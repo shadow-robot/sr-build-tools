@@ -1,0 +1,124 @@
+#!/usr/bin/env python
+
+import re, os, sys, platform
+from   sys    import stdout, exit
+from   shutil import copy
+import optparse
+
+supported_distributions = {
+    'Ubuntu': ['lucid', 'maverick', 'natty', 'oneiric']
+}
+
+# Filled in by pre_flight()
+dist = { 'name': '', 'release': '', 'version': '' }
+
+#
+# Logging and util
+
+def info(msg):
+    """Log information messages to stdout"""
+    print(msg)
+
+def error(msg):
+    """Log error messages to stdout"""
+    print("ERROR: %s" % msg)
+
+def giveup(msg, status=1):
+    """Log error message and exit"""
+    error(msg)
+    info("Giving up!")
+    exit(status) 
+
+def sh(cmd):
+    """Run a shell command, echoing the command first"""
+    info(cmd)
+    # TODO Error trapping! Probably move to subprocess
+    os.system(cmd)
+
+#
+# main 
+
+def main():
+    optp = optparse.OptionParser()
+    #optp.add_option('--person', '-p', default="world")
+    opts, args = optp.parse_args()
+
+    info("Starting bootstrap")
+    pre_flight()
+    configure_repositories()
+    info("Finished bootstrap")
+
+def pre_flight():
+    """Pre flight checks"""
+    # TODO Check if root
+    # TODO Force option to try and install anyway
+
+    if os.name != 'posix' and platform.system() != 'Linux':
+        giveup("Not a linux system!")
+
+    (dist['name'], dist['version'], dist['release']) = platform.linux_distribution()
+    info("Looks like %s %s (%s) flavor linux"
+            % (dist['name'], dist['release'], dist['version']))
+
+    if dist['name'] not in supported_distributions:
+        giveup("Not a compatable system. Supported: "+str(supported_distributions.keys()))
+
+    if dist['release'] not in supported_distributions[dist['name']]:
+        giveup("Un-supported Ubuntu release %s, supported: %s"
+            % (dist['release'], str(supported_distributions[dist['name']]))
+        )
+
+    info("Pre-flight checks ... OK")
+
+def configure_repositories():
+    """Sort out the sources lists and keys and apt-get update"""
+    #https://help.ubuntu.com/community/Repositories/CommandLine
+
+    sources = "/etc/apt/sources.list"
+    try:
+        lines = open(sources).readlines()
+    except IOError as err:
+        giveup("Reading '%s' : %s" % (sources, err), err.errno)
+
+    # Update source.list, out_lines is the new content, is_changed tells us if
+    # we need to write it.
+    out_lines     = []
+    is_changed    = False
+    re_needed_src = re.compile(r'#\s*deb(-src)? http:.*(restricted|universe|multiverse)$')
+    re_excludes   = re.compile(r'backports ')
+    re_start_hash = re.compile(r'^#\s*');
+    for line in lines:
+        m = re_needed_src.search(line)
+        if re_needed_src.search(line) and not re_excludes.search(line):
+            is_changed = True
+            out_line = re_start_hash.sub('', line)
+            out_lines.append(out_line)
+        else:
+            out_lines.append(line)
+
+    if is_changed:
+        bak_file = sources + ".sr-bootstrap-backup"
+        try:
+            copy(sources, bak_file)
+            out = open(sources, "w")
+            out.writelines(out_lines)
+        except IOError as err:
+            giveup("Updating '%s' : %s" % (sources, err), err.errno)
+        else:
+            info("Wrote '"+sources+"' (backup '"+bak_file+"')")
+
+    info("Restricted, universe and multiverse active")
+    sh('wget http://packages.ros.org/ros.key -O - | sudo apt-key add -')
+    info('Added ros apt key')
+
+    deb_line = "deb http://packages.ros.org/ros/ubuntu %s main" % dist['release']
+    sh('echo "'+deb_line+'" > /etc/apt/sources.list.d/ros-latest.list')
+    info('Source - %s' % deb_line)
+    sh("apt-get update")
+    
+    info("Configured repositories ... OK")
+
+
+# Go...
+if __name__ == '__main__':
+    main()
