@@ -9,6 +9,8 @@ supported_distributions = {
     'Ubuntu': ['lucid', 'maverick', 'natty', 'oneiric']
 }
 
+supported_ros_releases = ['electric']
+
 # Filled in by pre_flight()
 dist = { 'name': '', 'release': '', 'version': '' }
 
@@ -35,17 +37,20 @@ def sh(cmd):
     # TODO Error trapping! Probably move to subprocess
     os.system(cmd)
 
+
 #
 # main 
 
 def main():
     optp = optparse.OptionParser()
-    #optp.add_option('--person', '-p', default="world")
+    optp.add_option('--ros-release', '--ros', default="electric")
+    # TODO Option to run un-attended, ie say yes. For use under jenkins.
     opts, args = optp.parse_args()
 
     info("Starting bootstrap")
     pre_flight()
     configure_repositories()
+    install_packages(opts)
     info("Finished bootstrap")
 
 def pre_flight():
@@ -114,10 +119,15 @@ def configure_repositories():
     deb_line = "deb http://packages.ros.org/ros/ubuntu %s main" % dist['release']
     sh('echo "'+deb_line+'" > /etc/apt/sources.list.d/ros-latest.list')
     info('Source - %s' % deb_line)
-    sh("apt-get update")
     
     info("Configured repositories ... OK")
 
+def install_packages(opts):
+    pkg = "ros-"+opts.ros_release+"-shadow-robot"
+    sh("apt-get update")
+    sh('apt-get install '+pkg)
+    # BUG - sh() does not detect this failing
+    info('Installed packages ... OK')
 
 # Go...
 if __name__ == '__main__':
