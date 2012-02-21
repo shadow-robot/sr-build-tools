@@ -14,6 +14,9 @@ supported_ros_releases = ['electric']
 # Filled in by pre_flight()
 dist = { 'name': '', 'release': '', 'version': '' }
 
+# Command line opts
+opts = None 
+
 #
 # Logging and util
 
@@ -36,11 +39,16 @@ def sh(cmd):
 # main 
 
 def main():
+    global opts
     optp = optparse.OptionParser()
     optp.add_option('--ros-release', '--ros', default="electric")
     optp.add_option('--quiet', '-q', action="store_true", default=False)
     # TODO Option to run un-attended, ie say yes. For use under jenkins.
     opts, args = optp.parse_args()
+
+    opts.workspace = ""
+    if len(args) > 0:
+        opts.workspace = args[0]
 
     ch = logging.StreamHandler()
     if opts.quiet:
@@ -54,7 +62,7 @@ def main():
     log.info("Starting bootstrap")
     pre_flight()
     configure_repositories()
-    install_packages(opts)
+    install_packages()
     # TODO Env setup
     # TODO Workspace setup, rosinstall
     log.info("Finished bootstrap")
@@ -130,7 +138,7 @@ def configure_repositories():
     
     log.info("Configured repositorie ... OK")
 
-def install_packages(opts):
+def install_packages():
     """Install ROS packages and related tools"""
 
     pkg = "ros-"+opts.ros_release+"-shadow-robot"
