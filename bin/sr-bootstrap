@@ -71,13 +71,15 @@ def main():
 
 def pre_flight():
     """Pre flight checks"""
-    # TODO Check if root
     # TODO Force option to try and install anyway
     # This should maybe test if there is anything todo, if not we can abort
     # nice and quickly. Useful as we will run at start of each jenkins build.
 
     if os.name != 'posix' and platform.system() != 'Linux':
         giveup("Not a linux system!")
+
+    if os.geteuid() != 0:
+        giveup("You must be root (or use sudo)!")
 
     (dist['name'], dist['version'], dist['release']) = platform.linux_distribution()
     log.info("Looks like %s %s (%s) flavor linux"
