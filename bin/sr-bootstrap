@@ -170,7 +170,7 @@ def install_workspace():
 
     ros_dir = '/opt/ros/' + opts.ros_release
     # XXX Should we have seperate files for diff release/ros versions?
-    install_file = data_dir + '/shadow_robot.rosinstall'
+    install_file = data_dir + '/shadow_robot-'+opts.ros_release+'.rosinstall'
     sh('rosinstall ' + opts.workspace + ' ' + install_file + ' ' + ros_dir) 
     log.info("Workspace setup in "+opts.workspace)
     log.info("source "+opts.workspace+"/setup.bash to setup your ROS env")
