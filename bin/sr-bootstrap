@@ -131,10 +131,16 @@ def configure_repositories():
     log.info("Configured repositorie ... OK")
 
 def install_packages(opts):
+    """Install ROS packages and related tools"""
+
     pkg = "ros-"+opts.ros_release+"-shadow-robot"
     sh("apt-get update")
     sh('apt-get install '+pkg)
-    # BUG - sh() does not detect this failing
+
+    # rosinstall is a seperate install http://www.ros.org/wiki/rosinstall
+    sh("apt-get install python-setuptools")
+    sh("easy_install -U rosinstall")
+
     log.info('Installed packages ... OK')
 
 # Go...
