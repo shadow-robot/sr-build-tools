@@ -17,6 +17,9 @@ dist = { 'name': '', 'release': '', 'version': '' }
 # Command line opts
 opts = None 
 
+# Where to find the rosinstall file etc
+data_dir = os.path.join(os.path.abspath(os.path.dirname(sys.argv[0])), "..", "data")
+
 #
 # Logging and util
 
@@ -63,8 +66,7 @@ def main():
     pre_flight()
     configure_repositories()
     install_packages()
-    # TODO Env setup
-    # TODO Workspace setup, rosinstall
+    install_workspace()
     log.info("Finished bootstrap")
 
 def pre_flight():
@@ -141,15 +143,38 @@ def configure_repositories():
 def install_packages():
     """Install ROS packages and related tools"""
 
-    pkg = "ros-"+opts.ros_release+"-shadow-robot"
+    # What packages do we actually need here?! We say ros-electric-pr2-desktop
+    # http://www.ros.org/wiki/Robots/Shadow%20Robot/detailed_electric_trunk
+    # But that doesn't seem to exist on maverick.
+    # http://www.ros.org/wiki/electric/Installation/Ubuntu
+    # http://www.ros.org/wiki/Robots/PR2/electric says ros-electric-pr2-desktop
+    pkg = "ros-"+opts.ros_release+"-pr2-desktop"
+    #pkg = "ros-"+opts.ros_release+"-shadow-robot"
+    #pkg = "ros-"+opts.ros_release+"-desktop-full"
     sh("apt-get update")
     sh('apt-get install '+pkg)
+    sh('apt-get install bzr') # bzr-explorer qbzr
+    sh('apt-get install subversion python-svn')
+    sh('apt-get install mercurial')
 
     # rosinstall is a seperate install http://www.ros.org/wiki/rosinstall
     sh("apt-get install python-setuptools")
     sh("easy_install -U rosinstall")
 
     log.info('Installed packages ... OK')
+
+def install_workspace():
+    """Set up the workspace (rosinstall)"""
+    if not opts.workspace:
+        return
+
+    ros_dir = '/opt/ros/' + opts.ros_release
+    # XXX Should we have seperate files for diff release/ros versions?
+    install_file = data_dir + '/shadow_robot.rosinstall'
+    sh('rosinstall ' + opts.workspace + ' ' + install_file + ' ' + ros_dir) 
+    log.info("Workspace setup in "+opts.workspace)
+    log.info("source "+opts.workspace+"/setup.bash to setup your ROS env")
+
 
 # Go...
 if __name__ == '__main__':

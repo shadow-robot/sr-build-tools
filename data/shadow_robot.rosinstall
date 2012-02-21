@@ -1,0 +1,47 @@
+- bzr:
+    uri: 'lp:sr-ros-interface'
+    local-name: shadow_robot
+- bzr:
+    uri: 'lp:sr-ros-interface-ethercat'
+    local-name: shadow_robot_ethercat
+
+- svn:
+    uri: 'http://isr-uc-ros-pkg.googlecode.com/svn/stacks/serial_communication/trunk/cereal_port'
+    local-name: cereal_port
+
+- svn:
+    uri: 'https://code.ros.org/svn/wg-ros-pkg/stacks/pr2_ethercat_drivers/trunk/ethercat_hardware'
+    local-name: ethercat_hardware
+
+- svn:
+    uri: 'https://code.ros.org/svn/wg-ros-pkg/stacks/pr2_robot/trunk'
+    local-name: pr2_robot
+
+- svn:
+    uri: 'https://code.ros.org/svn/ros-pkg/stacks/joystick_drivers/trunk/joy'
+    local-name: joy
+
+- svn:
+    uri: 'https://code.ros.org/svn/ros-pkg/stacks/camera_drivers/trunk'
+    local-name: camera_drivers
+
+- hg:
+    uri: 'https://kforge.ros.org/audiocommon/audio_common'
+    local-name: audio_common
+
+- svn:
+    uri: 'https://code.ros.org/svn/ros-pkg/stacks/laser_drivers/trunk'
+    local-name: laser_drivers
+
+- svn:
+    uri: 'https://code.ros.org/svn/wg-ros-pkg/stacks/wifi_drivers/trunk'
+    local-name: wifi-drivers
+
+- svn:
+    uri: 'https://code.ros.org/svn/ros-pkg/stacks/imu_drivers/trunk'
+    local-name: imu-drivers
+
+- hg:
+    uri: 'https://kforge.ros.org/pr2mechanism/hg'
+    local-name: pr2_mechanism
+
