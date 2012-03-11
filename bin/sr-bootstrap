@@ -6,8 +6,10 @@ from   shutil import copy
 import optparse
 
 supported_distributions = {
-    'Ubuntu': ['lucid', 'maverick', 'natty', 'oneiric']
+    'Ubuntu': ['lucid', 'natty', 'oneiric']
 }
+# No Maverick as deps are not availiable. See
+# http://answers.ros.org/question/28101/ubuntu-maverick-install-of-ros-electric-pr2
 
 supported_ros_releases = ['electric']
 
@@ -15,7 +17,7 @@ supported_ros_releases = ['electric']
 dist = { 'name': '', 'release': '', 'version': '' }
 
 # Command line opts
-opts = None 
+opts = None
 
 # Where to find the rosinstall file etc
 data_dir = os.path.join(os.path.abspath(os.path.dirname(sys.argv[0])), "..", "data")
@@ -30,7 +32,7 @@ def giveup(msg, status=1):
     """Log error message and exit"""
     log.critical(msg)
     log.info("Giving up!")
-    exit(status) 
+    exit(status)
 
 def sh(cmd):
     """Run a shell command, echoing the command first"""
@@ -39,14 +41,13 @@ def sh(cmd):
 
 
 #
-# main 
+# main
 
 def main():
     global opts
     optp = optparse.OptionParser()
     optp.add_option('--ros-release', '--ros', default="electric")
     optp.add_option('--quiet', '-q', action="store_true", default=False)
-    # TODO Option to run un-attended, ie say yes. For use under jenkins.
     opts, args = optp.parse_args()
 
     opts.workspace = ""
@@ -139,28 +140,24 @@ def configure_repositories():
     deb_line = "deb http://packages.ros.org/ros/ubuntu %s main" % dist['release']
     sh('echo "'+deb_line+'" > /etc/apt/sources.list.d/ros-latest.list')
     log.info('Source - %s' % deb_line)
-    
+
     log.info("Configured repositorie ... OK")
 
 def install_packages():
     """Install ROS packages and related tools"""
 
-    # What packages do we actually need here?! We say ros-electric-pr2-desktop
     # http://www.ros.org/wiki/Robots/Shadow%20Robot/detailed_electric_trunk
-    # But that doesn't seem to exist on maverick.
     # http://www.ros.org/wiki/electric/Installation/Ubuntu
     # http://www.ros.org/wiki/Robots/PR2/electric says ros-electric-pr2-desktop
     pkg = "ros-"+opts.ros_release+"-pr2-desktop"
-    #pkg = "ros-"+opts.ros_release+"-shadow-robot"
-    #pkg = "ros-"+opts.ros_release+"-desktop-full"
     sh("apt-get update")
-    sh('apt-get install '+pkg)
-    sh('apt-get install bzr') # bzr-explorer qbzr
-    sh('apt-get install subversion python-svn')
-    sh('apt-get install mercurial')
+    sh('apt-get install --yes '+pkg)
+    sh('apt-get install --yes bzr') # bzr-explorer qbzr
+    sh('apt-get install --yes subversion python-svn')
+    sh('apt-get install --yes mercurial')
 
     # rosinstall is a seperate install http://www.ros.org/wiki/rosinstall
-    sh("apt-get install python-setuptools")
+    sh("apt-get install --yes python-setuptools")
     sh("easy_install -U rosinstall")
 
     log.info('Installed packages ... OK')
@@ -173,7 +170,7 @@ def install_workspace():
     ros_dir = '/opt/ros/' + opts.ros_release
     # XXX Should we have seperate files for diff release/ros versions?
     install_file = data_dir + '/shadow_robot-'+opts.ros_release+'.rosinstall'
-    sh('rosinstall ' + opts.workspace + ' ' + install_file + ' ' + ros_dir) 
+    sh('rosinstall ' + opts.workspace + ' ' + install_file + ' ' + ros_dir)
     log.info("Workspace setup in "+opts.workspace)
     log.info("source "+opts.workspace+"/setup.bash to setup your ROS env")
 
