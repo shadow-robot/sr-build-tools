@@ -1,0 +1,23 @@
+#!/bin/bash
+
+#
+# Boot strap a jenkins slave for the shadow build environment.
+#
+
+apt_opt="--yes"
+
+info() {
+    echo '['$(date)']' "($$)" $@
+}
+
+# Are we root?
+if [ "$(id -u)" != "0" ]; then
+    echo "Not root!"
+    exit 10
+fi
+
+# Install some needed packages
+apt-get install $apt_opt ssh
+apt-get install $apt_opt openjdk-6-jre openjdk-6-jdk
+
+# Setup jenkins user with a password less key
