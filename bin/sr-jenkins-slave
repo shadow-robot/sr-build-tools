@@ -5,10 +5,12 @@
 #
 
 apt_opt="--yes"
+jenkins_user="jenkins"
+jenkins_home="/home/$jenkins_user"
 
-info() {
-    echo '['$(date)']' "($$)" $@
-}
+# We use a (passwordless) ssh key setup for the server to login with.
+# This tells us where we can wget the pub key to setup authorized_keys
+server_pubkey="http://shadow-jenkins:8080/userContent/id_rsa.pub"
 
 # Are we root?
 if [ "$(id -u)" != "0" ]; then
@@ -20,4 +22,12 @@ fi
 apt-get install $apt_opt ssh
 apt-get install $apt_opt openjdk-6-jre openjdk-6-jdk
 
-# Setup jenkins user with a password less key
+# Setup jenkins user and install the servers pub key
+useradd -d "$jenkins_home" --create-home $jenkins_user
+mkdir "$jenkins_home/.ssh"
+chmod 700 "$jenkins_home/.ssh"
+wget -O "$jenkins_home/.ssh/authorized_keys" "$server_pubkey"
+chmod 600 "$jenkins_home/.ssh/authorized_keys"
+chown -R jenkins:jenkins "$jenkins_home/.ssh"
+
+echo Now configure this node in Jenkins...
