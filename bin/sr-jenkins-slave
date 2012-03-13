@@ -36,4 +36,8 @@ chown -R jenkins:jenkins "$jenkins_home/.ssh"
 bzr branch lp:sr-build-tools "$jenkins_home/sr-build-tools"
 chown -R "$jenkins_user:$jenkins_user" "$jenkins_home/sr-build-tools"
 
+# Create build dir
+mkdir "$jenkins_home/build"
+chown "$jenkins_user:$jenkins_user" "$jenkins_home/build"
+
 echo Now configure this node in Jenkins...
