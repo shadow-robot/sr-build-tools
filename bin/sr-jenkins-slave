@@ -19,8 +19,10 @@ if [ "$(id -u)" != "0" ]; then
 fi
 
 # Install some needed packages
-apt-get install $apt_opt ssh
-apt-get install $apt_opt openjdk-6-jre openjdk-6-jdk
+# ssh  - so jenkins can login.
+# bzr  - to install the build tools.
+# java - for running the slave agent that jenkins will install.
+apt-get install $apt_opt ssh bzr openjdk-6-jre openjdk-6-jdk
 
 # Setup jenkins user and install the servers pub key
 useradd -d "$jenkins_home" --create-home $jenkins_user
@@ -29,5 +31,8 @@ chmod 700 "$jenkins_home/.ssh"
 wget -O "$jenkins_home/.ssh/authorized_keys" "$server_pubkey"
 chmod 600 "$jenkins_home/.ssh/authorized_keys"
 chown -R jenkins:jenkins "$jenkins_home/.ssh"
+
+# Install the build tools
+bzr branch lp:sr-build-tools "$jenkins_home/sr-build-tools"
 
 echo Now configure this node in Jenkins...
