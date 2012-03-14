@@ -138,10 +138,15 @@ def configure_repositories():
     log.info('Added ros apt key')
 
     deb_line = "deb http://packages.ros.org/ros/ubuntu %s main" % dist['release']
-    sh('echo "'+deb_line+'" > /etc/apt/sources.list.d/ros-latest.list')
-    log.info('Source - %s' % deb_line)
+    src_file = "/etc/apt/sources.list.d/ros-latest.list"
+    if os.path.isfile(src_file):
+        # TODO Test that the file looks ok
+        log.info("ros-latest.list already installed")
+    else:
+        sh('echo "'+deb_line+'" > /etc/apt/sources.list.d/ros-latest.list')
+        log.info('Source - %s' % deb_line)
 
-    log.info("Configured repositorie ... OK")
+    log.info("Configured repositories ... OK")
 
 def install_packages():
     """Install ROS packages and related tools"""
