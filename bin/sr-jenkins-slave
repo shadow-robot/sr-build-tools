@@ -3,6 +3,10 @@
 #
 # Boot strap a jenkins slave for the shadow build environment.
 #
+# TODO:
+# * Update the hosts file to point at the jenkins server.
+#   Script should probably take an arg of the jenkins server IP, can then add
+#   hosts and we know the server_pubkey will work.
 
 apt_opt="--yes"
 jenkins_user="jenkins"
