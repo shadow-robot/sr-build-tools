@@ -1,0 +1,44 @@
+#!/bin/bash
+
+#
+# Jenkins build script to make and test a ros package. Pass the package name
+# as the first arg, the package is also expected to be checked out into
+# $WORKSPACE, which is what jenkins does.
+# * Creates an overlay in $WORKSPACE of the installed ros and shadow dependancies.
+# * Fixes test out put to be under jenkins workspace so jenkins can see it.
+# * Fixes rostest rubbish xml out put (https://code.ros.org/trac/ros/ticket/3770)
+# * Put ros logs into $WORKSPACE/logs so jenkins can see them.
+# --mda
+#
+
+# lp:sr-build-tools needs to be checked out somewhere
+export SR_BUILD_TOOLS="$HOME/sr-build-tools"
+
+export BUILD_ROS_VERSION="electric"
+
+if [ -z "$WORKSPACE" ]; then
+    echo WORKSPACE is not set. Can\'t run. Not being run by Jenkins?
+    exit 1
+fi
+
+set -x  # echo commands run
+
+#PATH="$SR_BUILD_TOOLS/bin:$PATH"
+#sr-bootstrap --ros=$BUILD_ROS_VERSION
+
+ros_install_opts="--continue-on-error"
+sr_rosinstall="$SR_BUILD_TOOLS/data/shadow_robot-$BUILD_ROS_VERSION.rosinstall"
+sr_ros="$HOME/shadow-ros-$BUILD_ROS_VERSION"
+rosinstall $ros_install_opts "$sr_ros" "/opt/ros/$BUILD_ROS_VERSION" "$sr_rosinstall"
+rosinstall $ros_install_opts "$WORKSPACE" "$sr_ros"
+
+source "$WORKSPACE/setup.bash"
+ROS_PACKAGE_PATH="$WORKSPACE:$ROS_PACKAGE_PATH"
+export ROS_TEST_RESULTS_DIR="$WORKSPACE/test_results"
+export ROS_LOG_DIR="$WORKSPACE/logs"
+
+# --robust?
+rosmake -t -v --profile "$@"
+res=$?
+rosrun rosunit clean_junit_xml.py
+exit $res
