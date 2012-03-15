@@ -93,6 +93,10 @@ class SrJenkinsJobsCmd:
         optp.add_option('--labels', default='')
         self.opts, self.args = optp.parse_args()
 
+        if self.opts.jenkins_url and not re.match(r'^http://', self.opts.jenkins_url):
+            self.opts.jenkins_url = "http://"+self.opts.jenkins_url
+
+        # Set the logger up
         ch = logging.StreamHandler()
         if self.opts.quiet:
             level = logging.WARNING
@@ -102,12 +106,14 @@ class SrJenkinsJobsCmd:
         ch.setFormatter(logging.Formatter('%(levelname)s: %(message)s'))
         self.log.addHandler(ch)
 
+        # Dispatch
         if self.opts.add:
             return self.add()
 
     def connect(self):
         """Connect to the jenkins server"""
         self.j = jenkins.Jenkins(self.opts.jenkins_url, self.opts.username, self.opts.password)
+        self.j.get_info() # Test the connection
         self.log.info("Connected to %s"%self.opts.jenkins_url)
 
     def add(self):
