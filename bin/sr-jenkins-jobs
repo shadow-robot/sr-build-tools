@@ -52,7 +52,7 @@ class SrJenkinsJob(object):
           <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
           <triggers class="vector">
             <hudson.triggers.SCMTrigger>
-              <spec>%s(schedule)</spec>
+              <spec>%(schedule)s</spec>
             </hudson.triggers.SCMTrigger>
           </triggers>
           <concurrentBuild>false</concurrentBuild>
@@ -101,6 +101,8 @@ class SrJenkinsJobsCmd:
         optp.add_option('--xml', action="store_true", default=False)
         optp.add_option('--enable', action="store_true", default=False)
         optp.add_option('--schedule', default='*/5 * * * *')
+        optp.add_option('--replace',  action="store_true", default=False,
+                help='If a job with the same name exists delete it before create')
         optp.add_option('--add', '-c', action="store_true", default=False)
         optp.add_option('--name', default='')
         optp.add_option('--bzr_source', default='')
@@ -212,6 +214,7 @@ class SrJenkinsJobsCmd:
         self.add_job(job)
 
     def add_job(self, job):
+        """Add a SrJenkinsJob, logging the action"""
         if self.opts.enable:
             job.disabled = False
 
@@ -222,10 +225,18 @@ class SrJenkinsJobsCmd:
 
         self.connect()
         if self.j.job_exists(job.name):
-            raise CmdError("Job %s already exists"%job.name, 10)
+            if self.opts.replace:
+                self.del_job(job)
+            else:
+                raise CmdError("Job %s already exists"%job.name, 10)
         self.j.create_job(job.name, job.as_xml())
         state = 'Enabled' if job.disabled else 'Disabled'
         self.log.info("Created job %s - %s" % (job.name, state))
+
+    def del_job(self, job):
+        """Delete a SrJenkinsJob, logging the action"""
+        self.j.delete_job(job.name)
+        self.log.info("Deleted job %s" % job.name)
 
 
 if __name__ == '__main__':
