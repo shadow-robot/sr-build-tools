@@ -22,6 +22,9 @@ if [ "$(id -u)" != "0" ]; then
     exit 10
 fi
 
+# Stop on errors
+set -e
+
 # Install some needed packages
 # ssh  - so jenkins can login.
 # bzr  - to install the build tools.
@@ -29,19 +32,35 @@ fi
 apt-get install $apt_opt ssh bzr openjdk-6-jre openjdk-6-jdk
 
 # Setup jenkins user and install the servers pub key
-useradd -d "$jenkins_home" --create-home $jenkins_user
-mkdir "$jenkins_home/.ssh"
-chmod 700 "$jenkins_home/.ssh"
+if [ -d "$jenkins_home" ]; then
+    echo Using existing $jenkins_home. Assuming user is $jenkins_user.
+else
+    useradd -d "$jenkins_home" --create-home $jenkins_user
+    echo Added user $jenkins_user
+fi
+if [ ! -d "$jenkins_home/.ssh" ]; then
+    mkdir "$jenkins_home/.ssh"
+    chmod 700 "$jenkins_home/.ssh"
+fi
 wget -O "$jenkins_home/.ssh/authorized_keys" "$server_pubkey"
 chmod 600 "$jenkins_home/.ssh/authorized_keys"
 chown -R jenkins:jenkins "$jenkins_home/.ssh"
+echo Added pub key
 
-# Install the build tools
+# Install the build tools. If already there just remove so we get a nice clean,
+# up to date copy each tuime
+if [ -d "$jenkins_home/sr-build-tools" ]; then
+    rm -rf "$jenkins_home/sr-build-tools"
+fi
 bzr branch lp:sr-build-tools "$jenkins_home/sr-build-tools"
 chown -R "$jenkins_user:$jenkins_user" "$jenkins_home/sr-build-tools"
 
 # Create build dir
-mkdir "$jenkins_home/build"
-chown "$jenkins_user:$jenkins_user" "$jenkins_home/build"
+if [ -d "$jenkins_home/build" ]; then
+    echo "$jenkins_home/build" found.
+else
+    mkdir -v "$jenkins_home/build"
+    chown "$jenkins_user:$jenkins_user" "$jenkins_home/build"
+fi
 
 echo Now configure this node in Jenkins...
