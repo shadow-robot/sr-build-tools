@@ -16,6 +16,8 @@ export SR_BUILD_TOOLS="$HOME/sr-build-tools"
 
 export BUILD_ROS_VERSION="electric"
 
+export SR_PACKAGE=$1
+
 if [ -z "$WORKSPACE" ]; then
     echo WORKSPACE is not set. Can\'t run. Not being run by Jenkins?
     exit 1
@@ -38,7 +40,26 @@ export ROS_TEST_RESULTS_DIR="$WORKSPACE/test_results"
 export ROS_LOG_DIR="$WORKSPACE/logs"
 
 # --robust?
-rosmake -t -v --profile "$@"
+rosmake -t -v --profile "$SR_PACKAGE"
 res=$?
+
+# Write junit format XML test result for the build
+# This makes the build visible in tests results and also stops failures for
+# pkgs with not tests as no tests counts as a fail!
+# http://stackoverflow.com/questions/4922867/junit-xml-format-specification-that-hudson-supports
+# http://stackoverflow.com/questions/8697923/junit-xml-packages-in-hudson
+test_pkg=rosmake
+if [ $res ]; then
+    testcase="<testcase classname='$test_pkg.make' name='$SR_PACKAGE'/>"
+else
+    testcase="<testcase classname='$test_pkg.make' name='$SR_PACKAGE'>\n"
+    testcase="$testcase<failure type='MakeFail'>rosmake status $res</failure>\n"
+    testcase="$testcase</testcase>"
+fi
+junit_xml="<testsuite tests='1' name='$test_pkg'>\n    $testcase\n</testsuite>\n"
+mkdir -p "$ROS_TEST_RESULTS_DIR/_hudson"
+echo -e "$junit_xml" > "$ROS_TEST_RESULTS_DIR/_hudson/rosmake.xml"
+
 rosrun rosunit clean_junit_xml.py
+
 exit $res
