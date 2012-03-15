@@ -49,7 +49,7 @@ res=$?
 # http://stackoverflow.com/questions/4922867/junit-xml-format-specification-that-hudson-supports
 # http://stackoverflow.com/questions/8697923/junit-xml-packages-in-hudson
 test_pkg=rosmake
-if [ $res ]; then
+if [ "$res" == 0 ]; then
     testcase="<testcase classname='$test_pkg.make' name='$SR_PACKAGE'/>"
 else
     testcase="<testcase classname='$test_pkg.make' name='$SR_PACKAGE'>\n"
