@@ -11,6 +11,7 @@ class SrJenkinsJob(object):
         self.labels       = ""
         self.package      = ""
         self.disabled     = True
+        self.schedule     = ""
 
     @property
     def name(self):
@@ -51,7 +52,7 @@ class SrJenkinsJob(object):
           <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
           <triggers class="vector">
             <hudson.triggers.SCMTrigger>
-              <spec>*/5 * * * *</spec>
+              <spec>%s(schedule)</spec>
             </hudson.triggers.SCMTrigger>
           </triggers>
           <concurrentBuild>false</concurrentBuild>
@@ -99,6 +100,7 @@ class SrJenkinsJobsCmd:
         optp.add_option('--username', '-u', default='')
         optp.add_option('--xml', action="store_true", default=False)
         optp.add_option('--enable', action="store_true", default=False)
+        optp.add_option('--schedule', default='*/5 * * * *')
         optp.add_option('--add', '-c', action="store_true", default=False)
         optp.add_option('--name', default='')
         optp.add_option('--bzr_source', default='')
@@ -158,6 +160,7 @@ class SrJenkinsJobsCmd:
         job.package    = self.opts.package 
         job.bzr_source = self.opts.bzr_source 
         job.labels     = self.opts.labels 
+        job.schedule   = self.opts.schedule 
         self.add_job(job)
         return 0
 
@@ -205,6 +208,7 @@ class SrJenkinsJobsCmd:
         job.package    = args['pkg'] 
         job.bzr_source = "lp:~shadowrobot/%(stack)s/%(branch)s" % args 
         job.labels     = " && ".join((args['dist'], args['rel'], args['arch']))
+        job.schedule   = self.opts.schedule 
         self.add_job(job)
 
     def add_job(self, job):
