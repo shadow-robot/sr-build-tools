@@ -103,13 +103,11 @@ class SrJenkinsJobsCmd:
         optp.add_option('--schedule', default='*/5 * * * *')
         optp.add_option('--replace',  action="store_true", default=False,
                 help='If a job with the same name exists delete it before create')
-        optp.add_option('--add', '-c', action="store_true", default=False)
         optp.add_option('--name', default='')
         optp.add_option('--bzr_source', default='')
         optp.add_option('--package', default='')
         optp.add_option('--labels', default='')
 
-        optp.add_option('--add-packages', '--add-package', '--add-pkg', action="store_true", default=False)
         optp.add_option('--stack', default='')
         optp.add_option('--distros', '--distro', '--dist', action='append' )
         optp.add_option('--dist-releases', '--dist-release', '--release', action='append' )
@@ -117,7 +115,7 @@ class SrJenkinsJobsCmd:
         optp.add_option('--branches', '--branch', action='append')
         optp.add_option('--ros-versions', '--ros', action='append')
         optp.add_option('--packages', '--pkg', action='append')
-        self.opts, self.args = optp.parse_args()
+        self.opts, self.cmd_args = optp.parse_args()
 
         if self.opts.jenkins_url and not re.match(r'^http://', self.opts.jenkins_url):
             self.opts.jenkins_url = "http://"+self.opts.jenkins_url
@@ -134,10 +132,16 @@ class SrJenkinsJobsCmd:
 
         # Dispatch
         try:
-            if self.opts.add:
+            if len(self.cmd_args) < 1:
+                raise CmdError("No command", 8)
+ 
+            self.cmd = self.cmd_args.pop(0)
+            if self.cmd == 'add':
                 return self.cmd_add()
-            elif self.opts.add_packages:
+            elif self.cmd in ['add-packages', 'add-pkg']:
                 return self.cmd_add_packages()
+            else:
+                raise CmdError("Unknown command %s" % self.cmd, 9)
         except CmdError as err:
             self.log.error(err)
             return err.status
@@ -245,13 +249,13 @@ if __name__ == '__main__':
 """
 Add a job with an explicit name:
 
-    ./bin/sr-jenkins-jobs --add --name TestJob --package sr_robot_msgs --bzr_source lp:~shadowrobot/sr-ros-interface/smoke-test --labels "ubuntu && lucid && amd64"
+    ./bin/sr-jenkins-jobs add --name TestJob --package sr_robot_msgs --bzr_source lp:~shadowrobot/sr-ros-interface/smoke-test --labels "ubuntu && lucid && amd64"
 
 Drop the name opt to get auto generated name:
     
-    ./bin/sr-jenkins-jobs --add --package sr_robot_msgs --bzr_source lp:~shadowrobot/sr-ros-interface/smoke-test --labels "ubuntu && lucid && amd64"
+    ./bin/sr-jenkins-jobs add --package sr_robot_msgs --bzr_source lp:~shadowrobot/sr-ros-interface/smoke-test --labels "ubuntu && lucid && amd64"
 
 Use --xml flag to see the job XML instead of adding the job to the server.
 
-    ./bin/sr-jenkins-jobs --add --package sr_robot_msgs --bzr_source lp:~shadowrobot/sr-ros-interface/smoke-test --labels "ubuntu && lucid && amd64" --xml
+    ./bin/sr-jenkins-jobs add --package sr_robot_msgs --bzr_source lp:~shadowrobot/sr-ros-interface/smoke-test --labels "ubuntu && lucid && amd64" --xml
 """
