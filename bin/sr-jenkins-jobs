@@ -1,0 +1,150 @@
+#!/usr/bin/python
+
+import sys, logging, optparse, re
+from xml.sax.saxutils import escape
+import jenkins
+
+class SrJenkinsJob(object):
+    def __init__(self):
+        self._name        = ""
+        self.bzr_source   = ""
+        self.labels       = ""
+        self.package      = ""
+
+    @property
+    def name(self):
+        """name getter. If no name has been set creates a name from the labels
+        and package name"""
+        if self._name:
+            return self._name
+        n = self.labels
+        n = re.sub(r'\s+[&|]+\s+', '-', n)
+        n = re.sub(r'\s+', '_', n)
+        n = n + '-' + self.package
+        return n
+
+    @name.setter
+    def name(self, val):
+        self._name = val
+
+    def as_xml(self):
+        """Generate the XML for this job"""
+        xml = """
+        <project>
+          <actions/>
+          <description></description>
+          <keepDependencies>false</keepDependencies>
+          <properties/>
+          <scm class="hudson.plugins.bazaar.BazaarSCM">
+            <source>%(bzr_source)s</source>
+            <clean>true</clean>
+            <checkout>false</checkout>
+          </scm>
+          <assignedNode>%(labels)s</assignedNode>
+          <canRoam>false</canRoam>
+          <disabled>false</disabled>
+          <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
+          <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
+          <triggers class="vector">
+            <hudson.triggers.SCMTrigger>
+              <spec>*/5 * * * *</spec>
+            </hudson.triggers.SCMTrigger>
+          </triggers>
+          <concurrentBuild>false</concurrentBuild>
+          <builders>
+            <hudson.tasks.Shell>
+              <command>/home/jenkins/sr-build-tools/bin/sr-jenkins-build %(package)s</command>
+            </hudson.tasks.Shell>
+          </builders>
+          <publishers>
+            <hudson.tasks.junit.JUnitResultArchiver>
+              <testResults>test_results/_hudson/*.xml</testResults>
+              <keepLongStdio>false</keepLongStdio>
+              <testDataPublishers/>
+            </hudson.tasks.junit.JUnitResultArchiver>
+            <org.jenkinsci.plugins.emotional__jenkins.EmotionalJenkinsPublisher/>
+          </publishers>
+          <buildWrappers/>
+        </project>
+        """ 
+        var = self.__dict__
+        var['labels'] = escape(self.labels)
+        return xml % var
+
+
+class SrJenkinsJobsCmd:
+    def __init__(self):
+        self.opts = None
+        self.args = None
+        self.log  = logging.getLogger('hello')
+        self.log.setLevel(logging.DEBUG)
+
+    def run(self):
+        optp = optparse.OptionParser()
+        optp.add_option('--quiet', '-q', action="store_true", default=False)
+        optp.add_option('--jenkins_url', '--url', '-j', default='http://jenkins:8080/')
+        optp.add_option('--password', '-p', default='')
+        optp.add_option('--username', '-u', default='')
+        optp.add_option('--xml', action="store_true", default=False)
+        optp.add_option('--add', '-c', action="store_true", default=False)
+        optp.add_option('--name', default='')
+        optp.add_option('--bzr_source', default='')
+        optp.add_option('--package', default='')
+        optp.add_option('--labels', default='')
+        self.opts, self.args = optp.parse_args()
+
+        ch = logging.StreamHandler()
+        if self.opts.quiet:
+            level = logging.WARNING
+        else:
+            level = logging.INFO
+        ch.setLevel(level)
+        ch.setFormatter(logging.Formatter('%(levelname)s: %(message)s'))
+        self.log.addHandler(ch)
+
+        if self.opts.add:
+            return self.add()
+
+    def connect(self):
+        """Connect to the jenkins server"""
+        self.j = jenkins.Jenkins(self.opts.jenkins_url, self.opts.username, self.opts.password)
+        self.log.info("Connected to %s"%self.opts.jenkins_url)
+
+    def add(self):
+        """Add a new job on the server"""
+        job = SrJenkinsJob()
+        job.name       = self.opts.name 
+        job.package    = self.opts.package 
+        job.bzr_source = self.opts.bzr_source 
+        job.labels     = self.opts.labels 
+
+        if self.opts.xml:
+            print("Job: %s" % job.name);
+            print(job.as_xml());
+            return 0
+
+        self.connect()
+        if self.j.job_exists(job.name):
+            self.log.error("Job %s already exists" % job.name)
+            return 10
+        self.j.create_job(job.name, job.as_xml())
+        self.log.info("Created job %s" % job.name)
+        return 0
+
+
+if __name__ == '__main__':
+    sys.exit(SrJenkinsJobsCmd().run())
+
+"""
+Add a job with an explicit name:
+
+    ./bin/sr-jenkins-jobs --add --name TestJob --package sr_robot_msgs --bzr_source lp:~shadowrobot/sr-ros-interface/smoke-test --labels "ubuntu && lucid && amd64"
+
+Drop the name opt to get auto generated name:
+    
+    ./bin/sr-jenkins-jobs --add --package sr_robot_msgs --bzr_source lp:~shadowrobot/sr-ros-interface/smoke-test --labels "ubuntu && lucid && amd64"
+
+Use --xml flag to see the job XML instead of adding the job to the server.
+
+    ./bin/sr-jenkins-jobs --add --package sr_robot_msgs --bzr_source lp:~shadowrobot/sr-ros-interface/smoke-test --labels "ubuntu && lucid && amd64" --xml
+"""
