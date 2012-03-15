@@ -10,6 +10,7 @@ class SrJenkinsJob(object):
         self.bzr_source   = ""
         self.labels       = ""
         self.package      = ""
+        self.disabled     = True
 
     @property
     def name(self):
@@ -27,6 +28,9 @@ class SrJenkinsJob(object):
     def name(self, val):
         self._name = val
 
+    def __str__(self):
+        return "%(_name)s '%(labels)s' %(bzr_source)s %(package)s" % self.__dict__ 
+
     def as_xml(self):
         """Generate the XML for this job"""
         xml = """
@@ -42,7 +46,7 @@ class SrJenkinsJob(object):
           </scm>
           <assignedNode>%(labels)s</assignedNode>
           <canRoam>false</canRoam>
-          <disabled>false</disabled>
+          <disabled>%(disabled)s</disabled>
           <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
           <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
           <triggers class="vector">
@@ -68,9 +72,16 @@ class SrJenkinsJob(object):
         </project>
         """ 
         var = self.__dict__
-        var['labels'] = escape(self.labels)
+        var['labels']   = escape(self.labels)
+        var['disabled'] = 'True' if self.disabled else 'False'
         return xml % var
 
+class CmdError(Exception):
+    def __init__(self,msg,status=23):
+        self.msg    = msg
+        self.status = status
+    def __str__(self):
+        return self.msg
 
 class SrJenkinsJobsCmd:
     def __init__(self):
@@ -78,6 +89,7 @@ class SrJenkinsJobsCmd:
         self.args = None
         self.log  = logging.getLogger('hello')
         self.log.setLevel(logging.DEBUG)
+        self.j = None
 
     def run(self):
         optp = optparse.OptionParser()
@@ -86,11 +98,21 @@ class SrJenkinsJobsCmd:
         optp.add_option('--password', '-p', default='')
         optp.add_option('--username', '-u', default='')
         optp.add_option('--xml', action="store_true", default=False)
+        optp.add_option('--enable', action="store_true", default=False)
         optp.add_option('--add', '-c', action="store_true", default=False)
         optp.add_option('--name', default='')
         optp.add_option('--bzr_source', default='')
         optp.add_option('--package', default='')
         optp.add_option('--labels', default='')
+
+        optp.add_option('--add-packages', '--add-package', '--add-pkg', action="store_true", default=False)
+        optp.add_option('--stack', default='')
+        optp.add_option('--distros', '--distro', '--dist', action='append' )
+        optp.add_option('--dist-releases', '--dist-release', '--release', action='append' )
+        optp.add_option('--architectures', '--arch', action='append' )
+        optp.add_option('--branches', '--branch', action='append')
+        optp.add_option('--ros-versions', '--ros', action='append')
+        optp.add_option('--packages', '--pkg', action='append')
         self.opts, self.args = optp.parse_args()
 
         if self.opts.jenkins_url and not re.match(r'^http://', self.opts.jenkins_url):
@@ -107,22 +129,87 @@ class SrJenkinsJobsCmd:
         self.log.addHandler(ch)
 
         # Dispatch
-        if self.opts.add:
-            return self.add()
+        try:
+            if self.opts.add:
+                return self.cmd_add()
+            elif self.opts.add_packages:
+                return self.cmd_add_packages()
+        except CmdError as err:
+            self.log.error(err)
+            return err.status
+        except:
+            raise
+        return 0
+
 
     def connect(self):
         """Connect to the jenkins server"""
+        if self.j:
+            return True
         self.j = jenkins.Jenkins(self.opts.jenkins_url, self.opts.username, self.opts.password)
         self.j.get_info() # Test the connection
         self.log.info("Connected to %s"%self.opts.jenkins_url)
+        return True
 
-    def add(self):
+    def cmd_add(self):
         """Add a new job on the server"""
         job = SrJenkinsJob()
         job.name       = self.opts.name 
         job.package    = self.opts.package 
         job.bzr_source = self.opts.bzr_source 
         job.labels     = self.opts.labels 
+        self.add_job(job)
+        return 0
+
+    def cmd_add_packages(self):
+        """Generate a set of jobs from the options."""
+
+        if not self.opts.stack:
+            raise CmdError("No stack")
+        if not self.opts.distros:
+            raise CmdError("No distros")
+        if not self.opts.dist_releases:
+            raise CmdError("No releases")
+        if not self.opts.architectures:
+            raise CmdError("No architectures")
+        if not self.opts.ros_versions:
+            raise CmdError("No ros_versions")
+        if not self.opts.branches:
+            raise CmdError("No branches")
+        if not self.opts.packages:
+            raise CmdError("No packages")
+
+        stack = self.opts.stack
+        for dist in self.opts.distros:
+            for rel in self.opts.dist_releases:
+                for arch in self.opts.architectures:
+                    for rosv in self.opts.ros_versions:
+                            for branch in self.opts.branches:
+                                for pkg in self.opts.packages:
+                                    self.add_package(
+                                                stack=stack,
+                                                dist=dist,
+                                                rel=rel,
+                                                arch=arch,
+                                                rosv=rosv,
+                                                branch=branch, 
+                                                pkg=pkg
+                                            )
+        return 0
+
+    def add_package(self, **args):
+        """Add a package using the given config"""
+        job_name = "%(dist)s-%(rel)s-%(arch)s-%(rosv)s-%(stack)s-%(branch)s-%(pkg)s" % args
+        job = SrJenkinsJob()
+        job.name       = job_name 
+        job.package    = args['pkg'] 
+        job.bzr_source = "lp:~shadowrobot/%(stack)s/%(branch)s" % args 
+        job.labels     = " && ".join((args['dist'], args['rel'], args['arch']))
+        self.add_job(job)
+
+    def add_job(self, job):
+        if self.opts.enable:
+            job.disabled = False
 
         if self.opts.xml:
             print("Job: %s" % job.name);
@@ -131,11 +218,10 @@ class SrJenkinsJobsCmd:
 
         self.connect()
         if self.j.job_exists(job.name):
-            self.log.error("Job %s already exists" % job.name)
-            return 10
+            raise CmdError("Job %s already exists"%job.name, 10)
         self.j.create_job(job.name, job.as_xml())
-        self.log.info("Created job %s" % job.name)
-        return 0
+        state = 'Enabled' if job.disabled else 'Disabled'
+        self.log.info("Created job %s - %s" % (job.name, state))
 
 
 if __name__ == '__main__':
