@@ -104,6 +104,9 @@ class SrJenkinsJobsCmd:
         optp.add_option('--replace',  action="store_true", default=False,
                 help='If a job with the same name exists delete it before create')
         optp.add_option('--name', default='')
+        optp.add_option('--prefix', default='sr-',
+                help="Prefix all job names with this. Handy way to identify "
+                     "them later.")
         optp.add_option('--bzr_source', default='')
         optp.add_option('--package', default='')
         optp.add_option('--labels', default='')
@@ -221,6 +224,9 @@ class SrJenkinsJobsCmd:
         """Add a SrJenkinsJob, logging the action"""
         if self.opts.enable:
             job.disabled = False
+        
+        if self.opts.prefix:
+            job.name = self.opts.prefix + job.name
 
         if self.opts.xml:
             print("Job: %s" % job.name);
@@ -258,4 +264,14 @@ Drop the name opt to get auto generated name:
 Use --xml flag to see the job XML instead of adding the job to the server.
 
     ./bin/sr-jenkins-jobs add --package sr_robot_msgs --bzr_source lp:~shadowrobot/sr-ros-interface/smoke-test --labels "ubuntu && lucid && amd64" --xml
+
+Set up a jobs for sr_utilities and sr_robot_msgs packages (smoke-test branch) on
+ubuntu lucid amd64:
+
+    sr-jenkins-jobs add --stack=sr-ros-interface --dist ubuntu --rel=lucid --arch=amd64 --branch=smoke-test --ros=electric --pkg sr_utilities --pkg sr_robot_msgs
+
+Generate a whole load of builds :)
+
+    sr-jenkins-jobs add-pkg --stack=sr-ros-interface --dist ubuntu --rel=lucid --rel=oneiric --arch=i386 --arch=amd64 --branch=smoke-test --ros=electric --ros=diamondback --pkg sr_utilities --pkg sr_robot_msgs
+
 """
