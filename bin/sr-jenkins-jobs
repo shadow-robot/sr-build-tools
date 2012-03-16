@@ -103,7 +103,6 @@ class SrJenkinsJobsCmd:
     def connect(self):
         """Connect to the jenkins server"""
         try:
-            print("Connect to %s..." % self.opts.jenkins_url)
             self._j = jenkins.Jenkins(
                     self.opts.jenkins_url, self.opts.username, self.opts.password)
             self._j.get_info() # Test the connection, throws if bad
@@ -168,6 +167,8 @@ class SrJenkinsJobsCmd:
             self.cmd = self.cmd_args.pop(0)
             if self.cmd == 'add':
                 return self.cmd_add()
+            elif self.cmd in ['list']:
+                return self.cmd_list()
             elif self.cmd in ['add-packages', 'add-pkg']:
                 return self.cmd_add_packages()
             elif self.cmd in ['delete', 'del']:
@@ -181,6 +182,16 @@ class SrJenkinsJobsCmd:
             raise
         return 0
 
+    def cmd_list(self):
+        """List jobs"""
+        filt_re = None
+        if self.cmd_args:
+            filt_re = self.cmd_args[0]
+        
+        jobs = self.j.get_jobs()
+        for job in jobs:
+            if not filt_re or re.match(filt_re, job['name']):
+                print("%(color)10s - %(name)s" % job)
 
     def cmd_delete(self):
         """Delete jobs named on command line"""
