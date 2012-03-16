@@ -1,12 +1,13 @@
 #!/usr/bin/python
 
-import sys, logging, optparse, re
+import os, sys, logging, optparse, re
 from xml.sax.saxutils import escape
 import jenkins
+import urllib2
 
 class SrJenkinsJob(object):
-    def __init__(self):
-        self._name        = ""
+    def __init__(self, name=""):
+        self._name        = name
         self.bzr_source   = ""
         self.labels       = ""
         self.package      = ""
@@ -90,12 +91,38 @@ class SrJenkinsJobsCmd:
         self.args = None
         self.log  = logging.getLogger('hello')
         self.log.setLevel(logging.DEBUG)
-        self.j = None
+        self._j = None
+    
+    @property
+    def j(self):
+        """Get the jenkins handle. Auto connects on first call."""
+        if not self._j:
+            self.connect()
+        return self._j
+
+    def connect(self):
+        """Connect to the jenkins server"""
+        try:
+            print("Connect to %s..." % self.opts.jenkins_url)
+            self._j = jenkins.Jenkins(
+                    self.opts.jenkins_url, self.opts.username, self.opts.password)
+            self._j.get_info() # Test the connection, throws if bad
+        except urllib2.URLError as e:
+            raise CmdError("Failed to connect to %s : %s"
+                    % (self.opts.jenkins_url,e))
+        self.log.info("Connected to %s" % self.opts.jenkins_url)
+        return True
+
 
     def run(self):
         optp = optparse.OptionParser()
-        optp.add_option('--quiet', '-q', action="store_true", default=False)
-        optp.add_option('--jenkins_url', '--url', '-j', default='http://jenkins:8080/')
+        optp.add_option('--quiet', '-q', action="store_true", default=False,
+                help="Don't log what is happening, only errors")
+        optp.add_option('--jenkins_url', '--url', '-j',
+                default=os.environ['JENKINS_URL']
+                    if 'JENKINS_URL' in os.environ else 'http://localhost:8080',
+                help="Base url for the jenkins server. If not given will read "
+                     "JENKINS_URL from the environment then try localhost:8080")
         optp.add_option('--password', '-p', default='')
         optp.add_option('--username', '-u', default='')
         optp.add_option('--xml', action="store_true", default=False)
@@ -143,6 +170,8 @@ class SrJenkinsJobsCmd:
                 return self.cmd_add()
             elif self.cmd in ['add-packages', 'add-pkg']:
                 return self.cmd_add_packages()
+            elif self.cmd in ['delete', 'del']:
+                return self.cmd_delete()
             else:
                 raise CmdError("Unknown command %s" % self.cmd, 9)
         except CmdError as err:
@@ -153,14 +182,10 @@ class SrJenkinsJobsCmd:
         return 0
 
 
-    def connect(self):
-        """Connect to the jenkins server"""
-        if self.j:
-            return True
-        self.j = jenkins.Jenkins(self.opts.jenkins_url, self.opts.username, self.opts.password)
-        self.j.get_info() # Test the connection
-        self.log.info("Connected to %s"%self.opts.jenkins_url)
-        return True
+    def cmd_delete(self):
+        """Delete jobs named on command line"""
+        for name in self.cmd_args:
+            self.del_job(SrJenkinsJob(name))
 
     def cmd_add(self):
         """Add a new job on the server"""
@@ -233,7 +258,6 @@ class SrJenkinsJobsCmd:
             print(job.as_xml());
             return 0
 
-        self.connect()
         if self.j.job_exists(job.name):
             if self.opts.replace:
                 self.del_job(job)
