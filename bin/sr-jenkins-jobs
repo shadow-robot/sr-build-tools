@@ -120,7 +120,7 @@ class SrJenkinsJobsCmd:
         except urllib2.URLError as e:
             raise CmdError("Failed to connect to %s : %s"
                     % (self.opts.jenkins_url,e))
-        self.log.info("Connected to %s" % self.opts.jenkins_url)
+        self.log.debug("Connected to %s" % self.opts.jenkins_url)
         return True
 
 
@@ -128,6 +128,8 @@ class SrJenkinsJobsCmd:
         optp = optparse.OptionParser()
         optp.add_option('--quiet', '-q', action="store_true", default=False,
                 help="Don't log what is happening, only errors")
+        optp.add_option('--debug', action="store_true", default=False,
+                help="Log more info about what is happening")
         optp.add_option('--jenkins_url', '--url', '-j',
                 default=os.environ['JENKINS_URL']
                     if 'JENKINS_URL' in os.environ else 'http://localhost:8080',
@@ -162,10 +164,11 @@ class SrJenkinsJobsCmd:
 
         # Set the logger up
         ch = logging.StreamHandler()
+        level = logging.INFO
         if self.opts.quiet:
-            level = logging.WARNING
-        else:
-            level = logging.INFO
+            level = logging.ERROR
+        elif self.opts.debug:
+            level = logging.DEBUG
         ch.setLevel(level)
         ch.setFormatter(logging.Formatter('%(levelname)s: %(message)s'))
         self.log.addHandler(ch)
@@ -187,7 +190,7 @@ class SrJenkinsJobsCmd:
             else:
                 raise CmdError("Unknown command %s" % self.cmd, 9)
         except CmdError as err:
-            self.log.error(err)
+            self.log.critical(err)
             return err.status
         except:
             raise
