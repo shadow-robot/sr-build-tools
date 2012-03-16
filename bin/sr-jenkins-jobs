@@ -167,11 +167,11 @@ class SrJenkinsJobsCmd:
             self.cmd = self.cmd_args.pop(0)
             if self.cmd == 'add':
                 return self.cmd_add()
-            elif self.cmd in ['list']:
+            elif self.cmd in ['list', 'ls']:
                 return self.cmd_list()
             elif self.cmd in ['add-packages', 'add-pkg']:
                 return self.cmd_add_packages()
-            elif self.cmd in ['delete', 'del']:
+            elif self.cmd in ['delete', 'del', 'rm']:
                 return self.cmd_delete()
             else:
                 raise CmdError("Unknown command %s" % self.cmd, 9)
@@ -182,21 +182,31 @@ class SrJenkinsJobsCmd:
             raise
         return 0
 
-    def cmd_list(self):
-        """List jobs"""
+    def _get_arg_jobs(self):
+        """Use cmd line args as list of re to match against job names and
+        return the list of names that match. With no args returns all."""
         filt_re = None
-        if self.cmd_args:
+        jobs = self.j.get_jobs()
+        if not self.cmd_args:
+            return jobs
             filt_re = self.cmd_args[0]
         
-        jobs = self.j.get_jobs()
+        out = []
         for job in jobs:
-            if not filt_re or re.match(filt_re, job['name']):
-                print("%(color)10s - %(name)s" % job)
+            for filt_re in self.cmd_args:
+                if re.match(filt_re, job['name']):
+                    out.append(job)
+        return out
+
+    def cmd_list(self):
+        """List jobs"""
+        for job in self._get_arg_jobs():
+            print("%(color)10s - %(name)s" % job)
 
     def cmd_delete(self):
         """Delete jobs named on command line"""
-        for name in self.cmd_args:
-            self.del_job(SrJenkinsJob(name))
+        for job in self._get_arg_jobs():
+            self.del_job(SrJenkinsJob(job['name']))
 
     def cmd_add(self):
         """Add a new job on the server"""
