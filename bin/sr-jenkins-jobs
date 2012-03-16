@@ -6,19 +6,30 @@ import jenkins
 import urllib2
 
 class SrJenkinsJob(object):
-    def __init__(self, name=""):
+    def __init__(self, name=None, url='', color=''):
         self._name        = name
+        self.url          = url 
+        self.color        = color 
         self.bzr_source   = ""
         self.labels       = ""
         self.package      = ""
-        self.disabled     = True
         self.schedule     = ""
+        if color:
+            # jenkins module returns 'disabled' as a color, otherwise the jobs
+            # current status color. grey=new job, blue, red etc
+            if color == 'disabled':
+                self.disabled = True
+            else:
+                self.disabled = False 
+        else:
+            # Default to disabled
+            self.disabled = True
 
     @property
     def name(self):
         """name getter. If no name has been set creates a name from the labels
         and package name"""
-        if self._name:
+        if self._name is not None:
             return self._name
         n = self.labels
         n = re.sub(r'\s+[&|]+\s+', '-', n)
@@ -186,22 +197,21 @@ class SrJenkinsJobsCmd:
         """Use cmd line args as list of re to match against job names and
         return the list of names that match. With no args returns all."""
         filt_re = None
-        jobs = self.j.get_jobs()
+        jobs = [ SrJenkinsJob( j['name'], color=j['color'], url=j['url'] )
+                 for j in self.j.get_jobs() ]
         if not self.cmd_args:
             return jobs
-            filt_re = self.cmd_args[0]
         
-        out = []
         for job in jobs:
             for filt_re in self.cmd_args:
-                if re.match(filt_re, job['name']):
-                    out.append(job)
+                if re.match(filt_re, job.name):
+                    out.append(obj)
         return out
 
     def cmd_list(self):
         """List jobs"""
         for job in self._get_arg_jobs():
-            print("%(color)10s - %(name)s" % job)
+            print("{j.color:>10} - {j.name}".format(j=job))
 
     def cmd_delete(self):
         """Delete jobs named on command line"""
