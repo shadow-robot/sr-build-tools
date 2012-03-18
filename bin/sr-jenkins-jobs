@@ -126,6 +126,8 @@ class SrJenkinsJobsCmd:
     UsageText = """
     %prog -h|--help
 
+    %prog COMMAND [OPTIONS] [PATTERN]
+
     %prog list|ls [OPTIONS] [PATTERN]
 
     %prog enable [OPTIONS] [PATTERN]
@@ -222,7 +224,9 @@ class SrJenkinsJobsCmd:
         # Dispatch
         try:
             if len(self.cmd_args) < 1:
-                raise CmdError("No command", 8)
+                self.log.error("No command or help flag given")
+                optp.print_usage()
+                return 3 
  
             self.cmd = self.cmd_args.pop(0)
             if self.cmd == 'add':
@@ -238,7 +242,9 @@ class SrJenkinsJobsCmd:
             elif self.cmd in ['add-packages', 'add-pkg']:
                 return self.cmd_add_packages()
             else:
-                raise CmdError("Unknown command %s" % self.cmd, 9)
+                self.log.error("Unknown command %s" % self.cmd)
+                optp.print_usage()
+                return 4
         except CmdError as err:
             self.log.critical(err)
             return err.status
