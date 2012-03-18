@@ -159,6 +159,9 @@ class SrJenkinsJobsCmd:
         optp.add_option('--xml', action="store_true", default=False,
                 help="When adding jobs output the jenkins config XML instead "
                      "of adding the job to jenkins. Default=%default")
+        optp.add_option('--all', action="store_true", default=False,
+                help="For delete, enable and disable allow command on all jobs "
+                     "when no PATTERN. Default=%default")
         optp.add_option('--enable', action="store_true", default=False,
                 help="Enable jobs when adding, otherwise create disabled. "
                      "Default=%default")
@@ -228,9 +231,9 @@ class SrJenkinsJobsCmd:
                 return self.cmd_list()
             elif self.cmd in ['delete', 'del', 'rm']:
                 return self.cmd_delete()
-            elif self.cmd in ['enable']:
+            elif self.cmd in ['enable', 'on']:
                 return self.cmd_enable()
-            elif self.cmd in ['disable']:
+            elif self.cmd in ['disable', 'off']:
                 return self.cmd_disable()
             elif self.cmd in ['add-packages', 'add-pkg']:
                 return self.cmd_add_packages()
@@ -266,16 +269,25 @@ class SrJenkinsJobsCmd:
 
     def cmd_delete(self):
         """Delete jobs named on command line"""
+        if not self.cmd_args and not self.opts.all:
+            self.log.warning("Refusing to delete all jobs! Use --all to force.")
+            return
         for job in self._get_arg_jobs():
             self.del_job(job)
     
     def cmd_enable(self):
         """Enable jobs named on command line"""
+        if not self.cmd_args and not self.opts.all:
+            self.log.warning("Refusing to enable all jobs! Use --all to force.")
+            return
         for job in self._get_arg_jobs():
             self.enable_job(job)
 
     def cmd_disable(self):
         """Disable jobs named on command line"""
+        if not self.cmd_args and not self.opts.all:
+            self.log.warning("Refusing to disable all jobs! Use --all to force.")
+            return
         for job in self._get_arg_jobs():
             self.disable_job(job)
 
