@@ -103,7 +103,7 @@ class SrJenkinsJobsCmd:
         self.log  = logging.getLogger('hello')
         self.log.setLevel(logging.DEBUG)
         self._j = None
-    
+
     @property
     def j(self):
         """Get the jenkins handle. Auto connects on first call."""
@@ -123,39 +123,78 @@ class SrJenkinsJobsCmd:
         self.log.debug("Connected to %s" % self.opts.jenkins_url)
         return True
 
+    UsageText = """
+    %prog -h|--help
 
+    %prog list|ls [OPTIONS] [PATTERN]
+
+    %prog delete|del|rm [OPTIONS] [PATTERN]
+
+    %prog add OPTIONS
+
+    %prog add-packages|add-pkg OPTIONS PACKAGES
+"""
     def run(self):
-        optp = optparse.OptionParser()
+        """Run the command, parse cmd line and do stuff."""
+        optp = optparse.OptionParser(usage=self.UsageText)
         optp.add_option('--quiet', '-q', action="store_true", default=False,
                 help="Don't log what is happening, only errors")
         optp.add_option('--debug', action="store_true", default=False,
                 help="Log more info about what is happening")
-        optp.add_option('--jenkins_url', '--url', '-j',
+        optp.add_option('--jenkins_url', '-j',
                 default=os.environ['JENKINS_URL']
                     if 'JENKINS_URL' in os.environ else 'http://localhost:8080',
-                help="Base url for the jenkins server. If not given will read "
-                     "JENKINS_URL from the environment then try localhost:8080")
-        optp.add_option('--password', '-p', default='')
-        optp.add_option('--username', '-u', default='')
-        optp.add_option('--xml', action="store_true", default=False)
-        optp.add_option('--enable', action="store_true", default=False)
-        optp.add_option('--schedule', default='*/5 * * * *')
+                help="Base url for the jenkins server. Will read JENKINS_URL "
+                     "from the environment, command line value overrides. "
+                     "Default: %default",
+                metavar='URL')
+        optp.add_option('--password', '-p', default='',
+                help="Optional password for the jenkins server")
+        optp.add_option('--username', '-u', default='',
+                help="Optional user name for the jenkins server")
+        optp.add_option('--xml', action="store_true", default=False,
+                help="When adding jobs output the jenkins config XML instead "
+                     "of adding the job to jenkins. Default=%default")
+        optp.add_option('--enable', action="store_true", default=False,
+                help="Enable jobs when adding, otherwise create disabled. "
+                     "Default=%default")
         optp.add_option('--replace',  action="store_true", default=False,
-                help='If a job with the same name exists delete it before create')
-        optp.add_option('--name', default='')
+                help='If a job with the same name exists delete it before '
+                     'creating the new one. Default=%default')
+        optp.add_option('--schedule', default='*/5 * * * *',
+                help='Schedule field in job setup, how often to poll the vcs. '
+                     'Looks a bit like a cron line, see jenkins for details. '
+                     'Default=%default')
+        optp.add_option('--name', default='', help="Name of job for add action.")
         optp.add_option('--prefix', default='sr-',
                 help="Prefix all job names with this. Handy way to identify "
-                     "them later.")
-        optp.add_option('--bzr_source', default='')
-        optp.add_option('--package', default='')
-        optp.add_option('--labels', default='')
+                     "them later. e.g. using list or delete actions. "
+                     "Default=%default")
+        optp.add_option('--bzr_source', default='',
+                help="Bzr source url for add action.", metavar='URL')
+        optp.add_option('--package', default='',
+                help="Package name for add action.")
+        optp.add_option('--labels', default='',
+                help="Labels for add action.")
 
-        optp.add_option('--stack', default='')
-        optp.add_option('--distros', '--distro', '--dist', action='append' )
-        optp.add_option('--dist-releases', '--dist-release', '--release', action='append' )
-        optp.add_option('--architectures', '--arch', action='append' )
-        optp.add_option('--branches', '--branch', action='append')
-        optp.add_option('--ros-versions', '--ros', action='append')
+        optp.add_option('--stack', default='',
+                help='Stack(s) to create jobs for. Give multiple times for '
+                     "multiple stacks. e.g. 'sr-ros-interface'")
+        optp.add_option('--distros', '--distro', '--dist', action='append',
+                help='Distro(s) to create jobs for. Give multiple times for '
+                     "multiple distros. e.g. 'ubuntu'")
+        optp.add_option('--dist-releases', '--dist-release', '--release', action='append',
+                help='Distro release(s) to create jobs for. Give multiple times for '
+                     "multiple releases. e.g. 'lucid'")
+        optp.add_option('--architectures', '--arch', action='append', 
+                help='Architectures(s) to create jobs for. Give multiple times for '
+                     "multiple architectures. e.g. 'i386' or 'amd64'")
+        optp.add_option('--branches', '--branch', action='append',
+                help='Branch(es) to create jobs for. Give multiple times for '
+                     "multiple branches. e.g. 'trunk'")
+        optp.add_option('--ros-versions', '--ros', action='append',
+                help='ROS version(s) to create jobs for. Give multiple times for '
+                     "multiple versions. e.g. 'electric', 'diamonback'")
         optp.add_option('--packages', '--pkg', action='append')
         self.opts, self.cmd_args = optp.parse_args()
 
@@ -316,7 +355,7 @@ Add a job with an explicit name:
     ./bin/sr-jenkins-jobs add --name TestJob --package sr_robot_msgs --bzr_source lp:~shadowrobot/sr-ros-interface/smoke-test --labels "ubuntu && lucid && amd64"
 
 Drop the name opt to get auto generated name:
-    
+
     ./bin/sr-jenkins-jobs add --package sr_robot_msgs --bzr_source lp:~shadowrobot/sr-ros-interface/smoke-test --labels "ubuntu && lucid && amd64"
 
 Use --xml flag to see the job XML instead of adding the job to the server.
