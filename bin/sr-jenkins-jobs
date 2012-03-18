@@ -118,7 +118,7 @@ class SrJenkinsJobsCmd:
                     self.opts.jenkins_url, self.opts.username, self.opts.password)
             self._j.get_info() # Test the connection, throws if bad
         except urllib2.URLError as e:
-            raise CmdError("Failed to connect to %s : %s"
+            raise CmdError("Failed to connect to %s : %s\nYou need to give a -j option or set JENKINS_URL"
                     % (self.opts.jenkins_url,e))
         self.log.debug("Connected to %s" % self.opts.jenkins_url)
         return True
@@ -127,6 +127,10 @@ class SrJenkinsJobsCmd:
     %prog -h|--help
 
     %prog list|ls [OPTIONS] [PATTERN]
+
+    %prog enable [OPTIONS] [PATTERN]
+
+    %prog disable [OPTIONS] [PATTERN]
 
     %prog delete|del|rm [OPTIONS] [PATTERN]
 
@@ -222,10 +226,14 @@ class SrJenkinsJobsCmd:
                 return self.cmd_add()
             elif self.cmd in ['list', 'ls']:
                 return self.cmd_list()
-            elif self.cmd in ['add-packages', 'add-pkg']:
-                return self.cmd_add_packages()
             elif self.cmd in ['delete', 'del', 'rm']:
                 return self.cmd_delete()
+            elif self.cmd in ['enable']:
+                return self.cmd_enable()
+            elif self.cmd in ['disable']:
+                return self.cmd_disable()
+            elif self.cmd in ['add-packages', 'add-pkg']:
+                return self.cmd_add_packages()
             else:
                 raise CmdError("Unknown command %s" % self.cmd, 9)
         except CmdError as err:
@@ -244,10 +252,11 @@ class SrJenkinsJobsCmd:
         if not self.cmd_args:
             return jobs
         
+        out = []
         for job in jobs:
             for filt_re in self.cmd_args:
                 if re.match(filt_re, job.name):
-                    out.append(obj)
+                    out.append(job)
         return out
 
     def cmd_list(self):
@@ -258,7 +267,17 @@ class SrJenkinsJobsCmd:
     def cmd_delete(self):
         """Delete jobs named on command line"""
         for job in self._get_arg_jobs():
-            self.del_job(SrJenkinsJob(job['name']))
+            self.del_job(job)
+    
+    def cmd_enable(self):
+        """Enable jobs named on command line"""
+        for job in self._get_arg_jobs():
+            self.enable_job(job)
+
+    def cmd_disable(self):
+        """Disable jobs named on command line"""
+        for job in self._get_arg_jobs():
+            self.disable_job(job)
 
     def cmd_add(self):
         """Add a new job on the server"""
@@ -344,6 +363,16 @@ class SrJenkinsJobsCmd:
         """Delete a SrJenkinsJob, logging the action"""
         self.j.delete_job(job.name)
         self.log.info("Deleted job %s" % job.name)
+
+    def enable_job(self, job):
+        """Enable a SrJenkinsJob, logging the action"""
+        self.j.enable_job(job.name)
+        self.log.info("Enabled job %s" % job.name)
+
+    def disable_job(self, job):
+        """Disable a SrJenkinsJob, logging the action"""
+        self.j.disable_job(job.name)
+        self.log.info("Disabled job %s" % job.name)
 
 
 if __name__ == '__main__':
