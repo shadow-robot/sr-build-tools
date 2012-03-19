@@ -117,8 +117,9 @@ class SrJenkinsJobsCmd:
             self._j = jenkins.Jenkins(
                     self.opts.jenkins_url, self.opts.username, self.opts.password)
             self._j.get_info() # Test the connection, throws if bad
-        except urllib2.URLError as e:
-            raise CmdError("Failed to connect to %s : %s\nYou need to give a -j option or set JENKINS_URL"
+        except (urllib2.URLError, TypeError) as e:
+            raise CmdError("Failed to connect to %s : %s\n"
+                    "You need to give a -j option or set JENKINS_URL"
                     % (self.opts.jenkins_url,e))
         self.log.debug("Connected to %s" % self.opts.jenkins_url)
         return True
@@ -203,7 +204,7 @@ Long option names can be abbriviated to shortest unique name."""
         grp.add_option('--dist-releases', '--release', action='append',
                 help='Distro release(s) to create jobs for. Give multiple times for '
                      "multiple releases. e.g. 'lucid'")
-        grp.add_option('--architectures', action='append', 
+        grp.add_option('--architectures', action='append',
                 help='Architectures(s) to create jobs for. Give multiple times for '
                      "multiple architectures. e.g. 'i386' or 'amd64'")
         grp.add_option('--branches', action='append',
@@ -212,7 +213,6 @@ Long option names can be abbriviated to shortest unique name."""
         grp.add_option('--ros-versions', '--ros', action='append',
                 help='ROS version(s) to create jobs for. Give multiple times for '
                      "multiple versions. e.g. 'electric', 'diamonback'")
-        grp.add_option('--packages', '--pkg', action='append')
         optp.add_option_group(grp)
 
         self.opts, self.cmd_args = optp.parse_args()
@@ -292,7 +292,7 @@ Long option names can be abbriviated to shortest unique name."""
             return
         for job in self._get_arg_jobs():
             self.del_job(job)
-    
+
     def cmd_enable(self):
         """Enable jobs named on command line"""
         if not self.cmd_args and not self.opts.all:
@@ -308,7 +308,7 @@ Long option names can be abbriviated to shortest unique name."""
             return
         for job in self._get_arg_jobs():
             self.disable_job(job)
-    
+
     def cmd_build(self):
         """Build jobs named on command line"""
         if not self.cmd_args and not self.opts.all:
@@ -343,6 +343,8 @@ Long option names can be abbriviated to shortest unique name."""
             raise CmdError("No ros_versions")
         if not self.opts.branches:
             raise CmdError("No branches")
+
+        self.opts.packages = self.cmd_args
         if not self.opts.packages:
             raise CmdError("No packages")
 
@@ -411,7 +413,7 @@ Long option names can be abbriviated to shortest unique name."""
         """Disable a SrJenkinsJob, logging the action"""
         self.j.disable_job(job.name)
         self.log.info("Disabled job %s" % job.name)
-    
+
     def build_job(self, job):
         """Tell jenkins to build a SrJenkinsJob, logging the action"""
         self.j.build_job(job.name)
