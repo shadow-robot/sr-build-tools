@@ -170,41 +170,52 @@ class SrJenkinsJobsCmd:
         optp.add_option('--replace',  action="store_true", default=False,
                 help='If a job with the same name exists delete it before '
                      'creating the new one. Default=%default')
-        optp.add_option('--schedule', default='*/5 * * * *',
+        optp.add_option('--prefix', default='sr-',
+                help="Prefix all created job names with this. Handy way to identify "
+                     "them later. e.g. using list or delete actions. "
+                     "Default=%default")
+
+        grp = optparse.OptionGroup(optp, "Command: add",
+                "Add a single job to jenkins. If you trying to set up shadow "
+                "builds you probably want add-packages instead.")
+        grp.add_option('--name', default='', help="Name of job for add action.")
+        grp.add_option('--bzr_source', default='',
+                help="Bzr source url for add action.", metavar='URL')
+        grp.add_option('--schedule', default='*/5 * * * *',
                 help='Schedule field in job setup, how often to poll the vcs. '
                      'Looks a bit like a cron line, see jenkins for details. '
                      'Default=%default')
-        optp.add_option('--name', default='', help="Name of job for add action.")
-        optp.add_option('--prefix', default='sr-',
-                help="Prefix all job names with this. Handy way to identify "
-                     "them later. e.g. using list or delete actions. "
-                     "Default=%default")
-        optp.add_option('--bzr_source', default='',
-                help="Bzr source url for add action.", metavar='URL')
-        optp.add_option('--package', default='',
-                help="Package name for add action.")
-        optp.add_option('--labels', default='',
+        grp.add_option('--labels', default='',
                 help="Labels for add action.")
+        grp.add_option('--package', default='',
+                help="Package name for add action.")
+        optp.add_option_group(grp)
 
-        optp.add_option('--stack', default='',
+        grp = optparse.OptionGroup(optp, "Command: add-packages",
+                "Generates a set of shadow build jobs for the given options and"
+                " package list. Will generate jobs for all the combinations of "
+                "options.")
+        grp.add_option('--stack', default='',
                 help='Stack(s) to create jobs for. Give multiple times for '
                      "multiple stacks. e.g. 'sr-ros-interface'")
-        optp.add_option('--distros', '--distro', '--dist', action='append',
+        grp.add_option('--distros', '--distro', '--dist', action='append',
                 help='Distro(s) to create jobs for. Give multiple times for '
                      "multiple distros. e.g. 'ubuntu'")
-        optp.add_option('--dist-releases', '--dist-release', '--release', action='append',
+        grp.add_option('--dist-releases', '--dist-release', '--release', action='append',
                 help='Distro release(s) to create jobs for. Give multiple times for '
                      "multiple releases. e.g. 'lucid'")
-        optp.add_option('--architectures', '--arch', action='append', 
+        grp.add_option('--architectures', '--arch', action='append', 
                 help='Architectures(s) to create jobs for. Give multiple times for '
                      "multiple architectures. e.g. 'i386' or 'amd64'")
-        optp.add_option('--branches', '--branch', action='append',
+        grp.add_option('--branches', '--branch', action='append',
                 help='Branch(es) to create jobs for. Give multiple times for '
                      "multiple branches. e.g. 'trunk'")
-        optp.add_option('--ros-versions', '--ros', action='append',
+        grp.add_option('--ros-versions', '--ros', action='append',
                 help='ROS version(s) to create jobs for. Give multiple times for '
                      "multiple versions. e.g. 'electric', 'diamonback'")
-        optp.add_option('--packages', '--pkg', action='append')
+        grp.add_option('--packages', '--pkg', action='append')
+        optp.add_option_group(grp)
+
         self.opts, self.cmd_args = optp.parse_args()
 
         if self.opts.jenkins_url and not re.match(r'^http://', self.opts.jenkins_url):
