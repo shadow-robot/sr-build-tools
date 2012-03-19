@@ -138,7 +138,7 @@ class SrJenkinsJobsCmd:
     %prog add OPTIONS
     %prog add-packages|add-pkg OPTIONS PACKAGES
 
-"""
+Long option names can be abbriviated to shortest unique name."""
     def run(self):
         """Run the command, parse cmd line and do stuff."""
         optp = optparse.OptionParser(usage=self.UsageText)
@@ -197,16 +197,16 @@ class SrJenkinsJobsCmd:
         grp.add_option('--stack', default='',
                 help='Stack(s) to create jobs for. Give multiple times for '
                      "multiple stacks. e.g. 'sr-ros-interface'")
-        grp.add_option('--distros', '--distro', '--dist', action='append',
+        grp.add_option('--distros', '--dist', action='append',
                 help='Distro(s) to create jobs for. Give multiple times for '
                      "multiple distros. e.g. 'ubuntu'")
-        grp.add_option('--dist-releases', '--dist-release', '--release', action='append',
+        grp.add_option('--dist-releases', '--release', action='append',
                 help='Distro release(s) to create jobs for. Give multiple times for '
                      "multiple releases. e.g. 'lucid'")
-        grp.add_option('--architectures', '--arch', action='append', 
+        grp.add_option('--architectures', action='append', 
                 help='Architectures(s) to create jobs for. Give multiple times for '
                      "multiple architectures. e.g. 'i386' or 'amd64'")
-        grp.add_option('--branches', '--branch', action='append',
+        grp.add_option('--branches', action='append',
                 help='Branch(es) to create jobs for. Give multiple times for '
                      "multiple branches. e.g. 'trunk'")
         grp.add_option('--ros-versions', '--ros', action='append',
