@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-import os, sys, logging, optparse, re
+import os, sys, logging, subprocess, optparse, re
 from xml.sax.saxutils import escape
 import jenkins
 import urllib2
@@ -138,6 +138,7 @@ class SrJenkinsJobsCmd:
 
     %prog add OPTIONS
     %prog add-packages|add-pkg OPTIONS PACKAGES
+    %prog add-stack OPTIONS STACK
 
 Long option names can be abbriviated to shortest unique name."""
     def run(self):
@@ -177,7 +178,7 @@ Long option names can be abbriviated to shortest unique name."""
 
         grp = optparse.OptionGroup(optp, "Command: add",
                 "Add a single job to jenkins. If you trying to set up shadow "
-                "builds you probably want add-packages instead.")
+                "builds you probably want add-packages or add-stack instead.")
         grp.add_option('--name', default='', help="Name of job for add action.")
         grp.add_option('--bzr_source', default='',
                 help="Bzr source url for add action.", metavar='URL')
@@ -200,7 +201,7 @@ Long option names can be abbriviated to shortest unique name."""
                      "multiple stacks. e.g. 'sr-ros-interface'")
         grp.add_option('--distros', '--dist', action='append',
                 help='Distro(s) to create jobs for. Give multiple times for '
-                     "multiple distros. e.g. 'ubuntu'")
+                "multiple distros. e.g. 'ubuntu'.")
         grp.add_option('--dist-releases', '--release', action='append',
                 help='Distro release(s) to create jobs for. Give multiple times for '
                      "multiple releases. e.g. 'lucid'")
@@ -211,14 +212,29 @@ Long option names can be abbriviated to shortest unique name."""
                 help='Branch(es) to create jobs for. Give multiple times for '
                      "multiple branches. e.g. 'trunk'")
         grp.add_option('--ros-versions', '--ros', action='append',
-                help='ROS version(s) to create jobs for. Give multiple times for '
-                     "multiple versions. e.g. 'electric', 'diamonback'")
+                help='ROS version(s) to create jobs for. Give multiple times '
+                     " for multiple versions. e.g. 'electric', 'diamonback' ")
+        optp.add_option_group(grp)
+
+        grp = optparse.OptionGroup(optp, "Command: add-stack OPTIONS STACK",
+                "Generates a set of shadow build jobs for all packages in "
+                "the stack named STACK. Must be run inside a ROS environment "
+                " (ie setup.bash) as we use rosstack. OPTIONS are the same as "
+                "add-pkg without the stack option and no pkg list")
         optp.add_option_group(grp)
 
         self.opts, self.cmd_args = optp.parse_args()
 
         if self.opts.jenkins_url and not re.match(r'^http://', self.opts.jenkins_url):
             self.opts.jenkins_url = "http://"+self.opts.jenkins_url
+
+        # Setting default above for append actions doesn't work as the default
+        # will always be in the list. So, only set the default if no values
+        # given on the command line.
+        if not self.opts.distros or len(self.opts.distros) == 0:
+            self.opts.distros = ['ubuntu']
+        if not self.opts.ros_versions or len(self.opts.ros_versions) == 0:
+            self.opts.ros_versions = ['electric']
 
         # Set the logger up
         ch = logging.StreamHandler()
@@ -236,8 +252,8 @@ Long option names can be abbriviated to shortest unique name."""
             if len(self.cmd_args) < 1:
                 self.log.error("No command or help flag given")
                 optp.print_usage()
-                return 3 
- 
+                return 3
+
             self.cmd = self.cmd_args.pop(0)
             if self.cmd == 'add':
                 return self.cmd_add()
@@ -253,6 +269,8 @@ Long option names can be abbriviated to shortest unique name."""
                 return self.cmd_build()
             elif self.cmd in ['add-packages', 'add-pkg']:
                 return self.cmd_add_packages()
+            elif self.cmd in ['add-stack']:
+                return self.cmd_add_stack()
             else:
                 self.log.error("Unknown command %s" % self.cmd)
                 optp.print_usage()
@@ -361,27 +379,54 @@ Long option names can be abbriviated to shortest unique name."""
                                                 rel=rel,
                                                 arch=arch,
                                                 rosv=rosv,
-                                                branch=branch, 
+                                                branch=branch,
                                                 pkg=pkg
                                             )
         return 0
+
+    def is_ros_env(self):
+        if 'ROS_ROOT' in os.environ and os.environ['ROS_ROOT']:
+            return True
+        else:
+            return False
+
+    def cmd_add_stack(self):
+        """Generate a set of jobs for a stack"""
+        if not self.is_ros_env():
+            raise CmdError("Not a ROS environment. You need to source a setup.bash.")
+
+        if len(self.cmd_args) < 1:
+            raise CmdError("No stack")
+        self.opts.stack = self.cmd_args[0]
+
+        cmd  = "rosstack contents %s" % self.opts.stack
+        proc = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE)
+        out  = proc.communicate()[0]
+        pkgs = [ x for x in out.split('\n') if x]
+        if len(pkgs) == 0:
+            raise CmdError("Didn't find any packages in stack '%s'"
+                           % self.opts.stack)
+
+        # Use above info to turn this into a add-packages call
+        self.cmd_args = pkgs
+        return self.cmd_add_packages()
 
     def add_package(self, **args):
         """Add a package using the given config"""
         job_name = "%(dist)s-%(rel)s-%(arch)s-%(rosv)s-%(stack)s-%(branch)s-%(pkg)s" % args
         job = SrJenkinsJob()
-        job.name       = job_name 
-        job.package    = args['pkg'] 
-        job.bzr_source = "lp:~shadowrobot/%(stack)s/%(branch)s" % args 
+        job.name       = job_name
+        job.package    = args['pkg']
+        job.bzr_source = "lp:~shadowrobot/%(stack)s/%(branch)s" % args
         job.labels     = " && ".join((args['dist'], args['rel'], args['arch']))
-        job.schedule   = self.opts.schedule 
+        job.schedule   = self.opts.schedule
         self.add_job(job)
 
     def add_job(self, job):
         """Add a SrJenkinsJob, logging the action"""
         if self.opts.enable:
             job.disabled = False
-        
+
         if self.opts.prefix:
             job.name = self.opts.prefix + job.name
 
@@ -396,8 +441,7 @@ Long option names can be abbriviated to shortest unique name."""
             else:
                 raise CmdError("Job %s already exists"%job.name, 10)
         self.j.create_job(job.name, job.as_xml())
-        state = 'Enabled' if job.disabled else 'Disabled'
-        self.log.info("Created job %s - %s" % (job.name, state))
+        self.log.info("Created job %s - Disabled:%s" % (job.name, job.disabled))
 
     def del_job(self, job):
         """Delete a SrJenkinsJob, logging the action"""
@@ -443,6 +487,16 @@ ubuntu lucid amd64:
 
 Generate a whole load of builds :)
 
-    sr-jenkins-jobs add-pkg --stack=sr-ros-interface --dist ubuntu --rel=lucid --rel=oneiric --arch=i386 --arch=amd64 --branch=smoke-test --ros=electric --ros=diamondback --pkg sr_utilities --pkg sr_robot_msgs
+    sr-jenkins-jobs add-pkg --stack=sr-ros-interface --dist ubuntu --rel=lucid --rel=oneiric --arch=i386 --arch=amd64 --branch=smoke-test --ros=electric --ros=diamondback sr_utilities --pkg sr_robot_msgs
+
+Generate builds for stack when stack name doens't match brz url:
+
+    sr-jenkins-jobs add-pkg --stack=sr-ros-interface-ethercat --branch=trunk
+    --dist=ubuntu --rel=lucid --arch=i386 --arch=amd64 --ros=electric `rosstack
+    contents shadow_robot_ethercat`
+
+Generate builds for stack pkgs when name does match:
+
+    sr-jenkins-jobs add-stack --branch=trunk --rel=lucid --arch=i386 --arch=amd64 --enable denso
 
 """
