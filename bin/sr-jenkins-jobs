@@ -161,7 +161,7 @@ class SrJenkinsJobsCmd:
                 help="When adding jobs output the jenkins config XML instead "
                      "of adding the job to jenkins. Default=%default")
         optp.add_option('--all', action="store_true", default=False,
-                help="For delete, enable and disable allow command on all jobs "
+                help="For delete, enable, disable and build allow command on all jobs "
                      "when no PATTERN. Default=%default")
         optp.add_option('--enable', action="store_true", default=False,
                 help="Enable jobs when adding, otherwise create disabled. "
@@ -249,6 +249,8 @@ class SrJenkinsJobsCmd:
                 return self.cmd_enable()
             elif self.cmd in ['disable', 'off']:
                 return self.cmd_disable()
+            elif self.cmd in ['build', 'run']:
+                return self.cmd_build()
             elif self.cmd in ['add-packages', 'add-pkg']:
                 return self.cmd_add_packages()
             else:
@@ -306,6 +308,14 @@ class SrJenkinsJobsCmd:
             return
         for job in self._get_arg_jobs():
             self.disable_job(job)
+    
+    def cmd_build(self):
+        """Build jobs named on command line"""
+        if not self.cmd_args and not self.opts.all:
+            self.log.warning("Refusing to build all jobs! Use --all to force.")
+            return
+        for job in self._get_arg_jobs():
+            self.build_job(job)
 
     def cmd_add(self):
         """Add a new job on the server"""
@@ -401,6 +411,11 @@ class SrJenkinsJobsCmd:
         """Disable a SrJenkinsJob, logging the action"""
         self.j.disable_job(job.name)
         self.log.info("Disabled job %s" % job.name)
+    
+    def build_job(self, job):
+        """Tell jenkins to build a SrJenkinsJob, logging the action"""
+        self.j.build_job(job.name)
+        self.log.info("Build job %s" % job.name)
 
 
 if __name__ == '__main__':
