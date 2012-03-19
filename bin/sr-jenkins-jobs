@@ -129,16 +129,15 @@ class SrJenkinsJobsCmd:
     %prog COMMAND [OPTIONS] [PATTERN]
 
     %prog list|ls [OPTIONS] [PATTERN]
-
-    %prog enable [OPTIONS] [PATTERN]
-
+    %prog enable  [OPTIONS] [PATTERN]
     %prog disable [OPTIONS] [PATTERN]
-
     %prog delete|del|rm [OPTIONS] [PATTERN]
 
-    %prog add OPTIONS
+    PATTERN - A regexp to match against job names.
 
+    %prog add OPTIONS
     %prog add-packages|add-pkg OPTIONS PACKAGES
+
 """
     def run(self):
         """Run the command, parse cmd line and do stuff."""
