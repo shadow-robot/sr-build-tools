@@ -1,0 +1,36 @@
+- bzr:
+    uri: 'lp:sr-ros-interface'
+    local-name: shadow_robot
+
+- bzr:
+    uri: 'lp:sr-ros-interface-ethercat'
+    local-name: shadow_robot_ethercat
+
+- bzr:
+    uri: 'lp:sr-contrib'
+    local-name: sr_contrib
+
+- bzr:
+    uri: 'lp:sr-demo'
+    local-name: sr_demo
+
+- bzr:
+    uri: 'lp:sr-visualization'
+    local-name: sr_visualization
+
+- bzr:
+    uri: 'lp:sr-teleop'
+    local-name: sr_teleop
+
+- bzr:
+    uri: 'lp:denso'
+    local-name: denso
+
+- bzr:
+    uri: 'lp:~shadowrobot/object-manipulation/shadow_patch'
+    local-name: object_manipulation
+
+- bzr:
+    uri: 'lp:sr-manipulation'
+    local-name: sr_object_manipulation
+

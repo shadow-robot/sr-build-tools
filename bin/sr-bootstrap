@@ -172,13 +172,12 @@ def install_workspace():
     if not opts.workspace:
         return
 
-    ros_dir = '/opt/ros/' + opts.ros_release
-    # XXX Should we have seperate files for diff release/ros versions?
     # Our lp: uris get changed so that rosinstall thinks they have changed. So
     # we use --delete-changed-uris to force an update.
     # TODO: Fix properly. Probably means fix the url. Otherwise we will do alot
     # of extra downloading and building, slowing the builds down.
-    install_file = data_dir + '/shadow_robot-'+opts.ros_release+'.rosinstall'
+    ros_dir = '/opt/ros/' + opts.ros_release
+    install_file = data_dir + '/shadow_robot.rosinstall'
     sh('rosinstall --delete-changed-uris ' + opts.workspace + ' ' + install_file + ' ' + ros_dir)
     log.info("Workspace setup in "+opts.workspace)
     log.info("source "+opts.workspace+"/setup.bash to setup your ROS env")

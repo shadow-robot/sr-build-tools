@@ -31,7 +31,7 @@ set -x  # echo commands run
 #sr-bootstrap --ros=$BUILD_ROS_VERSION
 
 ros_dir="/opt/ros/$BUILD_ROS_VERSION"
-sr_rosinstall="$SR_BUILD_TOOLS/data/shadow_robot-$BUILD_ROS_VERSION.rosinstall"
+sr_rosinstall="$SR_BUILD_TOOLS/data/shadow_robot.rosinstall"
 sr_ros="$HOME/shadow-ros-$BUILD_ROS_VERSION"
 if [ ! -d "$ros_dir" ]; then
     echo Ros directory $ros_dir not found!
