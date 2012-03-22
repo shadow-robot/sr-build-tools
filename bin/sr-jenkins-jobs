@@ -18,6 +18,8 @@ def strip_indent(s):
     return re.sub('^%s' % m.group(0), '', s, flags=re.M)
 
 class SrJenkinsJob(object):
+    """A light weight wrapper around the properties of job that can generate
+    suitable XML for feeding to jenkins."""
     def __init__(self, name=None, url='', color=''):
         self.name         = name
         self.url          = url 
@@ -27,6 +29,7 @@ class SrJenkinsJob(object):
         self.package      = ""
         self.schedule     = ""
         self.description  = ""
+        self.command      = ""
         if color:
             # jenkins module returns 'disabled' as a color, otherwise the jobs
             # current status color. grey=new job, blue, red etc
@@ -67,7 +70,7 @@ class SrJenkinsJob(object):
           <concurrentBuild>false</concurrentBuild>
           <builders>
             <hudson.tasks.Shell>
-              <command>/home/jenkins/sr-build-tools/bin/sr-jenkins-build %(package)s</command>
+              <command>%(command)s</command>
             </hudson.tasks.Shell>
           </builders>
           <publishers>
@@ -495,6 +498,7 @@ Long option names can be abbriviated to shortest unique name."""
         job.bzr_source = bzr_src
         job.labels     = " && ".join((args['dist'], args['rel'], args['arch']))
         job.schedule   = self.opts.schedule
+        job.command    = "/home/jenkins/sr-build-tools/bin/sr-jenkins-build %(rosv)s %(pkg)s" % args
         self.add_job(job)
 
     def add_job(self, job):

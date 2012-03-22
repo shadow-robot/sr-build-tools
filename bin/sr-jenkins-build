@@ -11,11 +11,14 @@
 # --mda
 #
 
-export SR_PACKAGE=$1
-export BUILD_ROS_VERSION=$2
-if [ -z "$BUILD_ROS_VERSION" ]; then
-    BUILD_ROS_VERSION="electric"
+if [ ! "$#" == 2 ]; then
+    echo Wrong number of arguments
+    echo usage: $0 ROSVERSION PKGNAME
+    exit 3
 fi
+
+export BUILD_ROS_VERSION=$1
+export SR_PACKAGE=$2
 
 # lp:sr-build-tools needs to be checked out somewhere
 export SR_BUILD_TOOLS="$HOME/sr-build-tools"
