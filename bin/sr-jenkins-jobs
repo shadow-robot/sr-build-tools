@@ -11,14 +11,14 @@ import yaml
 def strip_indent(s):
     """Util to strip an fixed indent (based on first line) from all lines of
     a string. Used to fix up doc strings for help text generation."""
-    s = re.sub(r'^\n+', '', s, flags=re.M)
+    s = re.sub(r'^\n+', '', s)
     m = re.match(r'^\s+', s)
     if not m: return s
     return re.sub('^%s' % m.group(0), '', s, flags=re.M)
 
 class SrJenkinsJob(object):
     def __init__(self, name=None, url='', color=''):
-        self._name        = name
+        self.name         = name
         self.url          = url 
         self.color        = color 
         self.bzr_source   = ""
@@ -35,22 +35,6 @@ class SrJenkinsJob(object):
         else:
             # Default to disabled
             self.disabled = True
-
-    @property
-    def name(self):
-        """name getter. If no name has been set creates a name from the labels
-        and package name"""
-        if self._name is not None:
-            return self._name
-        n = self.labels
-        n = re.sub(r'\s+[&|]+\s+', '-', n)
-        n = re.sub(r'\s+', '_', n)
-        n = n + '-' + self.package
-        return n
-
-    @name.setter
-    def name(self, val):
-        self._name = val
 
     def __str__(self):
         return "%(_name)s '%(labels)s' %(bzr_source)s %(package)s" % self.__dict__ 
@@ -351,12 +335,22 @@ Long option names can be abbriviated to shortest unique name."""
             self.build_job(job)
 
     def cmd_add(self):
-        """Add a single job to jenkins. If your trying to set up shadow
+        """
+        Add a single job to jenkins. If your trying to set up shadow
         builds you probably want add-packages, add-stack or add-rosinstall
         instead.
         """
+        if not self.opts.package: raise CmdError("No package")
+        if not self.opts.bzr_source: raise CmdError("No bzr_source")
+        name = self.opts.name;
+        if not name:
+            name = self.opts.labels
+            name = re.sub(r'\s+[&|]+\s+', '-', name)
+            name = re.sub(r'\s+', '_', name)
+            name += '-' + self.opts.package
+
         job = SrJenkinsJob()
-        job.name       = self.opts.name
+        job.name       = name
         job.package    = self.opts.package
         job.bzr_source = self.opts.bzr_source
         job.labels     = self.opts.labels
