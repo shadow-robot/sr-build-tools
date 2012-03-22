@@ -4,6 +4,7 @@ import os, sys, logging, subprocess, optparse, re
 from xml.sax.saxutils import escape
 import jenkins
 import urllib2
+from urlparse import urlparse
 
 class SrJenkinsJob(object):
     def __init__(self, name=None, url='', color=''):
@@ -205,7 +206,12 @@ Long option names can be abbriviated to shortest unique name."""
                      "multiple architectures. e.g. 'i386' or 'amd64'")
         grp.add_option('--branches', action='append',
                 help='Branch(es) to create jobs for. Give multiple times for '
-                     "multiple branches. e.g. 'trunk'")
+                     "multiple branches. Can be either a branch name like "
+                     "'trunk' in which case we generate a lp url of the form "
+                     "lp:~shadowrobot/%(stack)s/%(branch)s \n"
+                     "or a complete bzr url, which is handy when we have "
+                     "mapped the stack name e.g. sr-robot-interface -> "
+                     "shadow_robot")
         grp.add_option('--ros-versions', '--ros', action='append',
                 help='ROS version(s) to create jobs for. Give multiple times '
                      " for multiple versions. e.g. 'electric', 'diamonback' ")
@@ -282,7 +288,7 @@ Long option names can be abbriviated to shortest unique name."""
                  for j in self.j.get_jobs() ]
         if not self.cmd_args:
             return jobs
-        
+
         out = []
         for job in jobs:
             for filt_re in self.cmd_args:
@@ -413,11 +419,28 @@ Long option names can be abbriviated to shortest unique name."""
 
     def add_package(self, **args):
         """Add a package using the given config"""
+
+        # Work out the bzr url
+        # Does the branch look like a vcs url http: https: lp: bzr+ssh: etc
+        bzr_src = ""
+        if re.match(r'[\w\+]+:', args['branch']):
+            bzr_src = args['branch']
+            url     = urlparse(args['branch'])
+            parts   = url.path.split('/')
+            if len(parts) == 0:
+                raise CmdError('Bad branch url %s' % bzr_src)
+            elif len(parts) == 1:
+                args['branch'] = 'trunk'
+            else:
+                args['branch'] = parts[-1]
+        else:
+            bzr_src = "lp:~shadowrobot/%(stack)s/%(branch)s" % args
+
         job_name = "%(dist)s-%(rel)s-%(arch)s-%(rosv)s-%(stack)s-%(branch)s-%(pkg)s" % args
         job = SrJenkinsJob()
         job.name       = job_name
         job.package    = args['pkg']
-        job.bzr_source = "lp:~shadowrobot/%(stack)s/%(branch)s" % args
+        job.bzr_source = bzr_src
         job.labels     = " && ".join((args['dist'], args['rel'], args['arch']))
         job.schedule   = self.opts.schedule
         self.add_job(job)
