@@ -518,9 +518,11 @@ Long option names can be abbriviated to shortest unique name."""
             if self.opts.replace:
                 self.del_job(job)
             else:
-                raise CmdError("Job %s already exists"%job.name, 10)
+                self.log.error("Job %s already exists" % job.name)
+                return False
         self.j.create_job(job.name, job.as_xml())
         self.log.info("Created job %s - Disabled:%s" % (job.name, job.disabled))
+        return True
 
     def del_job(self, job):
         """Delete a SrJenkinsJob, logging the action"""
