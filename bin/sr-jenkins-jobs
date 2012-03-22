@@ -8,6 +8,14 @@ import urllib2
 from urlparse import urlparse
 import yaml
 
+def strip_indent(s):
+    """Util to strip an fixed indent (based on first line) from all lines of
+    a string. Used to fix up doc strings for help text generation."""
+    s = re.sub(r'^\n+', '', s, flags=re.M)
+    m = re.match(r'^\s+', s)
+    if not m: return s
+    return re.sub('^%s' % m.group(0), '', s, flags=re.M)
+
 class SrJenkinsJob(object):
     def __init__(self, name=None, url='', color=''):
         self._name        = name
@@ -142,6 +150,7 @@ class SrJenkinsJobsCmd:
     %prog add OPTIONS
     %prog add-packages|add-pkg OPTIONS PACKAGES
     %prog add-stack OPTIONS STACK
+    %prog add-rosinstall OPTIONS FILE
 
 Long option names can be abbriviated to shortest unique name."""
     def run(self):
@@ -220,7 +229,11 @@ Long option names can be abbriviated to shortest unique name."""
         optp.add_option_group(grp)
 
         grp = optparse.OptionGroup(optp, "Command: add-stack OPTIONS STACK",
-                re.sub(r'^\s+', '', self.cmd_add_stack.__doc__, flags=re.M))
+                strip_indent(self.cmd_add_stack.__doc__))
+        optp.add_option_group(grp)
+        
+        grp = optparse.OptionGroup(optp, "Command: add-rosinstall OPTIONS FILE",
+                strip_indent(self.cmd_add_rosinstall.__doc__))
         optp.add_option_group(grp)
 
         self.opts, self.cmd_args = optp.parse_args()
@@ -339,7 +352,8 @@ Long option names can be abbriviated to shortest unique name."""
 
     def cmd_add(self):
         """Add a single job to jenkins. If your trying to set up shadow
-        builds you probably want add-packages or add-stack instead.
+        builds you probably want add-packages, add-stack or add-rosinstall
+        instead.
         """
         job = SrJenkinsJob()
         job.name       = self.opts.name
@@ -423,7 +437,9 @@ Long option names can be abbriviated to shortest unique name."""
 
     def cmd_add_rosinstall(self):
         """
-        Generate jobs from a rosinstall file.
+        Generate jobs from a rosinstall file. For each stack listed add jobs
+        like add-stack, searches the bzr uri for the list of packages.
+        OPTIONS are the same as add-pkg without stack, branch and pkg list.
         """
         if len(self.cmd_args) < 1: raise CmdError("No rosinstall file")
         f = self.opts.rosinstall_file = self.cmd_args[0]
