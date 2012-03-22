@@ -1,0 +1,20 @@
+#!/bin/bash
+
+# Add a line to sudoers in a safe way
+# Will not add an exact duplicate
+# usage: $0 "Line to add"
+# http://stackoverflow.com/questions/323957/how-do-i-edit-etc-sudoers-from-a-script
+
+if [ -n "$i_am_the_editor" ]; then
+    if ! grep -F -q "$line_to_add" /etc/sudoers; then
+        echo "$line_to_add" >> $1
+    fi
+    exit 0
+fi
+
+# Start visudo with us as the editor
+export i_am_the_editor=1
+export line_to_add="$1"
+export EDITOR=$0
+sudo -E visudo
+exit $?
