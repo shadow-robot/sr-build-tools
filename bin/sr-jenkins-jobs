@@ -466,11 +466,11 @@ Long option names can be abbriviated to shortest unique name."""
 
     def bzr_find_packages(self, uri):
         """For the given brz uri find all the ros package names."""
-        cmd  = 'bzr ls -d "%s" --recursive | grep manifest.xml' % uri
+        cmd  = 'bzr ls --recursive "%s" | grep manifest.xml' % uri
         proc = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE)
         out  = proc.communicate()[0]
         if not out: return []
-        return [ x.split('/')[0] for x in out.split('\n') if x ]
+        return [ x.split('/')[1] for x in out.split('\n') if x ]
 
     def add_package(self, **args):
         """Add a package using the given config"""
