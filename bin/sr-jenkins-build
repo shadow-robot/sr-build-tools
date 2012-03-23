@@ -29,10 +29,9 @@ if [ -z "$WORKSPACE" ]; then
     exit 1
 fi
 
-set -x  # echo commands run
+#set -x  # echo commands run
 
-#PATH="$SR_BUILD_TOOLS/bin:$PATH"
-#sr-bootstrap --ros=$BUILD_ROS_VERSION
+echo Starting build
 
 ros_dir="/opt/ros/$BUILD_ROS_VERSION"
 sr_rosinstall="$SR_BUILD_TOOLS/data/shadow_robot.rosinstall"
@@ -48,7 +47,11 @@ if [ ! -f "$sr_rosinstall" ]; then
     echo Looks like someone needs to update sr-build-tools.
     exit 10
 fi
-ros_install_opts="--continue-on-error"
+# XXX - Due to bug in rosinstall/bzr the url changes from lp: to http:
+#       for now we'll have to take the hit and remove and redownload and build
+#       but we really need to fix this.
+#ros_install_opts="--continue-on-error"
+ros_install_opts="--delete-changed-uris"
 rosinstall $ros_install_opts "$sr_ros" "$ros_dir" "$sr_rosinstall"
 rosinstall $ros_install_opts "$WORKSPACE" "$sr_ros"
 
@@ -58,10 +61,12 @@ export ROS_TEST_RESULTS_DIR="$WORKSPACE/test_results"
 export ROS_LOG_DIR="$WORKSPACE/logs"
 
 # --robust?
+echo Installing deps
 rosdep install -y "$SR_PACKAGE"
 rosdep_res=$?
 res=$rosdep_res
 if [ "$rosdep_res" == 0 ]; then
+    echo Making and testing
     rosmake -t -v --profile "$SR_PACKAGE"
     rosmake_res=$?
     res=$rosmake_res
@@ -93,4 +98,5 @@ test_pkg="rosmake"
 
 rosrun rosunit clean_junit_xml.py
 
+echo Build complete
 exit $res
