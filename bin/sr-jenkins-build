@@ -20,8 +20,9 @@ fi
 export BUILD_ROS_VERSION=$1
 export SR_PACKAGE=$2
 
-# lp:sr-build-tools needs to be checked out somewhere
-export SR_BUILD_TOOLS="$HOME/sr-build-tools"
+# lp:sr-build-tools needs to be checked out somewhere.
+# sr-jenkins-slave should have done this for us.
+export SR_BUILD_TOOLS="/opt/shadow/sr-build-tools"
 
 if [ -z "$WORKSPACE" ]; then
     echo WORKSPACE is not set. Can\'t run. Not being run by Jenkins?

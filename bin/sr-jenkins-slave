@@ -11,7 +11,7 @@ set -e # Stop on errors
 apt_opt="--yes"
 jenkins_user="jenkins"
 jenkins_home="/home/$jenkins_user"
-build_tools_dir="$jenkins_home/sr-build-tools"
+build_tools_dir="/opt/shadow/sr-build-tools"
 jenkins_url=${JENKINS_URL-jenkins:8080}
 
 # Options
@@ -54,20 +54,23 @@ else
     exit 3
 fi
 
+#
 # Install some needed packages
 # ssh  - so jenkins can login.
 # bzr  - to install the build tools.
 # java - for running the slave agent that jenkins will install.
+#
 apt-get install $apt_opt ssh bzr openjdk-6-jre openjdk-6-jdk
 
+#
 # Install the build tools. If already there just remove so we get a nice clean,
 # up to date copy each time
+#
 if [ -d "$build_tools_dir" ]; then
     rm -rf "$build_tools_dir"
 fi
 mkdir -p $(dirname $build_tools_dir)
 bzr branch lp:sr-build-tools "$build_tools_dir"
-chown -R "$jenkins_user:$jenkins_user" "$build_tools_dir"
 
 # Put the build tools in the path as we call some of them
 if [ -x "$(dirname $0)/sudoers-add" ]; then
@@ -78,14 +81,17 @@ else
     PATH="$build_tools_dir/bin:$PATH"
 fi
 
-# Setup jenkins user and install the servers pub key, allowing jenkins to login
-# in and start it's agent.
+#
+# Setup jenkins user
+#
 if [ -d "$jenkins_home" ]; then
     echo Using existing $jenkins_home. Assuming user is $jenkins_user.
 else
     useradd -d "$jenkins_home" --create-home $jenkins_user
     echo Added user $jenkins_user
 fi
+
+# Install the servers pub key, allowing jenkins to login
 if [ ! -d "$jenkins_home/.ssh" ]; then
     mkdir "$jenkins_home/.ssh"
     chmod 700 "$jenkins_home/.ssh"
@@ -106,5 +112,6 @@ fi
 # Give jenkins no password sudo access. Needed as we want our build script to
 # be able to install new deps.
 sudoers-add "$jenkins_user  ALL=(ALL) NOPASSWD:  ALL"
+
 
 echo Now configure this node in Jenkins...
