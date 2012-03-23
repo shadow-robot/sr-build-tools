@@ -1,0 +1,17 @@
+#!/bin/sh
+
+# Keeps build tools upto date
+
+set -e
+build_tools_dir="/opt/shadow/sr-build-tools"
+branch="lp:sr-build-tools"
+
+if [ -d "$build_tools_dir" ]; then
+    # Update in place so we (hopefully) don't upset a build that runs at just
+    # the wrong time.
+    cd "$build_tools_dir"
+    bzr pull -q --overwrite "$branch"
+else
+    mkdir -p $(dirname $build_tools_dir)
+    bzr branch "$branch" "$build_tools_dir" 
+fi

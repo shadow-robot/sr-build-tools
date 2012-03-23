@@ -74,8 +74,9 @@ bzr branch lp:sr-build-tools "$build_tools_dir"
 
 # Put the build tools in the path as we call some of them
 if [ -x "$(dirname $0)/sudoers-add" ]; then
-    # Inside repo checkout
+    # Inside repo checkout. So use that to get the latest stuff.
     PATH="$(dirname $0):$PATH"
+    build_tools_dir="$(dirname $0)/.."
 else
     # Allows the script to be used on its own outside of its repo.
     PATH="$build_tools_dir/bin:$PATH"
@@ -112,6 +113,14 @@ fi
 # Give jenkins no password sudo access. Needed as we want our build script to
 # be able to install new deps.
 sudoers-add "$jenkins_user  ALL=(ALL) NOPASSWD:  ALL"
+echo Gave $jenkins_user sudo
+
+#
+# Install crontabs that keep the slave upto date
+#
+cp -a "$build_tools_dir/data/cron.hourly/"* /etc/cron.hourly/
+echo Installed crontabs
 
 
+echo
 echo Now configure this node in Jenkins...
