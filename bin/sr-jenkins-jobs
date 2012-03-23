@@ -502,7 +502,7 @@ Long option names can be abbriviated to shortest unique name."""
         job.bzr_source = bzr_src
         job.labels     = " && ".join((args['dist'], args['rel'], args['arch']))
         job.schedule   = self.opts.schedule
-        job.command    = "/home/jenkins/sr-build-tools/bin/sr-jenkins-build %(rosv)s %(pkg)s" % args
+        job.command    = "/opt/shadow/sr-build-tools/bin/sr-jenkins-build %(rosv)s %(pkg)s" % args
         self.add_job(job)
 
     def add_job(self, job):
