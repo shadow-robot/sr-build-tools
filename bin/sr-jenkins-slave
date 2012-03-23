@@ -59,8 +59,9 @@ fi
 # ssh  - so jenkins can login.
 # bzr  - to install the build tools.
 # java - for running the slave agent that jenkins will install.
+# python-yaml - handy for the build tools
 #
-apt-get install $apt_opt ssh bzr openjdk-6-jre openjdk-6-jdk
+apt-get install $apt_opt ssh bzr openjdk-6-jre openjdk-6-jdk python-yaml
 
 #
 # Install the build tools. If already there just remove so we get a nice clean,
