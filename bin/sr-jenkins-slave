@@ -42,7 +42,7 @@ fi
 
 # We use a (passwordless) ssh key setup for the server to login with.
 # This tells us where we can wget the pub key to setup authorized_keys
-server_pubkey="http://$jenkins_url:8080/userContent/id_rsa.pub"
+server_pubkey="http://$jenkins_url/userContent/id_rsa.pub"
 
 # Make sure we can see jenkins and it looks setup ok
 if HEAD -d "$server_pubkey" >/dev.null; then
