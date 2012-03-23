@@ -493,7 +493,6 @@ Long option names can be abbriviated to shortest unique name."""
             elif len(parts) == 1:
                 args['branch'] = 'trunk'
             else:
-                print("HELLO: %s\nHELLO: %s" % (args['branch'], parts))
                 args['branch'] = parts[-1]
         else:
             bzr_src = "lp:~shadowrobot/%(stack)s/%(branch)s" % args
