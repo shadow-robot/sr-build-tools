@@ -58,25 +58,38 @@ export ROS_TEST_RESULTS_DIR="$WORKSPACE/test_results"
 export ROS_LOG_DIR="$WORKSPACE/logs"
 
 # --robust?
-rosmake -t -v --profile "$SR_PACKAGE"
-res=$?
+rosdep install -y "$SR_PACKAGE"
+rosdep_res=$?
+res=$rosdep_res
+if [ "$rosdep_res" == 0 ]; then
+    rosmake -t -v --profile "$SR_PACKAGE"
+    rosmake_res=$?
+    res=$rosmake_res
+fi
 
 # Write junit format XML test result for the build
 # This makes the build visible in tests results and also stops failures for
 # pkgs with not tests as no tests counts as a fail!
 # http://stackoverflow.com/questions/4922867/junit-xml-format-specification-that-hudson-supports
 # http://stackoverflow.com/questions/8697923/junit-xml-packages-in-hudson
-test_pkg="rosmake"
-if [ "$res" == 0 ]; then
-    testcase="<testcase classname='$test_pkg.make' name='$SR_PACKAGE'/>"
-else
-    testcase="<testcase classname='$test_pkg.make' name='$SR_PACKAGE'>\n"
-    testcase="$testcase<failure type='MakeFail'>rosmake status $res</failure>\n"
-    testcase="$testcase</testcase>"
-fi
-junit_xml="<testsuite tests='1' name='$test_pkg'>\n    $testcase\n</testsuite>\n"
 mkdir -p "$ROS_TEST_RESULTS_DIR/_hudson"
-echo -e "$junit_xml" > "$ROS_TEST_RESULTS_DIR/_hudson/rosmake.xml"
+test_file="$ROS_TEST_RESULTS_DIR/_hudson/rosmake.xml"
+test_pkg="rosmake"
+(
+    echo "<testsuite tests='2' name='$test_pkg'>"
+        echo "<testcase classname='$test_pkg.deps' name='$SR_PACKAGE'>"
+        if [ ! "$rosdep_res" == 0 ]; then
+            echo "    <failure type='DepFail'>rosdep status $rosdep_res</failure>"
+        fi
+        echo "</testcase>"
+
+        echo "<testcase classname='$test_pkg.make' name='$SR_PACKAGE'>"
+        if [ ! "$rosmake_res" == 0 ]; then
+            echo "    <failure type='MakeFail'>rosmake status $rosmake_res</failure>"
+        fi
+        echo "</testcase>"
+    echo "</testsuite>"
+) > "$test_file"
 
 rosrun rosunit clean_junit_xml.py
 
