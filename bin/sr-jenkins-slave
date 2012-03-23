@@ -2,19 +2,37 @@
 
 #
 # Boot strap a jenkins slave for the shadow build environment.
+# It is safe to run this script multiple times.
 #
-# TODO:
-# * Update the hosts file to point at the jenkins server.
-#   Script should probably take an arg of the jenkins server IP, can then add
-#   hosts and we know the server_pubkey will work.
+
+set -e # Stop on errors
+#set -x # echo commands
 
 apt_opt="--yes"
 jenkins_user="jenkins"
 jenkins_home="/home/$jenkins_user"
+build_tools_dir="$jenkins_home/sr-build-tools"
+jenkins_url=${JENKINS_URL-jenkins:8080}
 
-# We use a (passwordless) ssh key setup for the server to login with.
-# This tells us where we can wget the pub key to setup authorized_keys
-server_pubkey="http://jenkins:8080/userContent/id_rsa.pub"
+# Options
+usage() {
+    echo Usage: $0 "[-jHOST]"
+    echo
+    echo ' -j Jenkins master host or url. Default: "$JENKINS_URL" or "jenkins"' 
+    echo
+    exit 0
+}
+while getopts "hj:" opt; do
+    case $opt in
+        '?'|h|:|\?)
+            usage
+        ;;
+        j)
+            jenkins_url=$OPTARG
+        ;;
+    esac
+done
+shift $((OPTIND-1))
 
 # Are we root?
 if [ "$(id -u)" != "0" ]; then
@@ -22,8 +40,19 @@ if [ "$(id -u)" != "0" ]; then
     exit 10
 fi
 
-# Stop on errors
-set -e
+# We use a (passwordless) ssh key setup for the server to login with.
+# This tells us where we can wget the pub key to setup authorized_keys
+server_pubkey="http://$jenkins_url:8080/userContent/id_rsa.pub"
+
+# Make sure we can see jenkins and it looks setup ok
+if HEAD -d "$server_pubkey" >/dev.null; then
+    echo Jenkins server found at $jenkins_url
+else
+    echo "$0: $server_pubkey not found!" >&2
+    echo $0: Is jenkins setup properly and visible on the network\? >&2
+    echo $0: "Do you need to give a -j?" >&2 
+    exit 3
+fi
 
 # Install some needed packages
 # ssh  - so jenkins can login.
@@ -31,7 +60,26 @@ set -e
 # java - for running the slave agent that jenkins will install.
 apt-get install $apt_opt ssh bzr openjdk-6-jre openjdk-6-jdk
 
-# Setup jenkins user and install the servers pub key
+# Install the build tools. If already there just remove so we get a nice clean,
+# up to date copy each time
+if [ -d "$build_tools_dir" ]; then
+    rm -rf "$build_tools_dir"
+fi
+mkdir -p $(dirname $build_tools_dir)
+bzr branch lp:sr-build-tools "$build_tools_dir"
+chown -R "$jenkins_user:$jenkins_user" "$build_tools_dir"
+
+# Put the build tools in the path as we call some of them
+if [ -x "$(dirname $0)/sudoers-add" ]; then
+    # Inside repo checkout
+    PATH="$(dirname $0):$PATH"
+else
+    # Allows the script to be used on its own outside of its repo.
+    PATH="$build_tools_dir/bin:$PATH"
+fi
+
+# Setup jenkins user and install the servers pub key, allowing jenkins to login
+# in and start it's agent.
 if [ -d "$jenkins_home" ]; then
     echo Using existing $jenkins_home. Assuming user is $jenkins_user.
 else
@@ -47,14 +95,6 @@ chmod 600 "$jenkins_home/.ssh/authorized_keys"
 chown -R jenkins:jenkins "$jenkins_home/.ssh"
 echo Added pub key
 
-# Install the build tools. If already there just remove so we get a nice clean,
-# up to date copy each tuime
-if [ -d "$jenkins_home/sr-build-tools" ]; then
-    rm -rf "$jenkins_home/sr-build-tools"
-fi
-bzr branch lp:sr-build-tools "$jenkins_home/sr-build-tools"
-chown -R "$jenkins_user:$jenkins_user" "$jenkins_home/sr-build-tools"
-
 # Create build dir
 if [ -d "$jenkins_home/build" ]; then
     echo "$jenkins_home/build" found.
@@ -62,5 +102,9 @@ else
     mkdir -v "$jenkins_home/build"
     chown "$jenkins_user:$jenkins_user" "$jenkins_home/build"
 fi
+
+# Give jenkins no password sudo access. Needed as we want our build script to
+# be able to install new deps.
+sudoers-add "$jenkins_user  ALL=(ALL) NOPASSWD:  ALL"
 
 echo Now configure this node in Jenkins...
