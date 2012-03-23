@@ -8,11 +8,11 @@
 set -e # Stop on errors
 #set -x # echo commands
 
-apt_opt="--yes"
 jenkins_user="jenkins"
 jenkins_home="/home/$jenkins_user"
 build_tools_dir="/opt/shadow/sr-build-tools"
 jenkins_url=${JENKINS_URL-jenkins:8080}
+apt_opt="-q --yes"
 
 # Options
 usage() {
@@ -120,6 +120,14 @@ echo Gave $jenkins_user sudo
 #
 cp -a "$build_tools_dir/data/cron.hourly/"* /etc/cron.hourly/
 echo Installed crontabs
+
+#
+# Bootstrap ros if asked to
+#
+for version in "$@"; do
+    sr-bootstrap --ros $version
+done
+echo Boot strapped $@ 'ros version(s)'
 
 
 echo

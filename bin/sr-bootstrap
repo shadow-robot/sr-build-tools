@@ -155,11 +155,12 @@ def install_packages():
     # http://www.ros.org/wiki/electric/Installation/Ubuntu
     # http://www.ros.org/wiki/Robots/PR2/electric says ros-electric-pr2-desktop
     pkg = "ros-"+opts.ros_release+"-pr2-desktop"
+    apt_opts = '-q --yes'
     sh("apt-get update")
-    sh('apt-get install --yes '+pkg)
-    sh('apt-get install --yes bzr') # bzr-explorer qbzr
-    sh('apt-get install --yes subversion python-svn')
-    sh('apt-get install --yes mercurial')
+    sh('apt-get install %s %s' % (apt_opts, pkg))
+    sh('apt-get install %s bzr' % apt_opts) # bzr-explorer qbzr
+    sh('apt-get install %s subversion python-svn' % apt_opts)
+    sh('apt-get install %s mercurial' % apt_opts)
 
     # rosinstall is a seperate install http://www.ros.org/wiki/rosinstall
     sh("apt-get install --yes python-setuptools")
