@@ -483,6 +483,8 @@ Long option names can be abbriviated to shortest unique name."""
         # Does the branch look like a vcs url http: https: lp: bzr+ssh: etc
         bzr_src = ""
         if re.match(r'[\w\+]+:', args['branch']):
+            # Avoid empty path component at the end
+            args['branch'] = re.sub(r'/$', '', args['branch'])
             bzr_src = args['branch']
             url     = urlparse(args['branch'])
             parts   = url.path.split('/')
@@ -491,6 +493,7 @@ Long option names can be abbriviated to shortest unique name."""
             elif len(parts) == 1:
                 args['branch'] = 'trunk'
             else:
+                print("HELLO: %s\nHELLO: %s" % (args['branch'], parts))
                 args['branch'] = parts[-1]
         else:
             bzr_src = "lp:~shadowrobot/%(stack)s/%(branch)s" % args
