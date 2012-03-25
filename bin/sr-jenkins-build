@@ -47,12 +47,26 @@ if [ ! -f "$sr_rosinstall" ]; then
     echo Looks like someone needs to update sr-build-tools.
     exit 10
 fi
+
+echo Installing ros workspace
 # XXX - Due to bug in rosinstall/bzr the url changes from lp: to http:
 #       for now we'll have to take the hit and remove and redownload and build
 #       but we really need to fix this.
 #ros_install_opts="--continue-on-error"
 ros_install_opts="--delete-changed-uris"
-rosinstall $ros_install_opts "$sr_ros" "$ros_dir" "$sr_rosinstall"
+if [ -d "$sr_ros" ]; then
+    # rosinstall is not working well for us, it just re branches everytime. We
+    # get no inplace update, so bodge that here.
+    for d in $(find "$sr_ros" -type d -name '.bzr'); do
+        (
+            target=$(dirname "$d")
+            cd $target
+            bzr pull --overwrite
+        )
+    done
+else
+    rosinstall $ros_install_opts "$sr_ros" "$ros_dir" "$sr_rosinstall"
+fi
 rosinstall $ros_install_opts "$WORKSPACE" "$sr_ros"
 
 source "$WORKSPACE/setup.bash"
