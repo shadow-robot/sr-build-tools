@@ -33,7 +33,7 @@ class BzrUtils(object):
         """
         Returns the diff between the 2 specified urls: runs bzr diff --old source --new target
         """
-        command = "bzr diff --old " + source + " --new " + target
+        command = "bzr diff --old " + target + " --new " + source
         command = shlex.split(str(command))
         process = subprocess.Popen(command , shell=False, stdout = subprocess.PIPE)
         output = process.communicate()
@@ -67,7 +67,7 @@ class LaunchpadMergeProposalReviewer(object):
         """
         self.bzr_utils = BzrUtils()
 
-        self.launchpad = Launchpad.login_with('Merge Proposal Reviewer', 'staging', cachedir, credential_save_failed = self.no_credential)
+        self.launchpad = Launchpad.login_with('Merge Proposal Reviewer', 'production', cachedir, credential_save_failed = self.no_credential)
         self.team = self.launchpad.people( team )
 
         self.merge_proposals = None
@@ -96,16 +96,27 @@ class LaunchpadMergeProposalReviewer(object):
             target = self.bzr_utils.launchpadify(entry["target_branch_link"])
             source = self.bzr_utils.launchpadify(entry["source_branch_link"])
 
-            print "Comparing "+  target + " and: " + source
+            print "Comparing "+ target + " and: " + source
 
             bzr_diff = self.bzr_utils.diff(target, source)
 
+            self.merge_proposals.entries[index]["target_branch_link"] = target
+            self.merge_proposals.entries[index]["source_branch_link"] = source
             self.merge_proposals.entries[index]["full_diff"] = bzr_diff
+
+        return self.merge_proposals.entries
 
 
 def main():
     lp = LaunchpadMergeProposalReviewer()
-    lp.get_active_merge_proposals()
+    mp = lp.get_active_merge_proposals()
+
+    for i,m in enumerate(mp):
+        #print m
+
+        f = open("/tmp/toto_" + str(i), 'w')
+        f.writelines(m["full_diff"])
+        f.close()
 
 if __name__ == '__main__':
     main()
