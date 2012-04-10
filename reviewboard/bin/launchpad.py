@@ -18,6 +18,7 @@
 
 from launchpadlib.launchpad import Launchpad
 import subprocess, shlex
+import pprint
 
 class BzrUtils(object):
     """
@@ -52,8 +53,19 @@ class BzrUtils(object):
         splitted_url = url.split("shadowrobot")
         launchpad_url += splitted_url[-1]
         return launchpad_url
+    
+    def httpify(self, url):
+        """
+        Modifies the given url to have the form: http:~shadowrobot/...
+        These are needed for review board as that doesn't handle lp: urls
+        (which are generally a real pain for automation).
 
-
+        @url: the url is typically u'https://api.staging.launchpad.net/1.0/~shadowrobot/project-name/branch-name'
+        """
+        http_url = "http:~shadowrobot"
+        splitted_url = url.split("shadowrobot")
+        http_url += splitted_url[-1]
+        return http_url
 
 
 class LaunchpadMergeProposalReviewer(object):
@@ -67,7 +79,9 @@ class LaunchpadMergeProposalReviewer(object):
         """
         self.bzr_utils = BzrUtils()
 
-        self.launchpad = Launchpad.login_with('Merge Proposal Reviewer', 'production', cachedir, credential_save_failed = self.no_credential)
+        self.launchpad = Launchpad.login_with(
+                'Merge Proposal Reviewer', 'production', cachedir,
+                credential_save_failed = self.no_credential)
         self.team = self.launchpad.people( team )
 
         self.merge_proposals = None
@@ -78,41 +92,51 @@ class LaunchpadMergeProposalReviewer(object):
 
     def get_active_merge_proposals(self):
         """
-        Returns a list containing the different active merge proposals. Includes the full diff for each of those.
+        Returns a list containing the different active merge proposals.
+        Includes the full diff for each of those.
 
-        a merge proposal has the following elements: address, all_comments_collection_link, commit_message, date_created,
-                                                     date_merged, date_queued, date_review_requested, date_reviewed,
-                                                     description, http_etag, merge_reporter_link, merged_revno, prerequisite_branch_link,
-                                                     preview_diff_link, private, queue_position, queue_status, queued_revid, queuer_link,
-                                                     registrant_link, resource_type_link, reviewed_revid, reviewer_link, self_link,
-                                                     source_branch_link, superseded_by_link, supersedes_link, target_branch_link, votes_collection_link,
-                                                     web_link, full_diff
+        A merge proposal has the following elements: address,
+            all_comments_collection_link, commit_message, date_created,
+            date_merged, date_queued, date_review_requested, date_reviewed,
+            description, http_etag, merge_reporter_link, merged_revno,
+            prerequisite_branch_link, preview_diff_link, private, queue_position,
+            queue_status, queued_revid, queuer_link, registrant_link,
+            resource_type_link, reviewed_revid, reviewer_link, self_link,
+            source_branch_link, superseded_by_link, supersedes_link,
+            target_branch_link, votes_collection_link, web_link, full_diff
 
-        @return the interesting element of each merge proposal are probably "full_diff", "commit_message"
+        In addition we add:
+            target_branch_lp, target_branch_http, source_branch_lp,
+            source_branch_http
+
+        @return the interesting element of each merge proposal are probably
+        "full_diff", "commit_message"
         """
         self.merge_proposals = self.team.getMergeProposals(status='Needs review')
 
         for index,entry in enumerate(self.merge_proposals.entries):
             target = self.bzr_utils.launchpadify(entry["target_branch_link"])
             source = self.bzr_utils.launchpadify(entry["source_branch_link"])
-
             print "Comparing "+ target + " and: " + source
-
             bzr_diff = self.bzr_utils.diff(target, source)
 
-            self.merge_proposals.entries[index]["target_branch_link"] = target
-            self.merge_proposals.entries[index]["source_branch_link"] = source
-            self.merge_proposals.entries[index]["full_diff"] = bzr_diff
+            entry["target_branch_lp"] = target
+            entry["source_branch_lp"] = source
+            entry["target_branch_http"] = self.bzr_utils.httpify(
+                    entry["target_branch_link"])
+            entry["source_branch_http"] = self.bzr_utils.httpify(
+                    entry["source_branch_link"])
+            entry["full_diff"] = bzr_diff
 
         return self.merge_proposals.entries
-
 
 def main():
     lp = LaunchpadMergeProposalReviewer()
     mp = lp.get_active_merge_proposals()
 
+    pp = pprint.PrettyPrinter(indent=4)
     for i,m in enumerate(mp):
-        #print m
+        pp.pprint(m)
 
         f = open("/tmp/toto_" + str(i), 'w')
         f.writelines(m["full_diff"])
