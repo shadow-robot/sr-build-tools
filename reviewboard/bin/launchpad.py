@@ -23,7 +23,6 @@ from launchpadlib.launchpad import Launchpad
 import rbtools.postreview
 from rbtools.postreview import ReviewBoardServer
 from rbtools.clients import SCMClient, RepositoryInfo
-from rbtools.clients.bazaar import BazaarClient
 
 class BzrUtils(object):
     """
@@ -208,7 +207,7 @@ class LPMerge2RB(object):
         diff = m['full_diff']
         parent_diff = None
         submit_as   = None
-        tool        = BazaarClient() 
+        tool        = SCMClient() 
         changenum   = None
 
         # Post the review 
