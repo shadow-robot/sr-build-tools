@@ -16,9 +16,14 @@
 # with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
+
+import subprocess, shlex, os, sys, tempfile, optparse
+import pickle
 from launchpadlib.launchpad import Launchpad
-import subprocess, shlex
-import pprint
+import rbtools.postreview
+from rbtools.postreview import ReviewBoardServer
+from rbtools.clients import SCMClient, RepositoryInfo
+from rbtools.clients.bazaar import BazaarClient
 
 class BzrUtils(object):
     """
@@ -62,7 +67,7 @@ class BzrUtils(object):
 
         @url: the url is typically u'https://api.staging.launchpad.net/1.0/~shadowrobot/project-name/branch-name'
         """
-        http_url = "http:~shadowrobot"
+        http_url = "http://bazaar.launchpad.net/~shadowrobot"
         splitted_url = url.split("shadowrobot")
         http_url += splitted_url[-1]
         return http_url
@@ -127,21 +132,92 @@ class LaunchpadMergeProposalReviewer(object):
             entry["source_branch_http"] = self.bzr_utils.httpify(
                     entry["source_branch_link"])
             entry["full_diff"] = bzr_diff
+            if entry["commit_message"] == None:
+                entry["commit_message"] = ""
 
         return self.merge_proposals.entries
 
-def main():
-    lp = LaunchpadMergeProposalReviewer()
-    mp = lp.get_active_merge_proposals()
 
-    pp = pprint.PrettyPrinter(indent=4)
-    for i,m in enumerate(mp):
-        pp.pprint(m)
+class CmdError(Exception):
+    def __init__(self,msg,status=23):
+        self.msg    = msg
+        self.status = status
+    def __str__(self):
+        return self.msg
 
-        f = open("/tmp/toto_" + str(i), 'w')
-        f.writelines(m["full_diff"])
-        f.close()
+
+class LPMerge2RB(object):
+    def __init__(self):
+        self.server   = "http://reviewboard.shadow.local"
+        self.username = 'mark'
+        self.password = 'shadow'
+        self.lp       = None
+        self.mp       = None
+
+    def run(self):
+        self.lp = LaunchpadMergeProposalReviewer()
+        self.mp = self.lp.get_active_merge_proposals()
+        #pickle.dump(self.mp, open("./mp.out", 'w'))
+        #self.mp = pickle.load(open("./mp.out", 'r'))
+        for m in self.mp:
+            self.post_review(m)
+        return 0
+
+    def post_review(self, m):
+        """
+        Based on main() from rbtools.postreview. Lets us post a diff without
+        a checkout. Bit like:
+         post-review --repository=foo --diff-file=foo.diff
+        """
+        if not self.server:
+            raise CmdError("No server url");
+        if len(m['full_diff']) == 0:
+            raise CmdError("There don't seem to be any diffs!")
+        
+        desc = (m['description']
+                + "\n\nCommit Message:\n" + m['commit_message']
+                + "\n\nLP Link:\n" + m['web_link'] )
+
+        # postreview uses a global options all through its classes. grrr. So we
+        # have to fix that up here.
+        rbtools.postreview.parse_options([
+                '--server', self.server,
+                '--username', self.username,
+                '--password', self.password,
+                '--debug',
+                '--repository', m['target_branch_http'],
+                '--description', desc
+            ])
+        
+        # Not in a repo so fake up the info
+        repository_info = RepositoryInfo(
+                path=m['target_branch_http'],
+                base_path="/",    # Diffs are always relative to the root.
+                supports_parent_diffs=False )
+
+        # If we end up creating a cookie file, make sure it's only readable by the
+        # user.
+        os.umask(0077)
+        cookie_file = os.path.join(os.environ["HOME"], ".post-review-cookies.txt")
+        server = ReviewBoardServer(self.server, repository_info, cookie_file)
+
+        # Handle the case where /api/ requires authorization (RBCommons).
+        if not server.check_api_version():
+            raise CmdError("Unable to log in with the supplied username and password.")
+
+        diff = m['full_diff']
+        parent_diff = None
+        submit_as   = None
+        tool        = BazaarClient() 
+        changenum   = None
+
+        # Post the review 
+        server.login()
+        review_url = rbtools.postreview.tempt_fate(
+                server, tool, changenum, diff_content=diff,
+                parent_diff_content=parent_diff,
+                submit_as=submit_as)
+
 
 if __name__ == '__main__':
-    main()
-
+    sys.exit( LPMerge2RB().run() )
