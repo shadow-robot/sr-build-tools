@@ -19,6 +19,7 @@
 
 import subprocess, shlex, os, sys, tempfile, optparse, urlparse
 import pickle
+import datetime
 from launchpadlib.launchpad import Launchpad
 import rbtools.postreview
 from rbtools.postreview import ReviewBoardServer
@@ -151,7 +152,6 @@ class LaunchpadMergeProposalReviewer(object):
         for index,entry in enumerate(self.merge_proposals.entries):
             target = self.bzr_utils.launchpadify(entry["target_branch_link"])
             source = self.bzr_utils.launchpadify(entry["source_branch_link"])
-            print "Comparing "+ target + " and: " + source
             bzr_diff = "".join( self.merge_proposals[index].preview_diff.diff_text.open().readlines() )
 
             entry["target_branch_lp"] = target
@@ -198,8 +198,11 @@ class LPMerge2RB(object):
         self.password = 'shadow'
         self.lp       = None
         self.mp       = None
+        self.history_file  = './lpmerge2rb.hist'
+        self.history  = None
 
     def run(self):
+        self.load_history()
         self.lp = LaunchpadMergeProposalReviewer()
         self.mp = self.lp.get_active_merge_proposals()
         #pickle.dump(self.mp, open("./mp.out", 'w'))
@@ -208,15 +211,46 @@ class LPMerge2RB(object):
         #pp = pprint.PrettyPrinter(indent=4)
         #print(pp.pprint(self.mp))
 
+        #for m in [self.mp[0]]:
         for m in self.mp:
-            review_url = None
+            summary = "Merge "+m['source_branch_lp']+" into "+m['target_branch_lp']
+            print("Found: "+ summary)
             try:
-                review_url = self.post_review(m)
+                h = self.find_history(m['self_link'])
+                if h:
+                    print("Already processed, skipping. %s" % h['review_url'])
+                else:
+                    review_url = self.post_review(m)
+                    self.add_history(m, review_url)
+                    print("Added review: %s"%review_url);
             except (APIError, CmdError) as err:
                 sys.stderr.write("Error: %s"%err);
-            print("Added review: %s"%review_url);
 
+        self.save_history()
         return 0
+
+    def load_history(self):
+        if self.history: return
+        if not os.path.exists(self.history_file):
+            self.history = {}
+        else:
+            self.history = pickle.load(open(self.history_file))
+
+    def save_history(self):
+        pickle.dump(self.history, open(self.history_file, 'w'))
+
+    def add_history(self, m, rb_url):
+        # According to lp docs web_link can be used as identifier
+        self.history[m['self_link']] = {
+                    'review_url': rb_url,
+                    'self_link': m['self_link'],
+                    'added': datetime.datetime.today()
+                }
+
+    def find_history(self, self_link):
+        if self_link in self.history:
+            return self.history[self_link]
+        return None
 
     def post_review(self, m):
         """
