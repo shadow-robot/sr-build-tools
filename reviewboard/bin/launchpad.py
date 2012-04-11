@@ -151,7 +151,7 @@ class LaunchpadMergeProposalReviewer(object):
 
         for index,entry in enumerate(self.merge_proposals.entries):
             # Get the object returned via the api (entities just gives us dicts)
-            mp = self.merge_proposals[index]
+            entry['entry'] = mp = self.merge_proposals[index]
 
             target = self.bzr_utils.launchpadify(entry["target_branch_link"])
             source = self.bzr_utils.launchpadify(entry["source_branch_link"])
@@ -233,10 +233,17 @@ class LPMerge2RB(object):
                 h = self.find_history(m['self_link'])
                 if h:
                     print("Already processed, skipping. %s" % h['review_url'])
-                else:
-                    review_url = self.post_review(m)
-                    self.add_history(m, review_url)
-                    print("Added review: %s"%review_url);
+                    continue
+
+                # Add the review and record history
+                review_url = self.post_review(m)
+                self.add_history(m, review_url)
+                print("Added review: %s"%review_url);
+                
+                # Comment on lp site with link to rb review.
+                m['entry'].createComment(
+                        subject="Added to review board",
+                        content=review_url)
             except (APIError, CmdError) as err:
                 sys.stderr.write("Error: %s"%err);
 
