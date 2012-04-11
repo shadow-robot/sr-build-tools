@@ -23,6 +23,7 @@ from launchpadlib.launchpad import Launchpad
 import rbtools.postreview
 from rbtools.postreview import ReviewBoardServer
 from rbtools.clients import SCMClient, RepositoryInfo
+from rbtools.api.errors import APIError
 
 # Monkey patch a new_repository method as current rbtools doesn't supply one.
 def new_repository_monkey(self, name, path, tool = "Bazaar"):
@@ -158,10 +159,25 @@ class LaunchpadMergeProposalReviewer(object):
             entry["source_branch_http"] = self.bzr_utils.httpify(
                     entry["source_branch_link"])
             entry["full_diff"] = bzr_diff
+            # TODO - We don't seem to get the reviewers here.
+            for l in ("merge_reporter", "registrant", "reviewer"):
+                if entry[l+"_link"] == None: entry[l+"_user"] = None
+                else: entry[l+"_user"] = self.link_user(entry[l+"_link"])
             if entry["commit_message"] == None:
                 entry["commit_message"] = ""
 
         return self.merge_proposals.entries
+
+    def link_user(self, link):
+        """
+        Give a LP url for a user e.g.
+          u'merge_reporter_link': u'https://api.launchpad.net/1.0/~toliver-shadow'
+        Return the user name only ie name after ~, toliver-shadow
+        """
+        path = link.split('/')
+        if len(path) < 1: return None
+        if path[-1][0] != '~': return None 
+        return path[-1][1:] 
 
 
 class CmdError(Exception):
@@ -175,7 +191,8 @@ class CmdError(Exception):
 class LPMerge2RB(object):
     def __init__(self):
         self.server   = "http://reviewboard.shadow.local"
-        self.username = 'mark'
+        # This rb user needs perms to create and mod requests as other users
+        self.username = 'admin'
         self.password = 'shadow'
         self.lp       = None
         self.mp       = None
@@ -185,8 +202,18 @@ class LPMerge2RB(object):
         self.mp = self.lp.get_active_merge_proposals()
         #pickle.dump(self.mp, open("./mp.out", 'w'))
         #self.mp = pickle.load(open("./mp.out", 'r'))
+        #import pprint
+        #pp = pprint.PrettyPrinter(indent=4)
+        #print(pp.pprint(self.mp))
+
         for m in self.mp:
-            self.post_review(m)
+            review_url = None
+            try:
+                review_url = self.post_review(m)
+            except (APIError, CmdError) as err:
+                sys.stderr.write("Error: %s"%err);
+            print("Added review: %s"%review_url);
+
         return 0
 
     def post_review(self, m):
@@ -200,9 +227,14 @@ class LPMerge2RB(object):
             raise CmdError("There don't seem to be any diffs!")
         
         repo_url = m['target_branch_http']
-        desc = (m['description']
+        summary = "Merge "+m['source_branch_lp']+" into "+m['target_branch_lp']
+        # Create a descrition a bit like the merge page on lp site
+        desc = ("Link: " + m['web_link']
+                + "\n\nProposed branch: " + m['source_branch_lp']
+                + "\nMerge into: " + m['target_branch_lp']
+                + "\n\nDescription:\n" + m['description']
                 + "\n\nCommit Message:\n" + m['commit_message']
-                + "\n\nLP Link:\n" + m['web_link'] )
+                )
 
         # postreview uses a global options all through its classes. grrr. So we
         # have to fix that up here.
@@ -212,7 +244,8 @@ class LPMerge2RB(object):
                 '--password', self.password,
                 '--debug',
                 '--repository', repo_url,
-                '--description', desc
+                '--summary', summary,
+                '--description', desc,
             ])
         
         # Not in a repo so fake up the info
@@ -244,7 +277,7 @@ class LPMerge2RB(object):
         # Post the review 
         diff = m['full_diff']
         parent_diff = None
-        submit_as   = None
+        submit_as   = m['registrant_user']
         tool        = SCMClient() 
         changenum   = None
         review_url = rbtools.postreview.tempt_fate(
