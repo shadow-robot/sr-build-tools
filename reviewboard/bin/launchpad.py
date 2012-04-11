@@ -17,12 +17,39 @@
 #
 
 
-import subprocess, shlex, os, sys, tempfile, optparse
+import subprocess, shlex, os, sys, tempfile, optparse, urlparse
 import pickle
 from launchpadlib.launchpad import Launchpad
 import rbtools.postreview
 from rbtools.postreview import ReviewBoardServer
 from rbtools.clients import SCMClient, RepositoryInfo
+
+# Monkey patch a new_repository method as current rbtools doesn't supply one.
+def new_repository_monkey(self, name, path, tool = "Bazaar"):
+    repos = self.get_repositories()
+    for repo in repos:
+        if repo['tool'] == tool and repo['path'] == path:
+            # Repo exists no need to create it
+            return repo
+
+    # Not found so create
+    data = { 'name': name, 'tool': tool, 'path': path }
+    rbtools.postreview.debug("Attempting to create repo %s " % data)
+
+    if self.deprecated_api:
+        #rsp = self.api_post('api/json/reviewrequests/new/', data)
+        raise Exception("TODO old style api")
+    else:
+        links = self.root_resource['links']
+        assert 'repositories' in links
+        href = links['repositories']['href']
+        rsp = self.api_post(href, data)
+
+    rbtools.postreview.debug("Created repo %s " % rsp['repository'])
+    return rsp['repository']
+
+ReviewBoardServer.new_repository = new_repository_monkey
+
 
 class BzrUtils(object):
     """
@@ -165,14 +192,14 @@ class LPMerge2RB(object):
     def post_review(self, m):
         """
         Based on main() from rbtools.postreview. Lets us post a diff without
-        a checkout. Bit like:
-         post-review --repository=foo --diff-file=foo.diff
+        a checkout. Bit like: post-review --repository=foo --diff-file=foo.diff
         """
         if not self.server:
             raise CmdError("No server url");
         if len(m['full_diff']) == 0:
             raise CmdError("There don't seem to be any diffs!")
         
+        repo_url = m['target_branch_http']
         desc = (m['description']
                 + "\n\nCommit Message:\n" + m['commit_message']
                 + "\n\nLP Link:\n" + m['web_link'] )
@@ -184,13 +211,13 @@ class LPMerge2RB(object):
                 '--username', self.username,
                 '--password', self.password,
                 '--debug',
-                '--repository', m['target_branch_http'],
+                '--repository', repo_url,
                 '--description', desc
             ])
         
         # Not in a repo so fake up the info
         repository_info = RepositoryInfo(
-                path=m['target_branch_http'],
+                path=repo_url,
                 base_path="/",    # Diffs are always relative to the root.
                 supports_parent_diffs=False )
 
@@ -198,24 +225,34 @@ class LPMerge2RB(object):
         # user.
         os.umask(0077)
         cookie_file = os.path.join(os.environ["HOME"], ".post-review-cookies.txt")
-        server = ReviewBoardServer(self.server, repository_info, cookie_file)
+        self.rb = ReviewBoardServer(self.server, repository_info, cookie_file)
 
         # Handle the case where /api/ requires authorization (RBCommons).
-        if not server.check_api_version():
+        # This is needed to initialise the object before making API calls.
+        if not self.rb.check_api_version():
             raise CmdError("Unable to log in with the supplied username and password.")
+        self.rb.login()
 
+        # Make sure the repo is there
+        url  = urlparse.urlsplit(repo_url)
+        path = url.path.split('/')
+        if len(path) < 2:
+            raise("Repo url '%s' too short" % repo_url)
+        repo_name = path[-2] + "-" + path[-1]
+        self.rb.new_repository(repo_name, repo_url, tool="Bazaar")
+
+        # Post the review 
         diff = m['full_diff']
         parent_diff = None
         submit_as   = None
         tool        = SCMClient() 
         changenum   = None
-
-        # Post the review 
-        server.login()
         review_url = rbtools.postreview.tempt_fate(
-                server, tool, changenum, diff_content=diff,
+                self.rb, tool, changenum, diff_content=diff,
                 parent_diff_content=parent_diff,
                 submit_as=submit_as)
+
+        return review_url
 
 
 if __name__ == '__main__':
