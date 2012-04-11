@@ -66,6 +66,7 @@ class BzrUtils(object):
         """
         Returns the diff between the 2 specified urls: runs bzr diff --old source --new target
         """
+        # TODO: This doesn't seem to generate the same diff as the merge.
         command = "bzr diff --old " + target + " --new " + source
         command = shlex.split(str(command))
         process = subprocess.Popen(command , shell=False, stdout = subprocess.PIPE)
@@ -140,6 +141,7 @@ class LaunchpadMergeProposalReviewer(object):
         In addition we add:
             target_branch_lp, target_branch_http, source_branch_lp,
             source_branch_http
+            merge_reporter_user, registrant_user, reviewer_user
 
         @return the interesting element of each merge proposal are probably
         "full_diff", "commit_message"
