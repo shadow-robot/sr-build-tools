@@ -150,9 +150,12 @@ class LaunchpadMergeProposalReviewer(object):
         self.merge_proposals = self.team.getMergeProposals(status='Needs review')
 
         for index,entry in enumerate(self.merge_proposals.entries):
+            # Get the object returned via the api (entities just gives us dicts)
+            mp = self.merge_proposals[index]
+
             target = self.bzr_utils.launchpadify(entry["target_branch_link"])
             source = self.bzr_utils.launchpadify(entry["source_branch_link"])
-            bzr_diff = "".join( self.merge_proposals[index].preview_diff.diff_text.open().readlines() )
+            bzr_diff = "".join( mp.preview_diff.diff_text.open().readlines() )
 
             entry["target_branch_lp"] = target
             entry["source_branch_lp"] = source
@@ -161,16 +164,27 @@ class LaunchpadMergeProposalReviewer(object):
             entry["source_branch_http"] = self.bzr_utils.httpify(
                     entry["source_branch_link"])
             entry["full_diff"] = bzr_diff
-            # TODO - We don't seem to get the reviewers here.
             for l in ("merge_reporter", "registrant", "reviewer"):
                 if entry[l+"_link"] == None: entry[l+"_user"] = None
-                else: entry[l+"_user"] = self.link_user(entry[l+"_link"])
+                else: entry[l+"_user"] = self._link_user_name(entry[l+"_link"])
             if entry["commit_message"] == None:
                 entry["commit_message"] = ""
 
+            # Find the reviewers
+            reviewer_users = []
+            reviewer_teams = []
+            for vote in mp.votes:
+                name = self._link_user_name(vote.reviewer.self_link)
+                if vote.reviewer.is_team:
+                    reviewer_teams.append(name)
+                else:
+                    reviewer_users.append(name)
+            entry['voted_reviewer_users'] = reviewer_users
+            entry['voted_reviewer_teams'] = reviewer_teams
+
         return self.merge_proposals.entries
 
-    def link_user(self, link):
+    def _link_user_name(self, link):
         """
         Give a LP url for a user e.g.
           u'merge_reporter_link': u'https://api.launchpad.net/1.0/~toliver-shadow'
@@ -210,11 +224,11 @@ class LPMerge2RB(object):
         #import pprint
         #pp = pprint.PrettyPrinter(indent=4)
         #print(pp.pprint(self.mp))
+        #sys.exit(0)
 
         #for m in [self.mp[0]]:
         for m in self.mp:
-            summary = "Merge "+m['source_branch_lp']+" into "+m['target_branch_lp']
-            print("Found: "+ summary)
+            print("Found: "+ m['web_link'])
             try:
                 h = self.find_history(m['self_link'])
                 if h:
@@ -264,7 +278,7 @@ class LPMerge2RB(object):
         
         repo_url = m['target_branch_http']
         summary = "Merge "+m['source_branch_lp']+" into "+m['target_branch_lp']
-        # Create a descrition a bit like the merge page on lp site
+        # Create a description a bit like the merge page on lp site
         desc = ("Link: " + m['web_link']
                 + "\n\nProposed branch: " + m['source_branch_lp']
                 + "\nMerge into: " + m['target_branch_lp']
@@ -274,7 +288,7 @@ class LPMerge2RB(object):
 
         # postreview uses a global options all through its classes. grrr. So we
         # have to fix that up here.
-        rbtools.postreview.parse_options([
+        cmd_args = [
                 '--server', self.server,
                 '--username', self.username,
                 '--password', self.password,
@@ -282,7 +296,16 @@ class LPMerge2RB(object):
                 '--repository', repo_url,
                 '--summary', summary,
                 '--description', desc,
-            ])
+            ]
+
+        # The users must already exists with matching name in rb
+        if m['voted_reviewer_users']:
+            cmd_args.extend([ '--target-people', ','.join(m['voted_reviewer_users']) ])
+        # Map teams to rb groups, which need to be setup with matching name in rb
+        if m['voted_reviewer_teams']:
+            cmd_args.extend([ '--target-groups', ','.join(m['voted_reviewer_teams']) ])
+
+        rbtools.postreview.parse_options(cmd_args)
         
         # Not in a repo so fake up the info
         repository_info = RepositoryInfo(
