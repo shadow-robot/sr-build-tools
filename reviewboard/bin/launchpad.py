@@ -63,20 +63,6 @@ class BzrUtils(object):
         """
         pass
 
-    def diff(self, target, source):
-        """
-        Returns the diff between the 2 specified urls: runs bzr diff --old source --new target
-        """
-        # TODO: This doesn't seem to generate the same diff as the merge.
-        command = "bzr diff --old " + target + " --new " + source
-        command = shlex.split(str(command))
-        process = subprocess.Popen(command , shell=False, stdout = subprocess.PIPE)
-        output = process.communicate()
-        diff = output[0]
-        if diff != None and diff.strip() == '':
-            diff = None
-        return diff
-
     def launchpadify(self, url):
         """
         Modifies the given url to have the form: lp:~shadowrobot/...
@@ -137,15 +123,16 @@ class LaunchpadMergeProposalReviewer(object):
             queue_status, queued_revid, queuer_link, registrant_link,
             resource_type_link, reviewed_revid, reviewer_link, self_link,
             source_branch_link, superseded_by_link, supersedes_link,
-            target_branch_link, votes_collection_link, web_link, full_diff
+            target_branch_link, votes_collection_link, web_link
 
         In addition we add:
             target_branch_lp, target_branch_http, source_branch_lp,
             source_branch_http
             merge_reporter_user, registrant_user, reviewer_user
+            voted_reviewer_users, voted_reviewer_teams
 
-        @return the interesting element of each merge proposal are probably
-        "full_diff", "commit_message"
+        The 'entry' key contains the origional object returned by the api.
+        https://launchpad.net/+apidoc/1.0.html#branch_merge_proposal
         """
         self.merge_proposals = self.team.getMergeProposals(status='Needs review')
 
@@ -163,7 +150,6 @@ class LaunchpadMergeProposalReviewer(object):
                     entry["target_branch_link"])
             entry["source_branch_http"] = self.bzr_utils.httpify(
                     entry["source_branch_link"])
-            entry["full_diff"] = bzr_diff
             for l in ("merge_reporter", "registrant", "reviewer"):
                 if entry[l+"_link"] == None: entry[l+"_user"] = None
                 else: entry[l+"_user"] = self._link_user_name(entry[l+"_link"])
@@ -214,22 +200,19 @@ class LPMerge2RB(object):
         self.mp       = None
         self.history_file  = './lpmerge2rb.hist'
         self.history  = None
+        self.debug    = False
+        self.add_lp_comment = True
 
     def run(self):
         self.load_history()
         self.lp = LaunchpadMergeProposalReviewer()
         self.mp = self.lp.get_active_merge_proposals()
-        #pickle.dump(self.mp, open("./mp.out", 'w'))
-        #self.mp = pickle.load(open("./mp.out", 'r'))
-        #import pprint
-        #pp = pprint.PrettyPrinter(indent=4)
-        #print(pp.pprint(self.mp))
-        #sys.exit(0)
 
-        #for m in [self.mp[0]]:
         for m in self.mp:
             print("Found: "+ m['web_link'])
             try:
+                # We dont want to re-submitting the same review.
+                # TODO: Spot updated reviews and set updated diffs.
                 h = self.find_history(m['self_link'])
                 if h:
                     print("Already processed, skipping. %s" % h['review_url'])
@@ -241,9 +224,10 @@ class LPMerge2RB(object):
                 print("Added review: %s"%review_url);
                 
                 # Comment on lp site with link to rb review.
-                m['entry'].createComment(
-                        subject="Added to review board",
-                        content=review_url)
+                if self.add_lp_comment:
+                    m['entry'].createComment(
+                            subject="Added to review board",
+                            content=review_url)
             except (APIError, CmdError) as err:
                 sys.stderr.write("Error: %s"%err);
 
@@ -280,8 +264,6 @@ class LPMerge2RB(object):
         """
         if not self.server:
             raise CmdError("No server url");
-        if len(m['full_diff']) == 0:
-            raise CmdError("There don't seem to be any diffs!")
         
         repo_url = m['target_branch_http']
         summary = "Merge "+m['source_branch_lp']+" into "+m['target_branch_lp']
@@ -304,12 +286,13 @@ class LPMerge2RB(object):
                 '--server', self.server,
                 '--username', self.username,
                 '--password', self.password,
-                '--debug',
                 '--repository', repo_url,
                 '--summary', summary,
                 '--description', desc,
                 '--branch', branch_name,
             ]
+
+        if self.debug: cmd_args.append('--debug')
 
         # The users must already exists with matching name in rb
         if m['voted_reviewer_users']:
@@ -317,6 +300,7 @@ class LPMerge2RB(object):
         # Map teams to rb groups, which need to be setup with matching name in rb
         if m['voted_reviewer_teams']:
             cmd_args.extend([ '--target-groups', ','.join(m['voted_reviewer_teams']) ])
+        # If we have some reviewers then we can publish
         if m['voted_reviewer_users'] or m['voted_reviewer_teams']:
             cmd_args.append('--publish')
 
@@ -340,7 +324,7 @@ class LPMerge2RB(object):
             raise CmdError("Unable to log in with the supplied username and password.")
         self.rb.login()
 
-        # Make sure the repo is there
+        # Make sure the repo is there and create if not
         url  = urlparse.urlsplit(repo_url)
         path = url.path.split('/')
         if len(path) < 2:
@@ -348,8 +332,12 @@ class LPMerge2RB(object):
         repo_name = path[-2] + "-" + path[-1]
         self.rb.new_repository(repo_name, repo_url, tool="Bazaar")
 
+        # Grab the diff from lp
+        diff = "".join( m['entry'].preview_diff.diff_text.open().readlines() )
+        if len(diff) == 0:
+            raise CmdError("There don't seem to be any diffs!")
+
         # Post the review 
-        diff = m['full_diff']
         parent_diff = None
         submit_as   = m['registrant_user']
         tool        = SCMClient() 
