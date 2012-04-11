@@ -152,7 +152,7 @@ class LaunchpadMergeProposalReviewer(object):
             target = self.bzr_utils.launchpadify(entry["target_branch_link"])
             source = self.bzr_utils.launchpadify(entry["source_branch_link"])
             print "Comparing "+ target + " and: " + source
-            bzr_diff = self.bzr_utils.diff(target, source)
+            bzr_diff = "".join( self.merge_proposals[index].preview_diff.diff_text.open().readlines() )
 
             entry["target_branch_lp"] = target
             entry["source_branch_lp"] = source
