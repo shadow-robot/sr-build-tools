@@ -304,6 +304,8 @@ class LPMerge2RB(object):
         # Map teams to rb groups, which need to be setup with matching name in rb
         if m['voted_reviewer_teams']:
             cmd_args.extend([ '--target-groups', ','.join(m['voted_reviewer_teams']) ])
+        if m['voted_reviewer_users'] or m['voted_reviewer_teams']:
+            cmd_args.append('--publish')
 
         rbtools.postreview.parse_options(cmd_args)
         
