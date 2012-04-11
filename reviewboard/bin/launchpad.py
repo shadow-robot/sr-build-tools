@@ -286,6 +286,11 @@ class LPMerge2RB(object):
                 + "\n\nCommit Message:\n" + m['commit_message']
                 )
 
+        branch_name = '' 
+        path = m['target_branch_lp'].split('/')
+        if len(path) > 0:
+            branch_name = path[-1]
+
         # postreview uses a global options all through its classes. grrr. So we
         # have to fix that up here.
         cmd_args = [
@@ -296,6 +301,7 @@ class LPMerge2RB(object):
                 '--repository', repo_url,
                 '--summary', summary,
                 '--description', desc,
+                '--branch', branch_name,
             ]
 
         # The users must already exists with matching name in rb
