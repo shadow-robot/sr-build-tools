@@ -190,17 +190,17 @@ class CmdError(Exception):
 
 
 class LPMerge2RB(object):
-    def __init__(self):
-        self.server   = "http://reviewboard.shadow.local"
-        # This rb user needs perms to create and mod requests as other users
-        self.username = 'admin'
-        self.password = 'shadow'
+    def __init__(self, server='', username='', password='', debug=False,
+                 add_lp_comment=True, history_file=None):
+        self.server         = server
+        self.username       = username
+        self.password       = password
+        self.history_file   = history_file
+        self.debug          = debug
+        self.add_lp_comment = add_lp_comment
         self.lp       = None
         self.mp       = None
-        self.history_file  = './lpmerge2rb.hist'
         self.history  = None
-        self.debug    = False
-        self.add_lp_comment = True
 
     def run(self):
         self.load_history()
@@ -235,13 +235,14 @@ class LPMerge2RB(object):
 
     def load_history(self):
         if self.history: return
-        if not os.path.exists(self.history_file):
+        if not self.history_file or not os.path.exists(self.history_file):
             self.history = {}
         else:
             self.history = pickle.load(open(self.history_file))
 
     def save_history(self):
-        pickle.dump(self.history, open(self.history_file, 'w'))
+        if self.history_file:
+            pickle.dump(self.history, open(self.history_file, 'w'))
 
     def add_history(self, m, rb_url):
         # According to lp docs web_link can be used as identifier
@@ -263,7 +264,7 @@ class LPMerge2RB(object):
         """
         if not self.server:
             raise CmdError("No server url");
-        
+
         repo_url = m['target_branch_http']
         summary = "Merge "+m['source_branch_lp']+" into "+m['target_branch_lp']
         # Create a description a bit like the merge page on lp site
@@ -274,7 +275,7 @@ class LPMerge2RB(object):
                 + "\n\nCommit Message:\n" + m['commit_message']
                 )
 
-        branch_name = '' 
+        branch_name = ''
         path = m['target_branch_lp'].split('/')
         if len(path) > 0:
             branch_name = path[-1]
@@ -304,7 +305,7 @@ class LPMerge2RB(object):
             cmd_args.append('--publish')
 
         rbtools.postreview.parse_options(cmd_args)
-        
+
         # Not in a repo so fake up the info
         repository_info = RepositoryInfo(
                 path=repo_url,
@@ -336,10 +337,10 @@ class LPMerge2RB(object):
         if len(diff) == 0:
             raise CmdError("There don't seem to be any diffs!")
 
-        # Post the review 
+        # Post the review
         parent_diff = None
         submit_as   = m['registrant_user']
-        tool        = SCMClient() 
+        tool        = SCMClient()
         changenum   = None
         review_url = rbtools.postreview.tempt_fate(
                 self.rb, tool, changenum, diff_content=diff,
@@ -349,5 +350,31 @@ class LPMerge2RB(object):
         return review_url
 
 
+def main():
+    """Process command line options and hand off to LPMerge2RB"""
+    optp = optparse.OptionParser()
+    optp.add_option('--server', default="http://reviewboard.shadow.local",
+            help="Address of reviewboard server. Default:%default")
+    optp.add_option('--username',
+            help="User to login into server with. Needs perms to submit-as.")
+    optp.add_option('--password', help="Password for username.")
+    optp.add_option('--add-lp-comment', action="store_true",
+            help="Add link to created review to LP, the default")
+    optp.add_option('--no-add-lp-comment', action="store_false", dest='add_lp_comment',
+            help="Dont't add link to created review to LP.")
+    optp.add_option('--history-file', default='./lpmerge2rb.hist', metavar='FILE',
+            help="File to store history in. Used to stop re-submit of the same "
+                 "reviews over multiple runs. Default:%default")
+    optp.add_option('--debug', action="store_true", help="Output lots of debug.")
+
+    (opts, args) = optp.parse_args()
+
+    # Strip None vals so we use the defaults from LPMerge2RB __init__
+    opts_dict = vars(opts)
+    for k,v in opts_dict.items():
+        if v is None: del(opts_dict[k])
+    obj = LPMerge2RB(**opts_dict)
+    return obj.run()
+
 if __name__ == '__main__':
-    sys.exit( LPMerge2RB().run() )
+    sys.exit( main() )
