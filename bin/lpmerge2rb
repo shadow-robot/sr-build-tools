@@ -16,6 +16,23 @@
 # with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
+# * Load history file
+# * Scans shadowrobot team for merge requests
+# * For each one not in history
+#     * Post the review to rb and post
+#     * A comment is added to LP with a link to the rb review.
+#     * Log in history.
+# * Save history file
+# 
+# Repositories pointing at lp, are automatically created.
+# 
+# Users names (people) are mapped to users in RB, which must already have those
+# users created.
+# 
+# Teams in LP are mapped to groups in RB, which must have already been created.
+# E.g. setting a merge proposal reviewer in LP to the 'shadowrobot' team will
+# assign the review to the shadowrobot group.
+
 
 import subprocess, shlex, os, sys, tempfile, optparse, urlparse
 import pickle
