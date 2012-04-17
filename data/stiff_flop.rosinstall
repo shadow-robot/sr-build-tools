@@ -1,0 +1,15 @@
+- bzr:
+    uri: 'lp:stiff-flop-hardware-drivers'
+    local-name: stiff_flop_hardware_interface
+
+- bzr:
+    uri: 'lp:stiff-flop-user-interface'
+    local-name: stiff_flop_user_interface
+
+- bzr:
+    uri: 'lp:stiff-flop-controllers'
+    local-name: stiff_flop_controllers
+
+- bzr:
+    uri: 'lp:stiff-flop-high-level-cognition'
+    local-name: stiff_flop_high_level_cognition
