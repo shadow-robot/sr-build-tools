@@ -16,10 +16,25 @@
 # with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
+# Requires RBTools, install wth (note recent Ubuntu has packages):
+#
+#     $ easy_install -U RBTools
+#
+# Requires launchpadlib:
+#
+#     $ sudo apt-get install python-launchpadlib
+#     # or
+#     pip install launchpadlib
+#
+# Example use:
+#
+# $ ./bin/lpmerge2rb --server http://rb.local --user admin --pass sekret --history ~/lpmerge2rb.hist
+#
+# For each run:
 # * Load history file
 # * Scans shadowrobot team for merge requests
 # * For each one not in history
-#     * Post the review to rb and post
+#     * Post the review to rb and publish if reviewers. 
 #     * A comment is added to LP with a link to the rb review.
 #     * Log in history.
 # * Save history file
@@ -67,6 +82,7 @@ def new_repository_monkey(self, name, path, tool = "Bazaar"):
     rbtools.postreview.debug("Created repo %s " % rsp['repository'])
     return rsp['repository']
 
+# patching new_repository method
 ReviewBoardServer.new_repository = new_repository_monkey
 
 
@@ -192,10 +208,9 @@ class LaunchpadMergeProposalReviewer(object):
           u'merge_reporter_link': u'https://api.launchpad.net/1.0/~toliver-shadow'
         Return the user name only ie name after ~, toliver-shadow
         """
-        path = link.split('/')
-        if len(path) < 1: return None
-        if path[-1][0] != '~': return None 
-        return path[-1][1:] 
+        if '~' not in link: return None
+        bits = link.split('~')
+        return bits[-1]
 
 
 class CmdError(Exception):
