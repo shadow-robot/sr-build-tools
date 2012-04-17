@@ -1,0 +1,412 @@
+#!/usr/bin/env python
+#
+# Copyright 2011 Shadow Robot Company Ltd.
+#
+# This program is free software: you can redistribute it and/or modify it
+# under the terms of the GNU General Public License as published by the Free
+# Software Foundation, either version 2 of the License, or (at your option)
+# any later version.
+#
+# This program is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+# FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
+# more details.
+#
+# You should have received a copy of the GNU General Public License along
+# with this program.  If not, see <http://www.gnu.org/licenses/>.
+#
+
+# Requires RBTools, install wth (note recent Ubuntu has packages):
+#
+#     $ easy_install -U RBTools
+#
+# Requires launchpadlib:
+#
+#     $ sudo apt-get install python-launchpadlib
+#     # or
+#     pip install launchpadlib
+#
+# Example use:
+#
+# $ ./bin/lpmerge2rb --server http://rb.local --user admin --pass sekret --history ~/lpmerge2rb.hist
+#
+# For each run:
+# * Load history file
+# * Scans shadowrobot team for merge requests
+# * For each one not in history
+#     * Post the review to rb and publish if reviewers. 
+#     * A comment is added to LP with a link to the rb review.
+#     * Log in history.
+# * Save history file
+# 
+# Repositories pointing at lp, are automatically created.
+# 
+# Users names (people) are mapped to users in RB, which must already have those
+# users created.
+# 
+# Teams in LP are mapped to groups in RB, which must have already been created.
+# E.g. setting a merge proposal reviewer in LP to the 'shadowrobot' team will
+# assign the review to the shadowrobot group.
+
+
+import subprocess, shlex, os, sys, tempfile, optparse, urlparse
+import pickle
+import datetime
+from launchpadlib.launchpad import Launchpad
+import rbtools.postreview
+from rbtools.postreview import ReviewBoardServer
+from rbtools.clients import SCMClient, RepositoryInfo
+from rbtools.api.errors import APIError
+
+# Monkey patch a new_repository method as current rbtools doesn't supply one.
+def new_repository_monkey(self, name, path, tool = "Bazaar"):
+    repos = self.get_repositories()
+    for repo in repos:
+        if repo['tool'] == tool and repo['path'] == path:
+            # Repo exists no need to create it
+            return repo
+
+    # Not found so create
+    data = { 'name': name, 'tool': tool, 'path': path }
+    rbtools.postreview.debug("Attempting to create repo %s " % data)
+
+    if self.deprecated_api:
+        #rsp = self.api_post('api/json/reviewrequests/new/', data)
+        raise Exception("TODO old style api")
+    else:
+        links = self.root_resource['links']
+        assert 'repositories' in links
+        href = links['repositories']['href']
+        rsp = self.api_post(href, data)
+
+    rbtools.postreview.debug("Created repo %s " % rsp['repository'])
+    return rsp['repository']
+
+# patching new_repository method
+ReviewBoardServer.new_repository = new_repository_monkey
+
+
+class BzrUtils(object):
+    """
+    A set of usefull functions for bzr.
+    """
+
+    def __init__(self, ):
+        """
+        """
+        pass
+
+    def launchpadify(self, url):
+        """
+        Modifies the given url to have the form: lp:~shadowrobot/...
+
+        @url: the url is typically u'https://api.staging.launchpad.net/1.0/~shadowrobot/project-name/branch-name'
+        """
+        launchpad_url = "lp:~shadowrobot"
+        splitted_url = url.split("shadowrobot")
+        launchpad_url += splitted_url[-1]
+        return launchpad_url
+    
+    def httpify(self, url):
+        """
+        Modifies the given url to have the form: http:~shadowrobot/...
+        These are needed for review board as that doesn't handle lp: urls
+        (which are generally a real pain for automation).
+
+        @url: the url is typically u'https://api.staging.launchpad.net/1.0/~shadowrobot/project-name/branch-name'
+        """
+        http_url = "http://bazaar.launchpad.net/~shadowrobot"
+        splitted_url = url.split("shadowrobot")
+        http_url += splitted_url[-1]
+        return http_url
+
+
+class LaunchpadMergeProposalReviewer(object):
+    """
+    Interfaces with launchpad to get the available merge proposals.
+    """
+
+    def __init__(self, team = "shadowrobot", cachedir = "~/.launchpadlib/cache"):
+        """
+        This will get all the merge proposal associated to the shadowrobot team.
+        """
+        self.bzr_utils = BzrUtils()
+
+        self.launchpad = Launchpad.login_with(
+                'Merge Proposal Reviewer', 'production', cachedir,
+                credential_save_failed = self.no_credential)
+        self.team = self.launchpad.people( team )
+
+        self.merge_proposals = None
+
+    def no_credential(self):
+        print "Can't proceed without Launchpad credential."
+        sys.exit()
+
+    def get_active_merge_proposals(self):
+        """
+        Returns a list containing the different active merge proposals.
+        Includes the full diff for each of those.
+
+        A merge proposal has the following elements: address,
+            all_comments_collection_link, commit_message, date_created,
+            date_merged, date_queued, date_review_requested, date_reviewed,
+            description, http_etag, merge_reporter_link, merged_revno,
+            prerequisite_branch_link, preview_diff_link, private, queue_position,
+            queue_status, queued_revid, queuer_link, registrant_link,
+            resource_type_link, reviewed_revid, reviewer_link, self_link,
+            source_branch_link, superseded_by_link, supersedes_link,
+            target_branch_link, votes_collection_link, web_link
+
+        In addition we add:
+            target_branch_lp, target_branch_http, source_branch_lp,
+            source_branch_http
+            merge_reporter_user, registrant_user, reviewer_user
+            voted_reviewer_users, voted_reviewer_teams
+
+        The 'entry' key contains the origional object returned by the api.
+        https://launchpad.net/+apidoc/1.0.html#branch_merge_proposal
+        """
+        self.merge_proposals = self.team.getMergeProposals(status='Needs review')
+
+        for index,entry in enumerate(self.merge_proposals.entries):
+            # Get the object returned via the api (entities just gives us dicts)
+            entry['entry'] = mp = self.merge_proposals[index]
+
+            target = self.bzr_utils.launchpadify(entry["target_branch_link"])
+            source = self.bzr_utils.launchpadify(entry["source_branch_link"])
+
+            entry["target_branch_lp"] = target
+            entry["source_branch_lp"] = source
+            entry["target_branch_http"] = self.bzr_utils.httpify(
+                    entry["target_branch_link"])
+            entry["source_branch_http"] = self.bzr_utils.httpify(
+                    entry["source_branch_link"])
+            for l in ("merge_reporter", "registrant", "reviewer"):
+                if entry[l+"_link"] == None: entry[l+"_user"] = None
+                else: entry[l+"_user"] = self._link_user_name(entry[l+"_link"])
+            if entry["commit_message"] == None:
+                entry["commit_message"] = ""
+
+            # Find the reviewers
+            reviewer_users = []
+            reviewer_teams = []
+            for vote in mp.votes:
+                name = self._link_user_name(vote.reviewer.self_link)
+                if vote.reviewer.is_team:
+                    reviewer_teams.append(name)
+                else:
+                    reviewer_users.append(name)
+            entry['voted_reviewer_users'] = reviewer_users
+            entry['voted_reviewer_teams'] = reviewer_teams
+
+        return self.merge_proposals.entries
+
+    def _link_user_name(self, link):
+        """
+        Give a LP url for a user e.g.
+          u'merge_reporter_link': u'https://api.launchpad.net/1.0/~toliver-shadow'
+        Return the user name only ie name after ~, toliver-shadow
+        """
+        if '~' not in link: return None
+        bits = link.split('~')
+        return bits[-1]
+
+
+class CmdError(Exception):
+    def __init__(self,msg,status=23):
+        self.msg    = msg
+        self.status = status
+    def __str__(self):
+        return self.msg
+
+
+class LPMerge2RB(object):
+    def __init__(self, server='', username='', password='', debug=False,
+                 add_lp_comment=True, history_file=None):
+        self.server         = server
+        self.username       = username
+        self.password       = password
+        self.history_file   = history_file
+        self.debug          = debug
+        self.add_lp_comment = add_lp_comment
+        self.lp       = None
+        self.mp       = None
+        self.history  = None
+
+    def run(self):
+        self.load_history()
+        self.lp = LaunchpadMergeProposalReviewer()
+        self.mp = self.lp.get_active_merge_proposals()
+
+        for m in self.mp:
+            print("Found: "+ m['web_link'])
+            try:
+                # We dont want to re-submitting the same review.
+                # TODO: Spot updated reviews and set updated diffs.
+                h = self.find_history(m['self_link'])
+                if h:
+                    print("Already processed, skipping. %s" % h['review_url'])
+                    continue
+
+                # Add the review and record history
+                review_url = self.post_review(m)
+                self.add_history(m, review_url)
+                print("Added review: %s"%review_url);
+                
+                # Comment on lp site with link to rb review.
+                if self.add_lp_comment:
+                    m['entry'].createComment(
+                            subject="Added to review board",
+                            content=review_url)
+            except (APIError, CmdError) as err:
+                sys.stderr.write("Error: %s"%err);
+
+        self.save_history()
+        return 0
+
+    def load_history(self):
+        if self.history: return
+        if not self.history_file or not os.path.exists(self.history_file):
+            self.history = {}
+        else:
+            self.history = pickle.load(open(self.history_file))
+
+    def save_history(self):
+        if self.history_file:
+            pickle.dump(self.history, open(self.history_file, 'w'))
+
+    def add_history(self, m, rb_url):
+        # According to lp docs web_link can be used as identifier
+        self.history[m['self_link']] = {
+                    'review_url': rb_url,
+                    'self_link': m['self_link'],
+                    'added': datetime.datetime.today()
+                }
+
+    def find_history(self, self_link):
+        if self_link in self.history:
+            return self.history[self_link]
+        return None
+
+    def post_review(self, m):
+        """
+        Based on main() from rbtools.postreview. Lets us post a diff without
+        a checkout. Bit like: post-review --repository=foo --diff-file=foo.diff
+        """
+        if not self.server:
+            raise CmdError("No server url");
+
+        repo_url = m['target_branch_http']
+        summary = "Merge "+m['source_branch_lp']+" into "+m['target_branch_lp']
+        # Create a description a bit like the merge page on lp site
+        desc = ("Link: " + m['web_link']
+                + "\n\nProposed branch: " + m['source_branch_lp']
+                + "\nMerge into: " + m['target_branch_lp']
+                + "\n\nDescription:\n" + m['description']
+                + "\n\nCommit Message:\n" + m['commit_message']
+                )
+
+        branch_name = ''
+        path = m['target_branch_lp'].split('/')
+        if len(path) > 0:
+            branch_name = path[-1]
+
+        # postreview uses a global options all through its classes. grrr. So we
+        # have to fix that up here.
+        cmd_args = [
+                '--server', self.server,
+                '--username', self.username,
+                '--password', self.password,
+                '--repository', repo_url,
+                '--summary', summary,
+                '--description', desc,
+                '--branch', branch_name,
+            ]
+
+        if self.debug: cmd_args.append('--debug')
+
+        # The users must already exists with matching name in rb
+        if m['voted_reviewer_users']:
+            cmd_args.extend([ '--target-people', ','.join(m['voted_reviewer_users']) ])
+        # Map teams to rb groups, which need to be setup with matching name in rb
+        if m['voted_reviewer_teams']:
+            cmd_args.extend([ '--target-groups', ','.join(m['voted_reviewer_teams']) ])
+        # If we have some reviewers then we can publish
+        if m['voted_reviewer_users'] or m['voted_reviewer_teams']:
+            cmd_args.append('--publish')
+
+        rbtools.postreview.parse_options(cmd_args)
+
+        # Not in a repo so fake up the info
+        repository_info = RepositoryInfo(
+                path=repo_url,
+                base_path="/",    # Diffs are always relative to the root.
+                supports_parent_diffs=False )
+
+        # If we end up creating a cookie file, make sure it's only readable by the
+        # user.
+        os.umask(0077)
+        cookie_file = os.path.join(os.environ["HOME"], ".post-review-cookies.txt")
+        self.rb = ReviewBoardServer(self.server, repository_info, cookie_file)
+
+        # Handle the case where /api/ requires authorization (RBCommons).
+        # This is needed to initialise the object before making API calls.
+        if not self.rb.check_api_version():
+            raise CmdError("Unable to log in with the supplied username and password.")
+        self.rb.login()
+
+        # Make sure the repo is there and create if not
+        url  = urlparse.urlsplit(repo_url)
+        path = url.path.split('/')
+        if len(path) < 2:
+            raise("Repo url '%s' too short" % repo_url)
+        repo_name = path[-2] + "-" + path[-1]
+        self.rb.new_repository(repo_name, repo_url, tool="Bazaar")
+
+        # Grab the diff from lp
+        diff = "".join( m['entry'].preview_diff.diff_text.open().readlines() )
+        if len(diff) == 0:
+            raise CmdError("There don't seem to be any diffs!")
+
+        # Post the review
+        parent_diff = None
+        submit_as   = m['registrant_user']
+        tool        = SCMClient()
+        changenum   = None
+        review_url = rbtools.postreview.tempt_fate(
+                self.rb, tool, changenum, diff_content=diff,
+                parent_diff_content=parent_diff,
+                submit_as=submit_as)
+
+        return review_url
+
+
+def main():
+    """Process command line options and hand off to LPMerge2RB"""
+    optp = optparse.OptionParser()
+    optp.add_option('--server', default="http://reviewboard.shadow.local",
+            help="Address of reviewboard server. Default:%default")
+    optp.add_option('--username',
+            help="User to login into server with. Needs perms to submit-as.")
+    optp.add_option('--password', help="Password for username.")
+    optp.add_option('--add-lp-comment', action="store_true",
+            help="Add link to created review to LP, the default")
+    optp.add_option('--no-add-lp-comment', action="store_false", dest='add_lp_comment',
+            help="Dont't add link to created review to LP.")
+    optp.add_option('--history-file', default='./lpmerge2rb.hist', metavar='FILE',
+            help="File to store history in. Used to stop re-submit of the same "
+                 "reviews over multiple runs. Default:%default")
+    optp.add_option('--debug', action="store_true", help="Output lots of debug.")
+
+    (opts, args) = optp.parse_args()
+
+    # Strip None vals so we use the defaults from LPMerge2RB __init__
+    opts_dict = vars(opts)
+    for k,v in opts_dict.items():
+        if v is None: del(opts_dict[k])
+    obj = LPMerge2RB(**opts_dict)
+    return obj.run()
+
+if __name__ == '__main__':
+    sys.exit( main() )
