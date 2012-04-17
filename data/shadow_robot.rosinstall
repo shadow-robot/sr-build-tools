@@ -45,3 +45,7 @@
     uri: 'http://bazaar.launchpad.net/~shadowrobot/sr-manipulation/trunk/'
     local-name: sr_object_manipulation
 
+- bzr:
+    #uri: 'lp:sr-config'
+    uri: 'bzr+ssh://bazaar.launchpad.net/%2Bbranch/sr-config/'
+    local-name: sr_config
