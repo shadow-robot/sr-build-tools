@@ -13,3 +13,10 @@
 - bzr:
     uri: 'lp:stiff-flop-high-level-cognition'
     local-name: stiff_flop_high_level_cognition
+
+# We need to newer ps3joy driver from fuerte to get the ps3joy_node node that
+# gives access to the rumble features of the pad. This will run under electric.
+- svn:
+    uri: 'https://code.ros.org/svn/ros-pkg/stacks/joystick_drivers/trunk/ps3joy'
+    #version: 39333
+    local-name: ps3joy
