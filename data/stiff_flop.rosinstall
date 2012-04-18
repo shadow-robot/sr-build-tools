@@ -1,6 +1,6 @@
 - bzr:
     uri: 'lp:stiff-flop-hardware-drivers'
-    local-name: stiff_flop_hardware_interface
+    local-name: stiff_flop_hardware_drivers
 
 - bzr:
     uri: 'lp:stiff-flop-user-interface'
