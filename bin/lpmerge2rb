@@ -126,7 +126,9 @@ class LaunchpadMergeProposalReviewer(object):
     Interfaces with launchpad to get the available merge proposals.
     """
 
-    def __init__(self, team = "shadowrobot", cachedir = "~/.launchpadlib/cache"):
+    def __init__(self, team = "shadowrobot",
+                 cachedir = "~/.launchpadlib/cache",
+                 credentials_file = None):
         """
         This will get all the merge proposal associated to the shadowrobot team.
         """
@@ -134,7 +136,8 @@ class LaunchpadMergeProposalReviewer(object):
 
         self.launchpad = Launchpad.login_with(
                 'Merge Proposal Reviewer', 'production', cachedir,
-                credential_save_failed = self.no_credential)
+                credential_save_failed = self.no_credential,
+                credentials_file = credentials_file)
         self.team = self.launchpad.people( team )
 
         self.merge_proposals = None
@@ -223,20 +226,23 @@ class CmdError(Exception):
 
 class LPMerge2RB(object):
     def __init__(self, server='', username='', password='', debug=False,
-                 add_lp_comment=True, history_file=None):
-        self.server         = server
-        self.username       = username
-        self.password       = password
-        self.history_file   = history_file
-        self.debug          = debug
-        self.add_lp_comment = add_lp_comment
+                 add_lp_comment=True, history_file=None,
+                 credentials_file=None):
+        self.server           = server
+        self.username         = username
+        self.password         = password
+        self.history_file     = history_file
+        self.debug            = debug
+        self.add_lp_comment   = add_lp_comment
+        self.credentials_file = credentials_file
         self.lp       = None
         self.mp       = None
         self.history  = None
 
     def run(self):
         self.load_history()
-        self.lp = LaunchpadMergeProposalReviewer()
+        self.lp = LaunchpadMergeProposalReviewer(
+                credentials_file=self.credentials_file)
         self.mp = self.lp.get_active_merge_proposals()
 
         for m in self.mp:
@@ -253,7 +259,7 @@ class LPMerge2RB(object):
                 review_url = self.post_review(m)
                 self.add_history(m, review_url)
                 print("Added review: %s"%review_url);
-                
+
                 # Comment on lp site with link to rb review.
                 if self.add_lp_comment:
                     m['entry'].createComment(
@@ -397,6 +403,9 @@ def main():
     optp.add_option('--history-file', default='./lpmerge2rb.hist', metavar='FILE',
             help="File to store history in. Used to stop re-submit of the same "
                  "reviews over multiple runs. Default:%default")
+    optp.add_option('--credentials-file', '--creds', default=None, metavar='FILE',
+            help="File to store credentials. You will need this if you plan to"
+            " run unatteneded, e.g. from cron. Default is to use the keyring.")
     optp.add_option('--debug', action="store_true", help="Output lots of debug.")
 
     (opts, args) = optp.parse_args()
