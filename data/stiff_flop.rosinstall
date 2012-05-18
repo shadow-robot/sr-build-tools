@@ -27,6 +27,11 @@
     uri: 'bzr+ssh://bzr@bzr.stiff-flop.eu/stiff_flop_high_level_cognition/trunk'
     local-name: stiff_flop_high_level_cognition
 
+- bzr:
+    uri: 'bzr+ssh://bzr@bzr.stiff-flop.eu/stiff_flop_demos/trunk'
+    local-name: stiff_flop_demos
+
+
 # We need to newer ps3joy driver from fuerte to get the ps3joy_node node that
 # gives access to the rumble features of the pad. This will run under electric.
 - svn:
