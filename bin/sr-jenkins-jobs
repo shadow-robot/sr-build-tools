@@ -179,7 +179,12 @@ Long option names can be abbriviated to shortest unique name."""
                      "them later. e.g. using list or delete actions. "
                      "Default=%default")
 
-        grp = optparse.OptionGroup(optp, "Command: add-packages", self.cmd_add_packages.__doc__)
+        grp = optparse.OptionGroup(optp, "Command: add-rosinstall OPTIONS FILE",
+                strip_indent(self.cmd_add_rosinstall.__doc__))
+        grp.add_option('--schedule', default='*/5 * * * *',
+                help='Schedule field in job setup, how often to poll the vcs. '
+                     'Looks a bit like a cron line, see jenkins for details. '
+                     'Default=%default')
         grp.add_option('--stack', default='',
                 help='Stack(s) to create jobs for. Give multiple times for '
                      "multiple stacks. e.g. 'sr-ros-interface'")
@@ -206,14 +211,6 @@ Long option names can be abbriviated to shortest unique name."""
         grp.add_option('--workspace-install', '--wsinstall',
                 help='ROS install file to use to create workspace for job to run in.'
                      ' Value is file name that must exist in sr-build-tools/data')
-        optp.add_option_group(grp)
-
-        grp = optparse.OptionGroup(optp, "Command: add-rosinstall OPTIONS FILE",
-                strip_indent(self.cmd_add_rosinstall.__doc__))
-        grp.add_option('--schedule', default='*/5 * * * *',
-                help='Schedule field in job setup, how often to poll the vcs. '
-                     'Looks a bit like a cron line, see jenkins for details. '
-                     'Default=%default')
         optp.add_option_group(grp)
 
         self.opts, self.cmd_args = optp.parse_args()
@@ -248,14 +245,12 @@ Long option names can be abbriviated to shortest unique name."""
                 return 3
 
             self.cmd = self.cmd_args.pop(0)
-            if self.cmd in ['list', 'ls']:          return self.cmd_list()
+            if   self.cmd in ['list', 'ls']:          return self.cmd_list()
             elif self.cmd in ['dumpxml']:             return self.cmd_dumpxml()
             elif self.cmd in ['delete', 'del', 'rm']: return self.cmd_delete()
             elif self.cmd in ['enable', 'on']:        return self.cmd_enable()
             elif self.cmd in ['disable', 'off']:      return self.cmd_disable()
             elif self.cmd in ['build', 'run']:        return self.cmd_build()
-            elif self.cmd in ['add-packages', 'add-pkg']:
-                return self.cmd_add_packages()
             elif self.cmd in ['add-rosinstall']: return self.cmd_add_rosinstall()
             else:
                 self.log.error("Unknown command %s" % self.cmd)
@@ -376,9 +371,8 @@ Long option names can be abbriviated to shortest unique name."""
 
     def cmd_add_rosinstall(self):
         """
-        Generate jobs from a rosinstall file. For each stack listed add jobs
-        like add-stack, searches the bzr uri for the list of packages.
-        OPTIONS are the same as add-pkg without stack, branch and pkg list.
+        Generate jobs from a rosinstall file. For each stack listed add jobs,
+        searching the bzr uri for the list of packages.
         """
         if len(self.cmd_args) < 1: raise CmdError("No rosinstall file")
         f = self.opts.rosinstall_file = self.cmd_args[0]
