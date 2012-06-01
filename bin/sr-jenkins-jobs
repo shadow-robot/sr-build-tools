@@ -1,5 +1,11 @@
 #!/usr/bin/python
 
+#To use you will need the python-jenkins package
+#(http://packages.python.org/python-jenkins/). To install on ubuntu:
+#
+#    sudo apt-get install python-setuptools
+#    sudo easy_install python-jenkins
+
 from __future__ import print_function
 import os, sys, logging, subprocess, optparse, re
 from datetime import datetime
@@ -23,8 +29,8 @@ class SrJenkinsJob(object):
     suitable XML for feeding to jenkins."""
     def __init__(self, name=None, url='', color=''):
         self.name         = name
-        self.url          = url 
-        self.color        = color 
+        self.url          = url
+        self.color        = color
         self.bzr_source   = ""
         self.labels       = ""
         self.package      = ""
@@ -37,13 +43,13 @@ class SrJenkinsJob(object):
             if color == 'disabled':
                 self.disabled = True
             else:
-                self.disabled = False 
+                self.disabled = False
         else:
             # Default to disabled
             self.disabled = True
 
     def __str__(self):
-        return "%(_name)s '%(labels)s' %(bzr_source)s %(package)s" % self.__dict__ 
+        return "%(_name)s '%(labels)s' %(bzr_source)s %(package)s" % self.__dict__
 
     def as_xml(self):
         """Generate the XML for this job"""
@@ -138,12 +144,17 @@ class SrJenkinsJobsCmd:
 
     PATTERN - A regexp to match against job names.
 
-    %prog add OPTIONS
-    %prog add-packages|add-pkg OPTIONS PACKAGES
-    %prog add-stack OPTIONS STACK
     %prog add-rosinstall OPTIONS FILE
 
-Long option names can be abbriviated to shortest unique name."""
+Long option names can be abbriviated to shortest unique name.
+
+Examples:
+
+    $ sr-jenkins-jobs -j jenkins:8080 add-rosinstall --prefix=sf- --dist=ubuntu --rel=lucid --arch=amd64 --ros=electric stiff_flop.rosinstall
+    $ sr-jenkins-jobs -j jenkins:8080 ls
+    $ sr-jenkins-jobs -j jenkins:8080 enable 'sf-.*'
+    $ sr-jenkins-jobs -j jenkins:8080 build --all
+    """
     def run(self):
         """Run the command, parse cmd line and do stuff."""
         optp = optparse.OptionParser(usage=self.UsageText)
@@ -162,25 +173,25 @@ Long option names can be abbriviated to shortest unique name."""
                 help="Optional password for the jenkins server")
         optp.add_option('--username', '-u', default='',
                 help="Optional user name for the jenkins server")
-        optp.add_option('--xml', action="store_true", default=False,
-                help="When adding jobs output the jenkins config XML instead "
-                     "of adding the job to jenkins. Default=%default")
         optp.add_option('--all', action="store_true", default=False,
                 help="For delete, enable, disable and build allow command on all jobs "
                      "when no PATTERN. Default=%default")
-        optp.add_option('--enable', action="store_true", default=False,
-                help="Enable jobs when adding, otherwise create disabled. "
-                     "Default=%default")
-        optp.add_option('--replace',  action="store_true", default=False,
-                help='If a job with the same name exists delete it before '
-                     'creating the new one. Default=%default')
-        optp.add_option('--prefix', default='sr-',
-                help="Prefix all created job names with this. Handy way to identify "
-                     "them later. e.g. using list or delete actions. "
-                     "Default=%default")
 
         grp = optparse.OptionGroup(optp, "Command: add-rosinstall OPTIONS FILE",
                 strip_indent(self.cmd_add_rosinstall.__doc__))
+        grp.add_option('--prefix', default='sr-',
+                help="Prefix all created job names with this. Handy way to identify "
+                     "them later. e.g. using list or delete actions. "
+                     "Default=%default")
+        grp.add_option('--enable', action="store_true", default=False,
+                help="Enable jobs when adding, otherwise create disabled. "
+                     "Default=%default")
+        grp.add_option('--replace',  action="store_true", default=False,
+                help='If a job with the same name exists delete it before '
+                     'creating the new one. Default=%default')
+        grp.add_option('--xml', action="store_true", default=False,
+                help="When adding jobs output the jenkins config XML instead "
+                     "of adding the job to jenkins. Default=%default")
         grp.add_option('--schedule', default='*/5 * * * *',
                 help='Schedule field in job setup, how often to poll the vcs. '
                      'Looks a bit like a cron line, see jenkins for details. '
@@ -310,6 +321,38 @@ Long option names can be abbriviated to shortest unique name."""
         for job in self._get_arg_jobs():
             self.build_job(job)
 
+    def cmd_add_rosinstall(self):
+        """
+        Generate jobs from a rosinstall file. For each stack listed add a job
+        per package, searching the bzr uri for the list of packages.
+        """
+        if len(self.cmd_args) < 1: raise CmdError("No rosinstall file")
+        f = self.cmd_args[0]
+
+        data = None
+        try:
+            data = yaml.load(open(f))
+        except IOError as e:
+            raise CmdError("Failed to open %s : %s" % (f, e))
+        except yaml.YAMLError as e:
+            raise CmdError("Failed to parse %s : %s" % (f, e))
+        except:
+            raise
+
+        # Use info to turn this into a set of add-packages calls
+        if not self.opts.workspace_install:
+            self.opts.workspace_install = os.path.basename(f)
+        for inst in data:
+            if not 'bzr' in inst:
+                self.log.error("Can't handle non bzr source: %s " % inst.keys[0])
+                continue
+            self.add_packages(
+                    stack    = inst['bzr']['local-name'],
+                    branch   = inst['bzr']['uri'],
+                    packages = self.bzr_find_packages(inst['bzr']['uri'])
+                    )
+        return 0
+
     def add_packages(self, stack=None, branch=None, packages=None):
         """Generates a set of shadow build jobs for the given options and
         package list. Will generate jobs for all the combinations of options.
@@ -349,43 +392,6 @@ Long option names can be abbriviated to shortest unique name."""
                                         )
         return 0
 
-    def is_ros_env(self):
-        if 'ROS_ROOT' in os.environ and os.environ['ROS_ROOT']:
-            return True
-        else:
-            return False
-
-    def cmd_add_rosinstall(self):
-        """
-        Generate jobs from a rosinstall file. For each stack listed add jobs,
-        searching the bzr uri for the list of packages.
-        """
-        if len(self.cmd_args) < 1: raise CmdError("No rosinstall file")
-        f = self.opts.rosinstall_file = self.cmd_args[0]
-
-        data = None
-        try:
-            data = yaml.load(open(f))
-        except IOError as e:
-            raise CmdError("Failed to open %s : %s" % (f, e))
-        except yaml.YAMLError as e:
-            raise CmdError("Failed to parse %s : %s" % (f, e))
-        except:
-            raise
-
-        # Use info to turn this into a set of add-packages calls
-        if not self.opts.workspace_install:
-            self.opts.workspace_install = os.path.basename(f)
-        for inst in data:
-            if not 'bzr' in inst:
-                self.log.error("Can't handle non bzr source: %s " % inst.keys[0])
-                continue
-            self.add_packages(
-                    stack    = inst['bzr']['local-name'],
-                    branch   = inst['bzr']['uri'],
-                    packages = self.bzr_find_packages(inst['bzr']['uri'])
-                    )
-        return 0
 
     def bzr_find_packages(self, uri):
         """For the given brz uri find all the ros package names."""
@@ -481,42 +487,3 @@ Long option names can be abbriviated to shortest unique name."""
 if __name__ == '__main__':
     sys.exit(SrJenkinsJobsCmd().run())
 
-"""
-To use you will need the python-jenkins package
-(http://packages.python.org/python-jenkins/). To install on ubuntu:
-
-    sudo apt-get install python-setuptools
-    sudo easy_install python-jenkins
-
-Add a job with an explicit name:
-
-    ./bin/sr-jenkins-jobs add --name TestJob --package sr_robot_msgs --bzr_source lp:~shadowrobot/sr-ros-interface/smoke-test --labels "ubuntu && lucid && amd64"
-
-Drop the name opt to get auto generated name:
-
-    ./bin/sr-jenkins-jobs add --package sr_robot_msgs --bzr_source lp:~shadowrobot/sr-ros-interface/smoke-test --labels "ubuntu && lucid && amd64"
-
-Use --xml flag to see the job XML instead of adding the job to the server.
-
-    ./bin/sr-jenkins-jobs add --package sr_robot_msgs --bzr_source lp:~shadowrobot/sr-ros-interface/smoke-test --labels "ubuntu && lucid && amd64" --xml
-
-Set up a jobs for sr_utilities and sr_robot_msgs packages (smoke-test branch) on
-ubuntu lucid amd64:
-
-    sr-jenkins-jobs add --stack=sr-ros-interface --dist ubuntu --rel=lucid --arch=amd64 --branch=smoke-test --ros=electric --pkg sr_utilities --pkg sr_robot_msgs
-
-Generate a whole load of builds :)
-
-    sr-jenkins-jobs add-pkg --stack=sr-ros-interface --dist ubuntu --rel=lucid --rel=oneiric --arch=i386 --arch=amd64 --branch=smoke-test --ros=electric --ros=diamondback sr_utilities --pkg sr_robot_msgs
-
-Generate builds for stack when stack name doens't match brz url:
-
-    sr-jenkins-jobs add-pkg --stack=sr-ros-interface-ethercat --branch=trunk
-    --dist=ubuntu --rel=lucid --arch=i386 --arch=amd64 --ros=electric `rosstack
-    contents shadow_robot_ethercat`
-
-Generate builds for stack pkgs when name does match:
-
-    sr-jenkins-jobs add-stack --branch=trunk --rel=lucid --arch=i386 --arch=amd64 --enable denso
-
-"""
