@@ -185,9 +185,6 @@ Long option names can be abbriviated to shortest unique name."""
                 help='Schedule field in job setup, how often to poll the vcs. '
                      'Looks a bit like a cron line, see jenkins for details. '
                      'Default=%default')
-        grp.add_option('--stack', default='',
-                help='Stack(s) to create jobs for. Give multiple times for '
-                     "multiple stacks. e.g. 'sr-ros-interface'")
         grp.add_option('--distros', '--dist', action='append',
                 help='Distro(s) to create jobs for. Give multiple times for '
                 "multiple distros. e.g. 'ubuntu'.")
@@ -197,14 +194,6 @@ Long option names can be abbriviated to shortest unique name."""
         grp.add_option('--architectures', action='append',
                 help='Architectures(s) to create jobs for. Give multiple times for '
                      "multiple architectures. e.g. 'i386' or 'amd64'")
-        grp.add_option('--branches', action='append',
-                help='Branch(es) to create jobs for. Give multiple times for '
-                     "multiple branches. Can be either a branch name like "
-                     "'trunk' in which case we generate a lp url of the form "
-                     "lp:~shadowrobot/%(stack)s/%(branch)s \n"
-                     "or a complete bzr url, which is handy when we have "
-                     "mapped the stack name e.g. sr-robot-interface -> "
-                     "shadow_robot")
         grp.add_option('--ros-versions', '--ros', action='append',
                 help='ROS version(s) to create jobs for. Give multiple times '
                      " for multiple versions. e.g. 'electric', 'diamonback' ")
@@ -321,12 +310,17 @@ Long option names can be abbriviated to shortest unique name."""
         for job in self._get_arg_jobs():
             self.build_job(job)
 
-    def cmd_add_packages(self):
+    def add_packages(self, stack=None, branch=None, packages=None):
         """Generates a set of shadow build jobs for the given options and
         package list. Will generate jobs for all the combinations of options.
         """
-        if not self.opts.stack:
+        if not stack:
             raise CmdError("No stack")
+        if not branch:
+            raise CmdError("No branch")
+        if not packages:
+            raise CmdError("No packages")
+
         if not self.opts.distros:
             raise CmdError("No distros")
         if not self.opts.dist_releases:
@@ -337,30 +331,22 @@ Long option names can be abbriviated to shortest unique name."""
             raise CmdError("No ros_versions")
         if not self.opts.workspace_install:
             raise CmdError("No workspace_install")
-        if not self.opts.branches:
-            raise CmdError("No branches")
 
-        self.opts.packages = self.cmd_args
-        if not self.opts.packages:
-            raise CmdError("No packages")
-
-        stack = self.opts.stack
         for dist in self.opts.distros:
             for rel in self.opts.dist_releases:
                 for arch in self.opts.architectures:
                     for rosv in self.opts.ros_versions:
-                            for branch in self.opts.branches:
-                                for pkg in self.opts.packages:
-                                    self.add_package(
-                                                stack=stack,
-                                                dist=dist,
-                                                rel=rel,
-                                                arch=arch,
-                                                rosv=rosv,
-                                                branch=branch,
-                                                pkg=pkg,
-                                                ws=self.opts.workspace_install,
-                                            )
+                            for pkg in packages:
+                                self.add_package(
+                                            stack=stack,
+                                            dist=dist,
+                                            rel=rel,
+                                            arch=arch,
+                                            rosv=rosv,
+                                            branch=branch,
+                                            pkg=pkg,
+                                            ws=self.opts.workspace_install,
+                                        )
         return 0
 
     def is_ros_env(self):
@@ -394,10 +380,11 @@ Long option names can be abbriviated to shortest unique name."""
             if not 'bzr' in inst:
                 self.log.error("Can't handle non bzr source: %s " % inst.keys[0])
                 continue
-            self.opts.stack    = inst['bzr']['local-name']
-            self.opts.branches = [ inst['bzr']['uri'] ]
-            self.cmd_args      = self.bzr_find_packages(inst['bzr']['uri'])
-            self.cmd_add_packages()
+            self.add_packages(
+                    stack    = inst['bzr']['local-name'],
+                    branch   = inst['bzr']['uri'],
+                    packages = self.bzr_find_packages(inst['bzr']['uri'])
+                    )
         return 0
 
     def bzr_find_packages(self, uri):
