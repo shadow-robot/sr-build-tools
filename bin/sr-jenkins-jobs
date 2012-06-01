@@ -433,7 +433,7 @@ Long option names can be abbriviated to shortest unique name."""
         else:
             bzr_src = "lp:~shadowrobot/%(stack)s/%(branch)s" % args
 
-        job_name = "%(dist)s-%(rel)s-%(arch)s-%(rosv)s-%(stack)s-%(branch)s-%(pkg)s" % args
+        job_name = "%(dist)s-%(rel)s-%(arch)s-%(rosv)s-%(branch)s-%(stack)s-%(pkg)s" % args
         job = SrJenkinsJob()
         job.name       = job_name
         job.package    = args['pkg']
