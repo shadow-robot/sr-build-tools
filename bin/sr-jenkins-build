@@ -1,9 +1,9 @@
 #!/bin/bash
 
 #
-# Jenkins build script to make and test a ros package. Pass the package name
-# as the first arg, the package is also expected to be checked out into
-# $WORKSPACE, which is what jenkins does.
+# Jenkins build script to make and test a ros package. The package, with its
+# stack is also expected to be checked out into $WORKSPACE, which is what
+# jenkins does.
 # * Creates an overlay in $WORKSPACE of the installed ros and shadow dependancies.
 # * Fixes test out put to be under jenkins workspace so jenkins can see it.
 # * Fixes rostest rubbish xml out put (https://code.ros.org/trac/ros/ticket/3770)
@@ -11,14 +11,15 @@
 # --mda
 #
 
-if [ ! "$#" == 2 ]; then
+if [ ! "$#" == 3 ]; then
     echo Wrong number of arguments
-    echo usage: $0 ROSVERSION PKGNAME
+    echo usage: $0 ROSVERSION ROSINSTALL PKGNAME
     exit 3
 fi
 
 export BUILD_ROS_VERSION=$1
-export SR_PACKAGE=$2
+export SR_ROSINSTALL=$2
+export SR_PACKAGE=$3
 
 # lp:sr-build-tools needs to be checked out somewhere.
 # sr-jenkins-slave should have done this for us.
@@ -34,8 +35,8 @@ fi
 echo Starting build
 
 ros_dir="/opt/ros/$BUILD_ROS_VERSION"
-sr_rosinstall="$SR_BUILD_TOOLS/data/shadow_robot.rosinstall"
-sr_ros="$HOME/shadow-ros-$BUILD_ROS_VERSION"
+sr_rosinstall="$SR_BUILD_TOOLS/data/$SR_ROSINSTALL"
+sr_ros="$HOME/shadow-ros-$BUILD_ROS_VERSION-$(basename "$SR_ROSINSTALL" .rosinstall)"
 if [ ! -d "$ros_dir" ]; then
     echo Ros directory $ros_dir not found!
     echo Are you sure this is a valid version of ROS?
@@ -48,7 +49,7 @@ if [ ! -f "$sr_rosinstall" ]; then
     exit 10
 fi
 
-echo Installing ros workspace
+echo Installing ros workspace $sr_ros
 # XXX - Due to bug in rosinstall/bzr the url changes from lp: to http:
 #       for now we'll have to take the hit and remove and redownload and build
 #       but we really need to fix this.
