@@ -222,10 +222,6 @@ Long option names can be abbriviated to shortest unique name."""
                      ' Value is file name that must exist in sr-build-tools/data')
         optp.add_option_group(grp)
 
-        grp = optparse.OptionGroup(optp, "Command: add-stack OPTIONS STACK",
-                strip_indent(self.cmd_add_stack.__doc__))
-        optp.add_option_group(grp)
-
         grp = optparse.OptionGroup(optp, "Command: add-rosinstall OPTIONS FILE",
                 strip_indent(self.cmd_add_rosinstall.__doc__))
         optp.add_option_group(grp)
@@ -271,7 +267,6 @@ Long option names can be abbriviated to shortest unique name."""
             elif self.cmd in ['build', 'run']:        return self.cmd_build()
             elif self.cmd in ['add-packages', 'add-pkg']:
                 return self.cmd_add_packages()
-            elif self.cmd in ['add-stack']:      return self.cmd_add_stack()
             elif self.cmd in ['add-rosinstall']: return self.cmd_add_rosinstall()
             else:
                 self.log.error("Unknown command %s" % self.cmd)
@@ -413,32 +408,6 @@ Long option names can be abbriviated to shortest unique name."""
             return True
         else:
             return False
-
-    def cmd_add_stack(self):
-        """
-        Generates a set of shadow build jobs for all packages in the stack
-        named STACK. Must be run inside a ROS environment (ie setup.bash) as we
-        use rosstack. OPTIONS are the same as add-pkg without the stack option
-        and no pkg list
-        """
-        if not self.is_ros_env():
-            raise CmdError("Not a ROS environment. You need to source a setup.bash.")
-
-        if len(self.cmd_args) < 1:
-            raise CmdError("No stack")
-        self.opts.stack = self.cmd_args[0]
-
-        cmd  = "rosstack contents %s" % self.opts.stack
-        proc = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE)
-        out  = proc.communicate()[0]
-        pkgs = [ x for x in out.split('\n') if x]
-        if len(pkgs) == 0:
-            raise CmdError("Didn't find any packages in stack '%s'"
-                           % self.opts.stack)
-
-        # Use above info to turn this into a add-packages call
-        self.cmd_args = pkgs
-        return self.cmd_add_packages()
 
     def cmd_add_rosinstall(self):
         """
