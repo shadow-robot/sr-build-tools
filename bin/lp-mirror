@@ -1,0 +1,69 @@
+#!/usr/bin/env python
+#
+# Copyright 2011 Shadow Robot Company Ltd.
+#
+# This program is free software: you can redistribute it and/or modify it
+# under the terms of the GNU General Public License as published by the Free
+# Software Foundation, either version 2 of the License, or (at your option)
+# any later version.
+#
+# This program is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+# FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
+# more details.
+#
+# You should have received a copy of the GNU General Public License along
+# with this program.  If not, see <http://www.gnu.org/licenses/>.
+#
+
+# Requires RBTools, install wth (note recent Ubuntu has packages):
+#
+#     $ easy_install -U RBTools
+#
+# Requires launchpadlib:
+#
+#     $ sudo apt-get install python-launchpadlib
+#     # or
+#     pip install launchpadlib
+#
+
+import sys
+from launchpadlib.launchpad import Launchpad
+
+class LPMirror(object):
+    def __init__(self,
+                 cachedir         = "~/.launchpadlib/cache",
+                 credentials_file = None,
+                 local_bzr        = '/srv/bzr',
+                 teams            = [],
+                 ):
+        """
+        Bzr mirror LP branches to a local repo
+        """
+        self.lp = Launchpad.login_with(
+                'LP Branch Mirror', 'production', cachedir,
+                credential_save_failed = self.no_credential,
+                credentials_file = credentials_file)
+        self.local_bzr = local_bzr
+        self.teams     = teams
+
+    def no_credential(self):
+        print "Can't proceed without Launchpad credential."
+        sys.exit()
+
+    def mirror(self):
+        """
+        Run the mirror.
+        """
+        for team_name in self.teams:
+            team = self.lp.people(team_name)
+            for branch in team.getBranches():
+                self.mirror_branch(branch)
+
+    def mirror_branch(self, branch):
+        print branch
+
+
+if __name__ == "__main__":
+    obj = LPMirror( teams=['shadowrobot'] )
+    obj.mirror()
