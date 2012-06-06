@@ -16,10 +16,6 @@
 # with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-# Requires RBTools, install wth (note recent Ubuntu has packages):
-#
-#     $ easy_install -U RBTools
-#
 # Requires launchpadlib:
 #
 #     $ sudo apt-get install python-launchpadlib
