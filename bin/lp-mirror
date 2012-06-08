@@ -23,7 +23,7 @@
 #     pip install launchpadlib
 #
 
-import sys
+import os, sys, subprocess
 from launchpadlib.launchpad import Launchpad
 
 class LPMirror(object):
@@ -57,7 +57,56 @@ class LPMirror(object):
                 self.mirror_branch(branch)
 
     def mirror_branch(self, branch):
-        print branch
+        # Use the lp: string to work out the project and branch names.
+        project = ""
+        branch_name = "trunk"
+        bits = branch.bzr_identity.split('/')
+        l = len(bits)
+        if l == 1: # e.g. lp:sr-build-tools
+            project = bits[0][3:] # remove lp:
+        elif l == 2: # e.g. lp:sr-manipulation/stable
+            project     = bits[0][3:] # remove lp:
+            branch_name = bits[1]
+        elif l == 3: # e.g. lp:~shadowrobot/sr-ros-interface/manip-electric
+            project     = bits[1]
+            branch_name = bits[2]
+
+        print "==== " + str(branch) + " ===="
+        if not self.project_exists(project):
+            self.project_init(project)
+        if self.branch_exists(project, branch_name):
+            self.branch_pull(project, branch_name)
+        else:
+            self.branch_init(project, branch_name, branch.bzr_identity)
+
+    def project_exists(self, name):
+        if os.path.exists(os.path.join(self.local_bzr, name)):
+            return True
+        return False
+
+    def project_init(self, name):
+        path = os.path.join(self.local_bzr, name)
+        cmd = ["bzr", "init-repository", "--no-trees", path]
+        print cmd
+        subprocess.check_call(cmd)
+
+    def branch_exists(self, project, name):
+        if os.path.exists(os.path.join(self.local_bzr, project, name)):
+            return True
+        return False
+
+    def branch_pull(self, project, name):
+        path = os.path.join(self.local_bzr, project, name)
+        cmd = ["bzr", "pull", "--directory", path, "--overwrite"]
+        print cmd
+        subprocess.check_call(cmd)
+
+    def branch_init(self, project, name, lpid):
+        path = os.path.join(self.local_bzr, project, name)
+        cmd = ["bzr", "branch", lpid, path]
+        print cmd
+        subprocess.check_call(cmd)
+
 
 
 if __name__ == "__main__":
