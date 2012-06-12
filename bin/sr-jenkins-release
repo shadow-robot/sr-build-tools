@@ -1,0 +1,50 @@
+#!/bin/bash
+
+#
+# Script to be run from jenkins jobs to build deb pkgs for a stack.
+#
+
+if [ ! "$#" == 6 ]; then
+    echo Wrong number of arguments
+    echo usage: $0 ROSVERSION ROSINSTALL STACK VERSION DISTRO ARCH
+    exit 3
+fi
+
+export BUILD_ROS_VERSION=$1
+export SR_ROSINSTALL=$2
+export STACK=$3
+export VERSION=$4
+export DISTRO=$5 # e.g. lucid
+export ARCH=$6   # amd64 or i386
+
+# lp:sr-build-tools needs to be checked out somewhere.
+# sr-jenkins-slave should have done this for us.
+export SR_BUILD_TOOLS="/opt/shadow/sr-build-tools"
+
+if [ -z "$WORKSPACE" ]; then
+    echo WORKSPACE is not set. Can\'t run. Not being run by Jenkins?
+    exit 1
+fi
+
+#set -x  # echo commands run
+
+echo Starting build
+
+ros_dir="/opt/ros/$BUILD_ROS_VERSION"
+sr_rosinstall="$SR_BUILD_TOOLS/data/$SR_ROSINSTALL"
+if [ ! -f "$sr_rosinstall" ]; then
+    echo We don\'t have a ros install file for $sr_rosinstall!
+    echo Looks like someone needs to update sr-build-tools.
+    exit 10
+fi
+
+echo Installing ros workspace for $sr_rosinstall
+rm -r "$WORKSPACE"/*
+rosinstall "$WORKSPACE" "$ros_dir" "$sr_rosinstall"
+source "$WORKSPACE/setup.bash"
+export ROS_TEST_RESULTS_DIR="$WORKSPACE/test_results"
+export ROS_LOG_DIR="$WORKSPACE/logs"
+
+rosrun release simple_create.py $STACK $VERSION $BUILD_ROS_VERSION
+rosrun rosdeb simple_create_source_deb.py $BUILD_ROS_VERSION $STACK $VERSION $DISTRO
+rosrun rosdeb simple_build_debs.py --force --besteffort --noramdisk --dir /tmp/debs $BUILD_ROS_VERSION $STACK $DISTRO $ARCH
