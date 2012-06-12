@@ -40,10 +40,12 @@ fi
 
 echo Installing ros workspace for $sr_rosinstall
 rm -r "$WORKSPACE"/*
-rosinstall --rosdep-install --rosdep-yes "$WORKSPACE" "$ros_dir" "$sr_rosinstall"
+rosinstall "$WORKSPACE" "$ros_dir" "$sr_rosinstall"
 source "$WORKSPACE/setup.bash"
 export ROS_TEST_RESULTS_DIR="$WORKSPACE/test_results"
 export ROS_LOG_DIR="$WORKSPACE/logs"
+
+rosdep install -y $STACK
 
 rosrun release simple_create.py $STACK $VERSION $BUILD_ROS_VERSION
 rosrun rosdeb simple_create_source_deb.py $BUILD_ROS_VERSION $STACK $VERSION $DISTRO
