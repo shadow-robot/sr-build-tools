@@ -4,9 +4,9 @@
 # Script to be run from jenkins jobs to build deb pkgs for a stack.
 #
 
-if [ ! "$#" == 6 ]; then
+if [ ! "$#" == 5 ]; then
     echo Wrong number of arguments
-    echo usage: $0 ROSVERSION ROSINSTALL STACK VERSION DISTRO ARCH
+    echo usage: $0 ROSVERSION ROSINSTALL STACK VERSION DISTRO
     exit 3
 fi
 
