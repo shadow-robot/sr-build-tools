@@ -48,8 +48,9 @@ export ROS_LOG_DIR="$WORKSPACE/logs"
 rosdep install -y $STACK
 
 VERSION=`rosrun release simple_create.py $STACK $BUILD_ROS_VERSION | xargs rosrun release get_version.py`
+
 rosrun rosdeb simple_create_source_deb.py $BUILD_ROS_VERSION $STACK $VERSION $DISTRO
 
 for arch in ${ARCHS}; do
-    rosrun rosdeb simple_build_debs.py --force --besteffort --noramdisk $BUILD_ROS_VERSION $STACK $DISTRO ${arch} --usermirror ${USERMIRROR}
+    rosrun rosdeb simple_build_debs.py --usermirror \"${USERMIRROR}\" --force --besteffort --noramdisk $BUILD_ROS_VERSION $STACK $DISTRO ${arch}
 done
