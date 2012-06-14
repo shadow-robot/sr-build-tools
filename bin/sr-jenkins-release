@@ -4,17 +4,16 @@
 # Script to be run from jenkins jobs to build deb pkgs for a stack.
 #
 
-if [ ! "$#" == 5 ]; then
+if [ ! "$#" == 4 ]; then
     echo Wrong number of arguments
-    echo usage: $0 ROSVERSION ROSINSTALL STACK VERSION DISTRO
+    echo usage: $0 ROSVERSION ROSINSTALL STACK DISTRO
     exit 3
 fi
 
 export BUILD_ROS_VERSION=$1
 export SR_ROSINSTALL=$2
 export STACK=$3
-export VERSION=$4
-export DISTRO=$5 # e.g. lucid
+export DISTRO=$4 # e.g. lucid
 export ARCHS="amd64 i386"   # amd64 or i386
 
 # lp:sr-build-tools needs to be checked out somewhere.
@@ -47,7 +46,7 @@ export ROS_LOG_DIR="$WORKSPACE/logs"
 
 rosdep install -y $STACK
 
-rosrun release simple_create.py $STACK $VERSION $BUILD_ROS_VERSION
+VERSION=`rosrun release simple_create.py $STACK $BUILD_ROS_VERSION | xargs rosrun release get_version.py`
 rosrun rosdeb simple_create_source_deb.py $BUILD_ROS_VERSION $STACK $VERSION $DISTRO
 
 for arch in ${ARCHS}; do

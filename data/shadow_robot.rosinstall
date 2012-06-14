@@ -1,51 +1,39 @@
-# We really want to be using the lp: urls but that causes changed fails from
-# rosinstall, which needs a patch. http: are a temp fix.
 - bzr:
-    #uri: 'lp:sr-ros-interface'
-    uri: 'http://bazaar.launchpad.net/~shadowrobot/sr-ros-interface/trunk/'
+    uri: 'lp:sr-ros-interface'
     local-name: shadow_robot
 
 - bzr:
-    #uri: 'lp:sr-ros-interface-ethercat'
-    uri: 'http://bazaar.launchpad.net/~shadowrobot/sr-ros-interface-ethercat/sr_hand_palm_edc/'
+    uri: 'lp:sr-ros-interface-ethercat'
     local-name: shadow_robot_ethercat
 
 - bzr:
-    #uri: 'lp:sr-contrib'
-    uri: 'http://bazaar.launchpad.net/~shadowrobot/sr-contrib/trunk/'
+    uri: 'lp:sr-contrib'
     local-name: sr_contrib
 
 - bzr:
-    #uri: 'lp:sr-demo'
-    uri: 'http://bazaar.launchpad.net/~shadowrobot/sr-demo/trunk/'
+    uri: 'lp:sr-demo'
     local-name: sr_demo
 
 - bzr:
-    #uri: 'lp:sr-visualization'
-    uri: 'http://bazaar.launchpad.net/~ugocupcic/sr-visualization/trunk/'
+    uri: 'lp:sr-visualization'
     local-name: sr_visualization
 
 - bzr:
-    #uri: 'lp:sr-teleop'
-    uri: 'http://bazaar.launchpad.net/~shadowrobot/sr-teleop/trunk/'
+    uri: 'lp:sr-teleop'
     local-name: sr_teleop
 
 - bzr:
-    #uri: 'lp:denso'
-    uri: 'http://bazaar.launchpad.net/~shadowrobot/denso/trunk/'
+    uri: 'lp:denso'
     local-name: denso
 
 - bzr:
-    #uri: 'lp:~shadowrobot/object-manipulation/shadow_patch'
-    uri: 'http://bazaar.launchpad.net/~shadowrobot/object-manipulation/shadow_patch/'
+    uri: 'lp:~shadowrobot/object-manipulation/shadow_patch'
     local-name: object_manipulation
 
 - bzr:
-    #uri: 'lp:sr-manipulation'
-    uri: 'http://bazaar.launchpad.net/~shadowrobot/sr-manipulation/trunk/'
+    uri: 'lp:sr-manipulation'
     local-name: sr_object_manipulation
 
 - bzr:
-    #uri: 'lp:sr-config'
-    uri: 'bzr+ssh://bazaar.launchpad.net/%2Bbranch/sr-config/'
+    uri: 'lp:sr-config'
     local-name: sr_config
