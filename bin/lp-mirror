@@ -23,7 +23,7 @@
 #     pip install launchpadlib
 #
 
-import os, sys, subprocess, optparse
+import os, sys, datetime, subprocess, optparse
 from launchpadlib.launchpad import Launchpad
 
 class LPMirror(object):
@@ -32,6 +32,7 @@ class LPMirror(object):
                  credentials_file = None,
                  local_bzr        = '',
                  teams            = [],
+                 debug            = False,
                  ):
         """
         Bzr mirror LP branches to a local repo
@@ -42,10 +43,10 @@ class LPMirror(object):
                 credentials_file = credentials_file)
         self.local_bzr = local_bzr
         self.teams     = teams
+        self.debug     = debug
 
     def no_credential(self):
-        print "Can't proceed without Launchpad credential."
-        sys.exit()
+        raise Exception("Can't proceed without Launchpad credential.")
 
     def mirror(self):
         """
@@ -54,10 +55,12 @@ class LPMirror(object):
         if not os.path.isdir(self.local_bzr):
             raise Exception("local_bzr '%s' is not a directory"%self.local_bzr)
 
+        print str(datetime.datetime.now()) + " Starting mirror"
         for team_name in self.teams:
             team = self.lp.people(team_name)
             for branch in team.getBranches():
                 self.mirror_branch(branch)
+        print str(datetime.datetime.now()) + " Finished mirror"
 
     def mirror_branch(self, branch):
         # Use the lp: string to work out the project and branch names.
@@ -82,6 +85,12 @@ class LPMirror(object):
         else:
             self.branch_init(project, branch_name, branch.bzr_identity)
 
+    def check_call(self, cmd):
+        if self.debug:
+            cmd.append("--verbose")
+            print cmd
+        subprocess.check_call(cmd)
+
     def project_exists(self, name):
         if os.path.exists(os.path.join(self.local_bzr, name)):
             return True
@@ -90,8 +99,7 @@ class LPMirror(object):
     def project_init(self, name):
         path = os.path.join(self.local_bzr, name)
         cmd = ["bzr", "init-repository", "--no-trees", path]
-        print cmd
-        subprocess.check_call(cmd)
+        self.check_call(cmd)
 
     def branch_exists(self, project, name):
         if os.path.exists(os.path.join(self.local_bzr, project, name)):
@@ -101,14 +109,12 @@ class LPMirror(object):
     def branch_pull(self, project, name):
         path = os.path.join(self.local_bzr, project, name)
         cmd = ["bzr", "pull", "--directory", path, "--overwrite"]
-        print cmd
-        subprocess.check_call(cmd)
+        self.check_call(cmd)
 
     def branch_init(self, project, name, lpid):
         path = os.path.join(self.local_bzr, project, name)
         cmd = ["bzr", "branch", lpid, path]
-        print cmd
-        subprocess.check_call(cmd)
+        self.check_call(cmd)
 
 
 def main():
@@ -127,6 +133,7 @@ Example:
             " run unatteneded, e.g. from cron. Default is to use the keyring.")
     optp.add_option('--cachedir', metavar='DIR',
             help="Cache dir for LP API. Default: ~/.launchpadlib/cache")
+    optp.add_option('--debug', action="store_true", help="Output debug messages.")
 
     (opts, args) = optp.parse_args()
 
