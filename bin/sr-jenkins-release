@@ -15,6 +15,7 @@ export SR_ROSINSTALL=$2
 export STACK=$3
 export USERMIRROR=$4
 
+export DISTROS="lucid"      #the distro for which we're building
 export ARCHS="amd64 i386"   # we're building for those archs
 
 # lp:sr-build-tools needs to be checked out somewhere.
@@ -50,7 +51,7 @@ rosdep install -y $STACK
 
 VERSION=`rosrun release simple_create.py $STACK $BUILD_ROS_VERSION | xargs rosrun release get_version.py`
 
-for DISTRO in `cat ${SR_BUILD_TOOLS}/data/supported_distribs`; do
+for DISTRO in $DISTROS; do
     rosrun rosdeb simple_create_source_deb.py $BUILD_ROS_VERSION $STACK $VERSION $DISTRO
 
     for arch in ${ARCHS}; do
