@@ -12,30 +12,30 @@
     local-name: stiff_flop_config
 
 - bzr:
-    uri: 'bzr+ssh://bzr@bzr.stiff-flop.eu/stiff_flop_hardware_drivers/trunk'
+    uri: 'bzr+ssh://bzr@bzr.stiff-flop.eu/stiff_flop_hardware_drivers/stable'
     local-name: stiff_flop_hardware_drivers
 
 - bzr:
-    uri: 'bzr+ssh://bzr@bzr.stiff-flop.eu/stiff_flop_user_interface/trunk'
+    uri: 'bzr+ssh://bzr@bzr.stiff-flop.eu/stiff_flop_user_interface/stable'
     local-name: stiff_flop_user_interface
 
 - bzr:
-    uri: 'bzr+ssh://bzr@bzr.stiff-flop.eu/stiff_flop_controllers/trunk'
+    uri: 'bzr+ssh://bzr@bzr.stiff-flop.eu/stiff_flop_controllers/stable'
     local-name: stiff_flop_controllers
 
 - bzr:
-    uri: 'bzr+ssh://bzr@bzr.stiff-flop.eu/stiff_flop_high_level_cognition/trunk'
+    uri: 'bzr+ssh://bzr@bzr.stiff-flop.eu/stiff_flop_high_level_cognition/stable'
     local-name: stiff_flop_high_level_cognition
 
 - bzr:
-    uri: 'bzr+ssh://bzr@bzr.stiff-flop.eu/stiff_flop_demos/trunk'
+    uri: 'bzr+ssh://bzr@bzr.stiff-flop.eu/stiff_flop_demos/stable'
     local-name: stiff_flop_demos
 
 # We need the release tools
 - bzr:
-    uri: 'bzr+ssh://bzr@bzr.stiff-flop.eu/stiff_flop_release/trunk'
+    uri: 'bzr+ssh://bzr@bzr.stiff-flop.eu/stiff_flop_release/stable'
     local-name: stiff_flop_release
 
 - bzr:
-    uri: 'bzr+ssh://bzr@bzr.stiff-flop.eu/stiff_flop_ros_release/trunk'
+    uri: 'bzr+ssh://bzr@bzr.stiff-flop.eu/stiff_flop_ros_release/stable'
     local-name: stiff_flop_ros_release
