@@ -23,14 +23,14 @@
 #     pip install launchpadlib
 #
 
-import os, sys, subprocess
+import os, sys, subprocess, optparse
 from launchpadlib.launchpad import Launchpad
 
 class LPMirror(object):
     def __init__(self,
                  cachedir         = "~/.launchpadlib/cache",
                  credentials_file = None,
-                 local_bzr        = '/srv/bzr',
+                 local_bzr        = '',
                  teams            = [],
                  ):
         """
@@ -51,6 +51,9 @@ class LPMirror(object):
         """
         Run the mirror.
         """
+        if not os.path.isdir(self.local_bzr):
+            raise Exception("local_bzr '%s' is not a directory"%self.local_bzr)
+
         for team_name in self.teams:
             team = self.lp.people(team_name)
             for branch in team.getBranches():
@@ -108,7 +111,40 @@ class LPMirror(object):
         subprocess.check_call(cmd)
 
 
+def main():
+    """Process command line options and hand off to LPMirror"""
+    usage="""
+  %prog [OPTIONS] LOCAL_BZR_DIR TEAM [TEAM...]
+
+  LOCAL_BZR_DIR - Directory containing the local mirror.
+  TEAM          - One or more LP team names. All the teams branches get
+                  mirrored into LOCAL_BZR_DIR.
+Example:
+  lp-mirror /srv/bzr shadowrobot"""
+    optp = optparse.OptionParser(usage=usage)
+    optp.add_option('--credentials-file', '--creds', default=None, metavar='FILE',
+            help="File to store credentials. You will need this if you plan to"
+            " run unatteneded, e.g. from cron. Default is to use the keyring.")
+    optp.add_option('--cachedir', metavar='DIR',
+            help="Cache dir for LP API. Default: ~/.launchpadlib/cache")
+
+    (opts, args) = optp.parse_args()
+
+    if len(args) == 0:
+        optp.error("Need a LOCAL_BZR_DIR")
+    if len(args) == 1:
+        optp.error("Need at least one TEAM")
+
+    # Strip None vals so we use the defaults from LPMirror __init__
+    opts_dict = vars(opts)
+    for k,v in opts_dict.items():
+        if v is None: del(opts_dict[k])
+    opts_dict['local_bzr'] = args[0]
+    opts_dict['teams']     = args[1:]
+
+    obj = LPMirror(**opts_dict)
+    obj.mirror()
+    return 0
 
 if __name__ == "__main__":
-    obj = LPMirror( teams=['shadowrobot'] )
-    obj.mirror()
+    main()
