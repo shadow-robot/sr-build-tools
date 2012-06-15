@@ -6,13 +6,13 @@
 
 if [ ! "$#" == 4 ]; then
     echo Wrong number of arguments
-    echo usage: $0 ROSVERSION ROSINSTALL STACKS USERMIRROR
+    echo usage: $0 ROSVERSION ROSINSTALL STACK USERMIRROR
     exit 3
 fi
 
 export BUILD_ROS_VERSION=$1
 export SR_ROSINSTALL=$2
-export STACKS=$3
+export STACK=$3
 export USERMIRROR=$4
 
 export ARCHS="amd64 i386"   # we're building for those archs
@@ -46,16 +46,14 @@ export ROS_TEST_RESULTS_DIR="$WORKSPACE/test_results"
 export ROS_LOG_DIR="$WORKSPACE/logs"
 
 
-for STACK in ${STACKS}; do
-    rosdep install -y $STACK
+rosdep install -y $STACK
 
-    VERSION=`rosrun release simple_create.py $STACK $BUILD_ROS_VERSION | xargs rosrun release get_version.py`
+VERSION=`rosrun release simple_create.py $STACK $BUILD_ROS_VERSION | xargs rosrun release get_version.py`
 
-    for DISTRO in `cat ${SR_BUILD_TOOLS}/data/supported_distribs`; do
-	rosrun rosdeb simple_create_source_deb.py $BUILD_ROS_VERSION $STACK $VERSION $DISTRO
+for DISTRO in `cat ${SR_BUILD_TOOLS}/data/supported_distribs`; do
+    rosrun rosdeb simple_create_source_deb.py $BUILD_ROS_VERSION $STACK $VERSION $DISTRO
 
-	for arch in ${ARCHS}; do
-	    rosrun rosdeb simple_build_debs.py --usermirror ${USERMIRROR} --force --besteffort --noramdisk $BUILD_ROS_VERSION $STACK $DISTRO ${arch}
-	done
+    for arch in ${ARCHS}; do
+	rosrun rosdeb simple_build_debs.py --usermirror ${USERMIRROR} --force --besteffort --noramdisk $BUILD_ROS_VERSION $STACK $DISTRO ${arch}
     done
 done
