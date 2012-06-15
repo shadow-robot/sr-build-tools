@@ -56,14 +56,20 @@ class LPMirror(object):
             raise Exception("local_bzr '%s' is not a directory"%self.local_bzr)
 
         print str(datetime.datetime.now()) + " Starting mirror"
+        branches = []
         for team_name in self.teams:
             team = self.lp.people(team_name)
             for branch in team.getBranches():
+                branches.append(branch)
                 self.mirror_branch(branch)
+        self.prune_branches(branches)
         print str(datetime.datetime.now()) + " Finished mirror"
 
-    def mirror_branch(self, branch):
-        # Use the lp: string to work out the project and branch names.
+    def branch_bits(self, branch):
+        """
+        Return project and branch name from a branch object retrieved from
+        the API based on its LP id.
+        """
         project = ""
         branch_name = "trunk"
         bits = branch.bzr_identity.split('/')
@@ -76,8 +82,11 @@ class LPMirror(object):
         elif l == 3: # e.g. lp:~shadowrobot/sr-ros-interface/manip-electric
             project     = bits[1]
             branch_name = bits[2]
+        return (project, branch_name)
 
-        print "==== " + str(branch) + " ===="
+    def mirror_branch(self, branch):
+        print "Mirror: " + str(branch)
+        project, branch_name = self.branch_bits(branch)
         if not self.project_exists(project):
             self.project_init(project)
         if self.branch_exists(project, branch_name):
@@ -85,8 +94,29 @@ class LPMirror(object):
         else:
             self.branch_init(project, branch_name, branch.bzr_identity)
 
+    def prune_branches(self, branches):
+        """Remove branches from disk not in the list passed"""
+        # Dict look up for (project, branch_name) tuples that exist on the
+        # remote side, ie in LP
+        remote = {}
+        for branch in branches:
+            remote[(self.branch_bits(branch))] = 1
+
+        # Scan local repo and remove any (project, branch_name) we have
+        # that is not in the remote lookup.
+        for proj in os.listdir(self.local_bzr):
+            path = os.path.join(self.local_bzr, proj)
+            if not os.path.isdir(path): continue
+            if proj[0] == ".": continue
+            for bran in os.listdir(path):
+                path = os.path.join(self.local_bzr, proj, bran)
+                if not os.path.isdir(path): continue
+                if bran[0] == ".": continue
+                if (proj, bran) in remote: continue
+                self.branch_rm(proj, bran)
+
     def check_call(self, cmd):
-        if self.debug:
+        if self.debug and cmd[0] == "bzr":
             cmd.append("--verbose")
             print cmd
         subprocess.check_call(cmd)
@@ -115,6 +145,13 @@ class LPMirror(object):
         path = os.path.join(self.local_bzr, project, name)
         cmd = ["bzr", "branch", lpid, path]
         self.check_call(cmd)
+
+    def branch_rm(self, project, name):
+        path = os.path.join(self.local_bzr, project, name)
+        cmd = ["rm", "-r", "-f", path]
+        self.check_call(cmd)
+        print "Removed:", path
+        # TODO - Cleanup empty project directory if last branch
 
 
 def main():
