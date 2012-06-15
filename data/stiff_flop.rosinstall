@@ -31,7 +31,3 @@
     uri: 'bzr+ssh://bzr@bzr.stiff-flop.eu/stiff_flop_demos/trunk'
     local-name: stiff_flop_demos
 
-- bzr:
-    uri: 'bzr+ssh://bzr@bzr.stiff-flop.eu/ps3joy/trunk'
-    local-name: ps3joy
-
