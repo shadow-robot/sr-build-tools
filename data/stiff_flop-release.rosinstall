@@ -8,7 +8,7 @@
 #
 
 - bzr:
-    uri: 'bzr+ssh://bzr@bzr.stiff-flop.eu/stiff_flop_config/trunk'
+    uri: 'bzr+ssh://bzr@bzr.stiff-flop.eu/stiff_flop_config/stable'
     local-name: stiff_flop_config
 
 - bzr:
