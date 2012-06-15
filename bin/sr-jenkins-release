@@ -55,6 +55,6 @@ for DISTRO in $DISTROS; do
     rosrun rosdeb simple_create_source_deb.py $BUILD_ROS_VERSION $STACK $VERSION $DISTRO
 
     for arch in ${ARCHS}; do
-	rosrun rosdeb simple_build_debs.py --rosinstall ${SR_ROSINSTALL} --usermirror ${USERMIRROR} --force --besteffort --noramdisk $BUILD_ROS_VERSION $STACK $DISTRO ${arch}
+	rosrun rosdeb simple_build_debs.py --rosinstall ${sr_rosinstall} --usermirror ${USERMIRROR} --force --besteffort --noramdisk $BUILD_ROS_VERSION $STACK $DISTRO ${arch}
     done
 done
