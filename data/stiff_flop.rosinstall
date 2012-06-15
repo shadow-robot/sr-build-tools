@@ -31,10 +31,7 @@
     uri: 'bzr+ssh://bzr@bzr.stiff-flop.eu/stiff_flop_demos/trunk'
     local-name: stiff_flop_demos
 
-
-# We need to newer ps3joy driver from fuerte to get the ps3joy_node node that
-# gives access to the rumble features of the pad. This will run under electric.
-- svn:
-    uri: 'https://code.ros.org/svn/ros-pkg/stacks/joystick_drivers/trunk/ps3joy'
-    #version: 39333
+- bzr:
+    uri: 'bzr+ssh://bzr@bzr.stiff-flop.eu/ps3joy/trunk'
     local-name: ps3joy
+
