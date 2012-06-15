@@ -46,9 +46,10 @@ source "$WORKSPACE/setup.bash"
 export ROS_TEST_RESULTS_DIR="$WORKSPACE/test_results"
 export ROS_LOG_DIR="$WORKSPACE/logs"
 
-
+echo Installing dependencies for: $STACK
 rosdep install -y $STACK
 
+echo Running simple_create.py $STACK $BUILD_ROS_VERSION
 VERSION=`rosrun release simple_create.py $STACK $BUILD_ROS_VERSION | xargs rosrun release get_version.py`
 
 for DISTRO in $DISTROS; do
