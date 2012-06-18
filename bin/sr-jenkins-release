@@ -5,8 +5,8 @@
 #
 
 if [ ! "$#" == 4 ]; then
-    echo Wrong number of arguments
-    echo usage: $0 ROSVERSION ROSINSTALL STACK USERMIRROR
+    echo "[RELEASE]" Wrong number of arguments
+    echo "[RELEASE]" usage: $0 ROSVERSION ROSINSTALL STACK USERMIRROR
     exit 3
 fi
 
@@ -23,33 +23,33 @@ export ARCHS="amd64 i386"   # we're building for those archs
 export SR_BUILD_TOOLS="/opt/shadow/sr-build-tools"
 
 if [ -z "$WORKSPACE" ]; then
-    echo WORKSPACE is not set. Can\'t run. Not being run by Jenkins?
+    echo "[RELEASE]" WORKSPACE is not set. Can\'t run. Not being run by Jenkins?
     exit 1
 fi
 
 #set -x  # echo commands run
 
-echo Starting build
+echo "[RELEASE]" Starting build
 
 ros_dir="/opt/ros/$BUILD_ROS_VERSION"
 sr_rosinstall="$SR_BUILD_TOOLS/data/$SR_ROSINSTALL"
 if [ ! -f "$sr_rosinstall" ]; then
-    echo We don\'t have a ros install file for $sr_rosinstall!
-    echo Looks like someone needs to update sr-build-tools.
+    echo "[RELEASE]" We don\'t have a ros install file for $sr_rosinstall!
+    echo "[RELEASE]" Looks like someone needs to update sr-build-tools.
     exit 10
 fi
 
-echo Installing ros workspace for $sr_rosinstall
+echo "[RELEASE]" Installing ros workspace for $sr_rosinstall
 rm -rf "$WORKSPACE"/*
 rosinstall "$WORKSPACE" "$ros_dir" "$sr_rosinstall"
 source "$WORKSPACE/setup.bash"
 export ROS_TEST_RESULTS_DIR="$WORKSPACE/test_results"
 export ROS_LOG_DIR="$WORKSPACE/logs"
 
-echo Installing dependencies for: $STACK
+echo "[RELEASE]" Installing dependencies for: $STACK
 rosdep install -y $STACK
 
-echo Running simple_create.py $STACK $BUILD_ROS_VERSION
+echo "[RELEASE]" Running simple_create.py $STACK $BUILD_ROS_VERSION
 VERSION=`rosrun release simple_create.py $STACK $BUILD_ROS_VERSION | xargs rosrun release get_version.py`
 
 for DISTRO in $DISTROS; do
