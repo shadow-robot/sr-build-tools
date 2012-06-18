@@ -1,0 +1,16 @@
+# Install file the mirror of launchpad we maintain on a local machine.
+# This is jused for jenkins building as Jenkins will hammer LP too hard and get
+# us blacklisted! Using the mirror also speeds up builds by a large amount.
+- bzr:
+    #uri: 'lp:sr-ros-interface'
+    uri: 'bzr+ssh://bzr@minaton/sr-ros-interface/trunk'
+    local-name: shadow_robot
+
+# We need the release tools
+- bzr:
+    uri: 'bzr+ssh://bzr@bzr.stiff-flop.eu/stiff_flop_release/stable
+    local-name: stiff_flop_release
+
+- bzr:
+    uri: 'bzr+ssh://bzr@bzr.stiff-flop.eu/stiff_flop_ros_release/stable'
+    local-name: stiff_flop_ros_release
