@@ -7,6 +7,11 @@
     local-name: shadow_robot
 
 - bzr:
+    #uri: 'lp:sr-config'
+    uri: 'bzr+ssh://bzr@minaton/sr-config/trunk'
+    local-name: sr_config
+
+- bzr:
     #uri: 'lp:sr-ros-interface-ethercat'
     uri: 'bzr+ssh://bzr@minaton/sr-ros-interface-ethercat/trunk'
     local-name: shadow_robot_ethercat
