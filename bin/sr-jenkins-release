@@ -15,7 +15,7 @@ export SR_ROSINSTALL=$2
 export STACK=$3
 export USERMIRROR=$4
 
-export DISTROS="lucid oneiric"      #the distro for which we're building
+export DISTROS="lucid"      #the distro for which we're building
 export ARCHS="amd64 i386"   # we're building for those archs
 
 # lp:sr-build-tools needs to be checked out somewhere.
