@@ -29,6 +29,7 @@ if [ -z "$WORKSPACE" ]; then
 fi
 
 #set -x  # echo commands run
+set -e   # die on errors
 
 echo "[RELEASE]" Starting build
 
@@ -40,9 +41,23 @@ if [ ! -f "$sr_rosinstall" ]; then
     exit 10
 fi
 
+# Create copy of the install file with build tools added.
+sr_rosinstall_tmp=$(tempfile --suffix=.rosinstall)
+cat "$sr_rosinstall" > "$sr_rosinstall_tmp"
+cat >>"$sr_rosinstall_tmp" <<EOF
+
+- bzr:
+    uri: 'bzr+ssh://bzr@minaton/sr-release/stable'
+    local-name: sr_release
+
+- bzr:
+    uri: 'bzr+ssh://bzr@minaton/sr-ros-release/stable'
+    local-name: sr_ros_release
+EOF
+
 echo "[RELEASE]" Installing ros workspace for $sr_rosinstall
 rm -rf "$WORKSPACE"/*
-rosinstall "$WORKSPACE" "$ros_dir" "$sr_rosinstall"
+rosinstall "$WORKSPACE" "$ros_dir" "$sr_rosinstall_tmp"
 source "$WORKSPACE/setup.bash"
 export ROS_TEST_RESULTS_DIR="$WORKSPACE/test_results"
 export ROS_LOG_DIR="$WORKSPACE/logs"
@@ -60,3 +75,7 @@ for DISTRO in $DISTROS; do
 	rosrun rosdeb simple_build_debs.py --rosinstall ${sr_rosinstall} --usermirror ${USERMIRROR} --force --besteffort --noramdisk --repoupload="$REPOUPLOAD" $BUILD_ROS_VERSION $STACK $DISTRO ${arch}
     done
 done
+
+rm -f "$sr_rosinstall_tmp"
+
+echo "[RELEASE]" Done.

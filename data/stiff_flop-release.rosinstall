@@ -31,11 +31,3 @@
     uri: 'bzr+ssh://bzr@bzr.stiff-flop.eu/stiff_flop_demos/stable'
     local-name: stiff_flop_demos
 
-# We need the release tools
-- bzr:
-    uri: 'bzr+ssh://bzr@bzr.stiff-flop.eu/stiff_flop_release/stable'
-    local-name: stiff_flop_release
-
-- bzr:
-    uri: 'bzr+ssh://bzr@bzr.stiff-flop.eu/stiff_flop_ros_release/stable'
-    local-name: stiff_flop_ros_release
