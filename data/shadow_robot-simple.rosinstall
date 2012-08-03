@@ -21,3 +21,11 @@
 - bzr:
     uri: 'lp:sr-config'
     local-name: sr_config
+
+- bzr:
+    uri: 'lp:rosgui'
+    local-name: rosgui
+
+- bzr:
+    uri: 'lp:~shadowrobot/sr-visualization/new_gui'
+    local-name: sr_visualization
