@@ -11,7 +11,7 @@
     local-name: sr_contrib
 
 - bzr:
-    uri: 'lp:sr-visualization'
+    uri: 'lp:sr-visualization/fuerte'
     local-name: sr_visualization
 
 - bzr:
