@@ -1,0 +1,5 @@
+
+- bzr:
+    #uri: 'lp:rosgui'
+    uri: 'bzr+ssh://bzr@minaton/rosgui/trunk'
+    local-name: rosgui
