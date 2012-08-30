@@ -16,3 +16,31 @@
     uri: 'bzr+ssh://bzr@minaton/sr-ros-interface-ethercat/trunk'
     local-name: shadow_robot_ethercat
 
+- bzr:
+    #uri: 'lp:sr-teleop'
+    uri: 'bzr+ssh://bzr@minaton/sr-teleop/trunk'
+    local-name: sr_teleop
+
+- bzr:
+    #uri: 'lp:rosgui'
+    uri: 'bzr+ssh://bzr@minaton/rosgui/trunk'
+    local-name: rosgui
+
+- bzr:
+    #uri: 'lp:~shadowrobot/sr-visualization/new_gui'
+    uri: 'bzr+ssh://bzr@minaton/sr-visualization/new_gui'
+    local-name: sr_visualization
+
+- bzr:
+    #uri: 'lp:sr-contrib'
+    uri: 'bzr+ssh://bzr@minaton/sr-contrib/trunk'
+    local-name: sr_contrib
+
+- svn:
+    uri: 'https://wu-robotics.googlecode.com/svn/branches/stable/urdf_tools/arm_kinematics'
+    local-name: arm_kinematics
+
+- bzr:
+    #uri: 'lp:sr-manipulation'
+    uri: 'bzr+ssh://bzr@minaton/sr-manipulation/trunk'
+    local-name: sr_manipulation
