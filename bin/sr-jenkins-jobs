@@ -107,7 +107,7 @@ class SrJenkinsJob(object):
 
         if var['publish_junit']:
             xml += """
-            <hudson.tasks.junit.JUnitsr-ubuntu-lucid-amd64-electric-trunk-shadow_robot-sr_exampleResultArchiver>
+            <hudson.tasks.junit.JUnitResultArchiver>
               <testResults>test_results/_hudson/*.xml</testResults>
               <keepLongStdio>false</keepLongStdio>
               <testDataPublishers/>
@@ -225,7 +225,7 @@ Examples:
         grp.add_option('--distros', '--dist', action='append',
                 help='Distro(s) to create jobs for. Give multiple times for '
                 "multiple distros. e.g. 'ubuntu'.")
-        grp.add_option('--dist-releases', '--release', action='append',
+        grp.add_option('--dist-releases', '--release', '--rel', action='append',
                 help='Distro release(s) to create jobs for. Give multiple times for '
                      "multiple releases. e.g. 'lucid'")
         grp.add_option('--architectures', action='append',
@@ -237,6 +237,17 @@ Examples:
         grp.add_option('--workspace-install', '--wsinstall',
                 help='ROS install file to use to create workspace for job to run in.'
                      ' Value is file name that must exist in sr-build-tools/data')
+        optp.add_option_group(grp)
+        
+        grp = optparse.OptionGroup(optp, "Command: add-release OPTIONS FILE",
+                strip_indent(self.cmd_add_release.__doc__))
+        grp.add_option('--release-slave', default='slave-dev',
+                help='Name of slave used for release builds. Default=%default')
+        grp.add_option('--user-mirror', default='http://packages.shadow.local/ubuntu',
+                help='Url for the deb repo we are building for. Default=%default')
+        grp.add_option('--repo-upload',
+                default='packages@packages.shadow.local:/srv/packages/ubuntu',
+                help="SSH login and path for uploading devs. slave is assumed to already have a key set that allows access. Default=%default")
         optp.add_option_group(grp)
 
         self.opts, self.cmd_args = optp.parse_args()
@@ -278,6 +289,7 @@ Examples:
             elif self.cmd in ['disable', 'off']:      return self.cmd_disable()
             elif self.cmd in ['build', 'run']:        return self.cmd_build()
             elif self.cmd in ['add-rosinstall']: return self.cmd_add_rosinstall()
+            elif self.cmd in ['add-release']:    return self.cmd_add_release()
             else:
                 self.log.error("Unknown command %s" % self.cmd)
                 optp.print_usage()
@@ -347,14 +359,7 @@ Examples:
         for job in self._get_arg_jobs():
             self.build_job(job)
 
-    def cmd_add_rosinstall(self):
-        """
-        Generate jobs from a rosinstall file. For each stack listed add a job
-        per package, searching the bzr uri for the list of packages.
-        """
-        if len(self.cmd_args) < 1: raise CmdError("No rosinstall file")
-        f = self.cmd_args[0]
-
+    def load_yaml(self,f):
         data = None
         try:
             data = yaml.load(open(f))
@@ -364,6 +369,16 @@ Examples:
             raise CmdError("Failed to parse %s : %s" % (f, e))
         except:
             raise
+        return data
+
+    def cmd_add_rosinstall(self):
+        """
+        Generate jobs from a rosinstall file. For each stack listed add a job
+        per package, searching the bzr uri for the list of packages.
+        """
+        if len(self.cmd_args) < 1: raise CmdError("No rosinstall file")
+        f = self.cmd_args[0]
+        data = self.load_yaml(f)
 
         # Use info to turn this into a set of add-packages calls
         if not self.opts.workspace_install:
@@ -378,6 +393,31 @@ Examples:
                     packages = self.bzr_find_packages(inst['bzr']['uri'])
                     )
         return 0
+
+    def cmd_add_release(self):
+        """Generate release jobs from a rosinstall file. Needs --ros-versions
+        option above."""
+        if len(self.cmd_args) < 1: raise CmdError("No rosinstall file")
+        f = self.cmd_args[0]
+        data = self.load_yaml(f)
+
+        if not self.opts.workspace_install:
+            self.opts.workspace_install = os.path.basename(f)
+
+        for inst in data:
+            if not 'bzr' in inst:
+                self.log.error("Can't handle non bzr source: %s " % inst.keys[0])
+                continue
+            for rosv in self.opts.ros_versions:
+                self.add_release_stack(
+                        stack = inst['bzr']['local-name'],
+                        rosv  = rosv,
+                        ws    = self.opts.workspace_install,
+                        user_mirror = self.opts.user_mirror,
+                        repo_upload = self.opts.repo_upload
+                        )
+        return 0
+
 
     def add_packages(self, stack=None, branch=None, packages=None):
         """Generates a set of shadow build jobs for the given options and
@@ -461,6 +501,15 @@ Examples:
         job.schedule   = self.opts.schedule
         job.command    = "/opt/shadow/sr-build-tools/bin/sr-jenkins-build %(rosv)s %(ws)s %(pkg)s" % args
         job.publish_junit = True
+        self.add_job(job)
+
+    def add_release_stack(self, **args):
+        """Add a release job for the given config"""
+        job_name = "release-%(rosv)s-%(stack)s" % args
+        job = SrJenkinsJob(job_name)
+        job.labels     = self.opts.release_slave
+        job.command    = "/opt/shadow/sr-build-tools/bin/sr-jenkins-release %(rosv)s %(ws)s %(stack)s \"%(user_mirror)s\" \"%(repo_upload)s\"" % args
+        job.publish_junit = False
         self.add_job(job)
 
     def add_job(self, job):
