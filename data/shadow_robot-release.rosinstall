@@ -37,8 +37,8 @@
     local-name: sr_contrib
 
 - svn:
-    uri: 'https://wu-robotics.googlecode.com/svn/branches/stable/urdf_tools/arm_kinematics'
-    local-name: arm_kinematics
+    uri: 'https://wu-robotics.googlecode.com/svn/branches/stable/urdf_tools'
+    local-name: urdf_tools
 
 - bzr:
     #uri: 'lp:sr-manipulation'
