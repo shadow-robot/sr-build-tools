@@ -37,6 +37,7 @@ class SrJenkinsJob(object):
         self.schedule     = ""
         self.description  = ""
         self.command      = ""
+        self.publish_junit = False
         if color:
             # jenkins module returns 'disabled' as a color, otherwise the jobs
             # current status color. grey=new job, blue, red etc
@@ -53,26 +54,47 @@ class SrJenkinsJob(object):
 
     def as_xml(self):
         """Generate the XML for this job"""
+        var = self.__dict__
+        var['labels']   = escape(self.labels)
+        var['disabled'] = 'True' if self.disabled else 'False'
         xml = """
         <project>
           <actions/>
           <description>%(description)s</description>
           <keepDependencies>false</keepDependencies>
           <properties/>
-          <scm class="hudson.plugins.bazaar.BazaarSCM">
-            <source>%(bzr_source)s</source>
-            <clean>true</clean>
-            <checkout>false</checkout>
-          </scm>
+          """
+
+        if var['bzr_source']:
+            xml += """
+              <scm class="hudson.plugins.bazaar.BazaarSCM">
+                <source>%(bzr_source)s</source>
+                <clean>true</clean>
+                <checkout>false</checkout>
+              </scm>
+            """
+        else:
+            xml += """
+                <scm class="hudson.scm.NullSCM"/>
+            """
+
+        xml += """
           <assignedNode>%(labels)s</assignedNode>
           <canRoam>false</canRoam>
           <disabled>%(disabled)s</disabled>
           <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
           <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
           <triggers class="vector">
+        """
+
+        if var['schedule']:
+            xml += """
             <hudson.triggers.SCMTrigger>
               <spec>%(schedule)s</spec>
             </hudson.triggers.SCMTrigger>
+            """
+
+        xml += """
           </triggers>
           <concurrentBuild>false</concurrentBuild>
           <builders>
@@ -81,19 +103,23 @@ class SrJenkinsJob(object):
             </hudson.tasks.Shell>
           </builders>
           <publishers>
-            <hudson.tasks.junit.JUnitResultArchiver>
+        """
+
+        if var['publish_junit']:
+            xml += """
+            <hudson.tasks.junit.JUnitsr-ubuntu-lucid-amd64-electric-trunk-shadow_robot-sr_exampleResultArchiver>
               <testResults>test_results/_hudson/*.xml</testResults>
               <keepLongStdio>false</keepLongStdio>
               <testDataPublishers/>
             </hudson.tasks.junit.JUnitResultArchiver>
+            """
+
+        xml += """
             <org.jenkinsci.plugins.emotional__jenkins.EmotionalJenkinsPublisher/>
           </publishers>
           <buildWrappers/>
         </project>
         """
-        var = self.__dict__
-        var['labels']   = escape(self.labels)
-        var['disabled'] = 'True' if self.disabled else 'False'
         return xml % var
 
 class CmdError(Exception):
@@ -434,6 +460,7 @@ Examples:
         job.labels     = " && ".join((args['dist'], args['rel'], args['arch']))
         job.schedule   = self.opts.schedule
         job.command    = "/opt/shadow/sr-build-tools/bin/sr-jenkins-build %(rosv)s %(ws)s %(pkg)s" % args
+        job.publish_junit = True
         self.add_job(job)
 
     def add_job(self, job):
