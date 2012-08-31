@@ -24,7 +24,7 @@
 - bzr:
     #uri: 'lp:rosgui'
     uri: 'bzr+ssh://bzr@minaton/rosgui/trunk'
-    local-name: rosgui
+    local-name: sr_rosgui
 
 - bzr:
     #uri: 'lp:~shadowrobot/sr-visualization/new_gui'
