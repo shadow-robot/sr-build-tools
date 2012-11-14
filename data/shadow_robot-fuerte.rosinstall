@@ -23,9 +23,5 @@
     local-name: sr_config
 
 - bzr:
-    uri: 'lp:rosgui'
-    local-name: rosgui
-
-- bzr:
-    uri: 'lp:~shadowrobot/sr-visualization/new_gui'
+    uri: 'lp:~shadowrobot/sr-visualization/fuerte'
     local-name: sr_visualization
