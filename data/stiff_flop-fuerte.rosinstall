@@ -20,6 +20,10 @@
     local-name: stiff_flop_user_interface
 
 - bzr:
+    uri: 'bzr+ssh://bzr@bzr.stiff-flop.eu/stiff_flop_hardware_simulator/fuerte'
+    local-name: stiff_flop_simulator
+
+- bzr:
     uri: 'bzr+ssh://bzr@bzr.stiff-flop.eu/stiff_flop_controllers/trunk'
     local-name: stiff_flop_controllers
 
