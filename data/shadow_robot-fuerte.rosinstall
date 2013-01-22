@@ -1,27 +1,26 @@
-- bzr:
-    uri: 'lp:sr-ros-interface/fuerte'
+- git:
+    uri: 'git@github.com:shadow-robot/sr-ros-interface'
+    version: 'fuerte'
     local-name: shadow_robot
 
-- bzr:
-    uri: 'lp:sr-ros-interface-ethercat/fuerte'
+- git:
+    uri: 'git@github.com:shadow-robot/sr-ros-interface-ethercat'
+    version: 'fuerte'
     local-name: shadow_robot_ethercat
 
-- bzr:
-    uri: 'lp:sr-contrib'
+- git:
+    uri: 'git@github.com:shadow-robot/sr-contrib'
     local-name: sr_contrib
 
-- bzr:
-    uri: 'lp:sr-visualization/fuerte'
+- git:
+    uri: 'git@github.com:shadow-robot/sr-visualization'
+    version: 'fuerte'
     local-name: sr_visualization
 
-- bzr:
-    uri: 'lp:sr-teleop'
+- git:
+    uri: 'git@github.com:shadow-robot/sr-teleop'
     local-name: sr_teleop
 
-- bzr:
-    uri: 'lp:sr-config'
+- git:
+    uri: 'git@github.com:shadow-robot/sr-config'
     local-name: sr_config
-
-- bzr:
-    uri: 'lp:~shadowrobot/sr-visualization/fuerte'
-    local-name: sr_visualization
