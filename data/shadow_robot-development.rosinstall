@@ -1,0 +1,29 @@
+- git:
+    uri: 'git@github.com:shadow-robot/sr-ros-interface.git'
+    version: 'development'
+    local-name: shadow_robot
+
+- git:
+    uri: 'git@github.com:shadow-robot/sr-ros-interface-ethercat.git'
+    version: 'development'
+    local-name: shadow_robot_ethercat
+
+- git:
+    uri: 'git@github.com:shadow-robot/sr-contrib.git'
+    version: 'development'
+    local-name: sr_contrib
+
+- git:
+    uri: 'git@github.com:shadow-robot/sr-visualization.git'
+    version: 'development'
+    local-name: sr_visualization
+
+- git:
+    uri: 'git@github.com:shadow-robot/sr-teleop.git'
+    version: 'development'
+    local-name: sr_teleop
+
+- git:
+    uri: 'git@github.com:shadow-robot/sr-config.git'
+    version: 'development'
+    local-name: sr_config
