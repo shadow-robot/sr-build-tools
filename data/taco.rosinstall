@@ -1,13 +1,13 @@
 - git:
-    uri: 'git@github.com:shadow-robot/sr-manipulation'
+    uri: 'git@github.com:shadow-robot/sr-manipulation.git'
     version: 'taco'
     local-name: sr_manipulation
 
 - git:
-    uri: 'git@github.com:shadow-robot/sr-taco'
+    uri: 'git@github.com:shadow-robot/sr-taco.git'
     local-name: sr_taco
 
 - git:
-     uri: 'git@github.com:shadow-robot/taco'
+     uri: 'git@github.com:shadow-robot/taco.git'
      local-name: taco
 
