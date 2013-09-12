@@ -1,0 +1,47 @@
+- git:
+    local-name: shadow_robot
+    uri: 'git@github.com:shadow-robot/sr-ros-interface.git'
+    version: R_groovy
+
+- git:
+    local-name: sr_manipulation
+    uri: 'git@github.com:shadow-robot/sr-manipulation'
+    version: F_taco
+
+- git:
+    local-name: sr_taco
+    uri: 'git@github.com:shadow-robot/sr-taco'
+    version: F_connect_tracker_servo
+
+- git:
+    local-name: taco
+    uri: 'git@github.com:shadow-robot/taco'
+
+- git:
+    local-name: shadow_robot_ethercat
+    uri: 'git@github.com:shadow-robot/sr-ros-interface-ethercat'
+    version: development
+
+- git:
+    local-name: sr_contrib
+    uri: 'git@github.com:shadow-robot/sr-contrib'
+    version: F_fuerte_pick_and_place
+
+- git:
+    local-name: sr_visualization
+    uri: 'git@github.com:shadow-robot/sr-visualization'
+    version: development
+
+- git:
+    local-name: sr_teleop
+    uri: 'git@github.com:shadow-robot/sr-teleop'
+    version: development
+
+- git:
+    local-name: sr_config
+    uri: 'git@github.com:shadow-robot/sr-config'
+
+- svn:
+    local-name: point_cloud_perception
+    uri: 'https://code.ros.org/svn/ros-pkg/stacks/point_cloud_perception/trunk'
+
