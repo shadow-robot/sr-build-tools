@@ -45,7 +45,7 @@ fi
 server_pubkey="http://$jenkins_url/userContent/id_rsa.pub"
 
 # Make sure we can see jenkins and it looks setup ok
-if HEAD -d "$server_pubkey" >/dev.null; then
+if HEAD -d "$server_pubkey" >/dev/null; then
     echo Jenkins server found at $jenkins_url
 else
     echo "$0: $server_pubkey not found!" >&2
