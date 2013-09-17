@@ -45,7 +45,7 @@ fi
 server_pubkey="http://$jenkins_url/userContent/id_rsa.pub"
 
 # Make sure we can see jenkins and it looks setup ok
-if HEAD -d "$server_pubkey" >/dev/null; then
+if wget -o /dev/null --spider "$server_pubkey"; then
     echo Jenkins server found at $jenkins_url
 else
     echo "$0: $server_pubkey not found!" >&2
@@ -57,11 +57,12 @@ fi
 #
 # Install some needed packages
 # ssh  - so jenkins can login.
-# bzr  - to install the build tools.
+# git  - to install the build tools.
 # java - for running the slave agent that jenkins will install.
 # python-yaml - handy for the build tools
 #
-apt-get install $apt_opt ssh bzr openjdk-6-jre openjdk-6-jdk python-yaml
+apt-get update
+apt-get install $apt_opt ssh git openjdk-6-jre openjdk-6-jdk python-yaml ntp acpid
 
 #
 # Install the build tools. If already there just remove so we get a nice clean,
@@ -71,7 +72,8 @@ if [ -d "$build_tools_dir" ]; then
     rm -rf "$build_tools_dir"
 fi
 mkdir -p $(dirname $build_tools_dir)
-bzr branch lp:sr-build-tools "$build_tools_dir"
+git clone https://github.com/shadow-robot/sr-build-tools.git "$build_tools_dir"
+echo Installed build tools
 
 # Put the build tools in the path as we call some of them
 if [ -x "$(dirname $0)/sudoers-add" ]; then
