@@ -33,6 +33,16 @@ if [ -z "$WORKSPACE" ]; then
 fi
 
 
+header() {
+    echo
+    echo "*********************************************************************"
+    echo $@
+    echo "*********************************************************************"
+}
+
+
+header Starting build
+
 # Enter the ros environment
 ros_dir="/opt/ros/$BUILD_ROS_VERSION"
 if [ ! -d "$ros_dir" ]; then
@@ -41,13 +51,14 @@ if [ ! -d "$ros_dir" ]; then
     echo Has this ros version been installed, ie slave bootstrapped properly?
     exit 10
 fi
+set +u # The setup script has unbound vars!
 source "$ros_dir/setup.bash"
+set -u
 
-echo Starting build
 
 # Set up the workspace
 sr_ws="$HOME/shadow-ros-$BUILD_ROS_VERSION-$(basename "$WORKSPACE")"
-echo Installing ros workspace $sr_ws
+header Installing ros workspace $sr_ws
 if [ -r "$sr_ws" ]; then
     rm -rf "$sr_ws"
 fi
@@ -59,22 +70,32 @@ mkdir -p "$sr_ws/src"
 source "$sr_ws/devel/setup.bash"
 
 # Add the package to test and build
-echo Building
-(
-    cd "$sr_ws/src"
-    ln -s "$WORKSPACE" .
-    cd ..
-    catkin_make
-)
-source "$sr_ws/devel/setup.bash"
+header Building
+cd "$sr_ws/src"
+ln -s "$WORKSPACE" .
+cd ..
+catkin_make
+build_res=$?
+if [ "$build_res" == 0 ]; then
+    source "$sr_ws/devel/setup.bash"
+fi
 
 # Build and run the tests
-echo Building Tests
-(
-    cd "$sr_ws/build"
-    make tests
-    echo Running Tests
-    make test
-)
+header Building Tests
+cd "$sr_ws/build"
+make tests
 
-echo Build Complete
+header Running Tests
+set +e
+make test
+test_res=$?
+set -e
+
+# Cleanup the XML creating test_results/_hudson
+echo Clean up test XML
+rosrun rosunit clean_junit_xml.py
+# Put the tests where Jenkins can find them
+ln -s "$sr_ws/build/test_results" "$WORKSPACE/"
+
+header Build Complete
+exit $test_res
