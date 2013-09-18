@@ -124,14 +124,31 @@ echo Gave $jenkins_user sudo
 cp -a "$build_tools_dir/data/cron.hourly/"* /etc/cron.hourly/
 echo Installed crontabs
 
+
+#
+# Setup apt sources etc for installing ros
+# http://wiki.ros.org/hydro/Installation/Ubuntu
+#
+
+# Activate restricted, universe, multiverse and add ros repo
+release=$(lsb_release -sc)
+bak_file=""
+sed -i".bak-$(date +'%Y%m%d-%H%M%S')" "s/^#\(deb.*$release\(-updates\)\? \(restricted\|universe\|multiverse\)\)/\1/" /etc/apt/sources.list
+echo "deb http://packages.ros.org/ros/ubuntu $release main" > /etc/apt/sources.list.d/ros-latest.list
+
+# Add the ros key and update
+wget http://packages.ros.org/ros.key -O - | sudo apt-key add -
+apt-get update
+
+
 #
 # Bootstrap ros if asked to
 #
 for version in "$@"; do
-    sr-bootstrap --ros $version
+    apt-get install $apt_opt ros-$version-desktop-full 
+    echo Boot strapped ros $version 
 done
-echo Boot strapped $@ 'ros version(s)'
 
-
+# DONE
 echo
 echo Now configure this node in Jenkins...
