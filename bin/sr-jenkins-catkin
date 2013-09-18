@@ -1,0 +1,80 @@
+#!/bin/bash
+
+#
+# Jenkins build script to make and test a ros package. The package, with its
+# stack is also expected to be checked out into $WORKSPACE, which is what
+# jenkins does.
+# * Creates an overlay in $WORKSPACE of the installed ros and shadow dependancies.
+# * Fixes test out put to be under jenkins workspace so jenkins can see it.
+# * Fixes rostest rubbish xml out put (https://code.ros.org/trac/ros/ticket/3770)
+# * Put ros logs into $WORKSPACE/logs so jenkins can see them.
+# --mda
+#
+
+set -e # fail on errors
+set -u # fail in unset vars
+#set -x # echo commands run
+
+if [ ! "$#" == 1 ]; then
+    echo Wrong number of arguments
+    echo usage: $0 ROSVERSION
+    exit 3
+fi
+
+export BUILD_ROS_VERSION=$1
+
+# sr-build-tools needs to be checked out somewhere.
+# sr-jenkins-slave should have done this for us.
+export SR_BUILD_TOOLS="/opt/shadow/sr-build-tools"
+
+if [ -z "$WORKSPACE" ]; then
+    echo WORKSPACE is not set. Can\'t run. Not being run by Jenkins?
+    exit 1
+fi
+
+
+# Enter the ros environment
+ros_dir="/opt/ros/$BUILD_ROS_VERSION"
+if [ ! -d "$ros_dir" ]; then
+    echo Ros directory $ros_dir not found!
+    echo Are you sure this is a valid version of ROS?
+    echo Has this ros version been installed, ie slave bootstrapped properly?
+    exit 10
+fi
+source "$ros_dir/setup.bash"
+
+echo Starting build
+
+# Set up the workspace
+sr_ws="$HOME/shadow-ros-$BUILD_ROS_VERSION-$(basename "$WORKSPACE")"
+echo Installing ros workspace $sr_ws
+if [ -r "$sr_ws" ]; then
+    rm -rf "$sr_ws"
+fi
+mkdir -p "$sr_ws/src"
+(
+    cd "$sr_ws"
+    catkin_make
+)
+source "$sr_ws/devel/setup.bash"
+
+# Add the package to test and build
+echo Building
+(
+    cd "$sr_ws/src"
+    ln -s "$WORKSPACE" .
+    cd ..
+    catkin_make
+)
+source "$sr_ws/devel/setup.bash"
+
+# Build and run the tests
+echo Building Tests
+(
+    cd "$sr_ws/build"
+    make tests
+    echo Running Tests
+    make test
+)
+
+echo Build Complete
