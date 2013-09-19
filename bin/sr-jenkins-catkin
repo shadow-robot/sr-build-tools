@@ -12,7 +12,6 @@
 #
 
 set -e # fail on errors
-set -u # fail in unset vars
 #set -x # echo commands run
 
 if [ ! "$#" == 1 ]; then
@@ -51,9 +50,7 @@ if [ ! -d "$ros_dir" ]; then
     echo Has this ros version been installed, ie slave bootstrapped properly?
     exit 10
 fi
-set +u # The setup script has unbound vars!
 source "$ros_dir/setup.bash"
-set -u
 
 
 # Set up the workspace
@@ -64,11 +61,8 @@ if [ -e "$SR_WORKSPACE" ]; then
     rm -rf "$SR_WORKSPACE"
 fi
 mkdir -p "$SR_WORKSPACE/src"
-(
-    cd "$SR_WORKSPACE"
-    catkin_make
-)
-source "$SR_WORKSPACE/devel/setup.bash"
+cd "$SR_WORKSPACE/src"
+catkin_init_workspace
 
 # Add the package to test and build
 header Building
@@ -77,9 +71,7 @@ ln -s "$WORKSPACE" .
 cd ..
 catkin_make
 build_res=$?
-if [ "$build_res" == 0 ]; then
-    source "$SR_WORKSPACE/devel/setup.bash"
-fi
+source "devel/setup.bash"
 
 # Build and run the tests
 header Building Tests
