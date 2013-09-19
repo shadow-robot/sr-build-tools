@@ -57,32 +57,33 @@ set -u
 
 
 # Set up the workspace
-sr_ws="$HOME/shadow-ros-$BUILD_ROS_VERSION-$(basename "$WORKSPACE")"
-header Installing ros workspace $sr_ws
-if [ -r "$sr_ws" ]; then
-    rm -rf "$sr_ws"
+SR_WORKSPACE="$HOME/shadow-ros-$BUILD_ROS_VERSION-$(basename "$WORKSPACE")"
+[ -n "$GIT_BRANCH" ] && SR_WORKSPACE="$SR_WORKSPACE-$GIT_BRANCH"
+header Installing ros workspace $SR_WORKSPACE
+if [ -e "$SR_WORKSPACE" ]; then
+    rm -rf "$SR_WORKSPACE"
 fi
-mkdir -p "$sr_ws/src"
+mkdir -p "$SR_WORKSPACE/src"
 (
-    cd "$sr_ws"
+    cd "$SR_WORKSPACE"
     catkin_make
 )
-source "$sr_ws/devel/setup.bash"
+source "$SR_WORKSPACE/devel/setup.bash"
 
 # Add the package to test and build
 header Building
-cd "$sr_ws/src"
+cd "$SR_WORKSPACE/src"
 ln -s "$WORKSPACE" .
 cd ..
 catkin_make
 build_res=$?
 if [ "$build_res" == 0 ]; then
-    source "$sr_ws/devel/setup.bash"
+    source "$SR_WORKSPACE/devel/setup.bash"
 fi
 
 # Build and run the tests
 header Building Tests
-cd "$sr_ws/build"
+cd "$SR_WORKSPACE/build"
 make tests
 
 header Running Tests
@@ -96,7 +97,7 @@ echo Clean up test XML
 rosrun rosunit clean_junit_xml.py
 # Put the tests where Jenkins can find them
 [ -d "$WORKSPACE/test_results" ] && rm -rf "$WORKSPACE/test_results"
-cp -a "$sr_ws/build/test_results" "$WORKSPACE/"
+cp -a "$SR_WORKSPACE/build/test_results" "$WORKSPACE/"
 
 header Build Complete
 exit $test_res
