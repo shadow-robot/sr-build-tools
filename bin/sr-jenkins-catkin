@@ -95,7 +95,8 @@ set -e
 echo Clean up test XML
 rosrun rosunit clean_junit_xml.py
 # Put the tests where Jenkins can find them
-ln -s "$sr_ws/build/test_results" "$WORKSPACE/"
+[ -d "$WORKSPACE/test_results" ] && rm -rf "$WORKSPACE/test_results"
+cp -a "$sr_ws/build/test_results" "$WORKSPACE/"
 
 header Build Complete
 exit $test_res
