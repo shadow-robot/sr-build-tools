@@ -9,6 +9,7 @@ set -e # Stop on errors
 #set -x # echo commands
 
 jenkins_user="jenkins"
+jenkins_user_email="jenkins-system@shadowrobot.com"
 jenkins_home="/home/$jenkins_user"
 build_tools_dir="/opt/shadow/sr-build-tools"
 jenkins_url=${JENKINS_URL-jenkins:8080}
@@ -117,6 +118,11 @@ fi
 # be able to install new deps.
 sudoers-add "$jenkins_user  ALL=(ALL) NOPASSWD:  ALL"
 echo Gave $jenkins_user sudo
+
+# Set up git to work for that user
+su - $jenkins_user -c "git config --global user.name $jenkins_user"
+su - $jenkins_user -c "git config --global user.email $jenkins_user_email"
+
 
 #
 # Install crontabs that keep the slave upto date
