@@ -438,7 +438,10 @@ Examples:
         job.schedule   = self.opts.schedule
         job.command    = self.opts.command
         job.publish_junit = self.opts.publish_junit
-        self.add_job(job)
+        if self.add_job(job):
+            return 0
+        else:
+            return 11
 
 
     def load_yaml(self,f):

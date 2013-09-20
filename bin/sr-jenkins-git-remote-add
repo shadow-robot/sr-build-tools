@@ -1,0 +1,55 @@
+#!/bin/bash
+
+#
+# Quick and dirty script to scan a remote repo for branches and add jobs to
+# jenkins for them.
+#
+# Filters branches to F_* only
+#
+# Probably contains assuptions for ronex (the label used) but should be pretty
+# generic. Just needs a few more args.
+#
+# @TODO - Find jobs with no branch anymore and remove them
+#
+
+set -e # fail on errors
+#set -x # echo commands run
+
+if [ ! "$#" == 1 ]; then
+    echo Wrong number of arguments
+    echo usage: $0 REPO_URL 
+    exit 3
+fi
+
+REPO=$1
+
+job_prefix="sr-auto-"
+job_labels="slave-ronex"
+job_schedule="H/5 * * * *"
+job_command="/opt/shadow/sr-build-tools/bin/sr-jenkins-catkin hydro"
+
+jenkins_cmd="sr-jenkins-jobs -j jenkins:8080"
+
+add_branch() {
+    [ -n "$1" ] || { echo No branch!; return 10; }
+    branch=$1
+    name="$(basename $REPO .git)-$branch"
+    # Add the job skipping errors for already exists
+    $jenkins_cmd add --prefix "$job_prefix" \
+        --name $name \
+        --labels "$job_labels" \
+        --git_source="$REPO" \
+        --git_branch="$branch" \
+        --schedule="$job_schedule" \
+        --publish_junit \
+        --command="$job_command" \
+        --enable \
+        2>/dev/null || return 0
+    name="$prefix$name"
+    echo Added job name $name
+    $jenkins_cmd build $name
+}
+
+for branch in $(git ls-remote --heads git@github.com:shadow-robot/sr-ronex-dev.git | cut -f2 | sed 's/refs\/heads\///' | grep -i '^F_'); do
+    add_branch $branch
+done;
