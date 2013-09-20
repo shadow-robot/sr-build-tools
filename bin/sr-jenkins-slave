@@ -44,6 +44,8 @@ fi
 # We use a (passwordless) ssh key setup for the server to login with.
 # This tells us where we can wget the pub key to setup authorized_keys
 server_pubkey="http://$jenkins_url/userContent/id_rsa.pub"
+# Use needs the private key to login into github
+server_privatekey="http://$jenkins_url/userContent/id_rsa"
 
 # Make sure we can see jenkins and it looks setup ok
 if wget -o /dev/null --spider "$server_pubkey"; then
@@ -106,6 +108,11 @@ chmod 600 "$jenkins_home/.ssh/authorized_keys"
 chown -R jenkins:jenkins "$jenkins_home/.ssh"
 echo Added pub key
 
+# Install private key so they can log into github
+wget -O "$jenkins_home/.ssh/id_rsa" "$server_privatekey"
+chmod 400 "$jenkins_home/.ssh/id_rsa"
+wget -O "$jenkins_home/.ssh/id_rsa.pub" "$server_pubkey"
+
 # Create build dir
 if [ -d "$jenkins_home/build" ]; then
     echo "$jenkins_home/build" found.
@@ -122,6 +129,7 @@ echo Gave $jenkins_user sudo
 # Set up git to work for that user
 su - $jenkins_user -c "git config --global user.name $jenkins_user"
 su - $jenkins_user -c "git config --global user.email $jenkins_user_email"
+echo Setup git config
 
 
 #
