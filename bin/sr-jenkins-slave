@@ -111,7 +111,9 @@ echo Added pub key
 # Install private key so they can log into github
 wget -O "$jenkins_home/.ssh/id_rsa" "$server_privatekey"
 chmod 400 "$jenkins_home/.ssh/id_rsa"
+chown $jenkins_user:$jenkins_user "$jenkins_home/.ssh/id_rsa"
 wget -O "$jenkins_home/.ssh/id_rsa.pub" "$server_pubkey"
+chown $jenkins_user:$jenkins_user "$jenkins_home/.ssh/id_rsa.pub"
 
 # Create build dir
 if [ -d "$jenkins_home/build" ]; then
