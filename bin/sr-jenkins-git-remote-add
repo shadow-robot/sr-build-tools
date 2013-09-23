@@ -102,7 +102,7 @@ done;
 
 # Delete jobs for branches that don't exist anymore
 # Only consider jobs that start with out prefix so we don't trash jenkins!
-for job in $(bin/sr-jenkins-jobs -j jenkins:8080 list "^$job_prefix" | sed 's/^.* - //')
+for job in $(sr-jenkins-jobs -j jenkins:8080 list "^$job_prefix" | sed 's/^.* - //')
 do
     if ! grep -q "$job" $tmp_github_job_list; then
         # Job in jenkins but not branch on github
