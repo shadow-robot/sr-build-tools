@@ -15,20 +15,48 @@
 set -e # fail on errors
 #set -x # echo commands run
 
-if [ ! "$#" == 1 ]; then
-    echo Wrong number of arguments
-    echo usage: $0 REPO_URL 
+#
+# Oprions
+#
+
+usage() {
+    echo usage: $0 [OPTIONS] REPO_URL
+    echo "    REPO_URL - url to access git repo"
+    echo "    -n       - Dry run, just print what would be done"
     exit 3
-fi
+}
 
-REPO=$1
-
+dry_run=""
 job_prefix="sr-auto-"
 job_labels="slave-ronex"
 job_schedule="H/5 * * * *"
 job_command="/opt/shadow/sr-build-tools/bin/sr-jenkins-catkin hydro"
-
 jenkins_cmd="sr-jenkins-jobs -j jenkins:8080"
+
+while getopts "hn" opt; do
+    case $opt in
+        '?'|h|:|\?)
+            usage
+        ;;
+        n)
+            dry_run="y"
+        ;;
+    esac
+done
+shift $((OPTIND-1))
+
+if [ ! "$#" == 1 ]; then
+    echo Wrong number of arguments
+    usage
+fi
+
+REPO=$1
+
+
+#
+# Main
+#
+
 
 add_branch() {
     [ -n "$1" ] || { echo No branch!; return 10; }
@@ -51,5 +79,9 @@ add_branch() {
 }
 
 for branch in $(git ls-remote --heads git@github.com:shadow-robot/sr-ronex-dev.git | cut -f2 | sed 's/refs\/heads\///' | grep -i '^F_'); do
-    add_branch $branch
+    if [ $dry_run ]; then
+        add_branch $branch
+    else
+        echo Add $branch
+    fi
 done;
