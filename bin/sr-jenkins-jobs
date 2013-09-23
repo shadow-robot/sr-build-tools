@@ -249,10 +249,9 @@ Examples:
 
         grp = optparse.OptionGroup(optp, "Common add options:",
                 "These options are common to all commands that add jobs.")
-        grp.add_option('--prefix', default='sr-',
+        grp.add_option('--prefix', default='',
                 help="Prefix all created job names with this. Handy way to identify "
-                     "them later. e.g. using list or delete actions. "
-                     "Default=%default")
+                     "them later. e.g. using list or delete actions. ")
         grp.add_option('--enable', action="store_true", default=False,
                 help="Enable jobs when adding, otherwise create disabled. "
                      "Default=%default")
