@@ -1,0 +1,67 @@
+#!/usr/bin/env python
+
+TRELLO_API_KEY = 'fillmein'
+TRELLO_TOKEN = 'fillmein'
+SHADOW_BOARD_ID = 'fnCbWCKD'
+
+from pprint import PrettyPrinter
+from datetime import datetime
+import re
+
+from trello import TrelloApi
+
+from github import Github
+
+pp = PrettyPrinter(indent=4)
+
+trello = TrelloApi(TRELLO_API_KEY, TRELLO_TOKEN)
+#token_url = trello.get_token_url('Shadow Sync', expires='30days', write_access=True)
+#print "Token:%s"%token_url
+
+#board = trello.boards.get(SHADOW_BOARD_ID)
+#print "\n\n################ Boards ##################\n"
+#pp.pprint(board)
+
+# Get the lists (the stacks of cards, e.g. Current, Backlog etc) from Trello
+lists = trello.boards.get_list(SHADOW_BOARD_ID)
+#pp.pprint(lists)
+lists_by_id = {}
+for l in lists:
+    lists_by_id[l['id']] = l
+
+# Get the cards from Trello
+# Filter to only the ones from github
+all_cards = trello.boards.get_card(SHADOW_BOARD_ID)
+#print "\n\n################ All Cards ##################\n"
+#pp.pprint(all_cards)
+cards = []
+cards_by_github_issue_id = {}
+for card in all_cards:
+    m = re.search('^(\d+) ', card['name'])
+    if not m:
+        continue
+    cards.append(card)
+    issue_id = m.group(1)
+    list_name = lists_by_id[card['idList']]['name']
+    print "Found card for git issue: '%s' in %s"%(issue_id, list_name)
+    cards_by_github_issue_id[str(issue_id)] = card
+
+# Get the issue list from github
+github_user = raw_input("Github user:")
+github_password = raw_input("Github password:")
+github = Github(github_user, github_password)
+org = github.get_organization('shadow-robot')
+issues = org.get_issues()
+issues_by_id = {}
+for issue in issues:
+    print str(issue.id) + " " + str(issue.title)
+    issues_by_id[str(issue.id)] = issue
+
+# Add cards for new github tickets
+for issue in issues:
+    if str(issue.id) in cards_by_github_issue_id:
+        continue
+    trello.cards.new(str(issue.id) + " " + str(issue.title),
+            lists[0]['id'],
+            desc=issue.body)
+
