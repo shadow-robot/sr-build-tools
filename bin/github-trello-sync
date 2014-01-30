@@ -1,18 +1,29 @@
 #!/usr/bin/env python
 
-TRELLO_API_KEY = 'fillmein'
-TRELLO_TOKEN = 'fillmein'
-SHADOW_BOARD_ID = 'fnCbWCKD'
-github_user = raw_input("Github user:")
-github_password = raw_input("Github password:")
-
 from pprint import PrettyPrinter
 from datetime import datetime
-import re
+import re, sys
 
 from trello import TrelloApi
 
 from github import Github
+
+#
+# Config
+#
+
+TRELLO_API_KEY = 'fillmein'
+TRELLO_TOKEN = 'fillmein'
+SHADOW_BOARD_ID = 'fnCbWCKD'
+
+github_user = raw_input("Github user:")
+github_password = raw_input("Github password:")
+
+new_card_list_name = 'Backlog'
+
+#
+# Connect and get lists, cards, issues etc
+#
 
 pp = PrettyPrinter(indent=4)
 
@@ -30,10 +41,18 @@ github = Github(github_user, github_password)
 
 # Get the lists (the stacks of cards, e.g. Current, Backlog etc) from Trello
 lists = trello.boards.get_list(SHADOW_BOARD_ID)
+new_card_list_id = None
 #pp.pprint(lists)
 lists_by_id = {}
 for l in lists:
     lists_by_id[l['id']] = l
+    print "Found list %s"%l['name']
+    if l['name'] == new_card_list_name:
+        new_card_list_id = l['id']
+
+if new_card_list_id is None:
+    print "ERROR: Couldn't find new card list: %s"%new_card_list_name
+    sys.exit(10)
 
 # Get the cards from Trello
 # Filter to only the ones from github
@@ -49,7 +68,7 @@ for card in all_cards:
     cards.append(card)
     issue_id = m.group(1)
     list_name = lists_by_id[card['idList']]['name']
-    print "Found card for git issue: '%s' in %s"%(issue_id, list_name)
+    print "Found card %s for git issue: '%s' in %s"%(card['id'], issue_id, list_name)
     cards_by_github_issue_id[str(issue_id)] = card
 
 # Get the issue list from github
@@ -62,12 +81,17 @@ for issue in issues:
     print "Github issue: " + str(issue.id) + " " + str(issue.title)
     issues_by_id[str(issue.id)] = issue
 
+
+#
+# Sync the Trello cards with github
+#
+
 # Add cards for new github tickets
 for issue in issues:
     if str(issue.id) in cards_by_github_issue_id:
         continue
-    trello.cards.new(str(issue.id) + " " + str(issue.title),
-            lists[0]['id'],
+    print "Adding card for issue: %s %s"%(issue.id, issue.title)
+    trello.cards.new(str(issue.id) + " " + str(issue.title), new_card_list_id,
             desc=issue.body)
 
 # Close cards where there are no more issues
