@@ -3,6 +3,8 @@
 TRELLO_API_KEY = 'fillmein'
 TRELLO_TOKEN = 'fillmein'
 SHADOW_BOARD_ID = 'fnCbWCKD'
+github_user = raw_input("Github user:")
+github_password = raw_input("Github password:")
 
 from pprint import PrettyPrinter
 from datetime import datetime
@@ -15,8 +17,12 @@ from github import Github
 pp = PrettyPrinter(indent=4)
 
 trello = TrelloApi(TRELLO_API_KEY, TRELLO_TOKEN)
+# The TRELLO_TOKEN above is obtained by visiting this url in browser, while
+# logged in to trello
 #token_url = trello.get_token_url('Shadow Sync', expires='30days', write_access=True)
-#print "Token:%s"%token_url
+#print "Token url:%s"%token_url
+
+github = Github(github_user, github_password)
 
 #board = trello.boards.get(SHADOW_BOARD_ID)
 #print "\n\n################ Boards ##################\n"
@@ -47,14 +53,13 @@ for card in all_cards:
     cards_by_github_issue_id[str(issue_id)] = card
 
 # Get the issue list from github
-github_user = raw_input("Github user:")
-github_password = raw_input("Github password:")
-github = Github(github_user, github_password)
+# This call appears to return only open tickets.
+# TODO - and only tickets assigned to the login user, need them all!
 org = github.get_organization('shadow-robot')
 issues = org.get_issues()
 issues_by_id = {}
 for issue in issues:
-    print str(issue.id) + " " + str(issue.title)
+    print "Github issue: " + str(issue.id) + " " + str(issue.title)
     issues_by_id[str(issue.id)] = issue
 
 # Add cards for new github tickets
@@ -64,4 +69,12 @@ for issue in issues:
     trello.cards.new(str(issue.id) + " " + str(issue.title),
             lists[0]['id'],
             desc=issue.body)
+
+# Close cards where there are no more issues
+for issue_id in cards_by_github_issue_id:
+    if str(issue_id) not in issues_by_id:
+        card_id = cards_by_github_issue_id[str(issue_id)]['id']
+        print "Archiving card %s (issue %s)"%(card_id, issue_id)
+        trello.cards.update_closed(card_id, "true")
+
 
