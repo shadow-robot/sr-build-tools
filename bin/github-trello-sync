@@ -21,6 +21,13 @@ github_password = raw_input("Github password:")
 
 new_card_list_name = 'Backlog'
 
+# Used to prefix the title of cards in trello linked to github. Title is
+# fomatted as below. Only tickets with a title that match are processed by this
+# script.
+# <prefix>:<issue.id> <issue.title>
+# TODO - Probably better to use a label.
+card_github_prefix = 'Github'
+
 #
 # Connect and get lists, cards, issues etc
 #
@@ -62,7 +69,7 @@ all_cards = trello.boards.get_card(SHADOW_BOARD_ID)
 cards = []
 cards_by_github_issue_id = {}
 for card in all_cards:
-    m = re.search('^(\d+) ', card['name'])
+    m = re.search('^'+card_github_prefix+':(\d+) ', card['name'])
     if not m:
         continue
     cards.append(card)
@@ -90,8 +97,9 @@ for issue in issues:
 for issue in issues:
     if str(issue.id) in cards_by_github_issue_id:
         continue
-    print "Adding card for issue: %s %s"%(issue.id, issue.title)
-    trello.cards.new(str(issue.id) + " " + str(issue.title), new_card_list_id,
+    card_name = card_github_prefix + ":" + str(issue.id) + " " + str(issue.title)
+    print "Adding card: %s"%(card_name)
+    trello.cards.new(card_name, new_card_list_id,
             desc=issue.body)
 
 # Close cards where there are no more issues
@@ -100,5 +108,9 @@ for issue_id in cards_by_github_issue_id:
         card_id = cards_by_github_issue_id[str(issue_id)]['id']
         print "Archiving card %s (issue %s)"%(card_id, issue_id)
         trello.cards.update_closed(card_id, "true")
+
+# TODO - Sync labels/tags
+
+# TODO - Sync users, ie set user on card based on git assigned.
 
 
