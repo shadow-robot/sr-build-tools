@@ -97,11 +97,9 @@ for card in all_cards:
     card['_github_issue_id'] = str(issue_id)
 #pp.pprint(cards)
 
-# Get the issue list from github
-# This call appears to return only open tickets.
-# TODO - and only tickets assigned to the login user, need them all!
+# Get the issue list from github. This call returns only open tickets.
 org = github.get_organization('shadow-robot')
-issues = org.get_issues()
+issues = org.get_issues(filter="all")
 issues_by_id = {}
 for issue in issues:
     print "Github issue: " + str(issue.id) + " " + str(issue.title)
@@ -142,6 +140,8 @@ for issue in issues:
     card_name = issue_card_name(issue)
     print "Adding card: %s"%(card_name)
     new_card = trello.cards.new(card_name, new_card_list_id)
+    # Add the card to the list so it will also get synced below, adding the
+    # rest of its details, desc etc.
     new_card['_github_issue_id'] = str(issue.id)
     cards.append(new_card)
     trello.cards.new_label(new_card['id'], conf.trello_label)
