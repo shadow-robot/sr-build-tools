@@ -15,7 +15,7 @@ pp = PrettyPrinter(indent=4)
 #
 
 class Config(object):
-    """Holds confif for the script, applies defaults and loads from files."""
+    """Holds config for the script, applies defaults and loads from files."""
     def __init__(self):
         self.trello_api_key = ''
         self.trello_token = ''
@@ -23,6 +23,9 @@ class Config(object):
         self.github_user = ''
         self.github_password = ''
         self.new_card_list_name = 'Backlog'
+        # Use this label (identified by color on trello) to mark all cards this
+        # script manages.
+        self.trello_label = 'purple'
         # Used to prefix the title of cards in trello linked to github. Title is
         # fomatted as below. Only tickets with a title that match are processed by this
         # script.
@@ -37,7 +40,7 @@ class Config(object):
 
 conf = Config()
 conf.load('github-trello-sync.yaml')
-pp.pprint(conf.__dict__)
+#pp.pprint(conf.__dict__)
 
 if not conf.github_user:
     conf.github_user = raw_input("Github user:")
@@ -84,6 +87,11 @@ all_cards = trello.boards.get_card(conf.shadow_board_id)
 cards = []
 cards_by_github_issue_id = {}
 for card in all_cards:
+    for l in card['labels']:
+        if l['color'] == conf.trello_label:
+            break
+    else: # Not tagged as managed so ignore
+        continue
     m = re.search('^'+conf.card_github_prefix+':(\d+) ', card['name'])
     if not m:
         continue
@@ -91,7 +99,10 @@ for card in all_cards:
     issue_id = m.group(1)
     list_name = lists_by_id[card['idList']]['name']
     print "Found card %s for git issue: '%s' in %s"%(card['id'], issue_id, list_name)
+    # Stash the parsed github id in the cards data
+    card['_github_issue_id'] = str(issue_id)
     cards_by_github_issue_id[str(issue_id)] = card
+#pp.pprint(cards)
 
 # Get the issue list from github
 # This call appears to return only open tickets.
@@ -114,15 +125,14 @@ for issue in issues:
         continue
     card_name = conf.card_github_prefix + ":" + str(issue.id) + " " + str(issue.title)
     print "Adding card: %s"%(card_name)
-    trello.cards.new(card_name, new_card_list_id,
-            desc=issue.body)
+    new_card = trello.cards.new(card_name, new_card_list_id, desc=issue.body)
+    trello.cards.new_label(new_card['id'], conf.trello_label)
 
 # Close cards where there are no more issues
-for issue_id in cards_by_github_issue_id:
-    if str(issue_id) not in issues_by_id:
-        card_id = cards_by_github_issue_id[str(issue_id)]['id']
-        print "Archiving card %s (issue %s)"%(card_id, issue_id)
-        trello.cards.update_closed(card_id, "true")
+for card in cards:
+    if str(card['_github_issue_id']) not in issues_by_id:
+        print "Archiving card %s (issue %s)"%(card['id'], card['_github_issue_id'])
+        trello.cards.update_closed(card['id'], "true")
 
 # TODO - Sync labels/tags
 
