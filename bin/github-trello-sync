@@ -3,58 +3,73 @@
 from pprint import PrettyPrinter
 from datetime import datetime
 import re, sys
+import yaml
 
 from trello import TrelloApi
-
 from github import Github
+
+pp = PrettyPrinter(indent=4)
 
 #
 # Config
 #
 
-TRELLO_API_KEY = 'fillmein'
-TRELLO_TOKEN = 'fillmein'
-SHADOW_BOARD_ID = 'fnCbWCKD'
+class Config(object):
+    """Holds confif for the script, applies defaults and loads from files."""
+    def __init__(self):
+        self.trello_api_key = ''
+        self.trello_token = ''
+        self.shadow_board_id = 'fnCbWCKD'
+        self.github_user = ''
+        self.github_password = ''
+        self.new_card_list_name = 'Backlog'
+        # Used to prefix the title of cards in trello linked to github. Title is
+        # fomatted as below. Only tickets with a title that match are processed by this
+        # script.
+        # <prefix>:<issue.id> <issue.title>
+        # TODO - Probably better to use a label.
+        self.card_github_prefix = 'Github'
 
-github_user = raw_input("Github user:")
-github_password = raw_input("Github password:")
+    def load(self, filepath):
+        data = yaml.load(file(filepath))
+        for k,v in data.iteritems():
+            setattr(self, k, v)
 
-new_card_list_name = 'Backlog'
+conf = Config()
+conf.load('github-trello-sync.yaml')
+pp.pprint(conf.__dict__)
 
-# Used to prefix the title of cards in trello linked to github. Title is
-# fomatted as below. Only tickets with a title that match are processed by this
-# script.
-# <prefix>:<issue.id> <issue.title>
-# TODO - Probably better to use a label.
-card_github_prefix = 'Github'
+if not conf.github_user:
+    conf.github_user = raw_input("Github user:")
+if not conf.github_password:
+    conf.github_password = raw_input("Github password:")
+
 
 #
 # Connect and get lists, cards, issues etc
 #
 
-pp = PrettyPrinter(indent=4)
-
-trello = TrelloApi(TRELLO_API_KEY, TRELLO_TOKEN)
-# The TRELLO_TOKEN above is obtained by visiting this url in browser, while
+trello = TrelloApi(conf.trello_api_key, conf.trello_token)
+# The conf.trello_token above is obtained by visiting this url in browser, while
 # logged in to trello
-#token_url = trello.get_token_url('Shadow Sync', expires='30days', write_access=True)
-#print "Token url:%s"%token_url
+token_url = trello.get_token_url('Shadow Sync', expires='30days', write_access=True)
+print "Token url:%s"%token_url
 
-github = Github(github_user, github_password)
+github = Github(conf.github_user, conf.github_password)
 
-#board = trello.boards.get(SHADOW_BOARD_ID)
+#board = trello.boards.get(conf.shadow_board_id)
 #print "\n\n################ Boards ##################\n"
 #pp.pprint(board)
 
 # Get the lists (the stacks of cards, e.g. Current, Backlog etc) from Trello
-lists = trello.boards.get_list(SHADOW_BOARD_ID)
+lists = trello.boards.get_list(conf.shadow_board_id)
 new_card_list_id = None
 #pp.pprint(lists)
 lists_by_id = {}
 for l in lists:
     lists_by_id[l['id']] = l
     print "Found list %s"%l['name']
-    if l['name'] == new_card_list_name:
+    if l['name'] == conf.new_card_list_name:
         new_card_list_id = l['id']
 
 if new_card_list_id is None:
@@ -63,13 +78,13 @@ if new_card_list_id is None:
 
 # Get the cards from Trello
 # Filter to only the ones from github
-all_cards = trello.boards.get_card(SHADOW_BOARD_ID)
+all_cards = trello.boards.get_card(conf.shadow_board_id)
 #print "\n\n################ All Cards ##################\n"
 #pp.pprint(all_cards)
 cards = []
 cards_by_github_issue_id = {}
 for card in all_cards:
-    m = re.search('^'+card_github_prefix+':(\d+) ', card['name'])
+    m = re.search('^'+conf.card_github_prefix+':(\d+) ', card['name'])
     if not m:
         continue
     cards.append(card)
@@ -97,7 +112,7 @@ for issue in issues:
 for issue in issues:
     if str(issue.id) in cards_by_github_issue_id:
         continue
-    card_name = card_github_prefix + ":" + str(issue.id) + " " + str(issue.title)
+    card_name = conf.card_github_prefix + ":" + str(issue.id) + " " + str(issue.title)
     print "Adding card: %s"%(card_name)
     trello.cards.new(card_name, new_card_list_id,
             desc=issue.body)
