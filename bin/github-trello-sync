@@ -26,12 +26,6 @@ class Config(object):
         # Use this label (identified by color on trello) to mark all cards this
         # script manages.
         self.trello_label = 'purple'
-        # Used to prefix the title of cards in trello linked to github. Title is
-        # fomatted as below. Only tickets with a title that match are processed by this
-        # script.
-        # <prefix>:<issue.id> <issue.title>
-        # TODO - Probably better to use a label.
-        self.card_github_prefix = 'Github'
 
     def load(self, filepath):
         data = yaml.load(file(filepath))
@@ -82,8 +76,6 @@ if new_card_list_id is None:
 # Get the cards from Trello
 # Filter to only the ones from github
 all_cards = trello.boards.get_card(conf.shadow_board_id)
-#print "\n\n################ All Cards ##################\n"
-#pp.pprint(all_cards)
 cards = []
 cards_by_github_issue_id = {}
 for card in all_cards:
@@ -92,7 +84,7 @@ for card in all_cards:
             break
     else: # Not tagged as managed so ignore
         continue
-    m = re.search('^'+conf.card_github_prefix+':(\d+) ', card['name'])
+    m = re.search('^(\d+) ', card['name'])
     if not m:
         continue
     cards.append(card)
@@ -123,7 +115,7 @@ for issue in issues:
 for issue in issues:
     if str(issue.id) in cards_by_github_issue_id:
         continue
-    card_name = conf.card_github_prefix + ":" + str(issue.id) + " " + str(issue.title)
+    card_name = str(issue.id) + " [" + issue.repository.name + "] " + str(issue.title)
     print "Adding card: %s"%(card_name)
     new_card = trello.cards.new(card_name, new_card_list_id, desc=issue.body)
     trello.cards.new_label(new_card['id'], conf.trello_label)
