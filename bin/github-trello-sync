@@ -63,7 +63,9 @@ lists = trello.boards.get_list(conf.shadow_board_id)
 new_card_list_id = None
 #pp.pprint(lists)
 lists_by_id = {}
+list_names = []
 for l in lists:
+    list_names.append(l['name'])
     lists_by_id[l['id']] = l
     print "Found list %s"%l['name']
     if l['name'] == conf.new_card_list_name:
@@ -117,10 +119,18 @@ def issue_card_name(issue):
 
 def sync_card_issue(card, issue):
     trello.cards.update_name(card['id'], issue_card_name(issue))
+
     desc = issue.body + "\n\n"
     desc += "URL: %s\n"%(issue.html_url)
     desc += "Issue: %s\n"%(issue.id)
     trello.cards.update_desc(card['id'], desc)
+
+    # We label the issues in github with the list name from trello
+    cur_labels = set(l.name for l in issue.labels)
+    new_labels = cur_labels - set(list_names) # Remove all list labels
+    new_labels.add(lists_by_id[card['idList']]['name']) # Add the 1 we want
+    if not new_labels == cur_labels:
+        issue.edit(labels=list(new_labels))
 
 # Add cards for new github tickets
 for issue in issues:
