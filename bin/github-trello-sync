@@ -84,8 +84,9 @@ for card in all_cards:
             break
     else: # Not tagged as managed so ignore
         continue
-    m = re.search('^(\d+) ', card['name'])
+    m = re.search(r'^Issue:\s*(\d+)\s*$', card['desc'], re.MULTILINE)
     if not m:
+        print "ERROR: Failed to get github issue id from card id:%s name:%s"%(card['id'], card['name'])
         continue
     cards.append(card)
     issue_id = m.group(1)
@@ -111,23 +112,36 @@ for issue in issues:
 # Sync the Trello cards with github
 #
 
+def issue_card_name(issue):
+    return "[" + issue.repository.name + "] " + str(issue.title)
+
+def sync_card_issue(card, issue):
+    trello.cards.update_name(card['id'], issue_card_name(issue))
+    desc = issue.body + "\n\n"
+    desc += "URL: %s\n"%(issue.html_url)
+    desc += "Issue: %s\n"%(issue.id)
+    trello.cards.update_desc(card['id'], desc)
+
 # Add cards for new github tickets
 for issue in issues:
     if str(issue.id) in cards_by_github_issue_id:
         continue
-    card_name = str(issue.id) + " [" + issue.repository.name + "] " + str(issue.title)
+    card_name = issue_card_name(issue)
     print "Adding card: %s"%(card_name)
-    new_card = trello.cards.new(card_name, new_card_list_id, desc=issue.body)
+    new_card = trello.cards.new(card_name, new_card_list_id)
+    new_card['_github_issue_id'] = str(issue.id)
+    cards.append(new_card)
     trello.cards.new_label(new_card['id'], conf.trello_label)
 
-# Close cards where there are no more issues
+# Sync cards and issues
 for card in cards:
     if str(card['_github_issue_id']) not in issues_by_id:
+        # Close card where there is no issue
         print "Archiving card %s (issue %s)"%(card['id'], card['_github_issue_id'])
         trello.cards.update_closed(card['id'], "true")
-
-# TODO - Sync labels/tags
-
-# TODO - Sync users, ie set user on card based on git assigned.
+    else:
+        # Card is active so update
+        print "Syncing card %s (issue %s)"%(card['id'], card['_github_issue_id'])
+        sync_card_issue(card, issues_by_id[card['_github_issue_id']])
 
 
