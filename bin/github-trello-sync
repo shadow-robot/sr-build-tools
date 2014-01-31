@@ -118,12 +118,15 @@ def issue_card_name(issue):
     return "[" + issue.repository.name + "] " + str(issue.title)
 
 def sync_card_issue(card, issue):
-    trello.cards.update_name(card['id'], issue_card_name(issue))
+    name = issue_card_name(issue)
+    if not name == card['name']:
+        trello.cards.update_name(card['id'], name)
 
     desc = issue.body + "\n\n"
     desc += "URL: %s\n"%(issue.html_url)
     desc += "Issue: %s\n"%(issue.id)
-    trello.cards.update_desc(card['id'], desc)
+    if not desc == card['desc']:
+        trello.cards.update_desc(card['id'], desc)
 
     # We label the issues in github with the list name from trello
     cur_labels = set(l.name for l in issue.labels)
