@@ -79,7 +79,6 @@ if new_card_list_id is None:
 # Filter to only the ones from github
 all_cards = trello.boards.get_card(conf.shadow_board_id)
 cards = []
-cards_by_github_issue_id = {}
 for card in all_cards:
     for l in card['labels']:
         if l['color'] == conf.trello_label:
@@ -96,7 +95,6 @@ for card in all_cards:
     print "Found card %s for git issue: '%s' in %s"%(card['id'], issue_id, list_name)
     # Stash the parsed github id in the cards data
     card['_github_issue_id'] = str(issue_id)
-    cards_by_github_issue_id[str(issue_id)] = card
 #pp.pprint(cards)
 
 # Get the issue list from github
@@ -136,8 +134,10 @@ def sync_card_issue(card, issue):
         issue.edit(labels=list(new_labels))
 
 # Add cards for new github tickets
+# Any issue not in this list is not in trello so needs adding
+card_issue_ids = [ str(c['_github_issue_id']) for c in cards ]
 for issue in issues:
-    if str(issue.id) in cards_by_github_issue_id:
+    if str(issue.id) in card_issue_ids:
         continue
     card_name = issue_card_name(issue)
     print "Adding card: %s"%(card_name)
