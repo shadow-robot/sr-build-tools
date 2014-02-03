@@ -28,7 +28,7 @@ class Config(object):
         self.log_level = 'WARNING'
         self.trello_api_key = ''
         self.trello_token = ''
-        self.shadow_board_id = 'fnCbWCKD'
+        self.trello_board_id = 'fnCbWCKD'
         self.github_user = ''
         self.github_password = ''
         self.new_card_list_name = 'Backlog'
@@ -82,7 +82,7 @@ github = Github(conf.github_user, conf.github_password)
 
 github_org = github.get_organization('shadow-robot')
 
-#board = trello.boards.get(conf.shadow_board_id)
+#board = trello.boards.get(conf.trello_board_id)
 #print "\n\n################ Boards ##################\n"
 #pp.pprint(board)
 
@@ -95,7 +95,7 @@ github_org = github.get_organization('shadow-robot')
 
 # Get the list of trello_members
 trello_members_by_username = {}
-for m in trello.boards.get_member(conf.shadow_board_id):
+for m in trello.boards.get_member(conf.trello_board_id):
     trello_members_by_username[m['username'].lower()] = m
 
 # Get the github members
@@ -150,7 +150,7 @@ def trello_2_github_user(tuser):
 #
 
 # Get the lists (the stacks of cards, e.g. Current, Backlog etc) from Trello
-lists = trello.boards.get_list(conf.shadow_board_id)
+lists = trello.boards.get_list(conf.trello_board_id)
 new_card_list_id = None
 lists_by_id = {}
 list_names = []
@@ -181,7 +181,7 @@ def get_trello_cards(github_issues):
     Get the cards from Trello. Filter to only the ones from github (by label).
     Pass a dict of github issues to link cards with matching github issue.
     """
-    all_cards = trello.boards.get_card(conf.shadow_board_id)
+    all_cards = trello.boards.get_card(conf.trello_board_id)
     cards = []
     for card in all_cards:
         for l in card['labels']:
