@@ -34,6 +34,10 @@ Once you have the config file setup simple run the script to sync:
 
     github-trello-sync
 
+Or to use a different location for the config:
+
+    github-trello-sync --config=/etc/opt/github-trello-sync.yaml
+
 """
 
 from pprint import PrettyPrinter
