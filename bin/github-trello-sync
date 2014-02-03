@@ -29,12 +29,14 @@ class Config(object):
         self.trello_api_key = ''
         self.trello_token = ''
         self.trello_board_id = 'fnCbWCKD'
-        self.github_user = ''
-        self.github_password = ''
-        self.new_card_list_name = 'Backlog'
         # Use this label (identified by color on trello) to mark all cards this
         # script manages.
         self.trello_label = 'purple'
+        # List name to add new cards to ie new tickets coming in
+        self.new_card_list_name = 'Backlog'
+        self.github_user = ''
+        self.github_password = ''
+        self.github_organization = 'shadow-robot'
         self.github_2_trello_user = {}
         self.trello_2_github_user = {}
 
@@ -80,11 +82,11 @@ log.info("Token url:%s"%token_url)
 
 github = Github(conf.github_user, conf.github_password)
 
-github_org = github.get_organization('shadow-robot')
+# Throws if not found.
+github_org = github.get_organization(conf.github_organization)
 
-#board = trello.boards.get(conf.trello_board_id)
-#print "\n\n################ Boards ##################\n"
-#pp.pprint(board)
+# Throws if not found.
+trello_board = trello.boards.get(conf.trello_board_id)
 
 
 #
