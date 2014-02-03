@@ -1,8 +1,9 @@
 #!/usr/bin/env python
 
+
 from pprint import PrettyPrinter
 from datetime import datetime
-import re, sys, logging
+import re, sys, logging, time
 import yaml
 
 from trello import TrelloApi
@@ -247,6 +248,7 @@ def sync_card_issue(card, issue):
 def sync():
     """Sync cards and issues."""
     log.info("Starting sync")
+    start_t = time.time()
     github_issues = get_github_issues()
     cards = get_trello_cards(github_issues)
 
@@ -276,6 +278,8 @@ def sync():
             log.info("Syncing card %s (issue %s)"%(card['id'], card['_github_issue'].id))
             sync_card_issue(card, card['_github_issue'])
 
-    log.info("Finished sync")
+    end_t = time.time()
+    dt = end_t - start_t
+    log.info("Finished sync %s issues in %ss"%(len(github_issues), dt))
 
 sync()
