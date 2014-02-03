@@ -152,11 +152,10 @@ if new_card_list_id is None:
     sys.exit(10)
 
 # Get the issue list from github. This call returns only open tickets.
-issues = github_org.get_issues(filter="all")
-issues_by_id = {}
-for issue in issues:
+github_issues = {}
+for issue in github_org.get_issues(filter="all"):
     print "Github issue: " + str(issue.id) + " " + str(issue.title)
-    issues_by_id[str(issue.id)] = issue
+    github_issues[str(issue.id)] = issue
 
 # Get the cards from Trello. Filter to only the ones from github (by label).
 # For cards with matching github issue link the issue object
@@ -177,8 +176,8 @@ for card in all_cards:
     print "Found card %s for git issue: '%s' in %s"%(card['id'], issue_id, list_name)
     # Find the matching github issue and link, set none if no issue found
     card['_github_issue'] = None
-    if str(issue_id) in issues_by_id:
-        card['_github_issue'] = issues_by_id[str(issue_id)]
+    if str(issue_id) in github_issues:
+        card['_github_issue'] = github_issues[str(issue_id)]
     cards.append(card)
 #pp.pprint(cards)
 
@@ -224,7 +223,7 @@ def sync_card_issue(card, issue):
 # Add cards for new github tickets
 # Any issue not in this list is not in trello so needs adding
 card_issue_ids = [ str(c['_github_issue'].id) for c in cards ]
-for issue in issues:
+for issue in github_issues.values():
     if str(issue.id) in card_issue_ids:
         continue
     card_name = issue_card_name(issue)
