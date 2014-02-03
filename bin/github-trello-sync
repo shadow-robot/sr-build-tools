@@ -58,6 +58,22 @@ github = Github(conf.github_user, conf.github_password)
 #print "\n\n################ Boards ##################\n"
 #pp.pprint(board)
 
+# Get the list of members
+members = trello.boards.get_member(conf.shadow_board_id)
+pp.pprint(members)
+members_by_username = {}
+for m in members:
+    members_by_username[m['username']] = m
+
+def github_2_trello_user(guser):
+    if guser is None:
+        return None
+    if guser.login in members_by_username:
+        return members_by_username[guser.login]
+    print "WARNING: Failed to find trello user for github user:%s"%guser.login
+    return None
+
+
 # Get the lists (the stacks of cards, e.g. Current, Backlog etc) from Trello
 lists = trello.boards.get_list(conf.shadow_board_id)
 new_card_list_id = None
@@ -130,6 +146,13 @@ def sync_card_issue(card, issue):
     new_labels.add(lists_by_id[card['idList']]['name']) # Add the 1 we want
     if not new_labels == cur_labels:
         issue.edit(labels=list(new_labels))
+
+    # Sync users
+    members = trello.cards.get_member(card['id'])
+    tuser = github_2_trello_user(issue.assignee)
+    if not members and tuser:
+        # Github user set but trello not set - set trello to github
+        trello.cards.new_member(card['id'], tuser['id'])
 
 # Add cards for new github tickets
 # Any issue not in this list is not in trello so needs adding
