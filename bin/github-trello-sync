@@ -137,9 +137,6 @@ if not conf.github_password:
 
 log.setLevel(conf.log_level)
 
-pp.pprint(conf.__dict__)
-sys.exit(10)
-
 
 #
 # Setup API objects
