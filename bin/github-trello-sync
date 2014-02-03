@@ -99,7 +99,10 @@ class Config(object):
         self.github_user = ''
         self.github_password = ''
         self.github_organization = 'shadow-robot'
+        # A map of github user name to trello user name to map users where the
+        # users names are not the same on the 2 services.
         self.github_2_trello_user = {}
+        # Don't set this yourself, will get auto built from github_2_trello_user
         self.trello_2_github_user = {}
 
     def load(self, filepath):
