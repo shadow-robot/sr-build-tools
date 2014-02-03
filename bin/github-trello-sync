@@ -1,5 +1,40 @@
 #!/usr/bin/env python
 
+"""
+Script to sync github issues with cards on trello.
+
+== Install ==
+
+You will need the yaml, trello and github API access modules for this.
+
+ sudo apt-get install python-yaml
+ sudo pip install trello
+ sudo pip install PyGithub
+
+== Setup ==
+
+To run we need a config file, by default it looks for a file called
+github-trello-sync.yaml in the current director. A minimal config includes the
+details needed to log into the github and trello services:
+
+  trello_api_key: f10...................7c655c4
+  trello_token: tg·.....................................hj
+  github_user: user
+  github_password: spassword
+
+Github is just a normal login for the site, needs access to the shadow org.
+
+The trello api key can be obtained via the trello site developer pages. To get
+a token run the script with a valid key and it should log a Token Url, open
+that url in a browser while logged into trello and it will give you a token.
+
+== Usage ==
+
+Once you have the config file setup simple run the script to sync:
+
+    github-trello-sync
+
+"""
 
 from pprint import PrettyPrinter
 from datetime import datetime
