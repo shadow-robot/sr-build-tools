@@ -18,7 +18,7 @@ github-trello-sync.yaml in the current director. A minimal config includes the
 details needed to log into the github and trello services:
 
   trello_api_key: f10...................7c655c4
-  trello_token: tg·.....................................hj
+  trello_token: tg.....................................hj
   github_user: user
   github_password: spassword
 
@@ -38,7 +38,7 @@ Once you have the config file setup simple run the script to sync:
 
 from pprint import PrettyPrinter
 from datetime import datetime
-import re, sys, logging, time
+import re, sys, logging, time, argparse
 import yaml
 
 from trello import TrelloApi
@@ -94,9 +94,15 @@ class Config(object):
         for k,v in self.github_2_trello_user.iteritems():
             self.trello_2_github_user[v] = k
 
+# Parse command line args
+parser = argparse.ArgumentParser()
+parser.add_argument("--config", type=str, default="github-trello-sync.yaml",
+        help="where to find the config file")
+args = parser.parse_args()
+
+# Load config
 conf = Config()
-conf.load('github-trello-sync.yaml')
-#pp.pprint(conf.__dict__)
+conf.load(args.config)
 
 if not conf.github_user:
     conf.github_user = raw_input("Github user:")
@@ -104,6 +110,9 @@ if not conf.github_password:
     conf.github_password = raw_input("Github password:")
 
 log.setLevel(conf.log_level)
+
+pp.pprint(conf.__dict__)
+sys.exit(10)
 
 
 #
