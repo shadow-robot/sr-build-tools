@@ -54,23 +54,39 @@ print "Token url:%s"%token_url
 
 github = Github(conf.github_user, conf.github_password)
 
+github_org = github.get_organization('shadow-robot')
+
 #board = trello.boards.get(conf.shadow_board_id)
 #print "\n\n################ Boards ##################\n"
 #pp.pprint(board)
 
-# Get the list of members
-members = trello.boards.get_member(conf.shadow_board_id)
-pp.pprint(members)
-members_by_username = {}
-for m in members:
-    members_by_username[m['username']] = m
+# Get the list of trello_members
+trello_members = trello.boards.get_member(conf.shadow_board_id)
+pp.pprint(trello_members)
+trello_members_by_username = {}
+for m in trello_members:
+    trello_members_by_username[m['username']] = m
+
+# Get the github members
+github_members_by_username = {}
+for m in github_org.get_members():
+    print "Github member:%s"%m.login
+    github_members_by_username[m.login] = m
 
 def github_2_trello_user(guser):
     if guser is None:
         return None
-    if guser.login in members_by_username:
-        return members_by_username[guser.login]
+    if guser.login in trello_members_by_username:
+        return trello_members_by_username[guser.login]
     print "WARNING: Failed to find trello user for github user:%s"%guser.login
+    return None
+
+def trello_2_github_user(tuser):
+    if tuser is None:
+        return None
+    if tuser['username'] in github_members_by_username:
+        return github_members_by_username[tuser['username']]
+    print "WARNING: Failed to find github user for trello user:%s"%tuser['username']
     return None
 
 
@@ -114,8 +130,7 @@ for card in all_cards:
 #pp.pprint(cards)
 
 # Get the issue list from github. This call returns only open tickets.
-org = github.get_organization('shadow-robot')
-issues = org.get_issues(filter="all")
+issues = github_org.get_issues(filter="all")
 issues_by_id = {}
 for issue in issues:
     print "Github issue: " + str(issue.id) + " " + str(issue.title)
@@ -153,6 +168,12 @@ def sync_card_issue(card, issue):
     if not members and tuser:
         # Github user set but trello not set - set trello to github
         trello.cards.new_member(card['id'], tuser['id'])
+    elif members:
+        # Card is assigned so update github
+        if not tuser or not tuser['id'] == members[0]['id']:
+            guser = trello_2_github_user(members[0])
+            if guser:
+                issue.edit(assignee=guser)
 
 # Add cards for new github tickets
 # Any issue not in this list is not in trello so needs adding
