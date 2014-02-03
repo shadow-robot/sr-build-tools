@@ -12,7 +12,6 @@ pp = PrettyPrinter(indent=4)
 
 # Setup logging object
 log = logging.getLogger(__name__)
-log.setLevel(logging.INFO)
 ch = logging.StreamHandler()
 formatter = logging.Formatter('[%(asctime)s] %(levelname)s - %(message)s')
 ch.setFormatter(formatter)
@@ -26,6 +25,7 @@ log.addHandler(ch)
 class Config(object):
     """Holds config for the script, applies defaults and loads from files."""
     def __init__(self):
+        self.log_level = 'WARNING'
         self.trello_api_key = ''
         self.trello_token = ''
         self.shadow_board_id = 'fnCbWCKD'
@@ -45,6 +45,12 @@ class Config(object):
         self.process()
 
     def process(self):
+        # Convert log level str to constant
+        if isinstance(self.log_level, str):
+            numeric_level = getattr(logging, self.log_level.upper(), None)
+            if not isinstance(numeric_level, int):
+                raise ValueError('Invalid log level: %s' % loglevel)
+
         # Build reverse lookup for users
         self.trello_2_github_user = {}
         for k,v in self.github_2_trello_user.iteritems():
@@ -58,6 +64,8 @@ if not conf.github_user:
     conf.github_user = raw_input("Github user:")
 if not conf.github_password:
     conf.github_password = raw_input("Github password:")
+
+log.setLevel(conf.log_level)
 
 
 #
