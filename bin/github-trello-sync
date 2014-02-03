@@ -26,11 +26,20 @@ class Config(object):
         # Use this label (identified by color on trello) to mark all cards this
         # script manages.
         self.trello_label = 'purple'
+        self.github_2_trello_user = {}
+        self.trello_2_github_user = {}
 
     def load(self, filepath):
         data = yaml.load(file(filepath))
         for k,v in data.iteritems():
             setattr(self, k, v)
+        self.process()
+
+    def process(self):
+        # Build reverse lookup for users
+        self.trello_2_github_user = {}
+        for k,v in self.github_2_trello_user.iteritems():
+            self.trello_2_github_user[v] = k
 
 conf = Config()
 conf.load('github-trello-sync.yaml')
@@ -43,7 +52,7 @@ if not conf.github_password:
 
 
 #
-# Connect and get lists, cards, issues etc
+# Setup API objects
 #
 
 trello = TrelloApi(conf.trello_api_key, conf.trello_token)
@@ -60,35 +69,70 @@ github_org = github.get_organization('shadow-robot')
 #print "\n\n################ Boards ##################\n"
 #pp.pprint(board)
 
+
+#
+# User lists and mapping
+#
+# Note that trello forces all usernames to lowercase but github seems to
+# prserve case, so we make ALL names lowercase for matching
+
 # Get the list of trello_members
-trello_members = trello.boards.get_member(conf.shadow_board_id)
-pp.pprint(trello_members)
 trello_members_by_username = {}
-for m in trello_members:
-    trello_members_by_username[m['username']] = m
+for m in trello.boards.get_member(conf.shadow_board_id):
+    trello_members_by_username[m['username'].lower()] = m
 
 # Get the github members
 github_members_by_username = {}
 for m in github_org.get_members():
     print "Github member:%s"%m.login
-    github_members_by_username[m.login] = m
+    github_members_by_username[m.login.lower()] = m
 
 def github_2_trello_user(guser):
+    """
+    Maps a github user to a trello user.
+    @param Git user from api, a github.NamedUser.NamedUser object.
+    @return Trello user json, as returned by API.
+    """
     if guser is None:
         return None
-    if guser.login in trello_members_by_username:
-        return trello_members_by_username[guser.login]
+    name = guser.login.lower()
+    if name not in trello_members_by_username:
+        # Github and trello usernames dont match, so try config mapping
+        if name in conf.github_2_trello_user:
+            name = conf.github_2_trello_user[name]
+        else:
+            name = None
+    if name in trello_members_by_username:
+        return trello_members_by_username[name]
     print "WARNING: Failed to find trello user for github user:%s"%guser.login
     return None
 
 def trello_2_github_user(tuser):
+    """
+    Maps a trello user to a gihub user.
+    @param Trello user json, as returned by API.
+    @return Git user from api, a github.NamedUser.NamedUser object.
+    """
     if tuser is None:
         return None
-    if tuser['username'] in github_members_by_username:
-        return github_members_by_username[tuser['username']]
+    name = tuser['username'].lower()
+    if name not in github_members_by_username:
+        # Github and trello usernames dont match, so try config mapping
+        print "Hello didn't find %s"%name
+        if name in conf.trello_2_github_user:
+            name = conf.trello_2_github_user[name]
+        else:
+            name = None
+        print "Name is %s"%name
+    if name in github_members_by_username:
+        return github_members_by_username[name]
     print "WARNING: Failed to find github user for trello user:%s"%tuser['username']
     return None
 
+
+#
+# Trello cards and github issues
+#
 
 # Get the lists (the stacks of cards, e.g. Current, Backlog etc) from Trello
 lists = trello.boards.get_list(conf.shadow_board_id)
