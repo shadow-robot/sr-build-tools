@@ -2,13 +2,22 @@
 
 from pprint import PrettyPrinter
 from datetime import datetime
-import re, sys
+import re, sys, logging
 import yaml
 
 from trello import TrelloApi
 from github import Github
 
 pp = PrettyPrinter(indent=4)
+
+# Setup logging object
+log = logging.getLogger(__name__)
+log.setLevel(logging.INFO)
+ch = logging.StreamHandler()
+formatter = logging.Formatter('[%(asctime)s] %(levelname)s - %(message)s')
+ch.setFormatter(formatter)
+log.addHandler(ch)
+
 
 #
 # Config
@@ -59,7 +68,7 @@ trello = TrelloApi(conf.trello_api_key, conf.trello_token)
 # The conf.trello_token above is obtained by visiting this url in browser, while
 # logged in to trello
 token_url = trello.get_token_url('Shadow Sync', expires='30days', write_access=True)
-print "Token url:%s"%token_url
+log.info("Token url:%s"%token_url)
 
 github = Github(conf.github_user, conf.github_password)
 
@@ -84,7 +93,7 @@ for m in trello.boards.get_member(conf.shadow_board_id):
 # Get the github members
 github_members_by_username = {}
 for m in github_org.get_members():
-    print "Github member:%s"%m.login
+    log.info("Github member:%s"%m.login)
     github_members_by_username[m.login.lower()] = m
 
 def github_2_trello_user(guser):
@@ -104,7 +113,7 @@ def github_2_trello_user(guser):
             name = None
     if name in trello_members_by_username:
         return trello_members_by_username[name]
-    print "WARNING: Failed to find trello user for github user:%s"%guser.login
+    log.warn("Failed to find trello user for github user:%s"%guser.login)
     return None
 
 def trello_2_github_user(tuser):
@@ -118,15 +127,13 @@ def trello_2_github_user(tuser):
     name = tuser['username'].lower()
     if name not in github_members_by_username:
         # Github and trello usernames dont match, so try config mapping
-        print "Hello didn't find %s"%name
         if name in conf.trello_2_github_user:
             name = conf.trello_2_github_user[name]
         else:
             name = None
-        print "Name is %s"%name
     if name in github_members_by_username:
         return github_members_by_username[name]
-    print "WARNING: Failed to find github user for trello user:%s"%tuser['username']
+    log.warn("Failed to find github user for trello user:%s"%tuser['username'])
     return None
 
 
@@ -137,18 +144,17 @@ def trello_2_github_user(tuser):
 # Get the lists (the stacks of cards, e.g. Current, Backlog etc) from Trello
 lists = trello.boards.get_list(conf.shadow_board_id)
 new_card_list_id = None
-#pp.pprint(lists)
 lists_by_id = {}
 list_names = []
 for l in lists:
     list_names.append(l['name'])
     lists_by_id[l['id']] = l
-    print "Found list %s"%l['name']
+    log.info("Found list %s"%l['name'])
     if l['name'] == conf.new_card_list_name:
         new_card_list_id = l['id']
 
 if new_card_list_id is None:
-    print "ERROR: Couldn't find new card list: %s"%new_card_list_name
+    log.error("Couldn't find new card list: %s"%new_card_list_name)
     sys.exit(10)
 
 def get_github_issues():
@@ -158,7 +164,7 @@ def get_github_issues():
     """
     github_issues = {}
     for issue in github_org.get_issues(filter="all"):
-        print "Github issue: " + str(issue.id) + " " + str(issue.title)
+        log.info("Github issue: " + str(issue.id) + " " + str(issue.title))
         github_issues[str(issue.id)] = issue
     return github_issues
 
@@ -177,17 +183,16 @@ def get_trello_cards(github_issues):
             continue
         m = re.search(r'^Issue:\s*(\d+)\s*$', card['desc'], re.MULTILINE)
         if not m:
-            print "ERROR: Failed to get github issue id from card id:%s name:%s"%(card['id'], card['name'])
+            log.error("Failed to get github issue id from card id:%s name:%s"%(card['id'], card['name']))
             continue
         issue_id = m.group(1)
         list_name = lists_by_id[card['idList']]['name']
-        print "Found card %s for git issue: '%s' in %s"%(card['id'], issue_id, list_name)
+        log.info("Found card %s for git issue: '%s' in %s"%(card['id'], issue_id, list_name))
         # Find the matching github issue and link, set none if no issue found
         card['_github_issue'] = None
         if str(issue_id) in github_issues:
             card['_github_issue'] = github_issues[str(issue_id)]
         cards.append(card)
-    #pp.pprint(cards)
     return cards
 
 
@@ -231,6 +236,7 @@ def sync_card_issue(card, issue):
 
 def sync():
     """Sync cards and issues."""
+    log.info("Starting sync")
     github_issues = get_github_issues()
     cards = get_trello_cards(github_issues)
 
@@ -241,7 +247,7 @@ def sync():
         if str(issue.id) in card_issue_ids:
             continue
         card_name = issue_card_name(issue)
-        print "Adding card: %s"%(card_name)
+        log.info("Adding card: %s"%(card_name))
         new_card = trello.cards.new(card_name, new_card_list_id)
         # Add the card to the list so it will also get synced below, adding the
         # rest of its details, desc etc.
@@ -253,11 +259,13 @@ def sync():
     for card in cards:
         if not card['_github_issue']:
             # Close card where there is no issue
-            print "Archiving card %s (issue %s)"%(card['id'], card['_github_issue'].id)
+            log.info("Archiving card %s (issue %s)"%(card['id'], card['_github_issue'].id))
             trello.cards.update_closed(card['id'], "true")
         else:
             # Card is active so update
-            print "Syncing card %s (issue %s)"%(card['id'], card['_github_issue'].id)
+            log.info("Syncing card %s (issue %s)"%(card['id'], card['_github_issue'].id))
             sync_card_issue(card, card['_github_issue'])
+
+    log.info("Finished sync")
 
 sync()
