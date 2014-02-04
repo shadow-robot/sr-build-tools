@@ -148,7 +148,7 @@ log.setLevel(conf.log_level)
 trello = TrelloApi(conf.trello_api_key, conf.trello_token)
 # The conf.trello_token above is obtained by visiting this url in browser, while
 # logged in to trello
-token_url = trello.get_token_url('Shadow Sync', expires='30days', write_access=True)
+token_url = trello.get_token_url('Shadow Sync', expires='never', write_access=True)
 log.info("Token url:%s"%token_url)
 
 github = Github(conf.github_user, conf.github_password)
