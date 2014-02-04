@@ -329,27 +329,33 @@ def sync():
     card_issue_ids = [ str(c['_github_issue'].id)
             for c in cards if c['_github_issue'] is not None]
     for issue in github_issues.values():
-        if str(issue.id) in card_issue_ids:
-            continue
-        card_name = issue_card_name(issue)
-        log.info("Adding card: %s"%(card_name))
-        new_card = trello.cards.new(card_name, new_card_list_id)
-        # Add the card to the list so it will also get synced below, adding the
-        # rest of its details, desc etc.
-        new_card['_github_issue'] = issue
-        cards.append(new_card)
-        trello.cards.new_label(new_card['id'], conf.trello_label)
+        try:
+            if str(issue.id) in card_issue_ids:
+                continue
+            card_name = issue_card_name(issue)
+            log.info("Adding card: %s"%(card_name))
+            new_card = trello.cards.new(card_name, new_card_list_id)
+            # Add the card to the list so it will also get synced below, adding the
+            # rest of its details, desc etc.
+            new_card['_github_issue'] = issue
+            cards.append(new_card)
+            trello.cards.new_label(new_card['id'], conf.trello_label)
+        except Exception as e:
+            log.error(str(e))
 
     # Sync cards and issues
     for card in cards:
-        if not card['_github_issue']:
-            # Close card where there is no issue
-            log.info("Archiving card %s (issue %s)"%(card['id'], card['_github_issue_id']))
-            trello.cards.update_closed(card['id'], "true")
-        else:
-            # Card is active so update
-            log.info("Syncing card %s (issue %s)"%(card['id'], card['_github_issue'].id))
-            sync_card_issue(card, card['_github_issue'])
+        try:
+            if not card['_github_issue']:
+                # Close card where there is no issue
+                log.info("Archiving card %s (issue %s)"%(card['id'], card['_github_issue_id']))
+                trello.cards.update_closed(card['id'], "true")
+            else:
+                # Card is active so update
+                log.info("Syncing card %s (issue %s)"%(card['id'], card['_github_issue'].id))
+                sync_card_issue(card, card['_github_issue'])
+        except Exception as e:
+            log.error("Card %s: %s"%(card['id'], str(e)))
 
     end_t = time.time()
     dt = end_t - start_t
