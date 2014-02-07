@@ -46,14 +46,17 @@ The sync runs along these lines:
 * Github is generally considered the master source of infomation, trello the slave.
 * New issues get added as trello cards, labeled with trello 'Gitub' label (purple by default)
 * The script will only ever operate on cards with this 'github' label, ignoring others.
-* Any card on trello that no longer has a matching, open, issue on github gets
-  archived. i.e. closing github tickets removes them from trello.
+* Any card on trello that no longer has a matching, open, issue on github get
+  get moved to the Done list.
 * Then for each matching card, issue pair:
     * Card name set from issue repo name and title. Over-writes trello changes.
     * Card description (body text) set from github description. Over-writes trello changes.
     * If the issue has a user assigned on github but not in trello, the same user is assigned on trello.
     * If the trello card has a user assigned, set the assigned user on github
-      to match. i.e. trello controlls ticket assignment.
+      to match. i.e. trello controls ticket assignment.
+    * Any labels on Trello that have been given names that match labels in
+      github will be synced, the cards labels are made to match the github
+      ones.
 
 The description on the trello card gets a section added at the end with the
 github issue id it is linked to and a url link to the github website for that
