@@ -324,7 +324,7 @@ def sync():
     cards = get_trello_cards(github_issues)
 
     # Will throw key errors if we didn't find a match
-    new_card_list_id = lists[conf.new_card_list_name]['id']
+    new_card_list = lists[conf.new_card_list_name]
     done_list_id = lists[conf.done_list_name]['id']
 
     # Add cards for new github tickets
@@ -337,7 +337,8 @@ def sync():
                 continue
             card_name = issue_card_name(issue)
             log.info("Adding card: %s"%(card_name))
-            new_card = trello.cards.new(card_name, new_card_list_id)
+            new_card = trello.cards.new(card_name, new_card_list['id'])
+            new_card['_list'] = new_card_list
             new_card['_github_issue'] = issue
             # Add the card to the list so it will also get synced below, adding the
             # rest of its details, desc etc. Top of list so synced first.
