@@ -223,20 +223,12 @@ def trello_2_github_user(tuser):
 #
 
 # Get the lists (the stacks of cards, e.g. Current, Backlog etc) from Trello
-lists = trello.boards.get_list(conf.trello_board_id)
-new_card_list_id = None
+lists = {}
 lists_by_id = {}
-list_names = []
-for l in lists:
-    list_names.append(l['name'])
+for l in trello.boards.get_list(conf.trello_board_id):
+    lists[l['name']] = l
     lists_by_id[l['id']] = l
-    log.info("Found list %s"%l['name'])
-    if l['name'] == conf.new_card_list_name:
-        new_card_list_id = l['id']
-
-if new_card_list_id is None:
-    log.error("Couldn't find new card list: %s"%new_card_list_name)
-    sys.exit(10)
+log.info("Found lists: %s"%(", ".join(lists.keys())))
 
 def get_github_issues():
     """
@@ -299,7 +291,7 @@ def sync_card_issue(card, issue):
 
     # We label the issues in github with the list name from trello
     cur_labels = set(l.name for l in issue.labels)
-    new_labels = cur_labels - set(list_names) # Remove all list labels
+    new_labels = cur_labels - set(lists.keys()) # Remove all list labels
     new_labels.add(lists_by_id[card['idList']]['name']) # Add the 1 we want
     if not new_labels == cur_labels:
         issue.edit(labels=list(new_labels))
@@ -328,6 +320,7 @@ def sync():
     # Any issue not in this list is not in trello so needs adding
     card_issue_ids = [ str(c['_github_issue'].id)
             for c in cards if c['_github_issue'] is not None]
+    new_card_list_id = lists[conf.new_card_list_name]['id']
     for issue in github_issues.values():
         try:
             if str(issue.id) in card_issue_ids:
