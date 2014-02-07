@@ -224,6 +224,19 @@ def trello_2_github_user(tuser):
 # Trello lists, cards and github issues
 #
 
+trello_board = trello.boards.get(conf.trello_board_id)
+
+# Labels that have been given names, to match against github
+sync_labels = [n for n in trello_board['labelNames'].values() if n]
+
+def trello_label_name_2_color(name):
+    for k,v in trello_board['labelNames'].items():
+        if v == name: return k
+    raise KeyError(name)
+
+def trello_label_color_2_name(color):
+    return trello_board['labelNames'][color]
+
 # Get the lists (the stacks of cards, e.g. Current, Backlog etc) from Trello
 lists = {}
 lists_by_id = {}
@@ -297,11 +310,28 @@ def sync_card_issue(card, issue):
         trello.cards.update_desc(card['id'], desc)
 
     # We label the issues in github with the list name from trello
-    cur_labels = set(l.name for l in issue.labels)
-    new_labels = cur_labels - set(lists.keys()) # Remove all list labels
+    glabels = set(l.name for l in issue.labels)
+    log.debug("Github labels: %s"%glabels)
+    new_labels = glabels - set(lists.keys()) # Remove all list labels
     new_labels.add(card['_list']['name']) # Add the 1 we want
-    if not new_labels == cur_labels:
+    if not new_labels == glabels:
         issue.edit(labels=list(new_labels))
+
+    # Sync any matching label names from github -> trello
+    tlabels = set(l['name'] for l in card['labels'])
+    log.debug("Trello labels: %s"%tlabels)
+    new_labels = tlabels - set(sync_labels) # Remove all the sync labels
+    # Add sync_labels that match a github label
+    new_labels.update([n for n in glabels if n in sync_labels])
+    # Re-add the trello label so we stayed synced
+    new_labels.add(trello_label_color_2_name(conf.trello_label))
+    if not new_labels == tlabels:
+        for n in tlabels - new_labels:
+            log.debug("Delete label: %s"%n)
+            trello.cards.delete_label_color(trello_label_name_2_color(n), card['id'])
+        for n in new_labels - tlabels:
+            log.debug("Add label: %s"%n)
+            trello.cards.new_label(card['id'], trello_label_name_2_color(n))
 
     # Sync users
     members = trello.cards.get_member(card['id'])
