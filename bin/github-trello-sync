@@ -101,6 +101,8 @@ class Config(object):
         self.new_card_list_name = 'Backlog'
         # Where cards go when closed on github
         self.done_list_name = 'Done'
+        # Where cards go when they are re-opened
+        self.current_list_name = 'Current'
         self.github_user = ''
         self.github_password = ''
         self.github_organization = 'shadow-robot'
@@ -311,6 +313,11 @@ def sync_card_issue(card, issue):
     desc += "Issue: %s\n"%(issue.id)
     if not desc == card['desc']:
         trello.cards.update_desc(card['id'], desc)
+
+    # Check for re-opend issues
+    if card['_list']['name'] == conf.done_list_name:
+        log.info("Re-opening card %s moving to %s"%(card['id'], conf.current_list_name))
+        trello.cards.update_idList(card['id'], lists[conf.current_list_name]['id'])
 
     # We label the issues in github with the list name from trello
     glabels = set(l.name for l in issue.labels)
