@@ -301,7 +301,7 @@ def get_trello_cards(github_issues):
 #
 
 def issue_card_name(issue):
-    return "[" + issue.repository.name + "] " + str(issue.title)
+    return "[" + issue.repository.name + "] #" + str(issue.number) + " " + str(issue.title)
 
 def sync_card_issue(card, issue):
     name = issue_card_name(issue)
