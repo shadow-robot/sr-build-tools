@@ -259,15 +259,20 @@ def get_trello_cards(github_issues):
             log.error("Failed to get github issue id from card id:%s name:%s"%(card['id'], card['name']))
             continue
         issue_id = m.group(1)
-        list_name = lists_by_id[card['idList']]['name']
-        log.info("Found card %s for git issue: '%s' in %s"%(card['id'], issue_id, list_name))
+
         # Add the parsed issue id, useful when no matching issue object found
         card['_github_issue_id'] = issue_id
         # Find the matching github issue and link, set none if no issue found
         card['_github_issue'] = None
         if str(issue_id) in github_issues:
             card['_github_issue'] = github_issues[str(issue_id)]
+
+        # Link the list in for easy access later
+        card['_list'] = lists_by_id[card['idList']]
+
         cards.append(card)
+        log.info("Found card %s for git issue: '%s' in %s"%(
+            card['id'], issue_id, card['_list']['name']))
     return cards
 
 
@@ -292,7 +297,7 @@ def sync_card_issue(card, issue):
     # We label the issues in github with the list name from trello
     cur_labels = set(l.name for l in issue.labels)
     new_labels = cur_labels - set(lists.keys()) # Remove all list labels
-    new_labels.add(lists_by_id[card['idList']]['name']) # Add the 1 we want
+    new_labels.add(card['_list']['name']) # Add the 1 we want
     if not new_labels == cur_labels:
         issue.edit(labels=list(new_labels))
 
