@@ -63,6 +63,11 @@ github issue id it is linked to and a url link to the github website for that
 issue. This embedded issue id is how the script matches the cards to their
 issues.
 
+== Links ==
+
+* http://jacquev6.github.io/PyGithub/
+* http://pythonhosted.org//trello/
+
 """
 
 from pprint import PrettyPrinter
