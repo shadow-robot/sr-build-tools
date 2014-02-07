@@ -338,10 +338,10 @@ def sync():
             card_name = issue_card_name(issue)
             log.info("Adding card: %s"%(card_name))
             new_card = trello.cards.new(card_name, new_card_list_id)
-            # Add the card to the list so it will also get synced below, adding the
-            # rest of its details, desc etc.
             new_card['_github_issue'] = issue
-            cards.append(new_card)
+            # Add the card to the list so it will also get synced below, adding the
+            # rest of its details, desc etc. Top of list so synced first.
+            cards.insert(0, new_card)
             trello.cards.new_label(new_card['id'], conf.trello_label)
         except Exception as e:
             log.error(str(e))
