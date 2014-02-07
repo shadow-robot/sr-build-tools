@@ -96,6 +96,8 @@ class Config(object):
         self.trello_label = 'purple'
         # List name to add new cards to ie new tickets coming in
         self.new_card_list_name = 'Backlog'
+        # Where cards go when closed on github
+        self.done_list_name = 'Done'
         self.github_user = ''
         self.github_password = ''
         self.github_organization = 'shadow-robot'
@@ -321,11 +323,14 @@ def sync():
     github_issues = get_github_issues()
     cards = get_trello_cards(github_issues)
 
+    # Will throw key errors if we didn't find a match
+    new_card_list_id = lists[conf.new_card_list_name]['id']
+    done_list_id = lists[conf.done_list_name]['id']
+
     # Add cards for new github tickets
     # Any issue not in this list is not in trello so needs adding
     card_issue_ids = [ str(c['_github_issue'].id)
             for c in cards if c['_github_issue'] is not None]
-    new_card_list_id = lists[conf.new_card_list_name]['id']
     for issue in github_issues.values():
         try:
             if str(issue.id) in card_issue_ids:
@@ -346,8 +351,9 @@ def sync():
         try:
             if not card['_github_issue']:
                 # Close card where there is no issue
-                log.info("Archiving card %s (issue %s)"%(card['id'], card['_github_issue_id']))
-                trello.cards.update_closed(card['id'], "true")
+                log.info("Card Done %s (issue %s)"%(card['id'], card['_github_issue_id']))
+                # archive:trello.cards.update_closed(card['id'], "true")
+                trello.cards.update_idList(card['id'], done_list_id)
             else:
                 # Card is active so update
                 log.info("Syncing card %s (issue %s)"%(card['id'], card['_github_issue'].id))
