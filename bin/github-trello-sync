@@ -306,12 +306,14 @@ def issue_card_name(issue):
 def sync_card_issue(card, issue):
     name = issue_card_name(issue)
     if not name == card['name']:
+        log.debug("Updating name:%s -> %s"%(card['name'], name))
         trello.cards.update_name(card['id'], name)
 
     desc = issue.body + "\n\n"
     desc += "URL: %s\n"%(issue.html_url)
     desc += "Issue: %s\n"%(issue.id)
     if not desc == card['desc']:
+        log.debug("Updating description")
         trello.cards.update_desc(card['id'], desc)
 
     # Check for re-opend issues
@@ -325,6 +327,7 @@ def sync_card_issue(card, issue):
     new_labels = glabels - set(lists.keys()) # Remove all list labels
     new_labels.add(card['_list']['name']) # Add the 1 we want
     if not new_labels == glabels:
+        log.debug("Setting github labels %s -> %s"%(glabels, new_labels))
         issue.edit(labels=list(new_labels))
 
     # Sync any matching label names from github -> trello
@@ -347,13 +350,14 @@ def sync_card_issue(card, issue):
     members = trello.cards.get_member(card['id'])
     tuser = github_2_trello_user(issue.assignee)
     if not members and tuser:
-        # Github user set but trello not set - set trello to github
+        log.debug("Github user set but trello not set - set trello to github")
         trello.cards.new_member(card['id'], tuser['id'])
     elif members:
         # Card is assigned so update github
         if not tuser or not tuser['id'] == members[0]['id']:
             guser = trello_2_github_user(members[0])
             if guser:
+                log.debug("Updating github issue assignee")
                 issue.edit(assignee=guser)
 
 def sync():
