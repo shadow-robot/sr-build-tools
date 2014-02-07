@@ -348,8 +348,9 @@ def sync_card_issue(card, issue):
             log.debug("Delete label: %s"%n)
             trello.cards.delete_label_color(trello_label_name_2_color(n), card['id'])
         for n in new_labels - tlabels:
-            log.debug("Add label: %s"%n)
-            trello.cards.new_label(card['id'], trello_label_name_2_color(n))
+            col = trello_label_name_2_color(n)
+            log.debug("Add label: %s %s"%(n,col))
+            trello.cards.new_label(card['id'], col)
 
     # Sync users
     members = trello.cards.get_member(card['id'])
@@ -392,7 +393,6 @@ def sync():
             # Add the card to the list so it will also get synced below, adding the
             # rest of its details, desc etc. Top of list so synced first.
             cards.insert(0, new_card)
-            trello.cards.new_label(new_card['id'], conf.trello_label)
         except Exception as e:
             log.error(str(e))
 
@@ -400,10 +400,10 @@ def sync():
     for card in cards:
         try:
             if not card['_github_issue']:
-                # Close card where there is no issue
-                log.info("Card Done %s (issue %s)"%(card['id'], card['_github_issue_id']))
-                # archive:trello.cards.update_closed(card['id'], "true")
-                trello.cards.update_idList(card['id'], done_list_id)
+                if not card['_list']['name'] == conf.done_list_name:
+                    # No active issue so move to Done (but only once!)
+                    log.info("Card Done %s (issue %s)"%(card['id'], card['_github_issue_id']))
+                    trello.cards.update_idList(card['id'], done_list_id)
             else:
                 # Card is active so update
                 log.info("Syncing card %s (issue %s)"%(card['id'], card['_github_issue'].id))
