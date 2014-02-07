@@ -243,12 +243,12 @@ def trello_label_color_2_name(color):
     return trello_board['labelNames'][color]
 
 # Get the lists (the stacks of cards, e.g. Current, Backlog etc) from Trello
-lists = {}
-lists_by_id = {}
+trello_lists = {}
+trello_lists_by_id = {}
 for l in trello.boards.get_list(conf.trello_board_id):
-    lists[l['name']] = l
-    lists_by_id[l['id']] = l
-log.info("Found lists: %s"%(", ".join(lists.keys())))
+    trello_lists[l['name']] = l
+    trello_lists_by_id[l['id']] = l
+log.info("Found lists: %s"%(", ".join(trello_lists.keys())))
 
 def get_github_issues():
     """
@@ -288,7 +288,7 @@ def get_trello_cards(github_issues):
             card['_github_issue'] = github_issues[str(issue_id)]
 
         # Link the list in for easy access later
-        card['_list'] = lists_by_id[card['idList']]
+        card['_list'] = trello_lists_by_id[card['idList']]
 
         cards.append(card)
         log.info("Found card %s for git issue: '%s' in %s"%(
@@ -319,12 +319,12 @@ def sync_card_issue(card, issue):
     # Check for re-opend issues
     if card['_list']['name'] == conf.done_list_name:
         log.info("Re-opening card %s moving to %s"%(card['id'], conf.current_list_name))
-        trello.cards.update_idList(card['id'], lists[conf.current_list_name]['id'])
+        trello.cards.update_idList(card['id'], trello_lists[conf.current_list_name]['id'])
 
     # We label the issues in github with the list name from trello
     glabels = set(l.name for l in issue.labels)
     log.debug("Github labels: %s"%glabels)
-    new_labels = glabels - set(lists.keys()) # Remove all list labels
+    new_labels = glabels - set(trello_lists.keys()) # Remove all list labels
     new_labels.add(card['_list']['name']) # Add the 1 we want
     if not new_labels == glabels:
         log.debug("Setting github labels %s -> %s"%(glabels, new_labels))
@@ -368,8 +368,8 @@ def sync():
     cards = get_trello_cards(github_issues)
 
     # Will throw key errors if we didn't find a match
-    new_card_list = lists[conf.new_card_list_name]
-    done_list_id = lists[conf.done_list_name]['id']
+    new_card_list = trello_lists[conf.new_card_list_name]
+    done_list_id = trello_lists[conf.done_list_name]['id']
 
     # Add cards for new github tickets
     # Any issue not in this list is not in trello so needs adding
