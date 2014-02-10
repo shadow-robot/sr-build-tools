@@ -46,19 +46,27 @@ The sync runs along these lines:
 * Github is generally considered the master source of infomation, trello the slave.
 * New issues get added as trello cards, labeled with trello 'Gitub' label (purple by default)
 * The script will only ever operate on cards with this 'github' label, ignoring others.
-* Any card on trello that no longer has a matching, open, issue on github gets
-  archived. i.e. closing github tickets removes them from trello.
+* Any card on trello that no longer has a matching, open, issue on github get
+  get moved to the Done list.
 * Then for each matching card, issue pair:
     * Card name set from issue repo name and title. Over-writes trello changes.
     * Card description (body text) set from github description. Over-writes trello changes.
     * If the issue has a user assigned on github but not in trello, the same user is assigned on trello.
     * If the trello card has a user assigned, set the assigned user on github
-      to match. i.e. trello controlls ticket assignment.
+      to match. i.e. trello controls ticket assignment.
+    * Any labels on Trello that have been given names that match labels in
+      github will be synced, the cards labels are made to match the github
+      ones.
 
 The description on the trello card gets a section added at the end with the
 github issue id it is linked to and a url link to the github website for that
 issue. This embedded issue id is how the script matches the cards to their
 issues.
+
+== Links ==
+
+* http://jacquev6.github.io/PyGithub/
+* http://pythonhosted.org//trello/
 
 """
 
@@ -96,6 +104,10 @@ class Config(object):
         self.trello_label = 'purple'
         # List name to add new cards to ie new tickets coming in
         self.new_card_list_name = 'Backlog'
+        # Where cards go when closed on github
+        self.done_list_name = 'Done'
+        # Where cards go when they are re-opened
+        self.current_list_name = 'Current'
         self.github_user = ''
         self.github_password = ''
         self.github_organization = 'shadow-robot'
@@ -222,21 +234,26 @@ def trello_2_github_user(tuser):
 # Trello lists, cards and github issues
 #
 
-# Get the lists (the stacks of cards, e.g. Current, Backlog etc) from Trello
-lists = trello.boards.get_list(conf.trello_board_id)
-new_card_list_id = None
-lists_by_id = {}
-list_names = []
-for l in lists:
-    list_names.append(l['name'])
-    lists_by_id[l['id']] = l
-    log.info("Found list %s"%l['name'])
-    if l['name'] == conf.new_card_list_name:
-        new_card_list_id = l['id']
+trello_board = trello.boards.get(conf.trello_board_id)
 
-if new_card_list_id is None:
-    log.error("Couldn't find new card list: %s"%new_card_list_name)
-    sys.exit(10)
+# Labels that have been given names, to match against github
+sync_labels = [n for n in trello_board['labelNames'].values() if n]
+
+def trello_label_name_2_color(name):
+    for k,v in trello_board['labelNames'].items():
+        if v == name: return k
+    raise KeyError(name)
+
+def trello_label_color_2_name(color):
+    return trello_board['labelNames'][color]
+
+# Get the lists (the stacks of cards, e.g. Current, Backlog etc) from Trello
+trello_lists = {}
+trello_lists_by_id = {}
+for l in trello.boards.get_list(conf.trello_board_id):
+    trello_lists[l['name']] = l
+    trello_lists_by_id[l['id']] = l
+log.info("Found lists: %s"%(", ".join(trello_lists.keys())))
 
 def get_github_issues():
     """
@@ -267,15 +284,20 @@ def get_trello_cards(github_issues):
             log.error("Failed to get github issue id from card id:%s name:%s"%(card['id'], card['name']))
             continue
         issue_id = m.group(1)
-        list_name = lists_by_id[card['idList']]['name']
-        log.info("Found card %s for git issue: '%s' in %s"%(card['id'], issue_id, list_name))
+
         # Add the parsed issue id, useful when no matching issue object found
         card['_github_issue_id'] = issue_id
         # Find the matching github issue and link, set none if no issue found
         card['_github_issue'] = None
         if str(issue_id) in github_issues:
             card['_github_issue'] = github_issues[str(issue_id)]
+
+        # Link the list in for easy access later
+        card['_list'] = trello_lists_by_id[card['idList']]
+
         cards.append(card)
+        log.info("Found card %s for git issue: '%s' in %s"%(
+            card['id'], issue_id, card['_list']['name']))
     return cards
 
 
@@ -284,37 +306,64 @@ def get_trello_cards(github_issues):
 #
 
 def issue_card_name(issue):
-    return "[" + issue.repository.name + "] " + str(issue.title)
+    return "[" + issue.repository.name + "] #" + str(issue.number) + " " + str(issue.title)
 
 def sync_card_issue(card, issue):
     name = issue_card_name(issue)
     if not name == card['name']:
+        log.debug("Updating name:%s -> %s"%(card['name'], name))
         trello.cards.update_name(card['id'], name)
 
     desc = issue.body + "\n\n"
     desc += "URL: %s\n"%(issue.html_url)
     desc += "Issue: %s\n"%(issue.id)
     if not desc == card['desc']:
+        log.debug("Updating description")
         trello.cards.update_desc(card['id'], desc)
 
+    # Check for re-opend issues
+    if card['_list']['name'] == conf.done_list_name:
+        log.info("Re-opening card %s moving to %s"%(card['id'], conf.current_list_name))
+        trello.cards.update_idList(card['id'], trello_lists[conf.current_list_name]['id'])
+
     # We label the issues in github with the list name from trello
-    cur_labels = set(l.name for l in issue.labels)
-    new_labels = cur_labels - set(list_names) # Remove all list labels
-    new_labels.add(lists_by_id[card['idList']]['name']) # Add the 1 we want
-    if not new_labels == cur_labels:
+    glabels = set(l.name for l in issue.labels)
+    log.debug("Github labels: %s"%glabels)
+    new_labels = glabels - set(trello_lists.keys()) # Remove all list labels
+    new_labels.add(card['_list']['name']) # Add the 1 we want
+    if not new_labels == glabels:
+        log.debug("Setting github labels %s -> %s"%(glabels, new_labels))
         issue.edit(labels=list(new_labels))
+
+    # Sync any matching label names from github -> trello
+    tlabels = set(l['name'] for l in card['labels'])
+    log.debug("Trello labels: %s"%tlabels)
+    new_labels = tlabels - set(sync_labels) # Remove all the sync labels
+    # Add sync_labels that match a github label
+    new_labels.update([n for n in glabels if n in sync_labels])
+    # Re-add the trello label so we stayed synced
+    new_labels.add(trello_label_color_2_name(conf.trello_label))
+    if not new_labels == tlabels:
+        for n in tlabels - new_labels:
+            log.debug("Delete label: %s"%n)
+            trello.cards.delete_label_color(trello_label_name_2_color(n), card['id'])
+        for n in new_labels - tlabels:
+            col = trello_label_name_2_color(n)
+            log.debug("Add label: %s %s"%(n,col))
+            trello.cards.new_label(card['id'], col)
 
     # Sync users
     members = trello.cards.get_member(card['id'])
     tuser = github_2_trello_user(issue.assignee)
     if not members and tuser:
-        # Github user set but trello not set - set trello to github
+        log.debug("Github user set but trello not set - set trello to github")
         trello.cards.new_member(card['id'], tuser['id'])
     elif members:
         # Card is assigned so update github
         if not tuser or not tuser['id'] == members[0]['id']:
             guser = trello_2_github_user(members[0])
             if guser:
+                log.debug("Updating github issue assignee")
                 issue.edit(assignee=guser)
 
 def sync():
@@ -323,6 +372,10 @@ def sync():
     start_t = time.time()
     github_issues = get_github_issues()
     cards = get_trello_cards(github_issues)
+
+    # Will throw key errors if we didn't find a match
+    new_card_list = trello_lists[conf.new_card_list_name]
+    done_list_id = trello_lists[conf.done_list_name]['id']
 
     # Add cards for new github tickets
     # Any issue not in this list is not in trello so needs adding
@@ -334,12 +387,12 @@ def sync():
                 continue
             card_name = issue_card_name(issue)
             log.info("Adding card: %s"%(card_name))
-            new_card = trello.cards.new(card_name, new_card_list_id)
-            # Add the card to the list so it will also get synced below, adding the
-            # rest of its details, desc etc.
+            new_card = trello.cards.new(card_name, new_card_list['id'])
+            new_card['_list'] = new_card_list
             new_card['_github_issue'] = issue
-            cards.append(new_card)
-            trello.cards.new_label(new_card['id'], conf.trello_label)
+            # Add the card to the list so it will also get synced below, adding the
+            # rest of its details, desc etc. Top of list so synced first.
+            cards.insert(0, new_card)
         except Exception as e:
             log.error(str(e))
 
@@ -347,9 +400,10 @@ def sync():
     for card in cards:
         try:
             if not card['_github_issue']:
-                # Close card where there is no issue
-                log.info("Archiving card %s (issue %s)"%(card['id'], card['_github_issue_id']))
-                trello.cards.update_closed(card['id'], "true")
+                if not card['_list']['name'] == conf.done_list_name:
+                    # No active issue so move to Done (but only once!)
+                    log.info("Card Done %s (issue %s)"%(card['id'], card['_github_issue_id']))
+                    trello.cards.update_idList(card['id'], done_list_id)
             else:
                 # Card is active so update
                 log.info("Syncing card %s (issue %s)"%(card['id'], card['_github_issue'].id))
