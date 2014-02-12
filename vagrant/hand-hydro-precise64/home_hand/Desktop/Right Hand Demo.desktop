@@ -1,0 +1,12 @@
+
+[Desktop Entry]
+Version=1.0
+Type=Application
+Terminal=false
+Icon[en_GB]=gnome-panel-launcher
+Name[en_GB]=Right Hand Demo
+Exec=xterm -hold -title "demo" -e "~/scripts/start_right_hand_demo.sh"
+Name=Right Hand Demo
+Icon=/usr/share/icons/hicolor/scalable/apps/gnome-nettool.svg
+GenericName[en_GB.utf8]=Right Demo of the hand
+Comment[en_GB.utf8]=Press the fingertips to move the hand
