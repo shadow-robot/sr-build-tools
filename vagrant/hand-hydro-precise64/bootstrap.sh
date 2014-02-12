@@ -104,7 +104,7 @@ fi
 if [ -d "$hand_home" ]; then
     echo Using existing $hand_home. Assuming user is $hand_user.
 else
-    adduser --home "$hand_home" --disabled-login $hand_user
+    adduser --home "$hand_home" --disabled-login --gecos='Shadow Hand,,,' $hand_user
     echo "$hand_user:$hand_password" | chpasswd
     echo Added user $hand_user
 fi
