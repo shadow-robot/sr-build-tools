@@ -54,11 +54,10 @@ fi
 # Set the "seen" flag for debconf questions that --yes fails for.
 # cluster is still non-interactive, see above.
 # Except you can't set the "seen" flag for something that isn't installed
-# so also set some sane defaults
-cat <<EOF | debconf-set-selections
-#gdm     shared/default-x-display-manager seen true
-hddtemp hddtemp/daemon seen true
-EOF
+#cat <<EOF | debconf-set-selections
+##gdm     shared/default-x-display-manager seen true
+#hddtemp hddtemp/daemon seen true
+#EOF
 
 echo Activating restricted, universe, multiverse
 release=$(lsb_release -sc)
