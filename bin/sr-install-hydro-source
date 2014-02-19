@@ -7,6 +7,7 @@
     wget http://packages.ros.org/ros.key -O - | sudo apt-key add -
     sudo apt-get update -y
     sudo apt-get install ros-hydro-desktop-full -y
+    sudo apt-get install ros-hydro-cmake-modules -y
 
 echo ROS UBUNTU installed sucessfully
 
@@ -41,7 +42,7 @@ echo ROS UBUNTU installed sucessfully
     rosdep install shadow_robot_ethercat -y
     rosdep install sr_visualization -y
     rosdep install sr_config -y
-    rosdep install sr_teleop -y
+    #rosdep install sr_teleop -y
     rosdep install sr_movements -y
     rosdep install sr_edc_ethercat_drivers -y
     
