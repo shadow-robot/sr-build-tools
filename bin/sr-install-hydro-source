@@ -1,0 +1,85 @@
+#!/bin/bash
+
+
+#Install ROS hydro
+
+    sudo sh -c 'echo "deb http://packages.ros.org/ros/ubuntu precise main" > /etc/apt/sources.list.d/ros-latest.list'
+    wget http://packages.ros.org/ros.key -O - | sudo apt-key add -
+    sudo apt-get update -y
+    sudo apt-get install ros-hydro-desktop-full -y
+
+echo ROS UBUNTU installed sucessfully
+
+# Install Shadow Software
+
+    sudo apt-get install ros-hydro-pr2-robot -y
+    sudo apt-get install python-rosinstall -y
+    sudo apt-get install python-rosdep -y
+    sudo apt-get install git -y
+
+    source /opt/ros/hydro/setup.bash
+    mkdir -p ~/workspace/src
+    cd ~/workspace/src
+    catkin_init_workspace
+    cd ~/workspace/
+    catkin_make
+    source devel/setup.bash
+
+    
+    
+    wstool set  shadow_robot --git https://github.com/shadow-robot/sr-ros-interface.git -v hydro-devel -y 
+    wstool set  shadow_robot_ethercat --git https://github.com/shadow-robot/sr-ros-interface-ethercat.git -v hydro-devel -y
+    wstool set  sr_visualization --git https://github.com/shadow-robot/sr-visualization.git -v hydro-devel -y
+    wstool set  sr_config --git https://github.com/shadow-robot/sr-config.git -v hydro-devel -y
+    wstool update
+    
+    source devel/setup.bash
+    echo source ~/workspace/devel/setup.bash >> ~/.bashrc
+
+    sudo rosdep init -y
+    rosdep update -y
+
+    rosdep install shadow_robot -y
+    rosdep install shadow_robot_ethercat -y
+    rosdep install sr_visualization -y
+    rosdep install sr_config -y
+    rosdep install sr_teleop -y
+    rosdep install sr_movements -y
+    rosdep install sr_edc_ethercat_drivers -y
+    
+    cd ~/workspace
+    catkin_make
+
+
+echo Shadow Software installed sucessfully
+
+# Install Extra Applications
+
+    sudo apt-get install ssh -y
+    sudo apt-get install nfs-common -y
+    sudo apt-get install qgit -y
+
+echo Extra Application installed sucessully
+
+# Set the Desktop Icons
+
+    mkdir ~/mount_home
+    sudo mount -a 10.1.1.11:/home/  ~/mount_home/
+    cp -r  ~/mount_home/shadow/icon_folder/scripts  ~/
+    cp ~/mount_home/shadow/icon_folder/Desktop/*  ~/Desktop/
+    sudo umount ~/mount_home
+    rmdir ~/mount_home
+
+echo Desktop Icons placed successfully
+
+# Install BioTac plug-in
+
+#    cd ~/workspace
+#    svn co http://syntouch.googlecode.com/svn/trunk/qt_ros
+#    echo - other: {local-name: qt_ros} >> ~/workspace/.rosinstall
+#    source ~/workspace/setup.bash
+#    rosmake st_biotac_gui   
+
+#echo BioTac plug-in installed successfully
+
+echo INSTALATION COMPLETED. WELL DONE 
