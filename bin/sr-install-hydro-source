@@ -31,7 +31,7 @@ echo ROS UBUNTU installed sucessfully
     git clone https://github.com/shadow-robot/sr-visualization.git -b hydro-devel sr_visualization
     git clone https://github.com/shadow-robot/sr-config.git -b hydro-devel sr_config
     
-    source devel/setup.bash
+    source ~/workspace/devel/setup.bash
     echo source ~/workspace/devel/setup.bash >> ~/.bashrc
 
     sudo rosdep init -y
