@@ -24,14 +24,12 @@ echo ROS UBUNTU installed sucessfully
     cd ~/workspace/
     catkin_make
     source devel/setup.bash
-
+    cd ~/workspace/src
     
-    
-    wstool set  shadow_robot --git https://github.com/shadow-robot/sr-ros-interface.git -v hydro-devel -y 
-    wstool set  shadow_robot_ethercat --git https://github.com/shadow-robot/sr-ros-interface-ethercat.git -v hydro-devel -y
-    wstool set  sr_visualization --git https://github.com/shadow-robot/sr-visualization.git -v hydro-devel -y
-    wstool set  sr_config --git https://github.com/shadow-robot/sr-config.git -v hydro-devel -y
-    wstool update
+    git clone https://github.com/shadow-robot/sr-ros-interface.git -b hydro-devel shadow_robot
+    git clone https://github.com/shadow-robot/sr-ros-interface-ethercat.git -b hydro-devel shadow_robot_ethercat
+    git clone https://github.com/shadow-robot/sr-visualization.git -b hydro-devel sr_visualization
+    git clone https://github.com/shadow-robot/sr-config.git -b hydro-devel sr_config
     
     source devel/setup.bash
     echo source ~/workspace/devel/setup.bash >> ~/.bashrc
