@@ -1,0 +1,89 @@
+#!/bin/bash
+
+#
+# Boot strap a machine with ROS.
+# It is safe to run this script multiple times.
+#
+
+set -e # Stop on errors
+#set -x # echo commands
+
+export ros_release='hydro'
+apt_opt="-q --yes"
+
+# Options
+usage() {
+    echo Usage: $0 "[-rRELEASE]"
+    echo
+    echo ' -r ROS version to install. Default: hydro'
+    echo
+    exit 0
+}
+while getopts "hr:" opt; do
+    case $opt in
+        '?'|h|:|\?)
+            usage
+        ;;
+        r)
+            ros_release=$OPTARG
+        ;;
+    esac
+done
+shift $((OPTIND-1))
+
+# Are we root?
+if [ "$(id -u)" != "0" ]; then
+    echo "Not root!"
+    exit 10
+fi
+
+#
+# Setup apt sources etc for installing ros
+# http://wiki.ros.org/hydro/Installation/Ubuntu
+
+# Set the "seen" flag for debconf questions that --yes fails for.
+# cluster is still non-interactive, see above.
+# Except you can't set the "seen" flag for something that isn't installed
+#cat <<EOF | debconf-set-selections
+##gdm     shared/default-x-display-manager seen true
+#hddtemp hddtemp/daemon seen true
+#EOF
+
+echo Activating restricted, universe, multiverse
+release=$(lsb_release -sc)
+bak_file=""
+sed -i".bak-$(date +'%Y%m%d-%H%M%S')" "s/^#\(deb.*$release\(-updates\)\? \(restricted\|universe\|multiverse\)\)/\1/" /etc/apt/sources.list
+# Add ros repo
+echo "deb http://packages.ros.org/ros/ubuntu $release main" > /etc/apt/sources.list.d/ros-latest.list
+
+echo Adding the ros key
+wget http://packages.ros.org/ros.key -O - | sudo apt-key add -
+
+echo Updating apt
+apt-get update $apt_opt
+apt-get dist-upgrade $apt_opt
+
+echo Installing packages
+# git  - to setup user, grab shadow code
+# python-yaml - handy for the build tools
+#apt-get install $apt_opt git qgit python-yaml ntp acpid
+apt-get install $apt_opt python-wstool
+#apt-get install $apt_opt screen tmux terminator
+
+echo Installing desktop system
+# Used when starting from a vagrant base image
+apt-get install $apt_opt ubuntu-desktop
+
+
+#
+# Bootstrap ROS
+#
+echo Installing ROS $version 
+apt-get install $apt_opt ros-$ros_release-desktop-full
+
+source /opt/ros/$ros_release/setup.bash
+if [ ! -f "/etc/ros/rosdep/sources.list.d/20-default.list" ]; then
+    rosdep init
+fi
+
+echo DONE
