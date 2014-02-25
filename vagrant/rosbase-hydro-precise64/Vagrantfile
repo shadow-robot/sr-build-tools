@@ -42,8 +42,9 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # the path on the guest to mount the folder. And the optional third
   # argument is a set of non-required options.
   # config.vm.synced_folder "../data", "/vagrant_data"
-  # Map a folder so we can access puppet stuff. Used for modulepath below.
-  config.vm.synced_folder "../../puppet", "/vagrant_puppet"
+  #
+  # Map a folder so we can access our puppet modules, in the default modulepath.
+  config.vm.synced_folder "../../puppet/modules", "/usr/share/puppet/modules"
 
   # VirtualBox
   #
@@ -58,18 +59,26 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # Shell provisioning
   #
   #config.vm.provision :shell, :path => "../../bin/foo", :args => "-r hydro"
-  # Install puppet modules we need.
-  config.vm.provision :shell, inline: "puppet module install -f puppetlabs/apt"
+  # Install module to /etc/puppet/module on the default path.
+  #config.vm.provision :shell, inline: "puppet module install -f puppetlabs/apt"
 
-  # Enable provisioning with Puppet stand alone.
+  # Provisioning with Puppet stand alone.
   #
+  # First we run a small puppet job to prepare the machine for the full job,
+  # installs modules into /etc/puppet/modules, on the default modulepath along
+  # with the shared folder above..
   config.vm.provision :puppet do |puppet|
     puppet.manifests_path = "../../puppet/manifests"
-    #puppet.module_path    = "../../puppet/modules"
+    puppet.manifest_file  = "puppet_bootstrap.pp"
+  end
+  # The main puppet provision
+  # Note: Don't set module_path, handled by puppet_bootstrap.pp and sync folder.
+  config.vm.provision :puppet do |puppet|
+    puppet.manifests_path = "../../puppet/manifests"
     puppet.manifest_file  = "rosbase.pp"
-    puppet.options  = "--modulepath='/vagrant_puppet/modules:/etc/puppet/modules'"
-    # custom facts provided to Puppet
+    #puppet.options        = "--verbose"
     puppet.facter = {
+        # custom facts provided to Puppet
         "is_vagrant" => true,
     }
   end
