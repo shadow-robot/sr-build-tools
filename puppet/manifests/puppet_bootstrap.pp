@@ -22,5 +22,6 @@ file { '/etc/puppet/modules':
 
 exec { 'puppet module install puppetlabs/apt':
   creates => '/etc/puppet/modules/apt/manifests/init.pp',
+  require => File['/etc/puppet/modules']
 }
 
