@@ -19,11 +19,19 @@
 # - http://wiki.ros.org/hydro/Installation/Ubuntu
 #
 define ros::user (
-  #$name   = $title,
-  $ensure = present,
+  # name           = the the users name
+  $ensure          = present,
+  $ros_release     = "hydro",
+  $workspace_setup = "",
 ) {
   # XXX Should we depend on ros::install here?
-  notify { "User: $name": }
+
+  if $workspace_setup == "" {
+    $_workspace_setup = "/opt/ros/$ros_release/setup.bash"
+  }
+  else {
+    $_workspace_setup = $workspace_setup
+  }
 
   group { 'ros':
     ensure => present
@@ -32,6 +40,7 @@ define ros::user (
   user { "$name":
     ensure     => present,
     shell      => '/bin/bash',
+    home       => "/home/$name",
     gid        => "ros",
     password   => "ros",
     managehome => true,
@@ -43,5 +52,14 @@ define ros::user (
       command   => "/bin/su $name - -c '/usr/bin/rosdep update'",
       logoutput => on_failure,
       require   => Exec['rosdep-init'],
+  }
+
+  # Sort the bashrc
+  exec { "clean-bashrc-$name":
+    command => "sed -i\".bak-$(date +\'%F-%T\')\" /^source.*setup.bash.*$/d /home/$name/.bashrc"
+  }
+  ->
+  exec { "bashrc-$name":
+    command => "echo 'source $_workspace_setup' >> /home/$name/.bashrc"
   }
 }
