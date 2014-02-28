@@ -9,7 +9,5 @@ package {
 
 ros::install { 'hydro': }
 
-group { 'ros':
-  ensure => present
-}
+ros::user { 'ros': }
 
