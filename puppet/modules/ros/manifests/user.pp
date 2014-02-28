@@ -15,6 +15,9 @@
 # Sample Usage:
 #  ros::user { 'ros': }
 #
+# See Also:
+# - http://wiki.ros.org/hydro/Installation/Ubuntu
+#
 define ros::user (
   #$name   = $title,
   $ensure = present,
