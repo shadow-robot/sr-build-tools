@@ -15,6 +15,9 @@ Exec {
   logoutput => true,
 }
 
+# Tool to get facts
+package { 'facter': ensure => present }
+
 # On the default modulepath for the root user
 file { '/etc/puppet/modules':
   ensure => directory,
