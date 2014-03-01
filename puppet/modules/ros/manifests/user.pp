@@ -26,7 +26,7 @@ define ros::user (
   $password        = "",
 ) {
   # XXX Should we depend on ros::install here?
-  Ros::User["$name"] -> Ros::Install["$ros_release"]
+  #Ros::User["$name"] -> Ros::Install["$ros_release"]
 
   if $workspace_setup == "" {
     $_workspace_setup = "/opt/ros/$ros_release/setup.bash"
@@ -53,7 +53,7 @@ define ros::user (
       # user option doesn't set env right, so use su - to run as the new user
       command   => "/bin/su $name - -c '/usr/bin/rosdep update'",
       logoutput => on_failure,
-      require   => User[$name],
+      require   => [ User[$name], Ros::Install["$ros_release"] ]
   }
 
   # Sort the bashrc
