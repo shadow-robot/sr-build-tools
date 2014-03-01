@@ -13,13 +13,15 @@ Exec {
 
 include ros
 
-package {
-  ubuntu-desktop: ensure => present; # Convert base image into a desktop system
-  #'dkms':         ensure => present; # For vbox guest additions.
-  'git':          ensure => present;
+# The ROS base image.
+node 'ros-hydro-desktop-precise64.box.local' {
+  package {
+    ubuntu-desktop: ensure => present; # Convert base image into a desktop system
+    #'dkms':         ensure => present; # For vbox guest additions.
+    'git':          ensure => present;
+  }
+
+  ros::install { 'hydro': }
+
+  ros::user { 'ros': }
 }
-
-ros::install { 'hydro': }
-
-ros::user { 'ros': }
-
