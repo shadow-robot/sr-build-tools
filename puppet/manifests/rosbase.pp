@@ -25,3 +25,7 @@ node 'ros-hydro-desktop-precise64.box.local' {
 
   ros::user { 'ros': }
 }
+
+node 'hand-hydro-precise64.box.local' {
+  notify { 'hello world!': }
+}
