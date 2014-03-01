@@ -8,7 +8,7 @@ MEMORY = ENV['VAGRANT_MEMORY'] || '1024'
 CORES = ENV['VAGRANT_CORES'] || '2'
 
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
-  config.vm.box = "rosbase-hydro-precise64"
+  config.vm.box = "ros-hydro-desktop-precise64"
   config.vm.box_url = "http://TODO.example.com/rosbase-hydro-precise64.box"
 
   config.vm.hostname = "hand-hydro-precise64.box.local"
