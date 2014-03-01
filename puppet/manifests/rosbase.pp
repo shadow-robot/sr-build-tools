@@ -21,6 +21,13 @@ node 'ros-hydro-desktop-precise64.box.local' {
     'git':          ensure => present;
   }
 
+  # Allow guest additions to be installed from the iso.
+  package {
+    "linux-headers-${kernelrelease}" : ensure => installed;
+    build-essential                  : ensure => installed;
+    dkms                             : ensure => installed;
+  }
+
   ros::install { 'hydro': }
 
   ros::user { 'ros': }
