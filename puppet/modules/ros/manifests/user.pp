@@ -9,6 +9,7 @@
 # - Adds the $name user. Default is title.
 # - Ensures group 'ros' is present.
 # - Runs rosdep update for the user.
+# - Adds source line to bashrc
 #
 # Requires:
 #
