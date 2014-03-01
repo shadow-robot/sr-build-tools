@@ -34,5 +34,11 @@ node 'ros-hydro-desktop-precise64.box.local' {
 }
 
 node 'hand-hydro-precise64.box.local' {
-  notify { 'hello world!': }
+  notify { 'Shadow Hand Machine': }
+
+  ros::install { 'hydro': }
+
+  ros::user { 'hand':
+    password => 'hand',
+  }
 }

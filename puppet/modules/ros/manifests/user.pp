@@ -23,8 +23,10 @@ define ros::user (
   $ensure          = present,
   $ros_release     = "hydro",
   $workspace_setup = "",
+  $password        = "",
 ) {
   # XXX Should we depend on ros::install here?
+  Ros::User["$name"] -> Ros::Install["$ros_release"]
 
   if $workspace_setup == "" {
     $_workspace_setup = "/opt/ros/$ros_release/setup.bash"
@@ -42,7 +44,7 @@ define ros::user (
     shell      => '/bin/bash',
     home       => "/home/$name",
     gid        => "ros",
-    password   => "ros",
+    password   => sha1($password),
     managehome => true,
     require    => [ Group["ros"] ],
   }
@@ -51,7 +53,7 @@ define ros::user (
       # user option doesn't set env right, so use su - to run as the new user
       command   => "/bin/su $name - -c '/usr/bin/rosdep update'",
       logoutput => on_failure,
-      require   => Exec['rosdep-init'],
+      require   => User[$name],
   }
 
   # Sort the bashrc
