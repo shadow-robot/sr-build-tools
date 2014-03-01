@@ -31,5 +31,17 @@ define ros::workspace (
     owner    => $ros_user,
     group    => "ros",
   }
-
+  ->
+  exec { "catkin_init_workspace-$dir":
+    command => "bash -c 'source /opt/ros/$ros_release/setup.bash && catkin_init_workspace'",
+    cwd     => "$dir/src",
+    user    => $ros_user,
+    creates => "$dir/src/CMakeLists.txt"
+  }
+  ->
+  exec { "catkin_make-$dir-init":
+    command => "bash -c 'source /opt/ros/$ros_release/setup.bash && catkin_make'",
+    cwd     => "$dir",
+    user    => $ros_user,
+  }
 }
