@@ -41,4 +41,9 @@ node 'hand-hydro-precise64.box.local' {
   ros::user { 'hand':
     password => 'hand',
   }
+
+  ros::workspace { '/home/hand/hydro_ws':
+    ros_release => 'hydro',
+    ros_user    => 'hand',
+  }
 }
