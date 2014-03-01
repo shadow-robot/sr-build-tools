@@ -56,7 +56,8 @@ define ros::user (
 
   # Sort the bashrc
   exec { "clean-bashrc-$name":
-    command => "sed -i\".bak-$(date +\'%F-%T\')\" /^source.*setup.bash.*$/d /home/$name/.bashrc"
+    command => "sed -i\".bak-$(date +\'%F-%T\')\" /^source.*setup.bash.*$/d /home/$name/.bashrc",
+    require => User[$name]
   }
   ->
   exec { "bashrc-$name":
