@@ -78,7 +78,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # Note: Don't set module_path, handled by puppet_bootstrap.pp and sync folder.
   config.vm.provision :puppet do |puppet|
     puppet.manifests_path = "../../puppet/manifests"
-    puppet.manifest_file  = "rosbase.pp"
+    puppet.manifest_file  = "vagrant.pp"
     #puppet.options        = "--verbose"
     puppet.facter = {
         # custom facts provided to Puppet
