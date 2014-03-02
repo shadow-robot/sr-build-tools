@@ -2,6 +2,8 @@
 - hosts: all
   vars:
     ros_release: 'hydro'
+  #remote_user: root
+  sudo: yes
   tasks:
     # Hello!
     - name: say hello
@@ -11,6 +13,7 @@
 
     # Bring apt upto date
     # Only run if the last one is more than more than 10mins ago
+    - apt_key: id=B01FA116 url=http://packages.ros.org/ros.key
     - apt: update_cache=yes cache_valid_time=3600
 
     # ROS Install
