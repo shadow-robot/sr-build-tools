@@ -46,6 +46,7 @@
   #    yum: pkg=ntp state=latest
   #    notify:
   #    - restart ntpd
+  # Note: Handlers only fire after all the taaks. Once for however many notifies
   handlers:
   #  - name: restart ntpd
   #    service: name=ntpd state=restarted
