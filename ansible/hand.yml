@@ -5,22 +5,13 @@
     ros_user: 'hand'
     ros_user_password: 'hand'
     ros_user_email: 'software@shadowrobot.com'
-    ros_workspace: ~{{ ros_user }}/{{ ros_release }}_ws
+    ros_workspace: ~{{ros_user}}/{{ros_release}}_ws
   #remote_user: root
   sudo: yes
   tasks:
     # Hello!
     - name: say hello
-      debug: msg="Hello World {{ ros_release }}"
-    - name: say some env
-      debug: msg="Host {{ ansible_hostname }} SHELL {{ansible_env.SHELL}}"
-    - name: Env test
-      shell: env
-      sudo: yes
-      sudo_user: "{{ ros_user }}"
-      register: env_result
-    - name: debug it
-      debug: msg="ENV:{{ env_result }}"
+      debug: msg="Setting up ROS {{ros_release}} for {{ros_user}}"
 
     # Bring apt upto date
     - apt_key: id=B01FA116 url=http://packages.ros.org/ros.key
@@ -34,10 +25,10 @@
 
     # ROS Install
     - name: Install ROS stuff
-      apt: name={{ item }}
+      apt: name={{item}}
       with_items:
         - ubuntu-desktop
-        - "ros-{{ ros_release }}-desktop-full"
+        - "ros-{{ros_release}}-desktop-full"
         - python-wstool
         - python-rosinstall
     - name: rosdep init
@@ -45,7 +36,7 @@
 
     # Install packages for the hand machine
     - name: Install packages
-      apt: name={{ item }}
+      apt: name={{item}}
       with_items:
         - git
         - vim
@@ -55,50 +46,55 @@
     # User setup
     - name: Add ros group
       group: name=ros
-    - name: Add {{ ros_user }} user
-      user: name={{ ros_user }} comment="Shadow Hand" shell=/bin/bash append=yes groups=ros,adm,sudo,plugdev,cdrom
+
+    - name: Add {{ros_user}} user
+      user: name={{ros_user}}
+        comment="Shadow Hand"
+        shell=/bin/bash
+        append=yes groups=ros,adm,sudo,plugdev,cdrom
     - name: Set users password
-      shell: "echo '{{ ros_user }}:{{ ros_user_password }}' | chpasswd"
+      shell: "echo '{{ros_user}}:{{ros_user_password}}' | chpasswd"
 
     - name: Setup git name
-      command: git config --global user.name "{{ ros_user }}"
+      command: git config --global user.name "{{ros_user}}"
     - name: Setup git email
-      command: git config --global user.email "{{ ros_user_email }}"
+      command: git config --global user.email "{{ros_user_email}}"
 
     - name: Update rosdep
-      shell: bash -c "source /opt/ros/{{ ros_release }}/setup.bash && rosdep update"
+      shell: bash -c "source /opt/ros/{{ros_release}}/setup.bash && rosdep update"
       sudo: yes
-      sudo_user: "{{ ros_user }}"
+      sudo_user: "{{ros_user}}"
 
     # Workspace
-    - name: Create workspace dir {{ ros_workspace }}
+    - name: Create workspace dir {{ros_workspace}}
       file: state=directory path={{ros_workspace}}/src owner={{ros_user}} group=ros
+
     - name: Init workspace
       command: wstool init .
         chdir={{ros_workspace}}/src
         creates={{ros_workspace}}/src/.rosinstall
       sudo: yes
-      sudo_user: "{{ ros_user }}"
+      sudo_user: "{{ros_user}}"
+
     - name: catkin_init_workspace
-      shell: bash -c "source /opt/ros/{{ ros_release }}/setup.bash && catkin_init_workspace"
+      shell: bash -c "source /opt/ros/{{ros_release}}/setup.bash && catkin_init_workspace"
         chdir={{ros_workspace}}/src
         creates={{ros_workspace}}/src/CMakeLists.txt
       sudo: yes
-      sudo_user: "{{ ros_user }}"
+      sudo_user: "{{ros_user}}"
+
     # Do an initial make of the empty workspace to get a setup.bash.
     # If there is one alredy don't do this, so we don't trigger a big make
     - name: catkin make workspace
-      shell: bash -c "source /opt/ros/{{ ros_release }}/setup.bash && catkin_make"
+      shell: bash -c "source /opt/ros/{{ros_release}}/setup.bash && catkin_make"
         chdir={{ros_workspace}}
         creates={{ros_workspace}}/devel/setup.bash
       sudo: yes
-      sudo_user: "{{ ros_user }}"
+      sudo_user: "{{ros_user}}"
 
-  #  - name: ensure ntpd is at the latest version
-  #    yum: pkg=ntp state=latest
+  # Note: Handlers only fire after all the taks. Once for however many notifies
   #    notify:
   #    - restart ntpd
-  # Note: Handlers only fire after all the taaks. Once for however many notifies
   handlers:
   #  - name: restart ntpd
   #    service: name=ntpd state=restarted
