@@ -2,6 +2,8 @@
 - hosts: all
   vars:
     ros_release: 'hydro'
+    ros_user: 'hand'
+    ros_user_password: 'hand'
   #remote_user: root
   sudo: yes
   tasks:
@@ -31,6 +33,14 @@
         - python-rosinstall
     - name: rosdep init
       command: rosdep init creates=/etc/ros/rosdep/sources.list.d/20-default.list
+
+    # User setup
+    - name: Add ros group
+      group: name=ros
+    - name: Add {{ ros_user }} user
+      user: name={{ ros_user }} comment="Shadow Hand" shell=/bin/bash append=yes groups=ros,adm,sudo,plugdev,cdrom
+    - name: Set users password
+      shell: "echo '{{ ros_user }}:{{ ros_user_password }}' | chpasswd"
 
   #  - name: ensure ntpd is at the latest version
   #    yum: pkg=ntp state=latest
