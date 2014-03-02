@@ -12,10 +12,13 @@
       debug: msg="Host {{ ansible_hostname }} SHELL {{ansible_env.SHELL}}"
 
     # Bring apt upto date
-    # Only run if the last one is more than more than 10mins ago
     - apt_key: id=B01FA116 url=http://packages.ros.org/ros.key
     # TODO - add repo http://packages.ros.org/ros/ubuntu
     # TODO - activate restricted, universe, multiverse
+    # Update all packages to the latest version
+    #- apt: upgrade=dist # dist or safe or full?
+    # http://docs.ansible.com/apt_module.html
+    # Only run if the last one is more than more than 10mins ago
     - apt: update_cache=yes cache_valid_time=3600
 
     # ROS Install
