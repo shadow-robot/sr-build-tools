@@ -14,6 +14,8 @@
     # Bring apt upto date
     # Only run if the last one is more than more than 10mins ago
     - apt_key: id=B01FA116 url=http://packages.ros.org/ros.key
+    # TODO - add repo http://packages.ros.org/ros/ubuntu
+    # TODO - activate restricted, universe, multiverse
     - apt: update_cache=yes cache_valid_time=3600
 
     # ROS Install
@@ -24,6 +26,9 @@
         - "ros-{{ ros_release }}-desktop-full"
         - python-wstool
         - python-rosinstall
+    - name: rosdep init
+      command: rosdep init creates=/etc/ros/rosdep/sources.list.d/20-default.list
+
   #  - name: ensure ntpd is at the latest version
   #    yum: pkg=ntp state=latest
   #    notify:
