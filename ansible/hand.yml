@@ -5,6 +5,7 @@
     ros_user: 'hand'
     ros_user_password: 'hand'
     ros_user_email: 'software@shadowrobot.com'
+    ros_workspace: ~{{ ros_user }}/{{ ros_release }}_ws
   #remote_user: root
   sudo: yes
   tasks:
@@ -13,6 +14,13 @@
       debug: msg="Hello World {{ ros_release }}"
     - name: say some env
       debug: msg="Host {{ ansible_hostname }} SHELL {{ansible_env.SHELL}}"
+    - name: Env test
+      shell: env
+      sudo: yes
+      sudo_user: "{{ ros_user }}"
+      register: env_result
+    - name: debug it
+      debug: msg="ENV:{{ env_result }}"
 
     # Bring apt upto date
     - apt_key: id=B01FA116 url=http://packages.ros.org/ros.key
@@ -61,13 +69,30 @@
       shell: bash -c "source /opt/ros/{{ ros_release }}/setup.bash && rosdep update"
       sudo: yes
       sudo_user: "{{ ros_user }}"
-    #- name: Env test
-    #  shell: env
-    #  sudo: yes
-    #  sudo_user: "{{ ros_user }}"
-    #  register: env_result
-    #- name: debug it
-    #  debug: msg="ENV:{{ env_result }}"
+
+    # Workspace
+    - name: Create workspace dir {{ ros_workspace }}
+      file: state=directory path={{ros_workspace}}/src owner={{ros_user}} group=ros
+    - name: Init workspace
+      command: wstool init .
+        chdir={{ros_workspace}}/src
+        creates={{ros_workspace}}/src/.rosinstall
+      sudo: yes
+      sudo_user: "{{ ros_user }}"
+    - name: catkin_init_workspace
+      shell: bash -c "source /opt/ros/{{ ros_release }}/setup.bash && catkin_init_workspace"
+        chdir={{ros_workspace}}/src
+        creates={{ros_workspace}}/src/CMakeLists.txt
+      sudo: yes
+      sudo_user: "{{ ros_user }}"
+    # Do an initial make of the empty workspace to get a setup.bash.
+    # If there is one alredy don't do this, so we don't trigger a big make
+    - name: catkin make workspace
+      shell: bash -c "source /opt/ros/{{ ros_release }}/setup.bash && catkin_make"
+        chdir={{ros_workspace}}
+        creates={{ros_workspace}}/devel/setup.bash
+      sudo: yes
+      sudo_user: "{{ ros_user }}"
 
   #  - name: ensure ntpd is at the latest version
   #    yum: pkg=ntp state=latest
