@@ -4,6 +4,7 @@
     ros_release: 'hydro'
     ros_user: 'hand'
     ros_user_password: 'hand'
+    ros_user_email: 'software@shadowrobot.com'
   #remote_user: root
   sudo: yes
   tasks:
@@ -34,6 +35,15 @@
     - name: rosdep init
       command: rosdep init creates=/etc/ros/rosdep/sources.list.d/20-default.list
 
+    # Install packages for the hand machine
+    - name: Install packages
+      apt: name={{ item }}
+      with_items:
+        - git
+        - vim
+        - emacs
+        - tree
+
     # User setup
     - name: Add ros group
       group: name=ros
@@ -41,6 +51,23 @@
       user: name={{ ros_user }} comment="Shadow Hand" shell=/bin/bash append=yes groups=ros,adm,sudo,plugdev,cdrom
     - name: Set users password
       shell: "echo '{{ ros_user }}:{{ ros_user_password }}' | chpasswd"
+
+    - name: Setup git name
+      command: git config --global user.name "{{ ros_user }}"
+    - name: Setup git email
+      command: git config --global user.email "{{ ros_user_email }}"
+
+    - name: Update rosdep
+      shell: bash -c "source /opt/ros/{{ ros_release }}/setup.bash && rosdep update"
+      sudo: yes
+      sudo_user: "{{ ros_user }}"
+    #- name: Env test
+    #  shell: env
+    #  sudo: yes
+    #  sudo_user: "{{ ros_user }}"
+    #  register: env_result
+    #- name: debug it
+    #  debug: msg="ENV:{{ env_result }}"
 
   #  - name: ensure ntpd is at the latest version
   #    yum: pkg=ntp state=latest
