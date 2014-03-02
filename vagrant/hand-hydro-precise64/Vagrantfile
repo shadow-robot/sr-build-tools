@@ -15,8 +15,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   config.ssh.forward_agent = true
 
-  # Map a folder so we can access our puppet modules, in the default modulepath.
-  config.vm.synced_folder "../../puppet/modules", "/usr/share/puppet/modules"
+  # Get access to all the build tools.
+  config.vm.synced_folder "../..", "/opt/shadow/sr-build-tools"
 
   # VirtualBox
   config.vm.provider :virtualbox do |vb|
@@ -26,25 +26,9 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       vb.customize ["modifyvm", :id, "--cpus", CORES.to_i]
   end
 
-  # Provisioning with Puppet stand alone.
-  #
-  # First we run a small puppet job to prepare the machine for the full job,
-  # installs modules into /etc/puppet/modules, on the default modulepath along
-  # with the shared folder above..
-  config.vm.provision :puppet do |puppet|
-    puppet.manifests_path = "../../puppet/manifests"
-    puppet.manifest_file  = "puppet_bootstrap.pp"
-  end
-  # The main puppet provision
-  # Note: Don't set module_path, handled by puppet_bootstrap.pp and sync folder.
-  config.vm.provision :puppet do |puppet|
-    puppet.manifests_path = "../../puppet/manifests"
-    puppet.manifest_file  = "vagrant.pp"
-    #puppet.options        = "--verbose"
-    puppet.facter = {
-        # custom facts provided to Puppet
-        "is_vagrant" => true,
-    }
+  # Provisioning with Ansible
+  config.vm.provision "ansible" do |ansible|
+      ansible.playbook = "../../ansible/hand.yml"
   end
 
 end
