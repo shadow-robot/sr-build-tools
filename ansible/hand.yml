@@ -68,6 +68,8 @@
     # Workspace
     - name: Create workspace dir {{ros_workspace}}
       file: state=directory path={{ros_workspace}}/src owner={{ros_user}} group=ros
+      sudo: yes
+      sudo_user: "{{ros_user}}"
 
     - name: Init workspace
       command: wstool init .
