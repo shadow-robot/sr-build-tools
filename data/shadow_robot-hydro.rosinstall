@@ -1,17 +1,17 @@
 - git:
     uri: 'https://github.com/shadow-robot/sr-config.git'
-    version: 'R_hydro'
+    version: 'hydro-devel'
     local-name: sr-config
 
 - git:
     uri: 'https://github.com/shadow-robot/sr-ros-interface.git'
     version: 'hydro-devel'
-    local-name: sr-ros-interface
+    local-name: shadow_robot
 
 - git:
     uri: 'https://github.com/shadow-robot/sr-ros-interface-ethercat.git'
     version: 'hydro-devel'
-    local-name: sr-ros-interface-ethercat
+    local-name: shadow_robot_ethercat
 
 - git:
     uri: 'https://github.com/shadow-robot/sr-visualization.git'
