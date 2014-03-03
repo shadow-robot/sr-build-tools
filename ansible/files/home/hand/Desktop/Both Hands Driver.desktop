@@ -5,6 +5,6 @@ Type=Application
 Terminal=false
 Icon[en_GB]=/usr/share/icons/hicolor/scalable/apps/gdu-emblem-raid1.svg
 Name[en_GB]=Both Hands Driver
-Exec=xterm -hold -title "both hands driver" -e "sudo ~/scripts/start_both_hands_driver.sh"
+Exec=xterm -hold -title "both hands driver" -e "sudo ~/bin/start_both_hands_driver.sh"
 Name=Both Hands Driver
 Icon=/usr/share/icons/hicolor/scalable/apps/gdu-emblem-raid1.svg
