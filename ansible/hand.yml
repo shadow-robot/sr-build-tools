@@ -42,6 +42,7 @@
         - vim
         - emacs
         - tree
+        - htop
 
     # User setup
     - name: Add ros group
@@ -93,6 +94,25 @@
         creates={{ros_workspace}}/devel/setup.bash
       sudo: yes
       sudo_user: "{{ros_user}}"
+
+    # Install the shadow code
+    - name: Install shadow src
+      shell: bash -c "{{item}}" chdir={{ros_workspace}}/src
+      sudo: yes
+      sudo_user: "{{ros_user}}"
+      with_items:
+        - wstool merge -y "/opt/shadow/sr-build-tools/data/shadow_robot-{{ros_release}}.rosinstall"
+        - wstool update
+
+    # Deps and make
+    - name: Install dependancies
+      shell: bash -c "source /opt/ros/{{ros_release}}/setup.bash && {{item}}"
+        chdir={{ros_workspace}}/src
+      sudo: yes
+      sudo_user: "{{ros_user}}"
+      with_items:
+        - rosdep install --default-yes --all --ignore-src
+        - catkin_make
 
   # Note: Handlers only fire after all the taks. Once for however many notifies
   #    notify:
