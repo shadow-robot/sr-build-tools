@@ -93,7 +93,7 @@
       sudo_user: "{{ros_user}}"
 
     # Do an initial make of the empty workspace to get a setup.bash.
-    # If there is one alredy don't do this, so we don't trigger a big make
+    # If there is one already don't do this, so we don't trigger a big make
     - name: catkin make workspace
       shell: bash -c "source /opt/ros/{{ros_release}}/setup.bash && catkin_make"
         chdir={{ros_workspace}}
