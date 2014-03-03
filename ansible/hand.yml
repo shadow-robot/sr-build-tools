@@ -1,11 +1,14 @@
 ---
 - hosts: all
   vars:
+    # Where to find the build tools. Mounted by vagrant
+    sr_build_tools: /opt/shadow/sr-build-tools
     ros_release: 'hydro'
     ros_user: 'hand'
     ros_user_password: 'hand'
     ros_user_email: 'software@shadowrobot.com'
-    ros_workspace: ~{{ros_user}}/{{ros_release}}_ws
+    ros_workspace: "~{{ros_user}}/{{ros_release}}_ws"
+    ros_workspace_install: "{{sr_build_tools}}/data/shadow_robot-{{ros_release}}.rosinstall"
   #remote_user: root
   sudo: yes
   tasks:
@@ -106,23 +109,14 @@
                   backup=yes
 
     # Install the shadow code
-    - name: Install shadow src
+    - name: Install {{ros_workspace_install}}
       shell: bash -c "{{item}}" chdir={{ros_workspace}}/src
       sudo: yes
       sudo_user: "{{ros_user}}"
       with_items:
-        - wstool merge -y "/opt/shadow/sr-build-tools/data/shadow_robot-{{ros_release}}.rosinstall"
+        - wstool merge -y "{{ros_workspace_install}}"
         - wstool update
 
-    # Deps and make
-    #- name: Install dependancies
-    #  shell: bash -c "source /opt/ros/{{ros_release}}/setup.bash && {{item}}"
-    #    chdir={{ros_workspace}}/src
-    #  sudo: yes
-    #  sudo_user: "{{ros_user}}"
-    #  with_items:
-    #    - rosdep install --default-yes --all --ignore-src
-    #    - catkin_make
     - name: Install dependancies
       shell: bash -c "source {{ros_workspace}}/devel/setup.bash && rosdep install --default-yes --all --ignore-src"
              chdir={{ros_workspace}}
