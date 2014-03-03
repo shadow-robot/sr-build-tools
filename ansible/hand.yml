@@ -56,6 +56,9 @@
     - name: Set users password
       shell: "echo '{{ros_user}}:{{ros_user_password}}' | chpasswd"
 
+    - name: Give user passwordless sudo.
+      lineinfile: "dest=/etc/sudoers state=present regexp='^{{ros_user}}' line='{{ros_user}}  ALL=(ALL) NOPASSWD:  ALL' insertafter=EOF"
+
     - name: Setup git name
       command: git config --global user.name "{{ros_user}}"
     - name: Setup git email
@@ -95,6 +98,13 @@
       sudo: yes
       sudo_user: "{{ros_user}}"
 
+    - name: Update users basrc to point to the workspace
+      lineinfile: dest=\~{{ros_user}}/.bashrc
+                  line="source {{ros_workspace}}/devel/setup.bash"
+                  regexp='^source.*/setup\.bash'
+                  insertafter=EOF
+                  backup=yes
+
     # Install the shadow code
     - name: Install shadow src
       shell: bash -c "{{item}}" chdir={{ros_workspace}}/src
@@ -105,14 +115,25 @@
         - wstool update
 
     # Deps and make
+    #- name: Install dependancies
+    #  shell: bash -c "source /opt/ros/{{ros_release}}/setup.bash && {{item}}"
+    #    chdir={{ros_workspace}}/src
+    #  sudo: yes
+    #  sudo_user: "{{ros_user}}"
+    #  with_items:
+    #    - rosdep install --default-yes --all --ignore-src
+    #    - catkin_make
     - name: Install dependancies
-      shell: bash -c "source /opt/ros/{{ros_release}}/setup.bash && {{item}}"
-        chdir={{ros_workspace}}/src
+      shell: bash -c "source {{ros_workspace}}/devel/setup.bash && rosdep install --default-yes --all --ignore-src"
+             chdir={{ros_workspace}}
       sudo: yes
       sudo_user: "{{ros_user}}"
-      with_items:
-        - rosdep install --default-yes --all --ignore-src
-        - catkin_make
+
+    - name: catkin_make
+      shell: bash -c "source {{ros_workspace}}/devel/setup.bash && catkin_make"
+        chdir={{ros_workspace}}
+      sudo: yes
+      sudo_user: "{{ros_user}}"
 
   # Note: Handlers only fire after all the taks. Once for however many notifies
   #    notify:
