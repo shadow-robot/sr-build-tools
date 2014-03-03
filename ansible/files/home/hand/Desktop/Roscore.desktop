@@ -5,6 +5,6 @@ Type=Application
 Terminal=false
 Icon[en_GB]=/usr/share/icons/hicolor/scalable/apps/gdu-emblem-raid0.svg
 Name[en_GB]=Roscore
-Exec=xterm -hold -title "roscore" -e "~/bin/start_roscore.sh"
+Exec=xterm -hold -title "roscore" -e "bash -i -c roscore"
 Name=Roscore
 Icon=/usr/share/icons/hicolor/scalable/apps/gdu-emblem-raid0.svg
