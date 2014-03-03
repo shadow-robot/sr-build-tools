@@ -9,6 +9,7 @@
     ros_user_email: 'software@shadowrobot.com'
     ros_workspace: "~{{ros_user}}/{{ros_release}}_ws"
     ros_workspace_install: "{{sr_build_tools}}/data/shadow_robot-{{ros_release}}.rosinstall"
+    desktop_files: "{{sr_build_tools}}/"
   #remote_user: root
   sudo: yes
   tasks:
@@ -71,6 +72,10 @@
       shell: bash -c "source /opt/ros/{{ros_release}}/setup.bash && rosdep update"
       sudo: yes
       sudo_user: "{{ros_user}}"
+
+    # Desktop
+    - name: Install home directory files
+      copy: src=files/home/{{ros_user}}/ dest=\~{{ros_user}}/ owner={{ros_user}} group=ros
 
     # Workspace
     - name: Create workspace dir {{ros_workspace}}
