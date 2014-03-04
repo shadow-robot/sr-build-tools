@@ -8,20 +8,16 @@ MEMORY = ENV['VAGRANT_MEMORY'] || '1024'
 CORES = ENV['VAGRANT_CORES'] || '2'
 
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
-  config.vm.box = "ros-hydro-desktop-precise64"
-  config.vm.box_url = "http://TODO.example.com/rosbase-hydro-precise64.box"
-
+  config.vm.box      = "ros-hydro-desktop-precise64"
+  config.vm.box_url  = "http://TODO.example.com/rosbase-hydro-precise64.box"
   config.vm.hostname = "hand-hydro-precise64.box.local"
 
   config.ssh.forward_agent = true
 
-  # Get access to all the build tools.
-  config.vm.synced_folder "../..", "/opt/shadow/sr-build-tools"
-
   # VirtualBox
   config.vm.provider :virtualbox do |vb|
       vb.gui = true
-      # Use VBoxManage to customize the VM. For example to change memory:
+      # Use VBoxManage to customize the VM.
       vb.customize ["modifyvm", :id, "--memory", MEMORY.to_i]
       vb.customize ["modifyvm", :id, "--cpus", CORES.to_i]
   end

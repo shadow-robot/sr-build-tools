@@ -2,14 +2,13 @@
 - hosts: all
   vars:
     # Where to find the build tools. Mounted by vagrant
-    sr_build_tools: /opt/shadow/sr-build-tools
     ros_release: 'hydro'
     ros_user: 'hand'
     ros_user_comment: 'Shadow Hand'
     ros_user_password: 'hand'
     ros_user_email: 'software@shadowrobot.com'
     ros_workspace: "~{{ros_user}}/{{ros_release}}_ws"
-    ros_workspace_install: "{{sr_build_tools}}/data/shadow_robot-{{ros_release}}.rosinstall"
+    ros_workspace_install: "../data/shadow_robot-{{ros_release}}.rosinstall"
   #remote_user: root
   sudo: yes
   roles:

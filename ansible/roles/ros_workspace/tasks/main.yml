@@ -1,7 +1,7 @@
 ---
 # Set up a ROS workspace, install a .rosinstall and compile.
 
-- name: Create workspace dir {{ros_workspace}}
+- name: Create workspace {{ros_workspace}}
   file: state=directory path={{ros_workspace}}/src owner={{ros_user}} group=ros
   sudo: yes
   sudo_user: "{{ros_user}}"
@@ -36,13 +36,16 @@
               insertafter=EOF
               backup=yes
 
+- name: Copy install file
+  copy: src={{ros_workspace_install}} dest=/tmp/ansible-ros-workspace.rosinstall
+
 # Install the given workspace file.
 - name: Install {{ros_workspace_install}}
   shell: bash -c "{{item}}" chdir={{ros_workspace}}/src
   sudo: yes
   sudo_user: "{{ros_user}}"
   with_items:
-    - wstool merge -y "{{ros_workspace_install}}"
+    - wstool merge -y /tmp/ansible-ros-workspace.rosinstall
     - wstool update
 
 - name: Install dependancies
