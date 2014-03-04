@@ -5,6 +5,6 @@ Type=Application
 Terminal=false
 Icon[en_GB]=/usr/share/icons/hicolor/scalable/apps/gnome-nettool.svg
 Name[en_GB]=Left Hand Robot Monitor
-Exec=xterm -hold -title "left hand robot monitor" -e "~/bin/start_left_hand_robot_monitor.sh"
+Exec=xterm -hold -title "left hand robot monitor" -e "bash -i -c roslaunch sr_ethercat_hand_config lhand_robot_monitor.launch"
 Name=Left Hand Robot Monitor
 Icon=/usr/share/icons/hicolor/scalable/apps/gnome-nettool.svg

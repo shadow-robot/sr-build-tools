@@ -5,6 +5,6 @@ Type=Application
 Terminal=false
 Icon[en_GB]=/usr/share/icons/hicolor/scalable/apps/gnome-nettool.svg
 Name[en_GB]=Left Tactile Visualize
-Exec=xterm -hold -title "tactile" -e "~/bin/start_left_hand_tactile.sh"
+Exec=xterm -hold -title "tactile" -e "bash -i -c 'roslaunch sr_ethercat_hand_config lhand_tactile_gui.launch'"
 Name=Left Tactile Visualize
 Icon=/usr/share/icons/hicolor/scalable/apps/gnome-nettool.svg

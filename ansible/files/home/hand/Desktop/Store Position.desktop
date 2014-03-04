@@ -5,6 +5,6 @@ Type=Application
 Terminal=false
 Icon[en_GB]=gnome-panel-launcher
 Name[en_GB]=Store Position
-Exec=xterm -hold -title "store" -e "~/bin/start_store_position.sh"
+Exec=xterm -hold -title "store" -e "bash -i -c 'roslaunch sr_ethercat_hand_config all_hands_store.launch'"
 Name=Store Position
 Icon=/usr/share/icons/hicolor/scalable/apps/gnome-nettool.svg
