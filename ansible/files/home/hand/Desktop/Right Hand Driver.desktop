@@ -5,6 +5,6 @@ Type=Application
 Terminal=false
 Icon[en_GB]=/usr/share/icons/hicolor/scalable/apps/gdu-emblem-raid1.svg
 Name[en_GB]=Right Hand Driver
-Exec=xterm -hold -title "right hand driver" -e "sudo ~/bin/start_right_hand_driver.sh"
+Exec=xterm -hold -title "Right Hand Driver" -e "sudo bash -i -c 'roslaunch sr_ethercat_hand_config sr_rhand.launch'"
 Name=Right Hand Driver
 Icon=/usr/share/icons/hicolor/scalable/apps/gdu-emblem-raid1.svg
