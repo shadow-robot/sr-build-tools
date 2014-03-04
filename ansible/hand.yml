@@ -5,55 +5,17 @@
     sr_build_tools: /opt/shadow/sr-build-tools
     ros_release: 'hydro'
     ros_user: 'hand'
+    ros_user_comment: 'Shadow Hand'
     ros_user_password: 'hand'
     ros_user_email: 'software@shadowrobot.com'
     ros_workspace: "~{{ros_user}}/{{ros_release}}_ws"
     ros_workspace_install: "{{sr_build_tools}}/data/shadow_robot-{{ros_release}}.rosinstall"
-    desktop_files: "{{sr_build_tools}}/"
   #remote_user: root
   sudo: yes
   roles:
   - ros_machine
+  - ros_user
   tasks:
-    # Install packages for the hand machine
-    - name: Install packages
-      apt: name={{item}}
-      with_items:
-        - git
-        - vim
-        - emacs
-        - tree
-        - htop
-
-    # User setup
-    - name: Add ros group
-      group: name=ros
-
-    - name: Add {{ros_user}} user
-      user: name={{ros_user}}
-        comment="Shadow Hand"
-        shell=/bin/bash
-        append=yes groups=ros,adm,sudo,plugdev,cdrom
-    - name: Set users password
-      shell: "echo '{{ros_user}}:{{ros_user_password}}' | chpasswd"
-
-    - name: Give user passwordless sudo.
-      lineinfile: "dest=/etc/sudoers state=present regexp='^{{ros_user}}' line='{{ros_user}}  ALL=(ALL) NOPASSWD:  ALL' insertafter=EOF"
-
-    - name: Setup git name
-      command: git config --global user.name "{{ros_user}}"
-    - name: Setup git email
-      command: git config --global user.email "{{ros_user_email}}"
-
-    - name: Update rosdep
-      shell: bash -c "source /opt/ros/{{ros_release}}/setup.bash && rosdep update"
-      sudo: yes
-      sudo_user: "{{ros_user}}"
-
-    # Desktop
-    - name: Install home directory files
-      copy: src=files/home/{{ros_user}}/ dest=\~{{ros_user}}/ owner={{ros_user}} group=ros
-
     # Workspace
     - name: Create workspace dir {{ros_workspace}}
       file: state=directory path={{ros_workspace}}/src owner={{ros_user}} group=ros
