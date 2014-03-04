@@ -27,14 +27,20 @@
 - name: Give user passwordless sudo.
   lineinfile: "dest=/etc/sudoers state=present regexp='^{{ros_user}}' line='{{ros_user}}  ALL=(ALL) NOPASSWD:  ALL' insertafter=EOF"
 
+- name: Install global home directory files
+  copy: src={{item}} dest=\~{{ros_user}}/ owner={{ros_user}} group=ros
+  with_first_found:
+    files:
+      - files/home/all/
+  when: item is defined and "{{item}}" != ""
+
+- name: Install home directory files
+  copy: src=files/home/{{ros_user}}/ dest=\~{{ros_user}}/ owner={{ros_user}} group=ros
+
 - name: Update rosdep
   shell: bash -c "source /opt/ros/{{ros_release}}/setup.bash && rosdep update"
   sudo: yes
   sudo_user: "{{ros_user}}"
-
-# Desktop
-- name: Install home directory files
-  copy: src=files/home/{{ros_user}}/ dest=\~{{ros_user}}/ owner={{ros_user}} group=ros
 
 - name: Setup git name
   command: git config --global user.name "{{ros_user}}"
