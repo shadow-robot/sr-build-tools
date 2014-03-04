@@ -13,10 +13,6 @@
   #remote_user: root
   sudo: yes
   tasks:
-    # Hello!
-    - name: say hello
-      debug: msg="Setting up ROS {{ros_release}} for {{ros_user}}"
-
     # Bring apt upto date
     - apt_key: id=B01FA116 url=http://packages.ros.org/ros.key
     # TODO - add repo http://packages.ros.org/ros/ubuntu
