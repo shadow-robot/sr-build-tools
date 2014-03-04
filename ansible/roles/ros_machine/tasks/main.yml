@@ -1,0 +1,25 @@
+---
+# Playbook to install ROS (www.ros.org) onto a system.
+# http://wiki.ros.org/hydro/Installation/Ubuntu
+
+# Bring apt upto date
+- apt_key: id=B01FA116 url=http://packages.ros.org/ros.key
+# TODO - add repo http://packages.ros.org/ros/ubuntu
+# TODO - activate restricted, universe, multiverse
+# Update all packages to the latest version
+#- apt: upgrade=dist # dist or safe or full?
+# http://docs.ansible.com/apt_module.html
+# Only run if the last one is more than more than 10mins ago
+- apt: update_cache=yes cache_valid_time=3600
+
+# ROS Install
+- name: Install ROS stuff
+  apt: name={{item}}
+  with_items:
+    - ubuntu-desktop
+    - "ros-{{ros_release}}-desktop-full"
+    - python-wstool
+    - python-rosinstall
+
+- name: rosdep init
+  command: rosdep init creates=/etc/ros/rosdep/sources.list.d/20-default.list
