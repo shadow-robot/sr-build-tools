@@ -1,7 +1,6 @@
 ---
-- hosts: all
+- hosts: default
   vars:
-    # Where to find the build tools. Mounted by vagrant
     ros_release: 'hydro'
     ros_user: 'hand'
     ros_user_comment: 'Shadow Hand'
