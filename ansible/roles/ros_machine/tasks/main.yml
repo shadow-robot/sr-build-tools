@@ -1,6 +1,9 @@
 ---
 # Playbook to install ROS (www.ros.org) onto a system.
 # http://wiki.ros.org/hydro/Installation/Ubuntu
+# TODO:
+# - Do some sanity checks on the ros versions, distro etc.
+#   E.g. hydro only allowed for precise, quantal, raring
 
 - name: Add the ROS repo key
   apt_key: id=B01FA116 url=http://packages.ros.org/ros.key
@@ -9,7 +12,7 @@
 
 - name: Add ROS repo
   copy: dest=/etc/apt/sources.list.d/ros-latest.list
-        content="deb http://packages.ros.org/ros/ubuntu precise main"
+        content="deb http://packages.ros.org/ros/ubuntu {{ansible_distribution_release}} main"
         owner=root group=root mode=644
 
 # Only run if the last one is more than more than 10mins ago
