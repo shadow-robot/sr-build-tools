@@ -33,7 +33,27 @@ $ vagrant up
 ```
 Now go make tea, this takes a while... Building this base image now saves us lots of time in future when building all the other machines.
 
-TODO - Create box and install it.
+Once that builds restart the machine to bring the newly installed GUI up:
+
+```sh
+$ vagrant halt
+$ vagrant up
+```
+
+You may get an error about failing to mount folders, this because the guest additions will need updating. You should do this anyway even without the error.
+
+* Log into the machine as the vagrant user (password vagrant) 
+* Select Devices -> Install Guest Additions CD Image on the virtual box window.
+* Click yes for the autorun prompt.
+
+Now shutdown the machine (vagrant halt) and open up it's settings in virtual box and remove all the shared folders, make sure no CDs are mounted and any final cleanup. Then create the new box file for the machine (you can get the name from the vbox settings window).
+```sh
+$ vagrant package --base ros-hydro-desktop-precise64_default_1394020834281_59005
+```
+If all went well you can now install that image with:
+```sh
+$ vagrant box add ros-hydro-desktop-precise64 package.box
+```
 
 ## Start the hand machine
 
@@ -41,3 +61,5 @@ TODO - Create box and install it.
 $ cd sr-build-tools/vagrant/hand-hydro-precise64
 $ vagrant up
 ```
+
+
