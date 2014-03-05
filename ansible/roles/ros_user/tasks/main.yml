@@ -1,6 +1,6 @@
 ---
 # Installs a ros user into the machine
-    
+
 # Install packages a ros user will need
 - name: Install packages
   apt: name={{item}}
@@ -40,6 +40,20 @@
     files:
       - files/home/{{ros_user}}/
   when: item is defined and "{{item}}" != ""
+
+- name: Test for existing bashrc setup
+  shell: grep '^source.*/setup\.bash' ~{{ros_user}}/.bashrc
+  register: setup_test_result
+  ignore_errors: true
+
+# Add a source line to bashrc, only if there isn't already one
+- name: Update bashrc to point to ROS {{ros_release}}
+  lineinfile: dest=\~{{ros_user}}/.bashrc
+              line="source /opt/ros/{{ros_release}}/setup.bash"
+              regexp='^source.*/setup\.bash'
+              insertafter=EOF
+              backup=yes
+  when: setup_test_result.rc != 0
 
 - name: Update rosdep
   shell: bash -c "source /opt/ros/{{ros_release}}/setup.bash && rosdep update"

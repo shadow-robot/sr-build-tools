@@ -29,7 +29,7 @@
   sudo: yes
   sudo_user: "{{ros_user}}"
 
-- name: Update users basrc to point to the workspace
+- name: Update users bashrc to point to the workspace
   lineinfile: dest=\~{{ros_user}}/.bashrc
               line="source {{ros_workspace}}/devel/setup.bash"
               regexp='^source.*/setup\.bash'
