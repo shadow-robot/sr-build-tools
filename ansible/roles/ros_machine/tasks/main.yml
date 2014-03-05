@@ -4,13 +4,20 @@
 
 # Bring apt upto date
 - apt_key: id=B01FA116 url=http://packages.ros.org/ros.key
-# TODO - add repo http://packages.ros.org/ros/ubuntu
-# TODO - activate restricted, universe, multiverse
+
+# - name: TODO activate restricted, universe, multiverse
+
+- name: Add ROS repo
+  copy: dest=/etc/apt/sources.list.d/ros-latest.list
+        content="deb http://packages.ros.org/ros/ubuntu precise main"
+
+# Only run if the last one is more than more than 10mins ago
+- name: Update package lists
+  apt: update_cache=yes cache_valid_time=3600
+
 # Update all packages to the latest version
 #- apt: upgrade=dist # dist or safe or full?
 # http://docs.ansible.com/apt_module.html
-# Only run if the last one is more than more than 10mins ago
-- apt: update_cache=yes cache_valid_time=3600
 
 # ROS Install
 - name: Install ROS stuff
