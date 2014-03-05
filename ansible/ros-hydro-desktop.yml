@@ -7,6 +7,16 @@
     ros_user_password: 'ros'
     ros_user_email: 'ros@example.com'
   sudo: yes
+  pre_tasks:
+    # Allow the mchine to have latest guest additions installed by mounting the
+    # CD image inside the machine. Without this try to install the latest
+    # additions breaks the vagrant setup.
+    - name: Install kernal source and DKMS for VBox additions
+      apt: name={{item}}
+      with_items:
+        - linux-headers-{{ansible_kernel}}
+        - build-essential
+        - dkms
   roles:
   - ros_machine
   - ros_user
