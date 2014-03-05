@@ -5,10 +5,19 @@
 # - Do some sanity checks on the ros versions, distro etc.
 #   E.g. hydro only allowed for precise, quantal, raring
 
+- name: Test for restricted, universe, multiverse
+  shell: grep '^#deb.*{{ansible_distribution_release}}\(-updates\)\? \(restricted\|universe\|multiverse\)' /etc/apt/sources.list
+  register: sources_test_result
+  ignore_errors: true
+  failed_when: false
+  changed_when: sources_test_result.rc == 0
+
+- name: Activate restricted, universe, multiverse
+  command: sed -i".bak-{{ansible_date_time.epoch}}" "s/^#\(deb.*{{ansible_distribution_release}}\(-updates\)\? \(restricted\|universe\|multiverse\)\)/\1/" /etc/apt/sources.list
+  when: sources_test_result.rc == 0
+
 - name: Add the ROS repo key
   apt_key: id=B01FA116 url=http://packages.ros.org/ros.key
-
-# - name: TODO activate restricted, universe, multiverse
 
 - name: Add ROS repo
   copy: dest=/etc/apt/sources.list.d/ros-latest.list
