@@ -1,0 +1,13 @@
+---
+- hosts: default
+  vars:
+    ros_release: 'hydro'
+    ros_user: 'ros'
+    ros_user_comment: 'ROS'
+    ros_user_password: 'ros'
+    ros_user_email: 'ros@example.com'
+  sudo: yes
+  roles:
+  - ros_machine
+  - ros_user
+

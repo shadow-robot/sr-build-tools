@@ -8,82 +8,23 @@ MEMORY = ENV['VAGRANT_MEMORY'] || '1024'
 CORES = ENV['VAGRANT_CORES'] || '2'
 
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
-  # All Vagrant configuration is done here. The most common configuration
-  # options are documented and commented below. For a complete reference,
-  # please see the online documentation at vagrantup.com.
-
-  # Every Vagrant virtual environment requires a box to build off of.
   config.vm.box = "precise64"
-
-  # The url from where the 'config.vm.box' box will be fetched if it
-  # doesn't already exist on the user's system.
   config.vm.box_url = "http://files.vagrantup.com/precise64.box"
-
-  # Hostname
   config.vm.hostname = "ros-hydro-desktop-precise64.box.local"
 
-  # Create a forwarded port mapping which allows access to a specific port
-  # within the machine from a port on the host machine. In the example below,
-  # accessing "localhost:8080" will access port 80 on the guest machine.
-  # config.vm.network :forwarded_port, guest: 80, host: 8080
-
-  # Create a private network, which allows host-only access to the machine
-  # using a specific IP.
-  # config.vm.network :private_network, ip: "192.168.33.10"
-
-  # Create a public network, which generally matched to bridged network.
-  # Bridged networks make the machine appear as another physical device on
-  # your network.
-  # config.vm.network :public_network
-
-  # If true, then any SSH connections made will enable agent forwarding.
-  # Default value: false
   config.ssh.forward_agent = true
 
-  # Share an additional folder to the guest VM. The first argument is
-  # the path on the host to the actual folder. The second argument is
-  # the path on the guest to mount the folder. And the optional third
-  # argument is a set of non-required options.
-  # config.vm.synced_folder "../data", "/vagrant_data"
-  #
-  # Map a folder so we can access our puppet modules, in the default modulepath.
-  config.vm.synced_folder "../../puppet/modules", "/usr/share/puppet/modules"
-
   # VirtualBox
-  #
   config.vm.provider :virtualbox do |vb|
-      # Start the display, false for headless
       vb.gui = true
-      # Use VBoxManage to customize the VM. For example to change memory:
+      # Use VBoxManage to customize the VM.
       vb.customize ["modifyvm", :id, "--memory", MEMORY.to_i]
       vb.customize ["modifyvm", :id, "--cpus", CORES.to_i]
   end
 
-  # Shell provisioning
-  #
-  #config.vm.provision :shell, :path => "../../bin/foo", :args => "-r hydro"
-  # Install module to /etc/puppet/module on the default path.
-  #config.vm.provision :shell, inline: "puppet module install -f puppetlabs/apt"
-
-  # Provisioning with Puppet stand alone.
-  #
-  # First we run a small puppet job to prepare the machine for the full job,
-  # installs modules into /etc/puppet/modules, on the default modulepath along
-  # with the shared folder above..
-  config.vm.provision :puppet do |puppet|
-    puppet.manifests_path = "../../puppet/manifests"
-    puppet.manifest_file  = "puppet_bootstrap.pp"
-  end
-  # The main puppet provision
-  # Note: Don't set module_path, handled by puppet_bootstrap.pp and sync folder.
-  config.vm.provision :puppet do |puppet|
-    puppet.manifests_path = "../../puppet/manifests"
-    puppet.manifest_file  = "vagrant.pp"
-    #puppet.options        = "--verbose"
-    puppet.facter = {
-        # custom facts provided to Puppet
-        "is_vagrant" => true,
-    }
+  # Provisioning with Ansible
+  config.vm.provision "ansible" do |ansible|
+      ansible.playbook = "../../ansible/ros-hydro-desktop.yml"
   end
 
 end
