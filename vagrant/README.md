@@ -33,6 +33,19 @@ $ vagrant up
 ```
 Now go make tea, this takes a while... Building this base image now saves us lots of time in future when building all the other machines.
 
+Once that builds restart the machine to bring the newly installed GUI up:
+
+```sh
+$ vagrant halt
+$ vagrant up
+```
+
+You may get an error about failing to mount folders, this because the guest additions will need updating. You should do this anyway even without the error.
+
+* Log into the machine as the vagrant user (password vagrant) 
+* Select Devices -> Install Guest Additions CD Image on the virtual box window.
+* Click yes for the autorun prompt.
+
 TODO - Create box and install it.
 
 ## Start the hand machine
