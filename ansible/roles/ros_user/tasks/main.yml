@@ -35,7 +35,11 @@
   when: item is defined and "{{item}}" != ""
 
 - name: Install home directory files
-  copy: src=files/home/{{ros_user}}/ dest=\~{{ros_user}}/ owner={{ros_user}} group=ros
+  copy: src={{item}} dest=\~{{ros_user}}/ owner={{ros_user}} group=ros
+  with_first_found:
+    files:
+      - files/home/{{ros_user}}/
+  when: item is defined and "{{item}}" != ""
 
 - name: Update rosdep
   shell: bash -c "source /opt/ros/{{ros_release}}/setup.bash && rosdep update"
