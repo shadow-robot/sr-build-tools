@@ -46,7 +46,14 @@ You may get an error about failing to mount folders, this because the guest addi
 * Select Devices -> Install Guest Additions CD Image on the virtual box window.
 * Click yes for the autorun prompt.
 
-TODO - Create box and install it.
+Now shutdown the machine (vagrant halt) and open up it's settings in virtual box and remove all the shared folders, make sure no CDs are mounted and any final cleanup. Then create the new box file for the machine (you can get the name from the vbox settings window).
+```sh
+$ vagrant package --base ros-hydro-desktop-precise64_default_1394020834281_59005
+```
+If all went well you can now install that image with:
+```sh
+$ vagrant box add ros-hydro-desktop-precise64 package.box
+```
 
 ## Start the hand machine
 
@@ -54,3 +61,5 @@ TODO - Create box and install it.
 $ cd sr-build-tools/vagrant/hand-hydro-precise64
 $ vagrant up
 ```
+
+
