@@ -1,0 +1,46 @@
+---
+# Playbook to install ROS (www.ros.org) onto a system.
+# http://wiki.ros.org/hydro/Installation/Ubuntu
+# TODO:
+# - Do some sanity checks on the ros versions, distro etc.
+#   E.g. hydro only allowed for precise, quantal, raring
+
+- name: Test for restricted, universe, multiverse
+  shell: grep '^#deb.*{{ansible_distribution_release}}\(-updates\)\? \(restricted\|universe\|multiverse\)' /etc/apt/sources.list
+  register: sources_test_result
+  ignore_errors: true
+  failed_when: false
+  changed_when: sources_test_result.rc == 0
+
+- name: Activate restricted, universe, multiverse
+  command: sed -i".bak-{{ansible_date_time.epoch}}" "s/^#\(deb.*{{ansible_distribution_release}}\(-updates\)\? \(restricted\|universe\|multiverse\)\)/\1/" /etc/apt/sources.list
+  when: sources_test_result.rc == 0
+
+- name: Add the ROS repo key
+  apt_key: id=B01FA116 url=http://packages.ros.org/ros.key
+
+- name: Add ROS repo
+  copy: dest=/etc/apt/sources.list.d/ros-latest.list
+        content="deb http://packages.ros.org/ros/ubuntu {{ansible_distribution_release}} main"
+        owner=root group=root mode=644
+
+# Only run if the last one is more than more than 10mins ago
+- name: Update package lists
+  apt: update_cache=yes cache_valid_time=3600
+
+# Is this a bit rude todo here? dist or safe or full?
+# http://docs.ansible.com/apt_module.html
+- name: Update all packages to the latest version
+  apt: upgrade=dist
+
+# ROS Install
+- name: Install ROS stuff
+  apt: name={{item}}
+  with_items:
+    - ubuntu-desktop
+    - "ros-{{ros_release}}-desktop-full"
+    - python-wstool
+    - python-rosinstall
+
+- name: rosdep init
+  command: rosdep init creates=/etc/ros/rosdep/sources.list.d/20-default.list

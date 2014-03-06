@@ -1,0 +1,10 @@
+
+[Desktop Entry]
+Version=1.0
+Type=Application
+Terminal=false
+Icon[en_GB]=/usr/share/icons/hicolor/scalable/apps/gnome-nettool.svg
+Name[en_GB]=Left Tactile Visualize
+Exec=xterm -hold -title "tactile" -e "~/scripts/start_left_hand_tactile.sh"
+Name=Left Tactile Visualize
+Icon=/usr/share/icons/hicolor/scalable/apps/gnome-nettool.svg

@@ -1,0 +1,10 @@
+
+[Desktop Entry]
+Version=1.0
+Type=Application
+Terminal=false
+Icon[en_GB]=/usr/share/icons/hicolor/scalable/apps/gnome-nettool.svg
+Name[en_GB]=Right Hand Rosgui
+Exec=xterm -hold -title "right hand rosgui" -e "bash -i -c 'roslaunch sr_ethercat_hand_config rhand_gui.launch'"
+Name=Right Hand Rosgui
+Icon=/usr/share/icons/hicolor/scalable/apps/gnome-nettool.svg

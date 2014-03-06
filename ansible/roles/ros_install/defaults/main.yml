@@ -1,0 +1,2 @@
+ros_release: 'hydro'
+ros_workspace: "~{{ros_user}}/{{ros_release}}_ws"

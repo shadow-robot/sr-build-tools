@@ -1,0 +1,28 @@
+---
+# Playbook for all the Vagrant machines.
+
+- hosts: ros-hydro-desktop-precise64
+  vars:
+    ros_release: 'hydro'
+  sudo: yes
+  roles:
+  # Allow the mchine to have latest guest additions installed by mounting the
+  # CD image inside the machine. Without this trying to install the latest
+  # additions breaks the vagrant setup.
+  - dkms
+  - ros_install
+  - ros_user
+
+- hosts: hand-hydro-precise64
+  vars:
+    ros_release: 'hydro'
+    ros_user: 'hand'
+    ros_user_comment: 'Shadow Hand'
+    ros_user_password: 'hand'
+    ros_user_email: 'software@shadowrobot.com'
+    ros_workspace_install: "../data/shadow_robot-{{ros_release}}.rosinstall"
+  sudo: yes
+  roles:
+  - ros_install
+  - ros_user
+  - ros_workspace

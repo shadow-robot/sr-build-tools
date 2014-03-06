@@ -1,0 +1,4 @@
+ros_user: 'ros'
+ros_user_comment: 'ROS'
+ros_user_password: 'ros'
+ros_user_email: 'ros@example.com'

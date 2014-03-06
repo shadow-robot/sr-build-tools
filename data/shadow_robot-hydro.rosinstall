@@ -1,0 +1,28 @@
+- git:
+    uri: 'https://github.com/shadow-robot/sr-config.git'
+    version: 'hydro-devel'
+    local-name: sr-config
+
+- git:
+    uri: 'https://github.com/shadow-robot/sr-ros-interface.git'
+    version: 'hydro-devel'
+    local-name: shadow_robot
+
+- git:
+    uri: 'https://github.com/shadow-robot/sr-ros-interface-ethercat.git'
+    version: 'hydro-devel'
+    local-name: shadow_robot_ethercat
+
+- git:
+    uri: 'https://github.com/shadow-robot/sr-visualization.git'
+    version: 'hydro-devel'
+    local-name: sr-visualization
+
+#- git:
+#    uri: 'https://github.com/shadow-robot/sr-contrib.git'
+#    version: 'R_hydro'
+#
+#- git:
+#    uri: 'https://github.com/shadow-robot/sr-teleop.git'
+#    version: 'R_hydro'
+

@@ -1,0 +1,62 @@
+---
+# Set up a ROS workspace, install a .rosinstall and compile.
+
+- name: Create workspace {{ros_workspace}}
+  file: state=directory path={{ros_workspace}}/src owner={{ros_user}} group=ros
+  sudo: yes
+  sudo_user: "{{ros_user}}"
+
+- name: Init workspace
+  command: wstool init .
+    chdir={{ros_workspace}}/src
+    creates={{ros_workspace}}/src/.rosinstall
+  sudo: yes
+  sudo_user: "{{ros_user}}"
+
+- name: catkin_init_workspace
+  shell: bash -c "source /opt/ros/{{ros_release}}/setup.bash && catkin_init_workspace"
+    chdir={{ros_workspace}}/src
+    creates={{ros_workspace}}/src/CMakeLists.txt
+  sudo: yes
+  sudo_user: "{{ros_user}}"
+
+# Do an initial make of the empty workspace to get a setup.bash.
+# If there is one already don't do this, so we don't trigger a big make
+- name: catkin make workspace
+  shell: bash -c "source /opt/ros/{{ros_release}}/setup.bash && catkin_make"
+    chdir={{ros_workspace}}
+    creates={{ros_workspace}}/devel/setup.bash
+  sudo: yes
+  sudo_user: "{{ros_user}}"
+
+- name: Update users bashrc to point to the workspace
+  lineinfile: dest=\~{{ros_user}}/.bashrc
+              line="source {{ros_workspace}}/devel/setup.bash"
+              regexp='^source.*/setup\.bash'
+              insertafter=EOF
+              backup=yes
+
+- name: Copy install file
+  copy: src={{ros_workspace_install}} dest=/tmp/ansible-ros-workspace.rosinstall
+
+# Install the given workspace file.
+- name: Install {{ros_workspace_install}}
+  shell: bash -c "{{item}}" chdir={{ros_workspace}}/src
+  sudo: yes
+  sudo_user: "{{ros_user}}"
+  with_items:
+    - wstool merge -y /tmp/ansible-ros-workspace.rosinstall
+    - wstool update
+
+- name: Install dependancies
+  shell: bash -c "source {{ros_workspace}}/devel/setup.bash && rosdep install --default-yes --all --ignore-src"
+         chdir={{ros_workspace}}
+  sudo: yes
+  sudo_user: "{{ros_user}}"
+
+# Now build the code we just installed.
+- name: catkin_make
+  shell: bash -c "source {{ros_workspace}}/devel/setup.bash && catkin_make"
+    chdir={{ros_workspace}}
+  sudo: yes
+  sudo_user: "{{ros_user}}"
