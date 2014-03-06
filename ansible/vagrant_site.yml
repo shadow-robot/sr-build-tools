@@ -10,7 +10,7 @@
   # CD image inside the machine. Without this trying to install the latest
   # additions breaks the vagrant setup.
   - dkms
-  - ros_machine
+  - ros_install
   - ros_user
 
 - hosts: hand-hydro-precise64
@@ -23,6 +23,6 @@
     ros_workspace_install: "../data/shadow_robot-{{ros_release}}.rosinstall"
   sudo: yes
   roles:
-  - ros_machine
+  - ros_install
   - ros_user
   - ros_workspace
