@@ -26,3 +26,17 @@
   - ros_install
   - ros_user
   - ros_workspace
+
+- hosts: hand-demo-64
+  vars:
+    ros_release: 'hydro'
+    ros_user: 'hand_demo'
+    ros_user_comment: 'Shadow Hand Demo'
+    ros_user_password: "password"
+    ros_user_email: 'software@shadowrobot.com'
+    ros_workspace_install: "../data/shadow_robot-{{ros_release}}.rosinstall"
+  sudo: yes
+  roles:
+  - ros_install
+  - ros_user
+  - ros_workspace
