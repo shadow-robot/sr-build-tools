@@ -4,10 +4,6 @@
 - hosts: ros-hydro-desktop-precise64
   vars:
     ros_release: 'hydro'
-    ros_user: 'ros'
-    ros_user_comment: 'ROS'
-    ros_user_password: 'ros'
-    ros_user_email: 'ros@example.com'
   sudo: yes
   roles:
   # Allow the mchine to have latest guest additions installed by mounting the
@@ -24,7 +20,6 @@
     ros_user_comment: 'Shadow Hand'
     ros_user_password: 'hand'
     ros_user_email: 'software@shadowrobot.com'
-    ros_workspace: "~{{ros_user}}/{{ros_release}}_ws"
     ros_workspace_install: "../data/shadow_robot-{{ros_release}}.rosinstall"
   sudo: yes
   roles:
