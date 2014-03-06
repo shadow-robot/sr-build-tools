@@ -4,13 +4,18 @@
 # Vagrantfile API/syntax version. Don't touch unless you know what you're doing!
 VAGRANTFILE_API_VERSION = "2"
 
-MEMORY = ENV['VAGRANT_MEMORY'] || '1024'
-CORES = ENV['VAGRANT_CORES'] || '2'
+hostname = "ros-hydro-desktop-precise64"
+memory   = ENV['VAGRANT_MEMORY'] || '1024'
+cores    = ENV['VAGRANT_CORES']  || '2'
 
-Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
-  config.vm.box = "precise64"
-  config.vm.box_url = "http://files.vagrantup.com/precise64.box"
-  config.vm.hostname = "ros-hydro-desktop-precise64.box.local"
+Vagrant.configure(VAGRANTFILE_API_VERSION)  do |config|
+  config.vm.box      = "precise64"
+  config.vm.box_url  = "http://files.vagrantup.com/precise64.box"
+  config.vm.hostname = hostname
+
+  # Set the vagrant name so we can match it in ansible
+  config.vm.define hostname do |host|
+  end
 
   config.ssh.forward_agent = true
 
@@ -18,13 +23,13 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.provider :virtualbox do |vb|
       vb.gui = true
       # Use VBoxManage to customize the VM.
-      vb.customize ["modifyvm", :id, "--memory", MEMORY.to_i]
-      vb.customize ["modifyvm", :id, "--cpus", CORES.to_i]
+      vb.customize ["modifyvm", :id, "--memory", memory.to_i]
+      vb.customize ["modifyvm", :id, "--cpus", cores.to_i]
   end
 
   # Provisioning with Ansible
   config.vm.provision "ansible" do |ansible|
-      ansible.playbook = "../../ansible/ros-hydro-desktop.yml"
+      ansible.playbook = "../../ansible/vagrant_site.yml"
   end
 
 end
