@@ -24,9 +24,8 @@
         content="deb http://packages.ros.org/ros/ubuntu {{ansible_distribution_release}} main"
         owner=root group=root mode=644
 
-# Only run if the last one is more than more than 10mins ago
 - name: Update package lists
-  apt: update_cache=yes cache_valid_time=3600
+  apt: update_cache=yes
 
 # Is this a bit rude todo here? dist or safe or full?
 # http://docs.ansible.com/apt_module.html
@@ -37,7 +36,6 @@
 - name: Install ROS stuff
   apt: name={{item}}
   with_items:
-    - ubuntu-desktop
     - "ros-{{ros_release}}-desktop-full"
     - python-wstool
     - python-rosinstall

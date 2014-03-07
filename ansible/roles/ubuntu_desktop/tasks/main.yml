@@ -1,0 +1,24 @@
+---
+# Installs the ubuntu dekstop system.
+# Useful for adding the GUI to base images.
+# Use ubuntu_desktop_thin: true to install a more minimal system.
+
+- name: Update package lists
+  apt: update_cache=yes
+
+- name: Install full Ubuntu desktop
+  apt: name={{item}}
+  with_items:
+    - ubuntu-desktop
+  when: not ubuntu_desktop_thin
+
+- name: Install thin Ubuntu desktop
+  apt: name={{item}} install_recommends=no
+  with_items:
+    - ubuntu-desktop
+    - avahi-autoipd
+    - avahi-daemon
+    - firefox
+    - firefox-gnome-support
+    #- nautilus-share
+  when: ubuntu_desktop_thin
