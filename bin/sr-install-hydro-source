@@ -38,13 +38,13 @@ echo ROS UBUNTU installed sucessfully
     sudo rosdep init -y
     rosdep update -y
 
-    rosdep install shadow_robot -y
-    rosdep install shadow_robot_ethercat -y
-    rosdep install sr_visualization -y
-    rosdep install sr_config -y
+    rosdep install --ignore-src shadow_robot -y
+    rosdep install --ignore-src shadow_robot_ethercat -y
+    rosdep install --ignore-src sr_visualization -y
+    rosdep install --ignore-src sr_config -y
     #rosdep install sr_teleop -y
-    rosdep install sr_movements -y
-    rosdep install sr_edc_ethercat_drivers -y
+    rosdep install --ignore-src sr_movements -y
+    rosdep install --ignore-src sr_edc_ethercat_drivers -y
     
     cd ~/workspace
     catkin_make
