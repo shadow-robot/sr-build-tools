@@ -26,7 +26,7 @@ $ cd git@github.com:shadow-robot/sr-build-tools.git
 
 Note to stop you needing to source the env-setup in all new terminals update your bashrc like so:
 ```sh
-echo 'source ~/opt/ansible/hacking/end-setup' >> ~/.bashrc
+echo 'source ~/opt/ansible/hacking/env-setup' >> ~/.bashrc
 ```
 
 ## Building the base image
