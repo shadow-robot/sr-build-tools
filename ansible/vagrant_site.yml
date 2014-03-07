@@ -40,3 +40,14 @@
   - ros_install
   - ros_user
   - ros_workspace
+  tasks:
+    - name: Copy background over
+      copy: src=files/images/ShadowRobot-smaller.jpg_1280x1280.jpg
+            dest=/usr/share/shadowrobot/images/
+
+    # http://askubuntu.com/questions/66914/how-to-change-desktop-background-from-command-line-in-unity
+    # http://askubuntu.com/questions/418171/set-desktop-background-from-command-line-over-ssh#
+    - name: Set users background
+      shell: "DISPLAY=:0 gsettings set org.gnome.desktop.background picture-uri file:///usr/share/shadowrobot/images/ShadowRobot-smaller.jpg_1280x1280.jpg"
+      sudo: yes
+      sudo_user: "{{ros_user}}"
