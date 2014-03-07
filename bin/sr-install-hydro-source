@@ -38,13 +38,9 @@ echo ROS UBUNTU installed sucessfully
     sudo rosdep init -y
     rosdep update -y
 
-    rosdep install --ignore-src shadow_robot -y
-    rosdep install --ignore-src shadow_robot_ethercat -y
-    rosdep install --ignore-src sr_visualization -y
-    rosdep install --ignore-src sr_config -y
-    #rosdep install sr_teleop -y
-    rosdep install --ignore-src sr_movements -y
-    rosdep install --ignore-src sr_edc_ethercat_drivers -y
+    # rosdep doesn't work with meta-packages. To avoid listing all the package names we can use --from-paths
+    # to install deps for all the packages in a directory
+    rosdep install --from-paths . --ignore-src --rosdistro hydro -y
     
     cd ~/workspace
     catkin_make
