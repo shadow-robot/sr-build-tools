@@ -4,10 +4,11 @@
 # Vagrantfile API/syntax version. Don't touch unless you know what you're doing!
 VAGRANTFILE_API_VERSION = "2"
 
-hostname = "hand-demo-64"
-memory   = ENV['VAGRANT_MEMORY'] || '1024'
-cores    = ENV['VAGRANT_CORES']  || '2'
-vram     = ENV['VAGRANT_VRAM']   || '64'
+hostname        = "hand-demo-64"
+memory          = ENV['VAGRANT_MEMORY']  || '1024'
+cores           = ENV['VAGRANT_CORES']   || '2'
+vram            = ENV['VAGRANT_VRAM']    || '64'
+ansible_verbose = ENV['ANSIBLE_VERBOSE'] || ""
 
 Vagrant.configure(VAGRANTFILE_API_VERSION)  do |config|
   config.vm.box      = "ros-hydro-desktop-precise64"
@@ -32,7 +33,9 @@ Vagrant.configure(VAGRANTFILE_API_VERSION)  do |config|
   # Provisioning with Ansible
   config.vm.provision "ansible" do |ansible|
       ansible.playbook = "../../ansible/vagrant_site.yml"
-      #ansible.verbose  = "v"
+      if ansible_verbose != ""
+          ansible.verbose  = ansible_verbose
+      end
   end
 
 end
