@@ -18,6 +18,10 @@
     - ubuntu-desktop
     - avahi-autoipd
     - avahi-daemon
+    - unity-lens-applications
+    - unity-lens-files
+    - indicator-session
+    - ttf-ubuntu-font-family
     - firefox
     - firefox-gnome-support
     #- nautilus-share
