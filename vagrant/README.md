@@ -24,6 +24,11 @@ $ git clone git@github.com:shadow-robot/sr-build-tools.git
 $ cd git@github.com:shadow-robot/sr-build-tools.git
 ```
 
+Note to stop you needing to source the env-setup in all new terminals update your bashrc like so:
+```sh
+echo 'source ~/opt/ansible/hacking/env-setup' >> ~/.bashrc
+```
+
 ## Building the base image
 
 The main machines use a custom made ROS base image that takes the basic ubuntu base, adds the desktop system and a full ROS desktop install. To build:

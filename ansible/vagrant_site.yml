@@ -4,11 +4,13 @@
 - hosts: ros-hydro-desktop-precise64
   vars:
     ros_release: 'hydro'
+    ubuntu_desktop_thin: true
   sudo: yes
   roles:
-  # Allow the mchine to have latest guest additions installed by mounting the
-  # CD image inside the machine. Without this trying to install the latest
-  # additions breaks the vagrant setup.
+  - ubuntu_desktop
+  # dkms - Allow the machine to have latest guest additions installed by
+  # mounting the CD image inside the machine. Without this trying to install
+  # the latest additions breaks the vagrant setup.
   - dkms
   - ros_install
   - ros_user
