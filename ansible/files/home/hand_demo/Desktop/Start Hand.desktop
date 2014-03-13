@@ -1,0 +1,8 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Terminal=false
+Exec=xterm -title "Hand Demo" -e bash -i -c 'roslaunch sr_hand  hand_demo_view.launch'
+Name=Rviz
+Icon=/usr/share/icons/hicolor/scalable/apps/gnome-nettool.svg
+Name[en_US]=Start Hand
