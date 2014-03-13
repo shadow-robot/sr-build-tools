@@ -3,8 +3,6 @@
 Version=1.0
 Type=Application
 Terminal=false
-Icon[en_GB]=gnome-panel-launcher
-Name[en_GB]=Rviz
 Exec=xterm -hold -title "rviz" -e "bash -i -c 'rosrun rviz rviz'"
 Name=Rviz
-Icon=/usr/share/icons/hicolor/scalable/apps/gnome-nettool.svg
+Icon=/opt/ros/hydro/share/rviz/icons/package.png
