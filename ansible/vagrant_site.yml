@@ -48,10 +48,13 @@
       copy: src=files/images/ShadowRobot-smaller.jpg_1280x1280.jpg
             dest=/usr/share/shadowrobot/images/
 
+    # http://askubuntu.com/questions/276509/change-gsettings-without-running-x-and-unity
     # http://askubuntu.com/questions/66914/how-to-change-desktop-background-from-command-line-in-unity
     # http://askubuntu.com/questions/418171/set-desktop-background-from-command-line-over-ssh#
     - name: Set users background
-      shell: "DISPLAY=:0 gsettings set org.gnome.desktop.background picture-uri file:///usr/share/shadowrobot/images/ShadowRobot-smaller.jpg_1280x1280.jpg"
+      shell: "dbus-launch --exit-with-session gsettings set org.gnome.desktop.background picture-uri file:///usr/share/shadowrobot/images/ShadowRobot-smaller.jpg_1280x1280.jpg"
+      register: command_result
+      failed_when: '"exited with non-zero exit status" in command_result.stderr'
       sudo: yes
       sudo_user: "{{ros_user}}"
 
@@ -60,8 +63,7 @@
     # http://www.techheadz.co.uk/279.html#.UyGH9d_qIz0
     - name: Set monospace font
       when: monospace_font is defined and monospace_font !=""
-      shell: DISPLAY=":0" gsettings set org.gnome.desktop.interface monospace-font-name "{{monospace_font}}"
-      #debug: msg="Hello {{monospace_font}}"
+      shell: "dbus-launch --exit-with-session gsettings set org.gnome.desktop.interface monospace-font-name '{{monospace_font}}'"
       register: command_result
       failed_when: '"exited with non-zero exit status" in command_result.stderr'
       sudo: yes
