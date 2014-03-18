@@ -27,17 +27,15 @@
 - name: Give user passwordless sudo.
   lineinfile: "dest=/etc/sudoers state=present regexp='^{{ros_user}}' line='{{ros_user}}  ALL=(ALL) NOPASSWD:  ALL' insertafter=EOF"
 
-- name: Install global home directory files
-  copy: src="{{item}}/" dest="~{{ros_user}}/" owner={{ros_user}} group=ros
-  with_first_found:
-      - ../../../files/home/all/
-  when: item is defined and "{{item}}" != ""
-
+# XXX Copy seems to have a bug here when the src tree is too deep and
+# it gets confused. Running again fixes for now.
 - name: Install home directory files
   copy: src="{{item}}/" dest="~{{ros_user}}/" owner={{ros_user}} group=ros
   with_first_found:
-      - ../../../files/home/{{ros_user}}/
+      - "../../../files/home/{{ros_user}}/"
   when: item is defined and "{{item}}" != ""
+  sudo: yes
+  sudo_user: "{{ros_user}}"
 
 - name: Test for existing bashrc setup
   shell: grep '^source.*/setup\.bash' ~{{ros_user}}/.bashrc
