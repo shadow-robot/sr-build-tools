@@ -28,3 +28,43 @@
   - ros_install
   - ros_user
   - ros_workspace
+
+- hosts: hand-demo-64
+  vars:
+    ros_release: 'hydro'
+    ros_user: 'hand_demo'
+    ros_user_comment: 'Shadow Hand Demo'
+    ros_user_password: "password"
+    ros_user_email: 'software@shadowrobot.com'
+    ros_workspace_install: "../data/shadow_robot-{{ros_release}}.rosinstall"
+    monospace_font: "Ubuntu Mono 11"
+  sudo: yes
+  roles:
+  - ros_install
+  - ros_user
+  - ros_workspace
+  tasks:
+    - name: Copy background over
+      copy: src=files/images/ShadowRobot-smaller.jpg_1280x1280.jpg
+            dest=/usr/share/shadowrobot/images/
+
+    # http://askubuntu.com/questions/276509/change-gsettings-without-running-x-and-unity
+    # http://askubuntu.com/questions/66914/how-to-change-desktop-background-from-command-line-in-unity
+    # http://askubuntu.com/questions/418171/set-desktop-background-from-command-line-over-ssh#
+    - name: Set users background
+      shell: "dbus-launch --exit-with-session gsettings set org.gnome.desktop.background picture-uri file:///usr/share/shadowrobot/images/ShadowRobot-smaller.jpg_1280x1280.jpg"
+      register: command_result
+      failed_when: '"exited with non-zero exit status" in command_result.stderr'
+      sudo: yes
+      sudo_user: "{{ros_user}}"
+
+    # Default font a bit large for a VM
+    # There are others we could tweak if we wanted to:
+    # http://www.techheadz.co.uk/279.html#.UyGH9d_qIz0
+    - name: Set monospace font
+      when: monospace_font is defined and monospace_font !=""
+      shell: "dbus-launch --exit-with-session gsettings set org.gnome.desktop.interface monospace-font-name '{{monospace_font}}'"
+      register: command_result
+      failed_when: '"exited with non-zero exit status" in command_result.stderr'
+      sudo: yes
+      sudo_user: "{{ros_user}}"

@@ -1,0 +1,8 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Terminal=false
+Exec=xterm -title "Hand Demo" -e bash -i -c 'roslaunch sr_hand  hand_demo_view.launch'
+Name=Rviz
+Icon=/home/hand_demo/hydro_ws/src/sr-visualization/sr_visualization_icons/icons/iconHand.png
+Name[en_US]=Start Hand

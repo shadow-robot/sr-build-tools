@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=Shadow Hand Welcome
+Exec=x-www-browser file:///home/hand_demo/Documents/Welcome.html
+#Icon=
+#Comment=
+X-GNOME-Autostart-enabled=true
+
