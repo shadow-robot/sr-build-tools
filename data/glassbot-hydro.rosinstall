@@ -1,0 +1,7 @@
+- git:
+    local-name: sr-ronex-dev
+    uri: "https://github.com/shadow-robot/sr-grasp-stabilisation.git"
+- git:
+    local-name: glassbot
+    uri: "https://github.com/shadow-robot/glassbot.git"
+
