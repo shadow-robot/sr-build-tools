@@ -68,3 +68,8 @@
       failed_when: '"exited with non-zero exit status" in command_result.stderr'
       sudo: yes
       sudo_user: "{{ros_user}}"
+
+- hosts: glassbot
+  sudo: yes
+  roles:
+    - glassbot
