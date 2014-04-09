@@ -43,10 +43,14 @@
 - name: Install {{ros_workspace_install}}
   shell: bash -c "{{item}}" chdir={{ros_workspace}}/src
   sudo: yes
-  sudo_user: "{{ros_user}}"
+  # Run as root to allow forward keys for github access
+  #sudo_user: "{{ros_user}}"
   with_items:
     - wstool merge -y /tmp/ansible-ros-workspace.rosinstall
     - wstool update
+
+- name: Fix perms
+  file: path={{ros_workspace}} recurse=yes owner={{ros_user}} group=ros
 
 - name: Install dependancies
   shell: bash -c "source {{ros_workspace}}/devel/setup.bash && rosdep install --default-yes --all --ignore-src"
