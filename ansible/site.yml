@@ -3,16 +3,6 @@
 
 # Machines running the glass bot system
 - hosts: glassbot_hosts
-  vars:
-    ros_release: 'hydro'
-    ros_user: 'glassbot'
-    ros_user_comment: 'Glass Bot'
-    ros_user_password: 'glassbot'
-    ros_user_email: 'software@shadowrobot.com'
-    ros_workspace_install: "../data/glassbot-{{ros_release}}.rosinstall"
   sudo: yes
   roles:
-  - ubuntu_desktop
-  - ros_install
-  - ros_user
-  - ros_workspace
+  - glassbot
