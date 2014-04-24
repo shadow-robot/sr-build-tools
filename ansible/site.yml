@@ -1,8 +1,0 @@
----
-# Playbook for the shadow site at Liverpool road
-
-# Machines running the glass bot system
-- hosts: glassbot_hosts
-  sudo: yes
-  roles:
-  - glassbot
