@@ -3,7 +3,7 @@ Tests the glassbot ansible role using a vagrant vm.
 Note that due to the glassbot repo being private we need a some tricks to install the code from github. The user running
 the playbook needs to have a key loaded in there key agent with github access and keyforwarding active.
 
-If this isn't working provision will hand on:
+If this isn't working provision will hang on:
 ```
 TASK: [ros_workspace | Install ../data/glassbot-hydro.rosinstall] *************
 ```
