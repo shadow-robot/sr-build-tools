@@ -37,6 +37,7 @@
     ros_user_password: "password"
     ros_user_email: 'software@shadowrobot.com'
     ros_workspace_install: "../data/shadow_robot-{{ros_release}}.rosinstall"
+    ros_user_background: "ShadowRobot-smaller.jpg_1280x1280.jpg"
     monospace_font: "Ubuntu Mono 11"
   sudo: yes
   roles:
