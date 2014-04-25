@@ -89,3 +89,7 @@
 
 - name: Setup git email
   command: git config --global user.email "{{ros_user_email}}"
+
+- name: Setup autologin
+  copy: src=files/config/lightdm.conf
+        dest=/etc/lightdm/lightdm.conf
