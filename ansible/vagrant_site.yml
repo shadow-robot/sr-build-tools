@@ -27,7 +27,6 @@
   roles:
   - ros_install
   - ros_user
-  - ros_workspace
 
 - hosts: hand-demo-64
   vars:
