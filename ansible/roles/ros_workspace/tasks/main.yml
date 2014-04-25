@@ -42,13 +42,13 @@
 # Install the given workspace file.
 - name: Install {{ros_workspace_install}}
   shell: bash -c "{{item}}" chdir={{ros_workspace}}/src
-  sudo: yes
   # Run as root to allow forward keys for github access
-  #sudo_user: "{{ros_user}}"
+  sudo: yes
   with_items:
     - wstool merge -y /tmp/ansible-ros-workspace.rosinstall
     - wstool update
 
+# As we installed code as root, fix the perms.
 - name: Fix perms
   file: path={{ros_workspace}} recurse=yes owner={{ros_user}} group=ros
 
