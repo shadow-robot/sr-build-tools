@@ -52,7 +52,7 @@
   when: setup_test_result.rc != 0
 
 - name: Copy background over
-  when: ros_user_background is defined and ros_user_background != ""
+  when: ros_user_background is defined and ros_user_background != "" and background_destination_folder is defined and background_destination_folder != ""
   copy: src=files/images/{{ros_user_background}}
         dest={{background_destination_folder}}
 
@@ -60,8 +60,8 @@
 # http://askubuntu.com/questions/66914/how-to-change-desktop-background-from-command-line-in-unity
 # http://askubuntu.com/questions/418171/set-desktop-background-from-command-line-over-ssh#
 - name: Set users background
-  when: ros_user_background is defined and ros_user_background != ""
-  shell: "dbus-launch --exit-with-session gsettings set org.gnome.desktop.background picture-uri file:///usr/share/shadowrobot/images/ShadowRobot-smaller.jpg_1280x1280.jpg"
+  when: ros_user_background is defined and ros_user_background != "" and background_destination_folder is defined and background_destination_folder != ""
+  shell: "dbus-launch --exit-with-session gsettings set org.gnome.desktop.background picture-uri file://{{background_destination_folder}}{{ros_user_background}}"
   register: command_result
   failed_when: '"exited with non-zero exit status" in command_result.stderr'
   sudo: yes
