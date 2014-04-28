@@ -47,7 +47,7 @@
   register: full_ros_packages_names
 
 - name: Install specific ROS packages
-  when: ros_packages is defined and ros_packages != ""
+  when: full_ros_packages_names.changed
   apt: name={{item.stdout}}
   with_items: full_ros_packages_names.results
 
