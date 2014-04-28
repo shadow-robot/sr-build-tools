@@ -1,0 +1,9 @@
+- git:
+    local-name: sr-ronex-dev
+    #uri: "https://github.com/shadow-robot/sr-ronex-dev.git"
+    uri: "git@github.com:shadow-robot/sr-ronex-dev.git"
+- git:
+    local-name: glassbot
+    #uri: "https://github.com/shadow-robot/glassbot.git"
+    uri: "git@github.com:shadow-robot/glassbot.git"
+
