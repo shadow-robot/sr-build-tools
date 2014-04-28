@@ -89,3 +89,11 @@
 
 - name: Setup git email
   command: git config --global user.email "{{ros_user_email}}"
+
+- name: Set autologin user to {{ros_user}}
+  when: ros_user_autologin
+  lineinfile: dest=/etc/lightdm/lightdm.conf line="autologin-user={{ros_user}}"
+
+- name: Set autologin to true
+  when: ros_user_autologin
+  lineinfile: dest=/etc/lightdm/lightdm.conf line="autologin-user-timeout=0"
