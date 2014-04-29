@@ -33,7 +33,7 @@
 - name: Install home directory files
   copy: src="{{item}}/" dest="~{{ros_user}}/" owner={{ros_user}} group=ros
   with_first_found:
-      - "../../../files/home/{{ros_user}}/"
+      - "{{ros_user_home_files}}"
   when: item is defined and "{{item}}" != ""
   sudo: yes
   sudo_user: "{{ros_user}}"
