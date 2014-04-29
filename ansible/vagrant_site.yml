@@ -26,7 +26,7 @@
   - ros_install
   - ros_user
 
-- hosts: hand-hydro-precise64
+- hosts: hand-prod
   vars:
     ros_release: 'hydro'
     ros_user: 'hand'
@@ -40,11 +40,32 @@
   - ros_user
   - ros_workspace
 
-- hosts: hand-demo-64
+- hosts: hand
   vars:
     ros_release: 'hydro'
-    ros_user: 'hand_demo'
-    ros_user_comment: 'Shadow Hand Demo'
+    ros_user: 'hand'
+    ros_user_comment: 'Shadow Hand'
+    ros_user_password: "password"
+    ros_user_email: 'software@shadowrobot.com'
+    ros_workspace_install: "../data/shadow_robot-{{ros_release}}.rosinstall"
+    ros_user_background: "ShadowRobot-smaller.jpg_1280x1280.jpg"
+    monospace_font: "Ubuntu Mono 11"
+    ros_packages:
+      - shadow-robot
+      - shadow-robot-ethercat
+      - sr-config
+      - sr-visualization
+  sudo: yes
+  roles:
+  - ros_install
+  - ros_user
+
+#development version of the hand machine
+- hosts: hand-dev
+  vars:
+    ros_release: 'hydro'
+    ros_user: 'hand'
+    ros_user_comment: 'Shadow Hand'
     ros_user_password: "password"
     ros_user_email: 'software@shadowrobot.com'
     ros_workspace_install: "../data/shadow_robot-{{ros_release}}.rosinstall"
