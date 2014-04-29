@@ -4,7 +4,7 @@
 # Vagrantfile API/syntax version. Don't touch unless you know what you're doing!
 VAGRANTFILE_API_VERSION = "2"
 
-hostname        = "hand-demo-64"
+hostname        = "hand"
 memory          = ENV['VAGRANT_MEMORY']  || '1024'
 cores           = ENV['VAGRANT_CORES']   || '2'
 vram            = ENV['VAGRANT_VRAM']    || '64'
