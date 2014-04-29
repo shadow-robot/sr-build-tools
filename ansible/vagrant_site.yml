@@ -81,6 +81,7 @@
   - ros_install
   - ros_user
   - ros_workspace
+  - share_folder
 
 - hosts: glassbot
   sudo: yes
