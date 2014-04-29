@@ -32,7 +32,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION)  do |config|
 
   # Provisioning with Ansible
   config.vm.provision "ansible" do |ansible|
-      ansible.playbook = "../../ansible/vagrant_site.yml"
+      ansible.playbook = "../../../ansible/vagrant_site.yml"
       if ansible_verbose != ""
           ansible.verbose = ansible_verbose
       end
