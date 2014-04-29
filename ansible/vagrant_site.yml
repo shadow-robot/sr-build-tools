@@ -71,11 +71,6 @@
     ros_workspace_install: "../data/shadow_robot-{{ros_release}}.rosinstall"
     ros_user_background: "ShadowRobot-smaller.jpg_1280x1280.jpg"
     monospace_font: "Ubuntu Mono 11"
-    ros_packages:
-      - shadow-robot
-      - shadow-robot-ethercat
-      - sr-config
-      - sr-visualization
   sudo: yes
   roles:
   - ros_install
