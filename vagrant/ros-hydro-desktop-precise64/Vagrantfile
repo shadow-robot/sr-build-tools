@@ -4,18 +4,30 @@
 # Vagrantfile API/syntax version. Don't touch unless you know what you're doing!
 VAGRANTFILE_API_VERSION = "2"
 
-hostname = "ros-hydro-desktop-precise64"
 memory   = ENV['VAGRANT_MEMORY'] || '1024'
 cores    = ENV['VAGRANT_CORES']  || '2'
 vram     = ENV['VAGRANT_VRAM']   || '64'
 
-Vagrant.configure(VAGRANTFILE_API_VERSION)  do |config|
-  config.vm.box      = "precise64"
-  config.vm.box_url  = "http://files.vagrantup.com/precise64.box"
-  config.vm.hostname = hostname
+# Multi machine setup. One for machine for each ros distro/ubuntu release
+# combination we support.
+nodes = [
+    { :name    => 'ros-hydro-desktop-precise64',
+      :box     => 'precise64',
+      :box_url => 'http://files.vagrantup.com/precise64.box',
+    },
+    { :name    => 'ros-indigo-desktop-trusty64',
+      :box     => 'trusty-server-cloudimg-amd64',
+      :box_url => 'https://cloud-images.ubuntu.com/vagrant/trusty/current/trusty-server-cloudimg-amd64-vagrant-disk1.box',
+    },
+]
 
-  # Set the vagrant name so we can match it in ansible
-  config.vm.define hostname do |host|
+Vagrant.configure(VAGRANTFILE_API_VERSION)  do |config|
+  # Create a machine for each of the nodes.
+  nodes.each do |node|
+      config.vm.define node[:name] do |node_config|
+          node_config.vm.box      = node[:box]
+          node_config.vm.hostname = node[:name]
+      end
   end
 
   config.ssh.forward_agent = true

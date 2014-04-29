@@ -15,6 +15,17 @@
   - ros_install
   - ros_user
 
+- hosts: ros-indigo-desktop-trusty64
+  vars:
+    ros_release: 'indigo'
+    ubuntu_desktop_thin: true
+  sudo: yes
+  roles:
+  - ubuntu_desktop
+  - dkms
+  - ros_install
+  - ros_user
+
 - hosts: hand-prod
   vars:
     ros_release: 'hydro'
