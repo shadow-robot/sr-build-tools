@@ -33,6 +33,7 @@
     ros_user_comment: 'Shadow Hand'
     ros_user_password: 'hand'
     ros_user_email: 'software@shadowrobot.com'
+    ros_user_home_files: files/home/hand_prod/
     ros_workspace_install: "../data/shadow_robot-{{ros_release}}.rosinstall"
   sudo: yes
   roles:
