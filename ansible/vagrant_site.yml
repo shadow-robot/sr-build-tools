@@ -80,6 +80,7 @@
   roles:
   - ros_install
   - ros_user
+  - ros_workspace
 
 - hosts: glassbot
   sudo: yes
