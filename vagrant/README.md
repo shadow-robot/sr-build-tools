@@ -3,6 +3,16 @@ Shadow Vagrant
 
 [Vagrant](http://vagrantup.com) setup to generte Vagrant base images for [ROS](http://ros.org) work and machines for Shadow projects. Uses [Virtual Box](https://www.virtualbox.org/) for virtualisation and uses [Ansible](http://ansible.com) for configuration managment, see ansible directory at root of the project for the playbooks and a set of roles for setting up ROS machines, users and workspaces.
 
+## What you'll find here
+Different machines configuration are stored here:
+
+* **hand/** is a stable machine for working with the simulated Shadow Hand
+* **dev/** contains the development machines (source install, development environment setup)
+* *dev/hand* is a development machine for the Shadow Hand
+* **production** contains the machines used for shipping to customers
+* *production/hand* is the Hand for customers machine
+* **experimental** contains more advanced machines (different ros versions, different projects, etc...)
+
 ## Install and Setup
 
 To start, [install the latest virtual box](https://www.virtualbox.org/wiki/Linux_Downloads). We have been using the oracle release (not the plain Ubuntu packages) and you will need to install the extension pack. I'd suggest adding their repo to your machine.
@@ -47,7 +57,7 @@ $ vagrant up
 
 You may get an error about failing to mount folders, this because the guest additions will need updating. You should do this anyway even without the error.
 
-* Log into the machine as the vagrant user (password vagrant) 
+* Log into the machine as the vagrant user (password vagrant)
 * Select Devices -> Install Guest Additions CD Image on the virtual box window.
 * Click yes for the autorun prompt.
 
@@ -66,5 +76,3 @@ $ vagrant box add ros-hydro-desktop-precise64 package.box
 $ cd sr-build-tools/vagrant/hand-hydro-precise64
 $ vagrant up
 ```
-
-
