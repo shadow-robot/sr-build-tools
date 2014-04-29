@@ -23,6 +23,11 @@
     - indicator-session
     - ttf-ubuntu-font-family
     - firefox
-    - firefox-gnome-support
     #- nautilus-share
   when: ubuntu_desktop_thin
+
+- name: Install thin Ubuntu desktop precise
+  apt: name={{item}} install_recommends=no
+  with_items:
+    - firefox-gnome-support
+  when: ubuntu_desktop_thin and '{{ansible_distribution_release}}' == 'precise'
