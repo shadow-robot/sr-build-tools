@@ -15,7 +15,7 @@
   - ros_install
   - ros_user
 
-- hosts: hand-hydro-precise64
+- hosts: hand-prod
   vars:
     ros_release: 'hydro'
     ros_user: 'hand'
