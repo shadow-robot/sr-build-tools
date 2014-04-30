@@ -18,6 +18,10 @@
   raw:  (echo {{ros_user_password}}; echo {{ros_user_password}}) | smbpasswd -s -a {{ros_user}}
   tags: samba
 
+- name: Expand workspace path
+  command: echo {{ros_workspace}}
+  register: expanded_ros_path
+
 - name: Copy proper samba config
   template: src=smb.conf dest=/etc/samba/smb.conf owner=root group=root mode=0644
   notify:
