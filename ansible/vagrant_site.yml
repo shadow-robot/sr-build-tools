@@ -94,6 +94,7 @@
   roles:
   - ros_install
   - ros_user
+  - ronex_post_install
 
 - hosts: glassbot
   sudo: yes
