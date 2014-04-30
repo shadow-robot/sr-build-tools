@@ -1,1 +1,1 @@
-ros_workspace: "~{{ros_user}}/{{ros_release}}_ws"
+ros_workspace: "/home/{{ros_user}}/{{ros_release}}_ws"

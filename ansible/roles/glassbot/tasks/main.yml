@@ -44,7 +44,7 @@
   file: path={{ros_build_workspace}} recurse=yes owner={{ros_user}} group=ros
 
 - name: Update users bashrc to point to the workspace
-  lineinfile: dest=\~{{ros_user}}/.bashrc
+  lineinfile: dest=/home/{{ros_user}}/.bashrc
               line="source {{ros_build_workspace}}/setup.bash"
               regexp='^source.*/setup\.bash'
               insertafter=EOF
