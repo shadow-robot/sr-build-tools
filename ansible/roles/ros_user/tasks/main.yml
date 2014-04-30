@@ -31,7 +31,7 @@
 # XXX Copy seems to have a bug here when the src tree is too deep and
 # it gets confused. Running again fixes for now.
 - name: Install home directory files
-  copy: src="{{item}}/" dest="/home/{{ros_user}}/" owner={{ros_user}} group=ros
+  copy: src="{{item}}/" dest="~{{ros_user}}/" owner={{ros_user}} group=ros
   with_first_found:
       - "../../../files/home/{{ros_user}}/"
   when: item is defined and "{{item}}" != ""
@@ -39,13 +39,13 @@
   sudo_user: "{{ros_user}}"
 
 - name: Test for existing bashrc setup
-  shell: grep '^source.*/setup\.bash' /home/{{ros_user}}/.bashrc
+  shell: grep '^source.*/setup\.bash' ~{{ros_user}}/.bashrc
   register: setup_test_result
   ignore_errors: true
 
 # Add a source line to bashrc, only if there isn't already one
 - name: Update bashrc to point to ROS {{ros_release}}
-  lineinfile: dest=/home/{{ros_user}}/.bashrc
+  lineinfile: dest=\~{{ros_user}}/.bashrc
               line="source /opt/ros/{{ros_release}}/setup.bash"
               regexp='^source.*/setup\.bash'
               insertafter=EOF
