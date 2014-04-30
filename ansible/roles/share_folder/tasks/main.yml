@@ -1,0 +1,30 @@
+---
+# Share a list of folders using samba
+# inspired from https://github.com/iamveen/ansible-shared/blob/master/samba
+# and: https://www.samba.org/samba/docs/man/Samba-HOWTO-Collection/FastStart.html
+- name: Check samba installed
+  apt:  pkg=samba state=installed
+  tags: samba
+
+- name: Backup samba config
+  copy: src=/etc/samba/smb.conf dest=/etc/samba/smb.conf.bak
+  tags: samba
+
+- name: Share code folder
+  file: path="{{ros_workspace}}/src" state=directory mode=0755 owner={{ros_user}} group=ros
+  tags: samba
+
+- name: Ensure smbpassword is set
+  raw:  (echo {{ros_user_password}}; echo {{ros_user_password}}) | smbpasswd -s -a {{ros_user}}
+  tags: samba
+
+- name: Expand workspace path
+  command: echo {{ros_workspace}}
+  register: expanded_ros_path
+
+- name: Copy proper samba config
+  template: src=smb.conf dest=/etc/samba/smb.conf owner=root group=root mode=0644
+  notify:
+    - restart smbd
+    - restart nmbd
+  tags: samba
