@@ -1,0 +1,9 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Terminal=false
+Exec=xterm -title "RoNeX" -e bash -i -c 'roslaunch sr_ronex_launch sr_ronex.launch'
+Name=RoNeX
+Icon=/usr/share/icons/hicolor/scalable/apps/gnome-nettool.svg
+StartupNotify=true
+Name[en_US]=RoNeX
