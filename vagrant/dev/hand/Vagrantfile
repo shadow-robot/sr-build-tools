@@ -11,6 +11,7 @@ vram            = ENV['VAGRANT_VRAM']    || '64'
 ansible_verbose = ENV['ANSIBLE_VERBOSE'] || ""
 
 #not using vb.customize as this returns an error when the dhcpserver doesn't exist
+# see: https://github.com/mitchellh/vagrant/issues/3083
 system('echo "Removing standard dhcpserver from virtual box - might throw an error but its OK."')
 system('VBoxManage dhcpserver remove --netname HostInterfaceNetworking-vboxnet0')
 
