@@ -1,12 +1,4 @@
 ---
-- name: Install home directory files
-  copy: src="{{item}}/" dest="/home/{{ros_user}}/" owner={{ros_user}} group=ros
-  with_first_found:
-      - "{{ros_user_home_files}}"
-  when: item is defined and "{{item}}" != ""
-  sudo: yes
-  sudo_user: "{{ros_user}}"
-
 - name: Update bashrc to use eth1 for RoNeX
   lineinfile: dest=/home/{{ros_user}}/.bashrc
               line="export ETHERCAT_PORT=eth1"
