@@ -3,8 +3,6 @@
 Version=1.0
 Type=Application
 Terminal=false
-Icon[en_GB]=/usr/share/icons/hicolor/scalable/apps/gdu-emblem-raid0.svg
-Name[en_GB]=Roscore
 Exec=xterm -hold -title "roscore" -e "bash -i -c roscore"
 Name=Roscore
-Icon=/usr/share/icons/hicolor/scalable/apps/gdu-emblem-raid0.svg
+Icon=/opt/ros/hydro/share/rqt_gui/resource/rqt.png

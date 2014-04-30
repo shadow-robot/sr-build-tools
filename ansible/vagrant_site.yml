@@ -33,6 +33,7 @@
     ros_user_comment: 'Shadow Hand'
     ros_user_password: 'hand'
     ros_user_email: 'software@shadowrobot.com'
+    ros_user_home_files: files/home/hand_prod/
     ros_workspace_install: "../data/shadow_robot-{{ros_release}}.rosinstall"
   sudo: yes
   roles:
@@ -71,17 +72,28 @@
     ros_workspace_install: "../data/shadow_robot-{{ros_release}}.rosinstall"
     ros_user_background: "ShadowRobot-smaller.jpg_1280x1280.jpg"
     monospace_font: "Ubuntu Mono 11"
-    ros_packages:
-      - shadow-robot
-      - shadow-robot-ethercat
-      - sr-config
-      - sr-visualization
   sudo: yes
   roles:
   - ros_install
   - ros_user
   - ros_workspace
   - share_folder
+
+- hosts: ronex
+  vars:
+    ros_release: 'hydro'
+    ros_user: 'ronex'
+    ros_user_comment: 'RoNeX'
+    ros_user_password: "password"
+    ros_user_email: 'software@shadowrobot.com'
+    ros_user_background: "ronex.jpg"
+    monospace_font: "Ubuntu Mono 11"
+    ros_packages:
+      - sr-ronex
+
+  sudo: yes
+  roles:
+  - ronex_user
 
 - hosts: glassbot
   sudo: yes
