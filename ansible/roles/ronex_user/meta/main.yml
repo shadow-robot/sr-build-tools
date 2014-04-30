@@ -1,0 +1,4 @@
+---
+dependencies:
+  - { role: ros_install }
+  - { role: ros_user }

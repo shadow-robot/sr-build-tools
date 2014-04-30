@@ -92,9 +92,7 @@
 
   sudo: yes
   roles:
-  - ros_install
-  - ros_user
-  - ronex_post_install
+  - ronex_user
 
 - hosts: glassbot
   sudo: yes
