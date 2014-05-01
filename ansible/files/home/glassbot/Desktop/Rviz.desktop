@@ -2,6 +2,6 @@
 Version=1.0
 Type=Application
 Terminal=false
-Exec=xterm -hold -title "rviz" -e "bash -i -c 'rosrun rviz rviz'"
+Exec=bash -i -c 'rosrun rviz rviz'
 Name=Rviz
 Icon=/opt/ros/hydro/share/rviz/icons/package.png
