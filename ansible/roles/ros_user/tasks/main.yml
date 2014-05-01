@@ -54,7 +54,7 @@
 
 - name: Copy background over
   when: ros_user_background is defined and ros_user_background != "" and background_destination_folder is defined and background_destination_folder != ""
-  copy: src=files/images/{{ros_user_background}}
+  copy: src={{ros_user_background}}
         dest={{background_destination_folder}}
 
 # http://askubuntu.com/questions/276509/change-gsettings-without-running-x-and-unity
