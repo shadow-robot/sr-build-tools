@@ -5,7 +5,7 @@
   vars:
     ros_release: 'hydro'
     ros_user_background: 'files/images/Hydromedusa_web1.jpg'
-    ubuntu_desktop_thin: true
+    ubuntu_desktop_thin: false
   sudo: yes
   roles:
   - ubuntu_desktop
