@@ -10,6 +10,12 @@ cores           = ENV['VAGRANT_CORES']   || '2'
 vram            = ENV['VAGRANT_VRAM']    || '64'
 ansible_verbose = ENV['ANSIBLE_VERBOSE'] || ""
 
+# Not using vb.customize as this returns an error when the dhcpserver doesn't exist
+# see: https://github.com/mitchellh/vagrant/issues/3083
+# This only seems to be needed once, not every run, maybe just needs to be readme?
+#system('echo "Removing standard dhcpserver from virtual box - might throw an error but its OK."')
+#system('VBoxManage dhcpserver remove --netname HostInterfaceNetworking-vboxnet0')
+
 Vagrant.configure(VAGRANTFILE_API_VERSION)  do |config|
   config.vm.box      = "ros-hydro-desktop-precise64"
   config.vm.box_url  = "http://files.shadowrobot.com/vagrant/ros-hydro-desktop-precise64.box"
@@ -18,6 +24,9 @@ Vagrant.configure(VAGRANTFILE_API_VERSION)  do |config|
   # Set the vagrant name so we can match it in ansible
   config.vm.define hostname do |host|
   end
+
+  # Adding private network interface
+  config.vm.network :private_network, type: :dhcp, :adapter => 3
 
   config.ssh.forward_agent = true
 

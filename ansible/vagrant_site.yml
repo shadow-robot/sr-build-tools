@@ -111,3 +111,4 @@
                  backup=yes
   roles:
     - glassbot
+    - share_folder
