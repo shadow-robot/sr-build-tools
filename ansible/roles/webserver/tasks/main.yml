@@ -1,0 +1,12 @@
+---
+#Installing a webserver and setting the glassbot html repo as the website
+
+- name: Install apache
+  apt: name={{item}}
+  with_items:
+    - apache2
+
+- name: Link glassbot website for apache
+  action: file src={{ros_workspace}}/src/glassbot/glassbot_game/html/index.html dest=/var/www/index.html state=link force=yes
+  notify:
+    - restart apache2

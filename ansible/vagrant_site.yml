@@ -97,6 +97,10 @@
 
 - hosts: glassbot
   sudo: yes
+  vars:
+    ros_packages:
+      - rosbridge-suite
+      - tf2-web-republisher
   pre_tasks:
     # To install a private repo need to pass the auth sock (ssh agent
     # forwarding onto root (wont work for other users due to perms on the
@@ -110,3 +114,4 @@
                  backup=yes
   roles:
     - glassbot
+    - webserver
