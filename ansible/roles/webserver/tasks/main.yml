@@ -1,5 +1,5 @@
 ---
-#Installing a webserver and setting the glassbot html repo as the website
+#Installing a webserver
 
 - name: Install apache
   apt: name={{item}}
