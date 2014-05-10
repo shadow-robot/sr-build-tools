@@ -55,3 +55,14 @@
               regexp='^source.*/setup\.bash'
               insertafter=EOF
               backup=yes
+
+# Link the index page to rosbridge
+- name: Remove index.html
+  file: state=absent path=/var/www/index.html
+
+- name: Link glassbot website for apache
+  file: state=link
+    src={{ros_workspace}}/src/glassbot/glassbot_game/html/index.html
+    dest=/var/www/index.html
+  notify:
+    - restart apache2
