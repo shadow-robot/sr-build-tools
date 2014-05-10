@@ -6,7 +6,12 @@
   with_items:
     - apache2
 
+- name: Remove index.html
+  file: state=absent path=/var/www/index.html
+
 - name: Link glassbot website for apache
-  action: file src={{ros_workspace}}/src/glassbot/glassbot_game/html/index.html dest=/var/www/index.html state=link force=yes
+  file: state=link
+    src={{ros_workspace}}/src/glassbot/glassbot_game/html/index.html
+    dest=/var/www/index.html
   notify:
     - restart apache2
