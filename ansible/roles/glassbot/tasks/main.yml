@@ -16,7 +16,13 @@
   sudo: yes
   sudo_user: "{{ros_user}}"
 
-- name: Install ar_pose code
+- name: Remove ar_pose repo
+  command: rosws remove ar_tools
+    chdir={{ros_build_workspace}}
+  sudo: yes
+  sudo_user: "{{ros_user}}"
+
+- name: Add ar_pose repo
   command: rosws set ar_tools -y --git "{{glassbot_ar_tools_repo}}"
     chdir={{ros_build_workspace}}
   sudo: yes
