@@ -90,7 +90,7 @@ add_branch() {
 # Find branches from github, adding jobs for them. Make a list of the jenkins
 # job names for those braches
 cat /dev/null > $tmp_github_job_list
-for branch in $(git ls-remote --heads git@github.com:shadow-robot/sr-ronex-dev.git | cut -f2 | sed 's/refs\/heads\///' | grep -i '^F_'); do
+for branch in $(git ls-remote --heads git@github.com:shadow-robot/sr-ronex.git | cut -f2 | sed 's/refs\/heads\///' | grep -i '^F_'); do
     name=$(branch_to_name "$branch")
     if [ -z "$dry_run" ]; then
         add_branch $branch
@@ -113,7 +113,7 @@ do
         fi
     fi
 done
-        
+
 # Cleanup
 if [ -z "$dry_run" ]; then
     rm "$tmp_github_job_list"

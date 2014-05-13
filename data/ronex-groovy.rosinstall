@@ -1,6 +1,6 @@
 - git:
-    local-name: sr-ronex-dev
-    uri: "git@github.com:shadow-robot/sr-ronex-dev.git"
+    local-name: sr-ronex
+    uri: "git@github.com:shadow-robot/sr-ronex.git"
     version: development
 - git:
     local-name: pr2_ethercat_drivers
@@ -18,4 +18,3 @@
     local-name: pr2_mechanism
     uri: "git@github.com:shadow-robot/pr2_mechanism.git"
     version: F_custom_hardware
-
