@@ -1,0 +1,42 @@
+- git:
+    uri: 'https://github.com/shadow-robot/sr-config.git'
+    version: 'hydro-devel'
+    local-name: sr-config
+
+- git:
+    uri: 'https://github.com/shadow-robot/sr-ros-interface.git'
+    version: 'hydro-devel'
+    local-name: shadow_robot
+
+- git:
+    uri: 'https://github.com/shadow-robot/sr-ros-interface-ethercat.git'
+    version: 'hydro-devel'
+    local-name: shadow_robot_ethercat
+
+- git:
+    uri: 'https://github.com/shadow-robot/sr-visualization.git'
+    version: 'hydro-devel'
+    local-name: sr_visualization
+
+- git:
+    uri: 'git@github.com:shadow-robot/sr-grasp-stabilisation.git'
+    version: 'hydro-devel'
+    local-name: sr_grasp_stabilisation
+
+#ork
+- git: {local-name: ecto, uri: "https://github.com/plasmodic/ecto"}
+- git: {local-name: ecto_image_pipeline, uri: "https://github.com/plasmodic/ecto_image_pipeline"}
+- git: {local-name: ecto_openni, uri: "https://github.com/plasmodic/ecto_openni"}
+- git: {local-name: ecto_opencv, uri: "https://github.com/plasmodic/ecto_opencv"}
+- git: {local-name: ecto_pcl, uri: "https://github.com/plasmodic/ecto_pcl"}
+- git: {local-name: ecto_ros, uri: "https://github.com/plasmodic/ecto_ros"}
+- git: {local-name: opencv_candidate, uri: "https://github.com/wg-perception/opencv_candidate"}
+- git: {local-name: ork_core, uri: "https://github.com/wg-perception/object_recognition_core"}
+- git: {local-name: ork_capture, uri: "https://github.com/wg-perception/capture"}
+- git: {local-name: ork_reconstruction, uri: "https://github.com/wg-perception/reconstruction"}
+- git: {local-name: ork_linemod, uri: "https://github.com/wg-perception/linemod"}
+- git: {local-name: ork_renderer, uri: "https://github.com/wg-perception/ork_renderer"}
+- git: {local-name: ork_tabletop, uri: "https://github.com/wg-perception/tabletop"}
+- git: {local-name: ork_tod, uri: "https://github.com/wg-perception/tod"}
+- git: {local-name: ork_transparent_objects, uri: "https://github.com/wg-perception/transparent_objects"}
+- git: {local-name: ork_ros, uri: "https://github.com/wg-perception/object_recognition_ros"}

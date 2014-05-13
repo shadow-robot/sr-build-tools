@@ -1,0 +1,42 @@
+---
+# Adds simox ppa + install
+# ppa seems broken for ubuntu 12.04...
+#- name: Add simox ppa
+#  apt_repository: repo='ppa:simox-dev/
+#- name: Update package lists
+#  apt: update_cache=yes
+
+#- name: Install simox
+#  apt: name={{item}} install_recommends=no
+#  with_items:
+#    - simox
+
+- name: Checkout Simox in ~{{ros_user}}/simox
+  subversion: repo=https://svn.code.sf.net/p/simox/code/tags/release-2.3.1 dest=~{{ros_user}}/simox
+  sudo: yes
+  sudo_user: "{{ros_user}}"
+
+- name: Install dependencies
+  apt: name={{item}}
+  with_items:
+    - cmake
+    - libboost-all-dev
+    - libeigen3-*
+    - libqt4-core
+    - libqt4-gui
+    - libqt4-dev
+    - libqt4-designer
+    - qt4-qmake
+    - libcoin60-dev
+    - libsoqt4-dev
+
+- name: Create build directory ~{{ros_user}}/simox/build
+  file: state=directory path=~{{ros_user}}/simox/build owner={{ros_user}} group=ros
+  sudo: yes
+  sudo_user: "{{ros_user}}"
+
+- name: Build and Install
+  shell: bash -c "cmake .. && make && sudo make install"
+    chdir=~{{ros_user}}/simox/build
+  sudo: yes
+  sudo_user: "{{ros_user}}"
