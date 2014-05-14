@@ -1,0 +1,28 @@
+---
+# Sets up the ORK database.
+- name: Install couchdb
+  apt: name={{item}}
+  with_items:
+    - couchdb
+
+- name: create tmp directory for database
+  file: state=directory path=/tmp/database
+
+- name: extract database from {{path_to_database}}
+  unarchive: src='{{path_to_database}}' dest=/tmp/database copy=false
+
+- name: copy /etc/couchdb
+  raw: cp -r /tmp/database/etc/couchdb /etc/
+
+- name: copy /var/lib/couchdb
+  raw: cp -r /tmp/database/var/lib/couchdb /var/lib/
+
+- name: copy /var/log/couchdb
+  raw: cp -r /tmp/database/var/log/couchdb /var/log/
+
+- name: set owner and group to couchdb
+  file: path={{item}} owner=couchdb group=couchdb recurse=yes
+  with_items:
+    - /etc/couchdb
+    - /var/lib/couchdb
+    - /var/log/couchdb
