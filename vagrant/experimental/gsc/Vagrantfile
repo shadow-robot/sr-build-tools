@@ -36,6 +36,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION)  do |config|
       vb.customize ["modifyvm", :id, "--memory", memory.to_i]
       vb.customize ["modifyvm", :id, "--cpus", cores.to_i]
       vb.customize ["modifyvm", :id, "--vram", vram.to_i]
+      vb.customize ["modifyvm", :id, "--usb", "on"] #, "--usbehci", "on"] # -> needs extension pack on host (http://download.virtualbox.org/virtualbox/4.1.12/Oracle_VM_VirtualBox_Extension_Pack-4.1.12-77245.vbox-extpack)
   end
 
   # Provisioning with Ansible
