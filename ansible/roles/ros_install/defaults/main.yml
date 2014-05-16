@@ -1,2 +1,3 @@
 ros_release: 'hydro'
+ros_base_package: "ros-{{ros_release}}-desktop-full"
 ros_workspace: "~{{ros_user}}/{{ros_release}}_ws"

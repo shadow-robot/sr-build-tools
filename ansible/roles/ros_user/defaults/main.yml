@@ -7,3 +7,4 @@ ros_user_background: ""
 ros_user_home_files: "../../../files/home/{{ros_user}}/"
 background_destination_folder: '/usr/share/shadowrobot/images/'
 monospace_font: ""
+lightdm_conf: "{{ '/usr/share/lightdm/lightdm.conf.d/50-ubuntu.conf' if ansible_distribution_release == 'trusty' else '/etc/lightdm/lightdm.conf' }}"
