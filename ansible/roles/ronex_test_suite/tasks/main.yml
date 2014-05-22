@@ -1,0 +1,43 @@
+---
+- name: Create /opt/shadow workspace dir
+  file: state=directory path=/opt/shadow owner={{ros_user}} group=ros
+
+- name: Fix perms
+  file: path=/opt/shadow recurse=yes owner={{ros_user}} group=ros
+
+- name: add host ssh-keys
+  shell: ssh-add -l
+  sudo: yes
+
+#- name: Checkout the ronex serial db repository
+#  git: repo=git@github.com:shadow-robot/sr-ronex-serial-db dest="/opt/shadow/sr-ronex-serial-db" accept_hostkey=True
+#  sudo: yes
+
+- name: Fix perms
+  file: path=/opt/shadow recurse=yes owner={{ros_user}} group=ros
+
+- name: Build SOEM
+  shell: bash -c "source /opt/shadow/sr-ronex-serial-db/SOEM1.3.0/setup.sh linux && make all"
+    chdir="/opt/shadow/sr-ronex-serial-db/SOEM1.3.0"
+  sudo: yes
+  sudo_user: "{{ros_user}}"
+
+- name: Install pip
+  apt: name={{item}}
+  with_items:
+    - python-pip
+
+- name: Install Django 1.5
+  shell: pip install Django==1.5
+
+- name: Add local database settings for easy setup
+  shell: cp /opt/shadow/sr-ronex-serial-db/ronexserial/ronexserial/dbsettings.py.local  /opt/shadow/sr-ronex-serial-db/ronexserial/ronexserial/dbsettings.py
+  sudo: yes
+  sudo_user: "{{ros_user}}"
+
+- name: prepopulate db
+  shell: python /opt/shadow/sr-ronex-serial-db/ronexserial/manage.py syncdb
+  sudo: yes
+
+- name: Create ~{{ros_user}}/logs dir
+  file: state=directory path=~{{ros_user}}/logs owner={{ros_user}} group=ros
