@@ -14,6 +14,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION)  do |config|
   config.vm.box      = "ros-hydro-desktop-precise64"
   config.vm.box_url  = "http://files.shadowrobot.com/vagrant/ros-hydro-desktop-precise64.box"
   config.vm.hostname = hostname
+  config.vm.network :public_network, :public_network => 'eth1', ip: "123.123.123.123"
 
   # Set the vagrant name so we can match it in ansible
   config.vm.define hostname do |host|
