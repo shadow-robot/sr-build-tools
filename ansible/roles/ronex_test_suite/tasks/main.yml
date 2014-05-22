@@ -35,9 +35,8 @@
   sudo: yes
   sudo_user: "{{ros_user}}"
 
-- name: prepopulate db
-  shell: python /opt/shadow/sr-ronex-serial-db/ronexserial/manage.py syncdb
-  sudo: yes
-
 - name: Create ~{{ros_user}}/logs dir
   file: state=directory path=~{{ros_user}}/logs owner={{ros_user}} group=ros
+
+- name: Setup soem for normal user
+  shell: "setcap cap_sys_nice,cap_ipc_lock,cap_net_raw,cap_net_admin=eip /opt/shadow/sr-ronex-serial-db/ronexserial/bin/eepromtool"
