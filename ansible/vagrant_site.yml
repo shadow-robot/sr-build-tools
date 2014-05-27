@@ -108,6 +108,7 @@
     monospace_font: "Ubuntu Mono 11"
     ros_packages:
       - sr-ronex
+    shared_folder: /opt/shadow/sr-ronex-serial-db
 
   sudo: yes
   pre_tasks:
@@ -124,6 +125,7 @@
   roles:
   - ronex_user
   - ronex_test_suite
+  - share_folder
 
 - hosts: glassbot
   sudo: yes

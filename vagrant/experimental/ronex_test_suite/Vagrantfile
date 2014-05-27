@@ -16,6 +16,9 @@ Vagrant.configure(VAGRANTFILE_API_VERSION)  do |config|
   config.vm.hostname = hostname
   config.vm.network :public_network, :public_network => 'eth1', ip: "123.123.123.123"
 
+  #adding private network interface
+  config.vm.network :private_network, type: :dhcp, :adapter => 3
+
   # Set the vagrant name so we can match it in ansible
   config.vm.define hostname do |host|
   end
