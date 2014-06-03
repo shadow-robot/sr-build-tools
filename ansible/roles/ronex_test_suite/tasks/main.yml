@@ -5,10 +5,6 @@
 - name: Fix perms
   file: path=/opt/shadow recurse=yes owner={{ros_user}} group=ros
 
-- name: add host ssh-keys
-  shell: ssh-add -l
-  sudo: yes
-
 - name: Checkout the ronex serial db repository
   git: repo=git@github.com:shadow-robot/sr-ronex-serial-db dest="/opt/shadow/sr-ronex-serial-db" accept_hostkey=True
   sudo: yes
