@@ -99,18 +99,8 @@
 
 - hosts: ronexserial
   sudo: yes
-  pre_tasks:
-    # To install a private repo need to pass the auth sock (ssh agent
-    # forwarding onto root (wont work for other users due to perms on the
-    # socket, which is good)
-    - name: Pass SSH_AUTH_SOCK through sudo
-      lineinfile: dest=/etc/sudoers
-                 state=present
-                 insertbefore='^Defaults\s+env_reset'
-                 line='Defaults        env_keep+=SSH_AUTH_SOCK'
-                 validate='visudo -cf %s'
-                 backup=yes
   roles:
+  - ssh_auth_sock
   - ronex_user
   - ronex_test_suite
   - share_folder
@@ -121,18 +111,8 @@
     ros_packages:
       - rosbridge-suite
       - tf2-web-republisher
-  pre_tasks:
-    # To install a private repo need to pass the auth sock (ssh agent
-    # forwarding onto root (wont work for other users due to perms on the
-    # socket, which is good)
-    - name: Pass SSH_AUTH_SOCK through sudo
-      lineinfile: dest=/etc/sudoers
-                 state=present
-                 insertbefore='^Defaults\s+env_reset'
-                 line='Defaults        env_keep+=SSH_AUTH_SOCK'
-                 validate='visudo -cf %s'
-                 backup=yes
   roles:
+    - ssh_auth_sock
     - glassbot
     - share_folder
 
@@ -147,19 +127,8 @@
     ros_user_background: "files/images/gsc.jpg"
     monospace_font: "Ubuntu Mono 11"
   sudo: yes
-  pre_tasks:
-    # To install a private repo need to pass the auth sock (ssh agent
-    # forwarding onto root (wont work for other users due to perms on the
-    # socket, which is good)
-    - name: Pass SSH_AUTH_SOCK through sudo
-      lineinfile: dest=/etc/sudoers
-                 state=present
-                 insertbefore='^Defaults\s+env_reset'
-                 line='Defaults        env_keep+=SSH_AUTH_SOCK'
-                 validate='visudo -cf %s'
-                 backup=yes
-
   roles:
+  - ssh_auth_sock
   - ros_install
   - ros_user
   - install_simox

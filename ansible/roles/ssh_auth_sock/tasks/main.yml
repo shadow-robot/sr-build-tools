@@ -1,0 +1,10 @@
+# To install a private repo need to pass the auth sock (ssh agent
+# forwarding onto root (wont work for other users due to perms on the
+# socket, which is good)
+- name: Pass SSH_AUTH_SOCK through sudo
+  lineinfile: dest=/etc/sudoers
+             state=present
+             insertbefore='^Defaults\s+env_reset'
+             line='Defaults        env_keep+=SSH_AUTH_SOCK'
+             validate='visudo -cf %s'
+             backup=yes
