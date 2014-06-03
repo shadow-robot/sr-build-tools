@@ -48,8 +48,10 @@
   file: state=link
     src="~{{ros_user}}/Desktop/FlashRonex.desktop"
     dest="~{{ros_user}}/.config/autostart/FlashRonex.desktop"
+    force=yes
 
 - name: Start webui at login
   file: state=link
     src="~{{ros_user}}/Desktop/FlashRonexWebUi.desktop"
     dest="~{{ros_user}}/.config/autostart/FlashRonexWebUi.desktop"
+    force=yes
