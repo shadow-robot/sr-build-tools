@@ -1,1 +1,1 @@
-folders: []
+shared_folder: "{{ros_workspace}}/src"

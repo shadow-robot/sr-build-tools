@@ -11,7 +11,7 @@
   tags: samba
 
 - name: Share code folder
-  file: path="{{ros_workspace}}/src" state=directory mode=0755 owner={{ros_user}} group=ros
+  file: path="{{shared_folder}}" state=directory mode=0755 owner={{ros_user}} group=ros
   tags: samba
 
 - name: Ensure smbpassword is set
@@ -19,8 +19,8 @@
   tags: samba
 
 - name: Expand workspace path
-  command: echo {{ros_workspace}}
-  register: expanded_ros_path
+  command: echo {{shared_folder}}
+  register: expanded_shared_folder
 
 - name: Copy proper samba config
   template: src=smb.conf dest=/etc/samba/smb.conf owner=root group=root mode=0644
