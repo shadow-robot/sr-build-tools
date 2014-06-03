@@ -1,0 +1,8 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Terminal=false
+Exec=xterm -hold -title "Program RoNeX" -e bash -i -c '/opt/shadow/sr-ronex-serial-db/contrib/programming_starting_script.sh'
+Name=Program RoNeX
+Icon=/usr/share/icons/hicolor/scalable/apps/gnome-nettool.svg
+Name[en_US]=Program RoNeX
