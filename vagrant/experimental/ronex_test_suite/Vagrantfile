@@ -14,9 +14,10 @@ Vagrant.configure(VAGRANTFILE_API_VERSION)  do |config|
   config.vm.box      = "ros-hydro-desktop-precise64"
   config.vm.box_url  = "http://files.shadowrobot.com/vagrant/ros-hydro-desktop-precise64.box"
   config.vm.hostname = hostname
+  # For RoNeX
   config.vm.network :public_network, :public_network => 'eth1', ip: "123.123.123.123"
 
-  #adding private network interface
+  # For sharing
   config.vm.network :private_network, type: :dhcp, :adapter => 3
 
   # Set the vagrant name so we can match it in ansible
