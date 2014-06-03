@@ -98,18 +98,6 @@
   - ronex_user
 
 - hosts: ronexserial
-  vars:
-    ros_release: 'hydro'
-    ros_user: 'ronexserial'
-    ros_user_comment: 'RoNeX Program And Test'
-    ros_user_password: "password"
-    ros_user_email: 'software@shadowrobot.com'
-    ros_user_background: "files/images/ronex.jpg"
-    monospace_font: "Ubuntu Mono 11"
-    ros_packages:
-      - sr-ronex
-    shared_folder: /opt/shadow/sr-ronex-serial-db
-
   sudo: yes
   pre_tasks:
     # To install a private repo need to pass the auth sock (ssh agent
