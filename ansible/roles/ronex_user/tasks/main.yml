@@ -6,7 +6,6 @@
               backup=yes
 
 - name: Setup ronex driver for normal user
-  shell: "setcap cap_sys_nice,cap_ipc_lock,cap_net_raw,cap_net_admin=eip /opt/ros/hydro/lib/pr2_ethercat/pr2_ethercat"
-
-- name: Setup nice for normal user
-  shell: "setcap cap_sys_nice=eip /usr/bin/nice"
+  shell: bash -i -c 'rosrun ros_ethercat_loop ros_grant'
+  sudo: yes
+  sudo_user: "{{ros_user}}"
