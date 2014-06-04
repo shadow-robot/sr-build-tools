@@ -23,6 +23,7 @@
   with_items:
     - python-pip
     - ccze
+    - sqlite3
 
 - name: Install Django 1.5
   shell: pip install Django==1.5
