@@ -18,10 +18,11 @@
   sudo: yes
   sudo_user: "{{ros_user}}"
 
-- name: Install pip
+- name: Install packages
   apt: name={{item}}
   with_items:
     - python-pip
+    - ccze
 
 - name: Install Django 1.5
   shell: pip install Django==1.5
