@@ -4,4 +4,4 @@ Type=Application
 Terminal=false
 Exec=xterm -hold -title "rviz" -e "bash -i -c 'rqt'"
 Name=Rqt
-Icon=/opt/ros/hydro/share/rviz/icons/package.png
+Icon=/usr/share/icons/hicolor/scalable/apps/preferences-desktop-display.svg
