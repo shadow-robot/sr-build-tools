@@ -79,6 +79,19 @@
   sudo: yes
   sudo_user: "{{ros_user}}"
 
+- name: Disable screen save and lock
+  when: ros_user_disable_lock
+  shell: "dbus-launch --exit-with-session gsettings {{ item }}"
+  register: command_result
+  failed_when: '"exited with non-zero exit status" in command_result.stderr'
+  with_items:
+    - "set org.gnome.desktop.screensaver idle-activation-enabled false"
+    - "set org.gnome.desktop.screensaver lock-enabled false"
+    - "set org.gnome.desktop.screensaver ubuntu-lock-on-suspend false"
+  sudo: yes
+  sudo_user: "{{ros_user}}"
+
+
 - name: Update rosdep
   shell: bash -c "source /opt/ros/{{ros_release}}/setup.bash && rosdep update"
   sudo: yes

@@ -2,6 +2,7 @@ ros_user: 'ros'
 ros_user_comment: 'ROS'
 ros_user_password: 'ros'
 ros_user_autologin: True
+ros_user_disable_lock: True
 ros_user_email: 'ros@example.com'
 ros_user_background: ""
 ros_user_home_files: "../../../files/home/{{ros_user}}/"
