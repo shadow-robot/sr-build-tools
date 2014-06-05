@@ -17,5 +17,6 @@
   file: state=link
     src={{ros_workspace}}/src/glassbot/glassbot_game/html/index.html
     dest=/var/www/index.html
+    force=yes
   notify:
     - restart apache2
