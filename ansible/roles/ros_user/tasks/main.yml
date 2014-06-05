@@ -90,6 +90,11 @@
 - name: Setup git email
   command: git config --global user.email "{{ros_user_email}}"
 
+- name: Color prompt
+  lineinfile: dest=~{{ ros_user }}/.bashrc
+    line="force_color_prompt=yes"
+    regexp="^#?force_color_prompt="
+
 - name: Set autologin user to {{ros_user}}
   when: ros_user_autologin
   lineinfile: dest={{ lightdm_conf }} line="autologin-user={{ros_user}}"
