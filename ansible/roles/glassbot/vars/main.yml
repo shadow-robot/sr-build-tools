@@ -7,4 +7,3 @@ ros_user_password: 'glassbot'
 ros_user_email: 'software@shadowrobot.com'
 ros_workspace_install: "../data/glassbot-{{ros_release}}.rosinstall"
 ros_build_workspace: "~{{ros_user}}/rosbuild_{{ros_release}}_ws"
-glassbot_ar_tools_repo: "https://github.com/LucidOne/ar_tools.git"

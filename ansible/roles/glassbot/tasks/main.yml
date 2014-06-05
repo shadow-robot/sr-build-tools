@@ -3,58 +3,11 @@
 # Note that ubuntu_desktop, ros_install, ros_user and ros_workspace will have
 # alredady been run, see meta/main.yml
 
-# Setup an extra ros_build space to hold ar_pose for now
-- name: Create rosbuild workspace dir
-  file: state=directory path={{ros_build_workspace}} owner={{ros_user}} group=ros
+# Remove the now unnecessary ros_build space (it was necessary to use ar_pose)
+- name: Remove rosbuild workspace dir
+  file: state=absent path={{ros_build_workspace}}
   sudo: yes
   sudo_user: "{{ros_user}}"
-
-- name: Init workspace
-  shell: rosws init . {{ros_workspace}}/devel
-    chdir={{ros_build_workspace}}
-    creates={{ros_build_workspace}}/setup.bash
-  sudo: yes
-  sudo_user: "{{ros_user}}"
-
-- name: Remove ar_pose repo
-  command: rosws remove ar_tools
-    chdir={{ros_build_workspace}}
-  sudo: yes
-  sudo_user: "{{ros_user}}"
-
-- name: Add ar_pose repo
-  command: rosws set ar_tools -y --git "{{glassbot_ar_tools_repo}}"
-    chdir={{ros_build_workspace}}
-  sudo: yes
-  sudo_user: "{{ros_user}}"
-
-- name: Update workspace
-  command: rosws update
-    chdir={{ros_build_workspace}}
-  sudo: yes
-  sudo_user: "{{ros_user}}"
-
-- name: Install dependancies
-  shell: bash -c "source {{ros_build_workspace}}/setup.bash && rosdep install --default-yes --all --ignore-src"
-         chdir={{ros_workspace}}
-  sudo: yes
-  sudo_user: "{{ros_user}}"
-
-- name: Make the code
-  shell: bash -c "source {{ros_build_workspace}}/setup.bash && rosmake artoolkit ar_pose"
-    chdir={{ros_build_workspace}}
-  sudo: yes
-  sudo_user: "{{ros_user}}"
-
-- name: Fix perms
-  file: path={{ros_build_workspace}} recurse=yes owner={{ros_user}} group=ros
-
-- name: Update users bashrc to point to the workspace
-  lineinfile: dest=\~{{ros_user}}/.bashrc
-              line="source {{ros_build_workspace}}/setup.bash"
-              regexp='^source.*/setup\.bash'
-              insertafter=EOF
-              backup=yes
 
 # Link the index page to rosbridge
 - name: Remove index.html
