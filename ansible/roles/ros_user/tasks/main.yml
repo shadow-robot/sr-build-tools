@@ -11,6 +11,8 @@
     - tree
     - htop
     - terminator
+    - synaptic
+    - wajig
 
 # We put all users in the ros group, so they can work togther easily
 - name: Add ros group
