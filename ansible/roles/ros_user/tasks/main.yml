@@ -11,6 +11,8 @@
     - tree
     - htop
     - terminator
+    - synaptic
+    - wajig
 
 # We put all users in the ros group, so they can work togther easily
 - name: Add ros group
@@ -79,6 +81,19 @@
   sudo: yes
   sudo_user: "{{ros_user}}"
 
+- name: Disable screen save and lock
+  when: ros_user_disable_lock
+  shell: "dbus-launch --exit-with-session gsettings {{ item }}"
+  register: command_result
+  failed_when: '"exited with non-zero exit status" in command_result.stderr'
+  with_items:
+    - "set org.gnome.desktop.screensaver idle-activation-enabled false"
+    - "set org.gnome.desktop.screensaver lock-enabled false"
+    - "set org.gnome.desktop.screensaver ubuntu-lock-on-suspend false"
+  sudo: yes
+  sudo_user: "{{ros_user}}"
+
+
 - name: Update rosdep
   shell: bash -c "source /opt/ros/{{ros_release}}/setup.bash && rosdep update"
   sudo: yes
@@ -89,6 +104,11 @@
 
 - name: Setup git email
   command: git config --global user.email "{{ros_user_email}}"
+
+- name: Color prompt
+  lineinfile: dest=~{{ ros_user }}/.bashrc
+    line="force_color_prompt=yes"
+    regexp="^#?force_color_prompt="
 
 - name: Set autologin user to {{ros_user}}
   when: ros_user_autologin
