@@ -5,7 +5,8 @@
 VAGRANTFILE_API_VERSION = "2"
 
 hostname        = "gsc"
-memory          = ENV['VAGRANT_MEMORY']  || '1024'
+# Note GSC needs >1GB to be able to compile!
+memory          = ENV['VAGRANT_MEMORY']  || '2048'
 cores           = ENV['VAGRANT_CORES']   || '2'
 vram            = ENV['VAGRANT_VRAM']    || '64'
 ansible_verbose = ENV['ANSIBLE_VERBOSE'] || ""
