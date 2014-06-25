@@ -97,6 +97,26 @@
   roles:
   - ronex_user
 
+- hosts: ronex-indigo
+  vars:
+    ros_release: 'indigo'
+    ros_user: 'ronex'
+    ros_user_comment: 'RoNeX'
+    ros_user_password: "password"
+    ros_user_email: 'software@shadowrobot.com'
+    ros_user_background: "files/images/ronex.jpg"
+    monospace_font: "Ubuntu Mono 11"
+    ros_packages:
+      - sr-ronex
+
+  sudo: yes
+  roles:
+  - ubuntu_desktop
+  - dkms
+  - ros_install
+  - ros_user
+  - ronex_user
+
 - hosts: ronexserial
   sudo: yes
   roles:
