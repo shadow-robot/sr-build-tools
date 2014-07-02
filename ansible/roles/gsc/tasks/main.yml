@@ -1,6 +1,20 @@
 ---
+- name: Test for KCL remote
+  command: git remote show kcl
+           chdir={{ ros_workspace }}/src/sr_grasp_stabilisation
+  ignore_errors: True
+  register: kcl_remote_test
+
 - name: Add KCL remote
   sudo: yes
   sudo_user: "{{ ros_user }}"
   command: git remote add kcl git@github.com:shadow-robot/kcl-gsc-source-code.git
            chdir={{ ros_workspace }}/src/sr_grasp_stabilisation
+  when: kcl_remote_test|failed
+
+- name: Fix repo perms
+  file: path={{ ros_workspace }}/src/sr_grasp_stabilisation
+        owner={{ros_user}} group=ros
+        recurse=yes
+  when: kcl_remote_test|failed
+
