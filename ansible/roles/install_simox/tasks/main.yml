@@ -15,6 +15,12 @@
   stat: path=/usr/local/include/VirtualRobot/Robot.h
   register: simox_exists
 
+- name: Install subversion
+  apt: name={{item}}
+  with_items:
+    - subversion
+  when: not simox_exists.stat.exists
+
 - name: Checkout Simox
   subversion: repo=https://svn.code.sf.net/p/simox/code/tags/release-2.3.1
               dest={{ simox_build_dir }}
