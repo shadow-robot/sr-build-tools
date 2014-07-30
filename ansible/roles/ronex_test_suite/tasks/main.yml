@@ -84,8 +84,9 @@
   command: python manage.py syncdb --noinput
     chdir=/opt/shadow/sr-ronex-serial-db/ronexserial
 
+# For some reason syncdb wont load this as model data, so we fudge it here.
+# This is for the admin user that syncdb prompts for when run as a user.
 - name: Boot strap auth admin user
   sudo: yes
   sudo_user: "{{ ros_user }}"
-  #shell: python manage.py dbshell < /opt/shadow/sr-ronex-serial-db/ronexserial/serials/sql/auth.sql chdir=/opt/shadow/sr-ronex-serial-db/ronexserial
   shell: "cat /opt/shadow/sr-ronex-serial-db/ronexserial/serials/sql/auth.sql | python manage.py dbshell chdir=/opt/shadow/sr-ronex-serial-db/ronexserial"
