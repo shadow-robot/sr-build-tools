@@ -33,11 +33,6 @@
 - name: Install Django 1.5
   shell: pip install Django==1.5
 
-- name: Add local database settings for easy setup
-  shell: cp /opt/shadow/sr-ronex-serial-db/ronexserial/ronexserial/dbsettings.py.local  /opt/shadow/sr-ronex-serial-db/ronexserial/ronexserial/dbsettings.py
-  sudo: yes
-  sudo_user: "{{ros_user}}"
-
 - name: Create ~{{ros_user}}/logs dir
   file: state=directory path=~{{ros_user}}/logs owner={{ros_user}} group=ros
 
@@ -59,7 +54,7 @@
     dest="~{{ros_user}}/.config/autostart/FlashRonexWebUi.desktop"
     force=yes
 
-- name: Create postgresql database.
+- name: Create postgresql database
   sudo: yes
   sudo_user: postgres
   postgresql_db: name={{ ronexserial_dbname }}
@@ -84,3 +79,13 @@
     dest=/opt/shadow/sr-ronex-serial-db/ronexserial/ronexserial/dbsettings.py
     owner={{ ros_user }}
     mode=0644
+
+- name: Syncdb
+  command: python manage.py syncdb --noinput
+    chdir=/opt/shadow/sr-ronex-serial-db/ronexserial
+
+- name: Boot strap auth admin user
+  sudo: yes
+  sudo_user: "{{ ros_user }}"
+  #shell: python manage.py dbshell < /opt/shadow/sr-ronex-serial-db/ronexserial/serials/sql/auth.sql chdir=/opt/shadow/sr-ronex-serial-db/ronexserial
+  shell: "cat /opt/shadow/sr-ronex-serial-db/ronexserial/serials/sql/auth.sql | python manage.py dbshell chdir=/opt/shadow/sr-ronex-serial-db/ronexserial"

@@ -10,8 +10,8 @@ DATABASES = {
         'NAME'     : '{{ ronexserial_dbname }}',
         'USER'     : '{{ ronexserial_dbuser }}',
         'PASSWORD' : '{{ ronexserial_dbpassword }}',
-        'HOST'     : 'localhost',
-        'PORT'     : '5432',
+        'HOST'     : '{{ ronexserial_dbhost }}',
+        'PORT'     : '{{ ronexserial_dbport }}',
     }
 }
 

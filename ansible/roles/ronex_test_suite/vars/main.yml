@@ -11,4 +11,6 @@ shared_folder: /opt/shadow/sr-ronex-serial-db
 ronexserial_dbname: ronexserial
 ronexserial_dbuser: ronexserial
 ronexserial_dbpassword: password
+ronexserial_dbhost: localhost
+ronexserial_dbport: 5432
 
