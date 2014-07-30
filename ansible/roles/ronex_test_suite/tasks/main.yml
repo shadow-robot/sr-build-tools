@@ -24,6 +24,11 @@
     - python-pip
     - ccze
     - sqlite3
+    - libpq-dev
+    - python-dev
+    - postgresql
+    - postgresql-contrib
+    - python-psycopg2
 
 - name: Install Django 1.5
   shell: pip install Django==1.5
@@ -53,3 +58,23 @@
     src="~{{ros_user}}/Desktop/FlashRonexWebUi.desktop"
     dest="~{{ros_user}}/.config/autostart/FlashRonexWebUi.desktop"
     force=yes
+
+- name: Create postgresql database.
+  sudo: yes
+  sudo_user: postgres
+  postgresql_db: name={{ ronexserial_dbname }}
+
+- name: Ensure user has access to database
+  sudo: yes
+  sudo_user: postgres
+  postgresql_user:
+    db={{ronexserial_dbname}}
+    name={{ronexserial_dbuser}}
+    password={{ronexserial_dbpassword}}
+    priv=ALL
+
+- name: Ensure user does not have unnecessary privilege
+  sudo: yes
+  sudo_user: postgres
+  postgresql_user: name={{ronexserial_dbuser}}
+    role_attr_flags=NOSUPERUSER,NOCREATEDB

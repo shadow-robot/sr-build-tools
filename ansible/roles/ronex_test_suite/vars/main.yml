@@ -8,4 +8,7 @@ monospace_font: "Ubuntu Mono 11"
 ros_packages:
   - sr-ronex
 shared_folder: /opt/shadow/sr-ronex-serial-db
+ronexserial_dbname: ronexserial
+ronexserial_dbuser: ronexserial
+ronexserial_dbpassword: password
 
