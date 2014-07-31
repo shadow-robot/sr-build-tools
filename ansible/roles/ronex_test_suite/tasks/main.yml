@@ -20,17 +20,26 @@
 - name: Fix perms
   file: path={{shadow_opt}} recurse=yes owner={{ros_user}} group=ros
 
-- name: Checkout the ronex serial db repository
-  git: repo={{ronexserial_repo}} dest="{{ronexserial_installdir}}" accept_hostkey=True
+- name: Repo status
+  git: repo={{ronexserial.repo}} dest="{{ronexserial.installdir}}" accept_hostkey=True update=no
+  register: repo
   sudo: yes
+  # changed: [ronexserial] => {"after": "cfa60a0f538acfb9bd683ab1904a71baff0ed833", "before": null, "changed": true}
+
+# Only do this if no repo there, we don't want to destroy work
+# TODO: Would be nice to check the state, update if clean.
+- name: Checkout the ronex serial db repository
+  git: repo={{ronexserial.repo}} dest="{{ronexserial.installdir}}" accept_hostkey=True
+  sudo: yes
+  when: not repo.before
 
 - name: Fix perms
-  file: path={{ronexserial_installdir}} recurse=yes owner={{ros_user}} group=ros
+  file: path={{ronexserial.installdir}} recurse=yes owner={{ros_user}} group=ros
 
 # This makes the eeprom command line tool we need for programming
 - name: Build SOEM
-  shell: bash -c "source {{ronexserial_installdir}}/SOEM1.3.0/setup.sh linux && make all"
-    chdir="{{ronexserial_installdir}}/SOEM1.3.0"
+  shell: bash -c "source {{ronexserial.installdir}}/SOEM1.3.0/setup.sh linux && make all"
+    chdir="{{ronexserial.installdir}}/SOEM1.3.0"
   sudo: yes
   sudo_user: "{{ros_user}}"
 
@@ -39,44 +48,55 @@
 
 # So we can run without sudo and access the ethercat
 - name: Setup soem for normal user
-  shell: "setcap cap_sys_nice,cap_ipc_lock,cap_net_raw,cap_net_admin=eip {{ronexserial_installdir}}/ronexserial/bin/eepromtool"
+  shell: "setcap cap_sys_nice,cap_ipc_lock,cap_net_raw,cap_net_admin=eip {{ronexserial.installdir}}/ronexserial/bin/eepromtool"
 
 - name: Create postgresql database
   sudo: yes
   sudo_user: postgres
-  postgresql_db: name={{ronexserial_dbname}}
+  postgresql_db: name={{ronexserial.dbname}}
 
 - name: Ensure user has access to database
   sudo: yes
   sudo_user: postgres
   postgresql_user:
-    db={{ronexserial_dbname}}
-    name={{ronexserial_dbuser}}
-    password={{ronexserial_dbpassword}}
+    db={{ronexserial.dbname}}
+    name={{ronexserial.dbuser}}
+    password={{ronexserial.dbpassword}}
     priv=ALL
 
 - name: Ensure user does not have unnecessary privilege
   sudo: yes
   sudo_user: postgres
-  postgresql_user: name={{ronexserial_dbuser}}
+  postgresql_user: name={{ronexserial.dbuser}}
     role_attr_flags=NOSUPERUSER,NOCREATEDB
+
+# XXX - Need something better than this for live install
+# http://www.postgresql.org/docs/current/static/libpq-pgpass.html
+- name: Allow user passwordless login
+  lineinfile:
+    dest=~{{ros_user}}/.pgpass
+    line="{{ronexserial.dbhost}}:{{ronexserial.dbport}}:{{ronexserial.dbname}}:{{ronexserial.dbuser}}:{{ronexserial.dbpassword}}"
+    state=present
+    create=yes
+    owner={{ros_user}}
+    mode=0600
 
 - name: Generate dbsettings.py
   template: src=dbsettings.py.j2
-    dest="{{ronexserial_installdir}}/ronexserial/ronexserial/dbsettings.py"
+    dest="{{ronexserial.installdir}}/ronexserial/ronexserial/dbsettings.py"
     owner={{ros_user}}
     mode=0644
 
 - name: Syncdb
   command: python manage.py syncdb --noinput
-    chdir={{ronexserial_installdir}}/ronexserial
+    chdir={{ronexserial.installdir}}/ronexserial
 
 # For some reason syncdb wont load this as model data, so we fudge it here.
 # This is for the admin user that syncdb prompts for when run as a user.
 - name: Boot strap auth admin user
   sudo: yes
   sudo_user: "{{ ros_user }}"
-  shell: "cat {{ronexserial_installdir}}/ronexserial/serials/sql/auth.sql | python manage.py dbshell chdir={{ronexserial_installdir}}/ronexserial"
+  shell: "cat {{ronexserial.installdir}}/ronexserial/serials/sql/auth.sql | python manage.py dbshell chdir={{ronexserial.installdir}}/ronexserial"
 
 - name: Create autostart directory
   file: state=directory path="~{{ros_user}}/.config/autostart" owner={{ros_user}} group=ros

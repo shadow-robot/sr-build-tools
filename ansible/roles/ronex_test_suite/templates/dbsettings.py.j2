@@ -7,11 +7,11 @@ DATABASES = {
     'default': {
         # add 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
         'ENGINE'   : 'django.db.backends.postgresql_psycopg2',
-        'NAME'     : '{{ ronexserial_dbname }}',
-        'USER'     : '{{ ronexserial_dbuser }}',
-        'PASSWORD' : '{{ ronexserial_dbpassword }}',
-        'HOST'     : '{{ ronexserial_dbhost }}',
-        'PORT'     : '{{ ronexserial_dbport }}',
+        'NAME'     : '{{ ronexserial.dbname }}',
+        'USER'     : '{{ ronexserial.dbuser }}',
+        'PASSWORD' : '{{ ronexserial.dbpassword }}',
+        'HOST'     : '{{ ronexserial.dbhost }}',
+        'PORT'     : '{{ ronexserial.dbport }}',
     }
 }
 
