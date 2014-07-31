@@ -7,5 +7,14 @@ ros_user_background: "files/images/ronex.jpg"
 monospace_font: "Ubuntu Mono 11"
 ros_packages:
   - sr-ronex
-shared_folder: /opt/shadow/sr-ronex-serial-db
+shadow_opt: /opt/shadow
+ronexserial:
+  installdir: "{{ shadow_opt }}/sr-ronex-serial-db"
+  repo: git@github.com:shadow-robot/sr-ronex-serial-db
+  dbname: ronexserial
+  dbuser: ronexserial
+  dbpassword: password
+  dbhost: localhost
+  dbport: 5432
+shared_folder: "{{ronexserial.installdir}}"
 
