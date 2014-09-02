@@ -1,0 +1,24 @@
+- git:
+    uri: 'https://github.com/shadow-robot/sr-config.git'
+    version: 'indigo-devel'
+    local-name: sr_config
+
+- git:
+    uri: 'https://github.com/shadow-robot/sr-ros-interface.git'
+    version: 'indigo-devel'
+    local-name: shadow_robot
+
+- git:
+    uri: 'https://github.com/shadow-robot/sr-ros-interface-ethercat.git'
+    version: 'indigo-devel'
+    local-name: shadow_robot_ethercat
+
+- git:
+    uri: 'https://github.com/shadow-robot/sr-visualization.git'
+    version: 'indigo-devel'
+    local-name: sr_visualization
+
+- git:
+    uri: 'https://github.com/shadow-robot/ros_ethercat.git'
+    version: 'indigo-devel'
+    local-name: ros_ethercat
