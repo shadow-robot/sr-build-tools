@@ -1,5 +1,5 @@
-Shadow Vagrant
-==============
+ros-base
+========
 
 Machines used make [ROS](http://ros.org) [Vagrant](http://vagrantup.com) base images that take a basic ubuntu base, add the desktop system and a full ROS desktop install.
 
