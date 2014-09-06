@@ -8,9 +8,9 @@ Different machines configuration are stored here:
 
 * **hand/** is a stable machine for working with the simulated Shadow Hand
 * **dev/** contains the development machines (source install, development environment setup)
-** *dev/hand* is a development machine for the Shadow Hand
+    * *dev/hand* is a development machine for the Shadow Hand
 * **production** contains the machines used for shipping to customers
-** *production/hand* is the Hand for customers machine
+    * *production/hand* is the Hand for customers machine
 * **ronex**
 * **experimental** contains more advanced machines (different ros versions, different projects, etc...)
 * **[ros-base](ros-base)** used to build vagrant base images used for the other boxes.
