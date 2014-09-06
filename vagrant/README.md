@@ -36,8 +36,8 @@ git clone git@github.com:shadow-robot/sr-build-tools.git
 To start a machine cd into it's directory and vagrant up. For the hand:
 
 ```sh
-$ cd sr-build-tools/vagrant/hand
-$ vagrant up
+cd sr-build-tools/vagrant/hand
+vagrant up
 ```
 
 ## New ROS Vagrant machine from base image
