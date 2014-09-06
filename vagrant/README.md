@@ -13,7 +13,7 @@ Different machines configuration are stored here:
 ** *production/hand* is the Hand for customers machine
 * **ronex**
 * **experimental** contains more advanced machines (different ros versions, different projects, etc...)
-* **ros-base** used to build vagrant base images used for the other boxes.
+* **[ros-base](ros-base)** used to build vagrant base images used for the other boxes.
 
 ## Install and Setup
 
