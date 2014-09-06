@@ -47,6 +47,6 @@ vagrant box add ros-indigo-desktop-trusty64 package.box
 mkdir ~/rosvm
 cd ~/rosvm
 vagrant init ros-indigo-desktop-trusty64
-sed -i.bak 's/#   vb.gui = true/    vb.gui = true/' Vagrantfile  # Open VM desktop
+# Set vb.gui = true in Vagrantfile
 vagrant up
 ```
