@@ -18,3 +18,11 @@
         recurse=yes
   when: kcl_remote_test|failed
 
+- name: Normal user access for ethercat loop
+  sudo: yes
+  command: setcap cap_sys_nice,cap_ipc_lock,cap_net_raw,cap_net_admin=eip /opt/ros/hydro/lib/pr2_ethercat/pr2_ethercat
+
+- name: Setcap nice
+  sudo: yes
+  command: setcap cap_sys_nice=eip /usr/bin/nice
+
