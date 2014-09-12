@@ -19,8 +19,8 @@
 - hosts: ros-indigo-desktop-trusty64
   vars:
     ros_release: 'indigo'
-    ros_base_package: 'ros-indigo-desktop'
-    ubuntu_desktop_thin: true
+    ros_user_background: 'files/images/indigoigloo_600.png'
+    ubuntu_desktop_thin: false
   sudo: yes
   roles:
   - ubuntu_desktop
