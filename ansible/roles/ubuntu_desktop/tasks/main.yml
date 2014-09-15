@@ -70,5 +70,6 @@
 - name: apt clean
   command: apt-get clean
 
-- name: apt autoremove
-  command: apt-get autoremove --yes
+# This is probably bad for ROS
+#- name: apt autoremove
+#  command: apt-get autoremove --yes

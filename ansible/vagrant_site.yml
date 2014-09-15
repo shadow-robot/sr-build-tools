@@ -5,7 +5,7 @@
   vars:
     ros_release: 'hydro'
     ros_user_background: 'files/images/Hydromedusa_web1.jpg'
-    ubuntu_desktop_thin: false
+    ubuntu_desktop_thin: yes
   sudo: yes
   roles:
   - ubuntu_desktop
@@ -20,13 +20,17 @@
   vars:
     ros_release: 'indigo'
     ros_user_background: 'files/images/indigoigloo_600.png'
-    ubuntu_desktop_thin: false
+    ubuntu_desktop_thin: yes
   sudo: yes
   roles:
   - ubuntu_desktop
   - dkms
   - ros_install
   - ros_user
+  tasks:
+    # The base image has an extra Ubuntu user we don't want
+    - name: Remove Ubuntu user
+      user: name=ubuntu state=absent remove=yes
 
 - hosts: hand-prod
   vars:
