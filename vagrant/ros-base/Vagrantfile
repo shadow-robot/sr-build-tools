@@ -16,8 +16,7 @@ nodes = [
       :box_url => 'http://files.vagrantup.com/precise64.box',
     },
     { :name    => 'ros-indigo-desktop-trusty64',
-      :box     => 'trusty-server-cloudimg-amd64',
-      :box_url => 'https://cloud-images.ubuntu.com/vagrant/trusty/current/trusty-server-cloudimg-amd64-vagrant-disk1.box',
+      :box     => 'ubuntu/trusty64',
     },
 ]
 
