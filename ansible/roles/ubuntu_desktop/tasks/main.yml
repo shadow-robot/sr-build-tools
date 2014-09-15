@@ -1,7 +1,6 @@
 ---
-# Installs the ubuntu dekstop system.
+# Installs the ubuntu dekstop system, rebooting if needed.
 # Useful for adding the GUI to base images.
-# Use ubuntu_desktop_thin: true to install a more minimal system.
 
 - name: Update package lists
   apt: update_cache=yes
@@ -11,21 +10,6 @@
   with_items:
     - ubuntu-desktop
   register: install_desktop_result
-
-- name: Thin desktop
-  apt: name={{item}} state=absent purge=yes
-  with_items:
-    - libreoffice
-    - libreoffice-math
-    - libreoffice-draw
-    - libreoffice-writer
-    - libreoffice-impress
-    - libreoffice-calc
-    - libreoffice-base
-    - thunderbird
-    - shotwell
-    - rhythmbox
-  when: ubuntu_desktop_thin
 
 #
 # Reboot if we installed a desktop
