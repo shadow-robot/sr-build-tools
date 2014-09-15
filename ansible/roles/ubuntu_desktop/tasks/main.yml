@@ -6,32 +6,31 @@
 - name: Update package lists
   apt: update_cache=yes
 
-- name: Install full Ubuntu desktop
+- name: Install Ubuntu desktop
   apt: name={{item}}
   with_items:
     - ubuntu-desktop
   register: install_desktop_result
   when: not ubuntu_desktop_thin
 
-- name: Install thin Ubuntu desktop
-  apt: name={{item}} install_recommends=no
+- name: Thin desktop
+  apt: name={{item}} state=absent purge=yes
   with_items:
-    - ubuntu-desktop
-    - avahi-autoipd
-    - avahi-daemon
-    - unity-lens-applications
-    - unity-lens-files
-    - indicator-session
-    - ttf-ubuntu-font-family
-    - firefox
-    #- nautilus-share
+    - libreoffice
+    - libreoffice-math
+    - libreoffice-draw
+    - libreoffice-writer
+    - libreoffice-impress
+    - libreoffice-calc
+    - libreoffice-base
+    - thunderbird
+    - shotwell
+    - rhythmbox
   when: ubuntu_desktop_thin
 
-- name: Install thin Ubuntu desktop precise
-  apt: name={{item}} install_recommends=no
-  with_items:
-    - firefox-gnome-support
-  when: ubuntu_desktop_thin and '{{ansible_distribution_release}}' == 'precise'
+#
+# Reboot if we installed a desktop
+#
 
 # This wont work when running under vagrant as you need to vagrant up to get
 # networking setup properly.
@@ -62,3 +61,14 @@
   sudo: false
   when: install_desktop_result.changed
 
+#
+# Do some cleanup, we want the image as small as possible.
+#
+- name: apt autoclean
+  command: apt-get autoclean
+
+- name: apt clean
+  command: apt-get clean
+
+- name: apt autoremove
+  command: apt-get autoremove --yes
