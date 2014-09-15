@@ -44,6 +44,12 @@ Vagrant.configure(VAGRANTFILE_API_VERSION)  do |config|
   # Provisioning with Ansible
   config.vm.provision "ansible" do |ansible|
       ansible.playbook = "../../ansible/vagrant_site.yml"
+      ansible.verbose  = "vv"
+      # There doesn't seem to be a way to find the vagrant dir in ansible and
+      # it uses the playbook dir as pwd, so we set here. Used to reboot.
+      ansible.extra_vars = {
+        vagrant_dir: ENV['PWD'],
+      }
   end
 
 end

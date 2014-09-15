@@ -10,6 +10,7 @@
   apt: name={{item}}
   with_items:
     - ubuntu-desktop
+  register: install_desktop_result
   when: not ubuntu_desktop_thin
 
 - name: Install thin Ubuntu desktop
@@ -31,3 +32,33 @@
   with_items:
     - firefox-gnome-support
   when: ubuntu_desktop_thin and '{{ansible_distribution_release}}' == 'precise'
+
+# This wont work when running under vagrant as you need to vagrant up to get
+# networking setup properly.
+- name: Restart machine
+  command: shutdown -r now "Ansible updates triggered"
+  async: 0
+  poll: 0
+  ignore_errors: true
+  when: install_desktop_result.changed and ansible_user_id != 'vagrant' and ansible_env.SUDO_USER != 'vagrant'
+
+- name: Reload vagrant
+  local_action: command vagrant reload {{ inventory_hostname }} chdir={{ vagrant_dir }}
+  async: 0
+  poll: 0
+  #ignore_errors: true
+  sudo: no
+  when: install_desktop_result.changed and (ansible_user_id=='vagrant' or ansible_env.SUDO_USER=='vagrant')
+
+# Wait for a normal reboot to go down.
+# No wait for down on vagrant as the reload command blocks.
+- name: Wait for machine to go down
+  local_action: wait_for host={{ ansible_ssh_host }} port={{ ansible_ssh_port | default(22) }} state=stopped
+  sudo: false
+  when: install_desktop_result.changed and ansible_user_id != 'vagrant' and ansible_env.SUDO_USER != 'vagrant'
+
+- name: Wait for machine to come back
+  local_action: wait_for host={{ ansible_ssh_host }} port={{ ansible_ssh_port | default(22) }} state=started
+  sudo: false
+  when: install_desktop_result.changed
+
