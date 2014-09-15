@@ -32,6 +32,7 @@
 # Reboot if we installed a desktop
 #
 
+# https://support.ansible.com/hc/en-us/articles/201958037-Reboot-a-server-and-wait-for-it-to-come-back
 # This wont work when running under vagrant as you need to vagrant up to get
 # networking setup properly.
 - name: Restart machine
