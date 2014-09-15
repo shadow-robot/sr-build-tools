@@ -11,7 +11,6 @@
   with_items:
     - ubuntu-desktop
   register: install_desktop_result
-  when: not ubuntu_desktop_thin
 
 - name: Thin desktop
   apt: name={{item}} state=absent purge=yes
@@ -62,15 +61,3 @@
   sudo: false
   when: install_desktop_result.changed
 
-#
-# Do some cleanup, we want the image as small as possible.
-#
-- name: apt autoclean
-  command: apt-get autoclean
-
-- name: apt clean
-  command: apt-get clean
-
-# This is probably bad for ROS
-#- name: apt autoremove
-#  command: apt-get autoremove --yes
