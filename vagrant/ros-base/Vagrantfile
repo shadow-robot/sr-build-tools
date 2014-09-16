@@ -12,8 +12,7 @@ vram     = ENV['VAGRANT_VRAM']   || '64'
 # combination we support.
 nodes = [
     { :name    => 'ros-hydro-desktop-precise64',
-      :box     => 'precise64',
-      :box_url => 'http://files.vagrantup.com/precise64.box',
+      :box     => 'hashicorp/precise64',
     },
     { :name    => 'ros-indigo-desktop-trusty64',
       :box     => 'ubuntu/trusty64',
