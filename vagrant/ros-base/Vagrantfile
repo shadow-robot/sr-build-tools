@@ -14,8 +14,14 @@ nodes = [
     { :name    => 'ros-hydro-desktop-precise64',
       :box     => 'hashicorp/precise64',
     },
+    { :name    => 'ros-hydro-desktop-precise32',
+      :box     => 'hashicorp/precise32',
+    },
     { :name    => 'ros-indigo-desktop-trusty64',
       :box     => 'ubuntu/trusty64',
+    },
+    { :name    => 'ros-indigo-desktop-trusty32',
+      :box     => 'ubuntu/trusty32',
     },
 ]
 
