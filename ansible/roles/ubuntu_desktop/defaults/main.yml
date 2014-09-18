@@ -1,1 +1,4 @@
 ---
+# The base desktop system package to install. Default is normal Unity.
+# Could be xubuntu or kubuntu
+ubuntu_desktop_base: ubuntu-desktop

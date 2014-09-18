@@ -8,7 +8,7 @@
 - name: Install Ubuntu desktop
   apt: name={{item}}
   with_items:
-    - ubuntu-desktop
+    - "{{ ubuntu_desktop_base }}"
   register: install_desktop_result
 
 #

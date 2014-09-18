@@ -17,6 +17,18 @@
   roles:
     - ros_vagrant_base
 
+- hosts: ros-indigo-desktop-xfce-trusty64
+  vars:
+    ros_release: 'indigo'
+    ros_user_background: 'files/images/indigoigloo_600.png'
+    # Only works wity lightdb atm, needs support for the xfce login manager.
+    ros_user_autologin: no
+    ubuntu_desktop_base: xubuntu-desktop
+  sudo: yes
+  roles:
+    - ros_vagrant_base
+
+
 - hosts: ros-hydro-desktop-precise32
   vars:
     ros_release: 'hydro'
