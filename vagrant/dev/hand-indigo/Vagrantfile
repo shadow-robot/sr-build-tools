@@ -11,8 +11,7 @@ vram            = ENV['VAGRANT_VRAM']    || '128'
 ansible_verbose = ENV['ANSIBLE_VERBOSE'] || "vv"
 
 Vagrant.configure(VAGRANTFILE_API_VERSION)  do |config|
-  config.vm.box      = "ros-indigo-desktop-trusty64"
-  config.vm.box_url  = "http://files.shadowrobot.com/vagrant/ros-indigo-desktop-trusty64.box"
+  config.vm.box      = "shadowrobot/ros-indigo-desktop-trusty64"
   config.vm.hostname = hostname
 
   #adding private network interface
