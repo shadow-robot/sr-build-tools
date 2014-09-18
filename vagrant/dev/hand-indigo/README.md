@@ -1,5 +1,5 @@
-hand-indigo
-===========
+Shadow Hand Indigo Developer
+============================
 
 Shadow Hand development (src) machine, ROS Indigo on Ubuntu Trusty. Start machine with:
 ```sh
