@@ -1,0 +1,9 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Terminal=false
+Exec=xterm -title "Hand Demo" -e bash -i -c 'rosrun sr_ethercat_hand_config demo_r.py'
+Icon=/home/gsc/hydro_ws/src/sr_visualization/sr_visualization_icons/icons/iconHand.png
+Name=Hand Demo
+Name[en_GB]=Hand Demo
+
