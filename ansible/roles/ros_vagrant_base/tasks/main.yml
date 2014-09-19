@@ -1,0 +1,33 @@
+---
+
+# The base image has an extra Ubuntu user we don't want
+- name: Remove Ubuntu user
+  user: name=ubuntu state=absent remove=yes
+
+# Don't need these in a VM, try to make it a bit smaller.
+- name: Remove packages
+  apt: name={{item}} state=absent purge=yes
+  with_items:
+    - libreoffice
+    - libreoffice-math
+    - libreoffice-draw
+    - libreoffice-writer
+    - libreoffice-impress
+    - libreoffice-calc
+    - libreoffice-base
+    - thunderbird
+    - shotwell
+    - rhythmbox
+
+#
+# Do some cleanup, we want the image as small as possible.
+#
+- name: apt autoclean
+  command: apt-get autoclean
+
+- name: apt clean
+  command: apt-get clean
+
+# This is probably bad for ROS
+#- name: apt autoremove
+#  command: apt-get autoremove --yes

@@ -1,0 +1,9 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Terminal=false
+Exec=xterm -title "Shadow Hand" -e bash -i -c 'roslaunch sr_edc_launch sr_edc.launch'
+Icon=/home/gsc/hydro_ws/src/sr_visualization/sr_visualization_icons/icons/iconHand.png
+Name=Shadow Hand
+Name[en_GB]=Shadow Hand
+

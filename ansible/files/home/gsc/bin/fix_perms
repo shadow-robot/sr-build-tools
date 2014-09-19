@@ -1,0 +1,13 @@
+#!/bin/bash -i
+
+set -e
+roscd
+cd ..
+ros_workspace=`pwd`
+echo Fixing perms in workspace "$ros_workspace"
+echo Set user $USER:ros
+sudo chown $USER:ros -R .
+echo Set group write
+sudo chmod g+w -R .
+echo Set sticky group, inherit ros group
+find . -type d -exec chmod g+s '{}' \;

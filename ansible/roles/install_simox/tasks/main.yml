@@ -11,10 +11,21 @@
 #  with_items:
 #    - simox
 
-- name: Checkout Simox in ~{{ros_user}}/simox
-  subversion: repo=https://svn.code.sf.net/p/simox/code/tags/release-2.3.1 dest=~{{ros_user}}/simox
+- name: Test for Simox
+  stat: path=/usr/local/include/VirtualRobot/Robot.h
+  register: simox_exists
+
+- name: Install subversion
+  apt: name={{item}}
+  with_items:
+    - subversion
+  when: not simox_exists.stat.exists
+
+- name: Checkout Simox
+  subversion: repo=https://svn.code.sf.net/p/simox/code/tags/release-2.3.1
+              dest={{ simox_build_dir }}
   sudo: yes
-  sudo_user: "{{ros_user}}"
+  when: not simox_exists.stat.exists
 
 - name: Install dependencies
   apt: name={{item}}
@@ -29,14 +40,20 @@
     - qt4-qmake
     - libcoin60-dev
     - libsoqt4-dev
+  when: not simox_exists.stat.exists
 
-- name: Create build directory ~{{ros_user}}/simox/build
-  file: state=directory path=~{{ros_user}}/simox/build owner={{ros_user}} group=ros
+- name: Create simox build directory {{ simox_build_dir }}/build
+  file: state=directory path={{ simox_build_dir }}/build
   sudo: yes
-  sudo_user: "{{ros_user}}"
+  when: not simox_exists.stat.exists
 
 - name: Build and Install
   shell: bash -c "cmake .. && make && sudo make install"
-    chdir=~{{ros_user}}/simox/build
+         chdir={{ simox_build_dir }}/build
   sudo: yes
-  sudo_user: "{{ros_user}}"
+  when: not simox_exists.stat.exists
+
+- name: Clean up Simox
+  file: state=absent path={{ simox_build_dir }}
+  sudo: yes
+  when: not simox_exists.stat.exists

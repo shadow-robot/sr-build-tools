@@ -1,33 +1,47 @@
 ---
-# Installs the ubuntu dekstop system.
+# Installs the ubuntu dekstop system, rebooting if needed.
 # Useful for adding the GUI to base images.
-# Use ubuntu_desktop_thin: true to install a more minimal system.
 
 - name: Update package lists
   apt: update_cache=yes
 
-- name: Install full Ubuntu desktop
+- name: Install Ubuntu desktop
   apt: name={{item}}
   with_items:
-    - ubuntu-desktop
-  when: not ubuntu_desktop_thin
+    - "{{ ubuntu_desktop_base }}"
+  register: install_desktop_result
 
-- name: Install thin Ubuntu desktop
-  apt: name={{item}} install_recommends=no
-  with_items:
-    - ubuntu-desktop
-    - avahi-autoipd
-    - avahi-daemon
-    - unity-lens-applications
-    - unity-lens-files
-    - indicator-session
-    - ttf-ubuntu-font-family
-    - firefox
-    #- nautilus-share
-  when: ubuntu_desktop_thin
+#
+# Reboot if we installed a desktop
+#
 
-- name: Install thin Ubuntu desktop precise
-  apt: name={{item}} install_recommends=no
-  with_items:
-    - firefox-gnome-support
-  when: ubuntu_desktop_thin and '{{ansible_distribution_release}}' == 'precise'
+# https://support.ansible.com/hc/en-us/articles/201958037-Reboot-a-server-and-wait-for-it-to-come-back
+# This wont work when running under vagrant as you need to vagrant up to get
+# networking setup properly.
+- name: Restart machine
+  command: shutdown -r now "Ansible updates triggered"
+  async: 0
+  poll: 0
+  ignore_errors: true
+  when: install_desktop_result.changed and ansible_user_id != 'vagrant' and ansible_env.SUDO_USER != 'vagrant'
+
+- name: Reload vagrant
+  local_action: command vagrant reload {{ inventory_hostname }} chdir={{ vagrant_dir }}
+  async: 0
+  poll: 0
+  #ignore_errors: true
+  sudo: no
+  when: install_desktop_result.changed and (ansible_user_id=='vagrant' or ansible_env.SUDO_USER=='vagrant')
+
+# Wait for a normal reboot to go down.
+# No wait for down on vagrant as the reload command blocks.
+- name: Wait for machine to go down
+  local_action: wait_for host={{ ansible_ssh_host }} port={{ ansible_ssh_port | default(22) }} state=stopped
+  sudo: false
+  when: install_desktop_result.changed and ansible_user_id != 'vagrant' and ansible_env.SUDO_USER != 'vagrant'
+
+- name: Wait for machine to come back
+  local_action: wait_for host={{ ansible_ssh_host }} port={{ ansible_ssh_port | default(22) }} state=started
+  sudo: false
+  when: install_desktop_result.changed
+

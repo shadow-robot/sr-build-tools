@@ -5,28 +5,47 @@
   vars:
     ros_release: 'hydro'
     ros_user_background: 'files/images/Hydromedusa_web1.jpg'
-    ubuntu_desktop_thin: false
   sudo: yes
   roles:
-  - ubuntu_desktop
-  # dkms - Allow the machine to have latest guest additions installed by
-  # mounting the CD image inside the machine. Without this trying to install
-  # the latest additions breaks the vagrant setup.
-  - dkms
-  - ros_install
-  - ros_user
+    - ros_vagrant_base
 
 - hosts: ros-indigo-desktop-trusty64
   vars:
     ros_release: 'indigo'
-    ros_base_package: 'ros-indigo-desktop'
-    ubuntu_desktop_thin: true
+    ros_user_background: 'files/images/indigoigloo_600.png'
   sudo: yes
   roles:
-  - ubuntu_desktop
-  - dkms
-  - ros_install
-  - ros_user
+    - ros_vagrant_base
+
+- hosts: ros-indigo-desktop-xfce-trusty64
+  vars:
+    ros_release: 'indigo'
+    ros_user_background: 'files/images/indigoigloo_600.png'
+    # Only works wity lightdb atm, needs support for the xfce login manager.
+    ros_user_autologin: no
+    ubuntu_desktop_base: xubuntu-desktop
+  sudo: yes
+  roles:
+    - ros_vagrant_base
+
+
+- hosts: ros-hydro-desktop-precise32
+  vars:
+    ros_release: 'hydro'
+    ros_user_background: 'files/images/Hydromedusa_web1.jpg'
+  sudo: yes
+  roles:
+    - ros_vagrant_base
+
+- hosts: ros-indigo-desktop-trusty32
+  vars:
+    ros_release: 'indigo'
+    ros_user_background: 'files/images/indigoigloo_600.png'
+  sudo: yes
+  roles:
+    - ros_vagrant_base
+
+
 
 - hosts: hand-prod
   vars:
