@@ -119,14 +119,6 @@
   sudo: yes
   vars:
     ros_release: 'indigo'
-    ros_user: 'ronex'
-    ros_user_comment: 'RoNeX'
-    ros_user_password: "password"
-    ros_user_email: 'software@shadowrobot.com'
-    ros_user_background: "files/images/ronex.jpg"
-    monospace_font: "Ubuntu Mono 11"
-    ros_packages:
-      - sr-ronex
   roles:
     - ronex_user
 

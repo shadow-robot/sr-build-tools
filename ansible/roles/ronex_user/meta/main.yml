@@ -2,3 +2,4 @@
 dependencies:
   - { role: ros_install }
   - { role: ros_user }
+  - { role: ros_workspace }
