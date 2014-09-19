@@ -14,10 +14,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION)  do |config|
   config.vm.box      = "shadowrobot/ros-indigo-desktop-trusty64"
   config.vm.hostname = hostname
 
-  # Public network for ssh access, shares etc
-  # XXX Breaks network access out of the machine as connection manager seems to
-  # use this instead of the natted connection.
-  #config.vm.network :public_network, :public_network => 'eth1', ip: "123.123.123.123"
+  # Public network for ronex hardware access
+  config.vm.network :public_network, :public_network => 'eth1', ip: "123.123.123.123", :adapter => 2
 
   # Adding private network interface for local access to ssh, shares etc
   config.vm.network :private_network, type: :dhcp, :adapter => 3
