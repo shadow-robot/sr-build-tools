@@ -5,16 +5,22 @@
 VAGRANTFILE_API_VERSION = "2"
 
 hostname        = "ronex-indigo"
-memory          = ENV['VAGRANT_MEMORY']  || '1024'
+memory          = ENV['VAGRANT_MEMORY']  || '2048'
 cores           = ENV['VAGRANT_CORES']   || '2'
-vram            = ENV['VAGRANT_VRAM']    || '64'
-ansible_verbose = ENV['ANSIBLE_VERBOSE'] || ""
+vram            = ENV['VAGRANT_VRAM']    || '128'
+ansible_verbose = ENV['ANSIBLE_VERBOSE'] || "vv"
 
 Vagrant.configure(VAGRANTFILE_API_VERSION)  do |config|
-  config.vm.box      = "ros-indigo-desktop-trusty64"
-  config.vm.box_url  = "https://cloud-images.ubuntu.com/vagrant/trusty/current/trusty-server-cloudimg-amd64-vagrant-disk1.box"
+  config.vm.box      = "shadowrobot/ros-indigo-desktop-trusty64"
   config.vm.hostname = hostname
-  config.vm.network :public_network, :public_network => 'eth1', ip: "123.123.123.123"
+
+  # Public network for ssh access, shares etc
+  # XXX Breaks network access out of the machine as connection manager seems to
+  # use this instead of the natted connection.
+  #config.vm.network :public_network, :public_network => 'eth1', ip: "123.123.123.123"
+
+  # Adding private network interface for local access to ssh, shares etc
+  config.vm.network :private_network, type: :dhcp, :adapter => 3
 
   # Set the vagrant name so we can match it in ansible
   config.vm.define hostname do |host|
