@@ -39,6 +39,25 @@
 - name: Copy install file
   copy: src={{ros_workspace_install}} dest=/tmp/ansible-ros-workspace.rosinstall
 
+#
+# When using private repos ssh key checks can become a pain so we generate the
+# keys first.
+# http://blog.kollerie.com/2014/02/18/ansible_git_ssh/
+#
+- name: Find repo domains
+  shell: 'grep "uri" /tmp/ansible-ros-workspace.rosinstall | sed -n -e "s/^.*@\(.*\):.*$/\1/p" | sort | uniq'
+  register: repo_domains
+
+- name: Get repo hosts keys
+  shell: ssh-keyscan "{{item}}"
+  with_items: repo_domains.stdout_lines
+  register: repo_host_keys
+
+- name: Add host keys for repos
+  lineinfile: create=yes dest="~/.ssh/known_hosts" line='{{ item.stdout }}' state=present
+  with_items: repo_host_keys.results
+
+
 # Install the given workspace file.
 - name: Install {{ros_workspace_install}}
   shell: bash -c "{{item}}" chdir={{ros_workspace}}/src
