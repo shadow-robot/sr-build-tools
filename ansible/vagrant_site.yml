@@ -119,6 +119,7 @@
     - share_folder
 
 - hosts: ronex
+  sudo: yes
   vars:
     ros_release: 'hydro'
     ros_user: 'ronex'
@@ -129,10 +130,16 @@
     monospace_font: "Ubuntu Mono 11"
     ros_packages:
       - sr-ronex
-
-  sudo: yes
   roles:
-  - ronex_user
+    - ronex_user
+
+- hosts: ronex-indigo
+  sudo: yes
+  vars:
+    ros_release: 'indigo'
+  roles:
+    - ssh_auth_sock
+    - ronex_user
 
 - hosts: ronexserial
   sudo: yes
