@@ -9,7 +9,7 @@ vagrant up
 1) eth0
 2) eth1
 ```
-Note the prompt, you should select the ethernet card you are going to attach the ronex to here. Machine gets a bridged network on that device.
+Note the prompt, you should select the ethernet card you are going to attach the __RoNeX__ to here. Machine gets a bridged network on that device. Don't select the port that you have connected to the internet as that can break networking in the VM.
 
 After a while you should have a vm desktop with a `ronex` user (password password), indigo-devel branch checked out and built in `~/indigo_ws/`.
 
