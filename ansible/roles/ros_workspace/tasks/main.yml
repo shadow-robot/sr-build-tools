@@ -56,19 +56,20 @@
 - name: Add host keys for repos
   lineinfile: create=yes dest="~/.ssh/known_hosts" line='{{ item.stdout }}' state=present
   with_items: repo_host_keys.results
+  when: repo_host_keys.stdout is defined repo_host_keys.stdout is not ""
 
-
-# Install the given workspace file.
-- name: Install {{ros_workspace_install}}
-  shell: bash -c "{{item}}" chdir={{ros_workspace}}/src
+- name: Merge {{ros_workspace_install}} into workspace
+  command: wstool merge -y /tmp/ansible-ros-workspace.rosinstall
+    chdir={{ros_workspace}}/src
   # Run as root to allow forward keys for github access
   sudo: yes
-  with_items:
-    - wstool merge -y /tmp/ansible-ros-workspace.rosinstall
-    - wstool update
 
-# As we installed code as root, fix the perms.
-- name: Fix perms
+- name: Workspace update
+  command: wstool update chdir={{ros_workspace}}/src
+  # Run as root to allow forward keys for github access
+  sudo: yes
+
+- name: Fix perms (As we installed code as root, fix the perms.)
   file: path={{ros_workspace}} recurse=yes owner={{ros_user}} group=ros
 
 - name: Install dependancies
