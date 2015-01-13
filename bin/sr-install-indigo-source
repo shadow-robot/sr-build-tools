@@ -32,6 +32,7 @@ echo ROS UBUNTU installed sucessfully
     git clone https://github.com/shadow-robot/sr-visualization.git -b indigo-devel sr_visualization
     git clone https://github.com/shadow-robot/sr-config.git -b indigo-devel sr_config
     git clone https://github.com/shadow-robot/ros_ethercat.git
+    git clone https://github.com/shadow-robot/ros_grant.git
     
     source ~/workspace/devel/setup.bash
     echo source ~/workspace/devel/setup.bash >> ~/.bashrc
