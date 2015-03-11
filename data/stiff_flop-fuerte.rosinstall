@@ -12,7 +12,7 @@
     local-name: stiff_flop_config
 
 - bzr:
-    uri: 'bzr+ssh://bzr@bzr.stiff-flop.eu/stiff_flop_hardware_drivers/fuerte'
+    uri: 'bzr+ssh://bzr@bzr.stiff-flop.eu/stiff_flop_hardware_drivers/trunk'
     local-name: stiff_flop_hardware_drivers
 
 - bzr:
@@ -20,7 +20,7 @@
     local-name: stiff_flop_user_interface
 
 - bzr:
-    uri: 'bzr+ssh://bzr@bzr.stiff-flop.eu/stiff_flop_hardware_simulator/fuerte'
+    uri: 'bzr+ssh://bzr@bzr.stiff-flop.eu/stiff_flop_hardware_simulator/trunk'
     local-name: stiff_flop_simulator
 
 - bzr:
@@ -34,4 +34,8 @@
 - bzr:
     uri: 'bzr+ssh://bzr@bzr.stiff-flop.eu/stiff_flop_demos/trunk'
     local-name: stiff_flop_demos
+
+- bzr:
+    uri: 'bzr+ssh://bzr@bzr.stiff-flop.eu/stiff_flop_vision/trunk'
+    local-name: stiff_flop_vision
 
