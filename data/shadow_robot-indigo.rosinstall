@@ -24,6 +24,6 @@
     local-name: ros_ethercat
 
 - git:
-    uri: 'https://github.com/shadow-robot/ros_grant.git'
+    uri: 'https://github.com/shadow-robot/ethercat_grant.git'
     version: 'indigo-devel'
-    local-name: ros_grant
+    local-name: ethercat_grant
