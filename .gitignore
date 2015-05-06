@@ -1,2 +1,4 @@
 .vagrant
 vagrant_ansible_inventory*
+
+.idea
