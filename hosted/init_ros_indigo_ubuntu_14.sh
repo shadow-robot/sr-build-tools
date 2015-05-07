@@ -15,7 +15,9 @@ echo ROS UBUNTU installed sucessfully
 sudo apt-get install python-wstool -y
 sudo apt-get install python-rosinstall -y
 sudo apt-get install python-rosdep -y
-sudo apt-get install python-catkin-pkg -y
+sudo apt-get install python-pip -y
+
+pip install catkin_pkg
 
 source /opt/ros/indigo/setup.bash
 mkdir -p ~/workspace/src
