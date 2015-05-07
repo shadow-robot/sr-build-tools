@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
 # Install ROS indigo
+sudo apt-get install wget -y
 sudo sh -c 'echo "deb http://packages.ros.org/ros/ubuntu trusty main" > /etc/apt/sources.list.d/ros-latest.list'
 wget http://packages.ros.org/ros.key -O - | sudo apt-key add -
 sudo apt-get update -y
