@@ -5,7 +5,7 @@ source ~/workspace/devel/setup.bash
 
 env
 
-locate rdf_loader.h
+sudo find / -name "rdf_loader.h"
 
 cd ~/workspace
 catkin_make clean
