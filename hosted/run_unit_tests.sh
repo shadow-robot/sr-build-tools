@@ -9,7 +9,19 @@ catkin_make run_tests
 mkdir -p ~/shippable/testresults
 mkdir -p ~/shippable/codecoverage
 
-mv ~/workspace/build/test_results/* ~/shippable/testresults
+for dir in ~/workspace/build/test_results/*
+do
+    dir_name=$(basename "$dir")
+    for file in "$dir"/*
+    do
+
+        if [[ -f $file ]]
+        then
+            filename=$(basename "$file")
+            mv -vT "$file" "$HOME/shippable/testresults/${dir_name}_${filename}"
+        fi
+    done
+done
 
 ls -al ~/shippable
 ls -al ~/shippable/testresults
