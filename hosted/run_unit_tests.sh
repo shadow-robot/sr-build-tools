@@ -18,7 +18,9 @@ do
         if [[ -f $file ]]
         then
             filename=$(basename "$file")
-            mv -vT "$file" "shippable/testresults/${dir_name}_${filename}"
+#            mv -vT "$file" "shippable/testresults/${dir_name}_${filename}"
+            mv -vT "$file" "shippable/testresults/nosetests.xml"
+            mv -vT "$file" "$HOME/shippable/testresults/nosetests.xml"
         fi
     done
 done
