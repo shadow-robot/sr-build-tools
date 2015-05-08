@@ -6,8 +6,7 @@ source ~/workspace/devel/setup.bash
 cd ~/workspace
 catkin_make run_tests
 
-mkdir -p shippable/testresults
-mkdir -p shippable/codecoverage
+cp -r ~/workspace/build/test_results/* $SHIPPABLE_REPO_DIR/shippable/testresults/
 
 for dir in ~/workspace/build/test_results/*
 do
