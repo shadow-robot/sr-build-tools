@@ -19,8 +19,12 @@ do
         then
             filename=$(basename "$file")
 #            mv -vT "$file" "shippable/testresults/${dir_name}_${filename}"
-            mv -vT "$file" "shippable/testresults/nosetests.xml"
-            mv -vT "$file" "$HOME/shippable/testresults/nosetests.xml"
+            cp -vTf "$file" "shippable/testresults/nosetests.xml"
+            cp -vTf "$file" "$HOME/shippable/testresults/nosetests.xml"
+            cp -vTf "$file" "$SHIPPABLE_REPO_DIR/shippable/testresults/nosetests.xml"
+            cp -vTf "$file" "$SHIPPABLE_REPO_DIR/shippable/testresults/${dir_name}_${filename}"
+
+            # should be mv -vT "$file" "$SHIPPABLE_REPO_DIR/shippable/testresults/${dir_name}_${filename}"
         fi
     done
 done
