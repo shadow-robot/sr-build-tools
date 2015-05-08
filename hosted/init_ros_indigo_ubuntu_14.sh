@@ -32,7 +32,8 @@ sudo rosdep init -y
 rosdep update -y
 
 cd ~/workspace/src
-wstool init ~/workspace/src /opt/ros/indigo/setup.bash
+#wstool init ~/workspace/src /opt/ros/indigo/setup.bash
+wstool init
 
 echo INSTALATION COMPLETED. WELL DONE
 
