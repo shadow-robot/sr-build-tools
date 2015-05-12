@@ -13,6 +13,7 @@ sudo apt-get install python-rosdep -y
 sudo apt-get install python-pip -y
 
 pip install catkin_pkg
+pip install empy
 
 source /opt/ros/indigo/setup.bash
 mkdir -p ~/workspace/src
