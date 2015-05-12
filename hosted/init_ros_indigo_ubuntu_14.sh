@@ -5,7 +5,6 @@ sudo sh -c 'echo "deb http://packages.ros.org/ros/ubuntu trusty main" > /etc/apt
 wget http://packages.ros.org/ros.key -O - | sudo apt-key add -
 sudo apt-get update -y
 sudo apt-get install ros-indigo-desktop-full -y
-sudo apt-get install ros-indigo-controller-interface -y
 sudo apt-get install ros-indigo-cmake-modules -y
 
 sudo apt-get install python-wstool -y
