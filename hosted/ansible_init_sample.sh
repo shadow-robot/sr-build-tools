@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
-sudo apt-get install python-pip -y
+sudo apt-get update
+sudo apt-get install python-dev libxml2-dev libxslt-dev python-pip -y
 sudo pip install ansible
 
 mkdir -p ~/workspace
