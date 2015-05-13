@@ -1,0 +1,11 @@
+---
+# Playbook Continuous Integration servers.
+
+- hosts: 127.0.0.1
+  connection: local
+  vars:
+    ros_release: 'indigo'
+  sudo: yes
+  roles:
+  - ros_install
+  - ros_workspace
