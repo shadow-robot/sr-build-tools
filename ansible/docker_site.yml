@@ -6,5 +6,5 @@
     ros_release: 'indigo'
   sudo: yes
   roles:
-    - {name: ros_install, tags: ros_install}
-    - {name: ros_workspace, tags: ros_workspace}
+    - {role: ros_install, tags: ['ros_install']}
+    - {role: ros_workspace, tags: ['ros_workspace']}
