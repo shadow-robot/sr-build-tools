@@ -11,6 +11,7 @@ git clone https://github.com/shadow-robot/sr-build-tools.git
 cd ./sr-build-tools
 git checkout F_hosted_build_support
 
-sudo ansible-playbook -v -i "localhost," -c local ~/workspace/sr-build-tools/ansible/docker_site.yml --tags "ros_install,ros_user,ros_workspace"
+sudo ansible-playbook -v -i "localhost," -c local ./ansible/docker_site.yml --tags "install,create_workspace,update_dependencies,build,unit_tests,shippable" -e "dependencies_file=$SHIPPABLE_REPO_DIR/project.rosinstall"
+
 
 

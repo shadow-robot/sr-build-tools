@@ -1,0 +1,24 @@
+---
+# Playbook for additional component installations
+
+- name: Install more packages
+  apt: name={{item}}
+  with_items:
+     - ros-{{ros_release}}-cmake-modules
+     - python-rosdep
+     - python-pip
+
+- name: Install PIP modules
+  pip: name={{item}}
+  with_items:
+     - catkin_pkg
+     - empy
+
+- name: Update users bashrc to point to the ROS installation
+  lineinfile: dest=\~/.bashrc
+              line="source /opt/ros/{{ros_release}}/setup.bash"
+              regexp='^source.*/setup\.bash'
+              insertafter=EOF
+              backup=yes
+
+

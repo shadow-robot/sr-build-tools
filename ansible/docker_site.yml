@@ -3,9 +3,14 @@
 
 - hosts: all
   vars:
-    ros_release: 'indigo'
-  sudo: yes
+    ros_release: "indigo"
+    ros_workspace: "~/workspace"
+    upgrade_all_packages: no
+    dependencies_file: project.rosinstall
   roles:
-    - {role: ros_install, tags: ['ros_install']}
-    - {role: ros_user, tags: ['ros_user']}
-    - {role: ros_workspace, tags: ['ros_workspace']}
+    - {role: ci/install, tags: ["install"]}
+    - {role: ci/create_workspace, tags: ["create_workspace"]}
+    - {role: ci/update_dependencies, tags: ["update_dependencies"]}
+    - {role: ci/build, tags: ["build"]}
+    - {role: ci/unit_tests, tags: ["unit_tests"]}
+    - {role: ci/servers/shippable, tags: ["shippable"]}

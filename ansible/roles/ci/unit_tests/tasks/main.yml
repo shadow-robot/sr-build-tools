@@ -1,0 +1,6 @@
+---
+# Playbook for unit tests
+
+- name: catkin run tests
+  shell: bash -c "catkin_make run_tests"
+    chdir={{ros_workspace}}

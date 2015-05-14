@@ -1,0 +1,10 @@
+---
+# Playbook for project build
+
+- name: catkin clean workspace
+  shell: bash -c "catkin_make clean"
+    chdir={{ros_workspace}}
+
+- name: catkin make workspace
+  shell: bash -c "catkin_make"
+    chdir={{ros_workspace}}

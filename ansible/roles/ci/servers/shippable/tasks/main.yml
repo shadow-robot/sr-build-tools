@@ -1,0 +1,5 @@
+---
+# Playbook for Shippable CI specific code
+
+- name: Move unit tests results
+  command: mv -vt {{ansible_env.SHIPPABLE_REPO_DIR}}/shippable/testresults/ {{ros_workspace}}/build/test_results/*

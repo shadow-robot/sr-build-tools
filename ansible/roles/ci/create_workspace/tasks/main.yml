@@ -1,0 +1,32 @@
+---
+# Playbook for workspace creation
+
+- name: Create workspace {{ros_workspace}}
+  file: state=directory path={{ros_workspace}}/src
+
+- name: catkin_init_workspace
+  shell: bash -c "catkin_init_workspace"
+    chdir={{ros_workspace}}/src
+    creates={{ros_workspace}}/src/CMakeLists.txt
+
+# Do an initial make of the empty workspace to get a setup.bash.
+- name: catkin make workspace
+  shell: bash -c "catkin_make"
+    chdir={{ros_workspace}}
+    creates={{ros_workspace}}/devel/setup.bash
+
+- name: Update users bashrc to point to the workspace
+  lineinfile: dest=\~/.bashrc
+              line="source {{ros_workspace}}/devel/setup.bash"
+              regexp='^source.*/setup\.bash'
+              insertafter=EOF
+              backup=yes
+
+- name: Init workspace
+  command: wstool init .
+    chdir={{ros_workspace}}/src
+    creates={{ros_workspace}}/src/.rosinstall
+
+- name: Update dependencies
+  shell: bash -c "rosdep update -y"
+         chdir={{ros_workspace}}
