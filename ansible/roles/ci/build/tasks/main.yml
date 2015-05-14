@@ -2,9 +2,9 @@
 # Playbook for project build
 
 - name: catkin clean workspace
-  shell: bash -c "catkin_make clean"
+  shell: bash -c "source /opt/ros/{{ros_release}}/setup.bash && catkin_make clean"
     chdir={{ros_workspace}}
 
 - name: catkin make workspace
-  shell: bash -c "catkin_make"
+  shell: bash -c "source /opt/ros/{{ros_release}}/setup.bash && catkin_make"
     chdir={{ros_workspace}}

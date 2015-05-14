@@ -5,13 +5,13 @@
   file: state=directory path={{ros_workspace}}/src
 
 - name: catkin_init_workspace
-  shell: bash -c "catkin_init_workspace"
+  shell: bash -c "source /opt/ros/{{ros_release}}/setup.bash && catkin_init_workspace"
     chdir={{ros_workspace}}/src
     creates={{ros_workspace}}/src/CMakeLists.txt
 
 # Do an initial make of the empty workspace to get a setup.bash.
 - name: catkin make workspace
-  shell: bash -c "catkin_make"
+  shell: bash -c "source /opt/ros/{{ros_release}}/setup.bash && catkin_make"
     chdir={{ros_workspace}}
     creates={{ros_workspace}}/devel/setup.bash
 
