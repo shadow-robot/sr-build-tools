@@ -12,6 +12,3 @@ cd ./sr-build-tools
 git checkout F_hosted_build_support
 
 sudo ansible-playbook -v -i "localhost," -c local ./ansible/docker_site.yml --tags "install,create_workspace,update_dependencies,build,unit_tests,shippable" -e "dependencies_file=$SHIPPABLE_REPO_DIR/project.rosinstall"
-
-
-
