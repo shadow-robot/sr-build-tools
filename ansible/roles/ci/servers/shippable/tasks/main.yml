@@ -2,4 +2,5 @@
 # Playbook for Shippable CI specific code
 
 - name: Move unit tests results
-  command: mv -vt {{shippable_repo_dir}}/shippable/testresults/ {{ros_workspace}}/build/test_results/*
+  shell: bash -c "mv -vt {{shippable_repo_dir}}/shippable/testresults/ {{ros_workspace}}/build/test_results/*"
+
