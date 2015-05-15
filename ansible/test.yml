@@ -1,0 +1,13 @@
+- hosts: all
+  vars:
+    ros_release: "indigo"
+    ros_workspace: "~/workspace"
+    upgrade_all_packages: no
+    dependencies_file: project.rosinstall
+  tasks:
+  - name: print env
+    shell: bash -c "env"
+
+  - name: print variable
+    shell: bash -c "echo $SHIPPABLE_REPO_DIR"
+
