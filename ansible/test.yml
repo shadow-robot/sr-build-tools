@@ -11,3 +11,6 @@
   - name: print variable
     shell: bash -c "echo $SHIPPABLE_REPO_DIR"
 
+  - name: Display all variables/facts known for a host
+    debug: var=hostvars['localhost']
+
