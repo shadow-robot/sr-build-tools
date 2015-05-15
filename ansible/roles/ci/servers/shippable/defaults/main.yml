@@ -1,4 +1,4 @@
 ---
 # defaults file for Shippable CI
 
-shippable_repo_dir: {{lookup('env','SHIPPABLE_REPO_DIR')}}
+shippable_repo_dir: ""
