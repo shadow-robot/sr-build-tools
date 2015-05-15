@@ -1,0 +1,6 @@
+---
+# Variables file for Shippable CI
+
+ros_workspace: "~/workspace"
+upgrade_all_packages: no
+dependencies_file: "{{shippable_repo_dir}}/project.rosinstall"

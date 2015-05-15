@@ -1,0 +1,26 @@
+---
+# Playbook for workspace creation
+
+- name: Update package lists
+  apt: update_cache=yes
+  when: upgrade_all_packages
+
+- name: Update all packages to the latest version
+  apt: upgrade=dist
+  when: upgrade_all_packages
+
+- name: Add more dependencies to project
+  command: wstool merge {{dependencies_file}}
+    chdir={{ros_workspace}}/src
+
+- name: Update dependencies to project
+  command: wstool update
+    chdir={{ros_workspace}}/src
+
+- name: Install dependencies
+  shell: bash -c "rosdep update -y"
+         chdir={{ros_workspace}}
+
+  shell: bash -c "rosdep install --from-paths . --ignore-src --rosdistro {{ros_release}} -y"
+         chdir={{ros_workspace}}
+
