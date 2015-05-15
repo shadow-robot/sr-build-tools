@@ -4,13 +4,11 @@
 - hosts: all
   vars:
     ros_release: "indigo"
-    ros_workspace: "~/workspace"
-    upgrade_all_packages: no
-    dependencies_file: project.rosinstall
   roles:
+    - {role: ci/servers/shippable/init, tags: ["shippable","shippable_init"]}
     - {role: ci/install, tags: ["install"]}
     - {role: ci/create_workspace, tags: ["create_workspace"]}
     - {role: ci/update_dependencies, tags: ["update_dependencies"]}
     - {role: ci/build, tags: ["build"]}
     - {role: ci/unit_tests, tags: ["unit_tests"]}
-    - {role: ci/servers/shippable, tags: ["shippable"]}
+    - {role: ci/servers/shippable/finalize, tags: ["shippable","shippable_finalize"]}
