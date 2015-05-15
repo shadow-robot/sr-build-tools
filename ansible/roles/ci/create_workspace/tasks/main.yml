@@ -9,19 +9,6 @@
     chdir={{ros_workspace}}/src
     creates={{ros_workspace}}/src/CMakeLists.txt
 
-# Do an initial make of the empty workspace to get a setup.bash.
-- name: catkin make workspace
-  shell: bash -c "source /opt/ros/{{ros_release}}/setup.bash && catkin_make"
-    chdir={{ros_workspace}}
-    creates={{ros_workspace}}/devel/setup.bash
-
-- name: Update users bashrc to point to the workspace
-  lineinfile: dest=\~/.bashrc
-              line="source {{ros_workspace}}/devel/setup.bash"
-              regexp='^source.*/setup\.bash'
-              insertafter=EOF
-              backup=yes
-
 - name: Init workspace
   command: wstool init .
     chdir={{ros_workspace}}/src
