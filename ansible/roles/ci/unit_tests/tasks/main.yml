@@ -2,5 +2,5 @@
 # Playbook for unit tests
 
 - name: catkin run tests
-  shell: bash -c "source /opt/ros/{{ros_release}}/setup.bash && catkin_make run_tests"
+  shell: bash -c "source {{ros_workspace}}/devel/setup.bash && catkin_make run_tests"
     chdir={{ros_workspace}}
