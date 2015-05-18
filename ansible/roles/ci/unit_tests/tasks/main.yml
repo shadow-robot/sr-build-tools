@@ -1,6 +1,6 @@
 ---
 # Playbook for unit tests
 
-- name: catkin run tests -DCOVERAGE=ON
-  shell: bash -c "source {{ros_workspace}}/devel/setup.bash && catkin_make run_tests"
+- name: catkin run tests
+  shell: bash -c "source {{ros_workspace}}/devel/setup.bash && catkin_make run_tests -DCOVERAGE=ON"
     chdir={{ros_workspace}}
