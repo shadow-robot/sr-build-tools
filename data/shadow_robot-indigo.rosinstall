@@ -51,3 +51,8 @@
     local-name: lma_kinematics_plugin
     uri: 'https://github.com/shadow-robot/lma_kinematics_plugin'
     version: F_ik_with_joint_limits
+    
+- git:
+    local-name: sr_ur_arm
+    uri: 'https://github.com/shadow-robot/sr_ur_arm.git'
+    version: indigo-devel
