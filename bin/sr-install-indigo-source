@@ -53,6 +53,8 @@ echo ROS UBUNTU installed sucessfully
     cd ~/workspace
     catkin_make
 
+    sudo cp devel/lib/ethercat_grant/ethercat_grant /usr/local/bin/
+    sudo chmod +s /usr/local/bin/ethercat_grant
 
 echo Shadow Software installed sucessfully
 
