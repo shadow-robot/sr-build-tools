@@ -32,7 +32,13 @@ echo ROS UBUNTU installed sucessfully
     git clone https://github.com/shadow-robot/sr-visualization.git -b indigo-devel sr_visualization
     git clone https://github.com/shadow-robot/sr-config.git -b indigo-devel sr_config
     git clone https://github.com/shadow-robot/ros_ethercat.git
-    git clone https://github.com/shadow-robot/ros_grant.git
+    git clone https://github.com/shadow-robot/ethercat_grant.git
+    git clone https://github.com/shadow-robot/sr-contrib.git
+    git clone https://github.com/shadow-robot/sr-teleop.git
+    git clone https://github.com/ozymandium/cereal-port.git
+    git clone https://github.com/shadow-robot/universal_robot.git -b F_sr_plugin_compatible
+    git clone https://github.com/shadow-robot/lma_kinematics_plugin.git -b F_ik_with_joint_limits
+    git clone https://github.com/shadow-robot/sr_ur_arm.git
     
     source ~/workspace/devel/setup.bash
     echo source ~/workspace/devel/setup.bash >> ~/.bashrc
@@ -47,6 +53,8 @@ echo ROS UBUNTU installed sucessfully
     cd ~/workspace
     catkin_make
 
+    sudo cp devel/lib/ethercat_grant/ethercat_grant /usr/local/bin/
+    sudo chmod +s /usr/local/bin/ethercat_grant
 
 echo Shadow Software installed sucessfully
 
@@ -60,12 +68,12 @@ echo Extra Application installed sucessully
 
 # Set the Desktop Icons
 
-    mkdir ~/mount_home
-    sudo mount -a 10.1.1.11:/home/  ~/mount_home/
-    cp -r  ~/mount_home/shadow/icon_folder/scripts  ~/
-    cp ~/mount_home/shadow/icon_folder/Desktop/*  ~/Desktop/
-    sudo umount ~/mount_home
-    rmdir ~/mount_home
+#    mkdir ~/mount_home
+#    sudo mount -a 10.1.1.11:/home/  ~/mount_home/
+#    cp -r  ~/mount_home/shadow/icon_folder/scripts  ~/
+#    cp ~/mount_home/shadow/icon_folder/Desktop/*  ~/Desktop/
+#    sudo umount ~/mount_home
+#    rmdir ~/mount_home
 
 echo Desktop Icons placed successfully
 
