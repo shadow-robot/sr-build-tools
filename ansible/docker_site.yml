@@ -13,4 +13,4 @@
     - {role: ci/update_dependencies, when: skip_build == no, tags: ["update_dependencies"]}
     - {role: ci/build, when: skip_build == no, tags: ["build"]}
     - {role: ci/unit_tests, when: skip_build == no, tags: ["unit_tests"]}
-    - {role: ci/servers/shippable/finalize, when: !skip_build, tags: ["shippable","shippable_finalize"]}
+    - {role: ci/servers/shippable/finalize, when: skip_build == no, tags: ["shippable","shippable_finalize"]}
