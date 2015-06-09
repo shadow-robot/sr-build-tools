@@ -4,11 +4,13 @@
 - hosts: all
   vars:
     ros_release: "indigo"
+    skip_build: no
   roles:
     - {role: ci/servers/shippable/init, tags: ["shippable","shippable_init"]}
-    - {role: ci/install, tags: ["install"]}
-    - {role: ci/create_workspace, tags: ["create_workspace"]}
-    - {role: ci/update_dependencies, tags: ["update_dependencies"]}
-    - {role: ci/build, tags: ["build"]}
-    - {role: ci/unit_tests, tags: ["unit_tests"]}
-    - {role: ci/servers/shippable/finalize, tags: ["shippable","shippable_finalize"]}
+    - {role: ci/build_pr_only, tags: ["build_pr_only"]}
+    - {role: ci/install, when: skip_build == no, tags: ["install"]}
+    - {role: ci/create_workspace, when: skip_build == no, tags: ["create_workspace"]}
+    - {role: ci/update_dependencies, when: skip_build == no, tags: ["update_dependencies"]}
+    - {role: ci/build, when: skip_build == no, tags: ["build"]}
+    - {role: ci/unit_tests, when: skip_build == no, tags: ["unit_tests"]}
+    - {role: ci/servers/shippable/finalize, when: !skip_build, tags: ["shippable","shippable_finalize"]}
