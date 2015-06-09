@@ -4,5 +4,5 @@
 ros_workspace: "~/workspace"
 upgrade_all_packages: no
 dependencies_file: "{{shippable_repo_dir}}/project.rosinstall"
-is_pull_request: {{shippable_is_pull_request}} == "false"
+is_pull_request: "{{shippable_is_pull_request}}" == "false"
 
