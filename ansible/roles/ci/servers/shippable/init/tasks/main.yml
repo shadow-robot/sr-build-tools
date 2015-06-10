@@ -1,0 +1,12 @@
+---
+# Playbook for Shippable CI init specific code
+
+- name: check if shippable_repo_dir variable was set by build server
+  fail: msg="Variable shippable_repo_dir was not set by CI server"
+  when: shippable_repo_dir is not defined
+
+- name: check if shippable_is_pull_request variable was set by build server
+  fail: msg="Variable shippable_is_pull_request was not set by CI server"
+  when: shippable_is_pull_request is not defined
+
+

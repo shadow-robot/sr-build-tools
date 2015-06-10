@@ -1,0 +1,6 @@
+---
+# Playbook for build PR only
+
+- name: check if is_pull_request variable was set by build server
+  fail: msg="Variable is_pull_request was not set by CI server"
+  when: is_pull_request is not defined
