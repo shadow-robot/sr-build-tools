@@ -1,4 +1,4 @@
 ---
 # Variables file for pull request build only
 
-skip_build: "{{is_pull_request}}"
+run_build: "{{is_pull_request}}"
