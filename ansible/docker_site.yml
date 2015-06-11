@@ -5,6 +5,9 @@
   vars:
     ros_release: "indigo"
     run_build: yes
+    python_code_check: "OFF"
+    cpp_code_check: "OFF"
+    generate_code_coverage: "OFF"
   roles:
     - {role: ci/servers/shippable/init, tags: ["shippable","shippable_init"]}
     - {role: ci/build_pr_only, tags: ["build_pr_only"]}
@@ -12,5 +15,8 @@
     - {role: ci/create_workspace, when: run_build, tags: ["create_workspace"]}
     - {role: ci/update_dependencies, when: run_build, tags: ["update_dependencies"]}
     - {role: ci/build, when: run_build, tags: ["build"]}
+    - {role: ci/code_style_check/python, when: run_build, tags: ["python_code_style_check", "code_style_check"]}
+    - {role: ci/code_style_check/cpp, when: run_build, tags: ["cpp_code_style_check", "code_style_check"]}
+    - {role: ci/code_coverage/data, when: run_build, tags: ["code_coverage_data", "code_coverage"]}
     - {role: ci/unit_tests, when: run_build, tags: ["unit_tests"]}
     - {role: ci/servers/shippable/finalize, when: run_build, tags: ["shippable","shippable_finalize"]}

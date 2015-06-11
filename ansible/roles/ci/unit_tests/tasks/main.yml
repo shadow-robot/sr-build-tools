@@ -2,5 +2,5 @@
 # Playbook for unit tests
 
 - name: catkin run tests
-  shell: bash -c "source {{ros_workspace}}/devel/setup.bash && catkin_make run_tests -DCOVERAGE=ON"
+  shell: bash -c "source {{ros_workspace}}/devel/setup.bash && catkin_make run_tests -DSR_COMMON_PYTHON_CODE_CHECK={{python_code_check}} -DSR_COMMON_PYTHON_CODE_CHECK={{python_code_check}} -DSR_COMMON_CPP_CODE_CHECK={{cpp_code_check}} -DSR_COMMON_CODE_COVERAGE={{generate_code_coverage}} "
     chdir={{ros_workspace}}

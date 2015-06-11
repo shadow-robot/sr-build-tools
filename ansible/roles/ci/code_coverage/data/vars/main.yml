@@ -1,0 +1,4 @@
+---
+# Variables file for code coverage data
+
+generate_code_coverage: "ON"
