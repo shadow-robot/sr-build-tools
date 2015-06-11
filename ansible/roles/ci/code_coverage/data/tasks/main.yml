@@ -1,0 +1,6 @@
+---
+# Playbook for build PR only
+
+- name: check if generate_code_coverage variable was
+  fail: msg="Variable generate_code_coverage was not set"
+  when: generate_code_coverage is not defined
