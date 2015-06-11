@@ -1,0 +1,6 @@
+---
+# Playbook for Python code style check
+
+- name: check if python_code_check variable was set
+  fail: msg="Variable python_code_check was not set"
+  when: python_code_check is not defined
