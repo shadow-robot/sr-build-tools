@@ -10,7 +10,7 @@
     generate_code_coverage: "OFF"
   roles:
     - {role: ci/servers/shippable/init, tags: ["shippable","shippable_init"]}
-    - {role: ci/build_pr_only, tags: ["build_pr_only"]}
+#    - {role: ci/build_pr_only, tags: ["build_pr_only"]}
     - {role: ci/install, when: run_build, tags: ["install"]}
     - {role: ci/create_workspace, when: run_build, tags: ["create_workspace"]}
     - {role: ci/update_dependencies, when: run_build, tags: ["update_dependencies"]}
