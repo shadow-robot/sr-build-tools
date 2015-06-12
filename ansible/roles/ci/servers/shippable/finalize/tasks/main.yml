@@ -3,4 +3,23 @@
 
 - name: Move unit tests results
   shell: bash -c "mv -vt {{shippable_repo_dir}}/shippable/testresults/ {{ros_workspace}}/build/test_results/*"
+  tags:
+    - unit_tests
+    - python_code_style_check
+    - cpp_code_style_check
+    - code_style_check
+    - code_coverage
+    - codecov_tool
 
+- name: Create coverage directory
+  file: state=directory path={{shippable_repo_dir}}/shippable/codecoverage
+  tags:
+    - code_coverage
+    - codecov_tool
+
+- name: Run gcovr
+  shell: bash -c "gcovr -r {{ros_workspace}} --xml-pretty > {{shippable_repo_dir}}/shippable/codecoverage/coverage.xml"
+    chdir={{shippable_repo_dir}}/shippable/codecoverage
+  tags:
+    - code_coverage
+    - codecov_tool

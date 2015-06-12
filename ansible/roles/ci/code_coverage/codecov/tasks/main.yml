@@ -5,13 +5,6 @@
   fail: msg="Variable codecov_secure was not set"
   when: codecov_secure is not defined
 
-- name: Create coverage directory
-  file: state=directory path={{shippable_repo_dir}}/shippable/codecoverage
-
-- name: Run gcovr
-  shell: bash -c "gcovr -r {{ros_workspace}} --xml-pretty > {{shippable_repo_dir}}/shippable/codecoverage/coverage.xml"
-    chdir={{shippable_repo_dir}}/shippable/codecoverage
-
 - name: Send data to codecov
   shell: bash <(curl -s https://codecov.io/bash)
   environment:

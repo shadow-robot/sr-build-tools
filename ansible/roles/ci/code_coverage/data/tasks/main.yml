@@ -1,6 +1,6 @@
 ---
 # Playbook for code coverage
 
-- name: check if generate_code_coverage variable was set
-  fail: msg="Variable generate_code_coverage was not set"
-  when: generate_code_coverage is not defined
+- name: Set flag generate_code_coverage ON
+  set_fact:
+    generate_code_coverage: "ON"

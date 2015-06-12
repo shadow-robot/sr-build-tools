@@ -1,4 +1,0 @@
----
-# Variables file for Python code style check
-
-python_code_check: "ON"

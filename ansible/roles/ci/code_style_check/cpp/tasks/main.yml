@@ -1,6 +1,6 @@
 ---
 # Playbook for C++ code style check
 
-- name: check if cpp_code_check variable was set
-  fail: msg="Variable cpp_code_check was not set"
-  when: cpp_code_check is not defined
+- name: Set flag cpp_code_check ON
+  set_fact:
+    cpp_code_check: "ON"

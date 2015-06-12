@@ -1,0 +1,4 @@
+---
+# Defaults for C++ code style check variables
+
+cpp_code_check: "OFF"

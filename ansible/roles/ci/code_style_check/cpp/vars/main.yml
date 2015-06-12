@@ -1,4 +1,0 @@
----
-# Variables file for C++ code style check
-
-cpp_code_check: "ON"
