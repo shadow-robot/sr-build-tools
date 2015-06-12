@@ -3,7 +3,7 @@
 
 - name: check if codecov_secure variable was set
   fail: msg="Variable codecov_secure was not set"
-  when: codecov_secure is not defined OR codecov_secure == ""
+  when: (codecov_secure is not defined) or (codecov_secure == "")
 
 - name: check if code_coverage_results_dir variable was set by build server
   fail: msg="Variable code_coverage_results_dir was not set by CI server"
