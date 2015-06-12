@@ -8,4 +8,4 @@
 - name: Send data to codecov
   shell: bash <(curl -s https://codecov.io/bash)
   environment:
-        secure: {{codecov_secure}}
+        secure: "{{codecov_secure}}"
