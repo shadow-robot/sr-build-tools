@@ -5,7 +5,11 @@
   fail: msg="Variable codecov_secure was not set"
   when: codecov_secure is not defined
 
+- name: check if code_coverage_results_dir variable was set by build server
+  fail: msg="Variable code_coverage_results_dir was not set by CI server"
+  when: code_coverage_results_dir is not defined
+
 - name: Send data to codecov
-  shell: bash -c "bash <(curl -s https://codecov.io/bash)"
+  shell: bash -c "cd {{code_coverage_results_dir}} && bash <(curl -s https://codecov.io/bash)"
   environment:
         secure: "{{codecov_secure}}"

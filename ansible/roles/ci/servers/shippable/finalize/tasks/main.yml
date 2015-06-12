@@ -1,8 +1,16 @@
 ---
 # Playbook for Shippable CI specific code
 
+- name: check if test_results_dir variable was set by build server
+  fail: msg="Variable test_results_dir was not set by CI server"
+  when: test_results_dir is not defined
+
+- name: check if code_coverage_results_dir variable was set by build server
+  fail: msg="Variable code_coverage_results_dir was not set by CI server"
+  when: code_coverage_results_dir is not defined
+
 - name: Move unit tests results
-  shell: bash -c "mv -vt {{shippable_repo_dir}}/shippable/testresults/ {{ros_workspace}}/build/test_results/*"
+  shell: bash -c "mv -vt {{test_results_dir}} {{ros_workspace}}/build/test_results/*"
   tags:
     - unit_tests
     - python_code_style_check
@@ -12,14 +20,14 @@
     - codecov_tool
 
 - name: Create coverage directory
-  file: state=directory path={{shippable_repo_dir}}/shippable/codecoverage
+  file: state=directory path={{code_coverage_results_dir}}
   tags:
     - code_coverage
     - codecov_tool
 
 - name: Run gcovr
-  shell: bash -c "gcovr -r {{ros_workspace}} --xml-pretty > {{shippable_repo_dir}}/shippable/codecoverage/coverage.xml"
-    chdir={{shippable_repo_dir}}/shippable/codecoverage
+  shell: bash -c "gcovr -r {{ros_workspace}} --xml-pretty > {{code_coverage_results_dir}}/coverage.xml"
+    chdir={{code_coverage_results_dir}}
   tags:
     - code_coverage
     - codecov_tool
