@@ -9,6 +9,9 @@ sudo apt-get install python-dev libxml2-dev libxslt-dev python-pip lcov wget -y
 sudo pip install ansible gcovr
 cd ./sr-build-tools/ansible
 
+# DEBUG !!!
+env
+
 if [ "shippable" == $server_type ]; then
     sudo ansible-playbook -v -i "localhost," -c local docker_site.yml --tags "shippable,$tags_list" -e "shippable_repo_dir=$SHIPPABLE_REPO_DIR  shippable_is_pull_request=$PULL_REQUEST codecov_secure=$secure"
 else
