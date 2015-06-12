@@ -12,4 +12,4 @@
 - name: Send data to codecov
   shell: bash -c "cd {{code_coverage_results_dir}} && bash <(curl -s https://codecov.io/bash)"
   environment:
-        secure: "{{codecov_secure}}"
+        CODECOV_TOKEN: "{{codecov_secure}}"

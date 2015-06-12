@@ -2,7 +2,6 @@
 
 export server_type=$1
 export tags_list=$2
-export codecov_secure=$3
 
 git clone https://github.com/shadow-robot/sr-build-tools.git -b F#111_code_style_module sr-build-tools
 sudo apt-get update
@@ -11,7 +10,7 @@ sudo pip install ansible gcovr
 cd ./sr-build-tools/ansible
 
 if [ "shippable" == $server_type ]; then
-    export extra_variables="shippable,$tags_list" -e "shippable_repo_dir=$SHIPPABLE_REPO_DIR  shippable_is_pull_request=$PULL_REQUEST codecov_secure=$codecov_secure"
+    export extra_variables="shippable,$tags_list" -e "shippable_repo_dir=$SHIPPABLE_REPO_DIR  shippable_is_pull_request=$PULL_REQUEST codecov_secure=$CODECOV_TOKEN"
     sudo ansible-playbook -v -i "localhost," -c local docker_site.yml --tags $extra_variables
 else
     echo Not supported server type $server_type
