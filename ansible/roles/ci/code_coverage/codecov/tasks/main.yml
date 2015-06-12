@@ -6,6 +6,6 @@
   when: codecov_secure is not defined
 
 - name: Send data to codecov
-  command: bash <(curl -s https://codecov.io/bash)
+  shell: bash -c "bash <(curl -s https://codecov.io/bash)"
   environment:
         secure: "{{codecov_secure}}"
