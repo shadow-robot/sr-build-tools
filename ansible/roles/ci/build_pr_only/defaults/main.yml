@@ -1,0 +1,4 @@
+---
+# Defaults for build PR only variables
+
+run_build: yes

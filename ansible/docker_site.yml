@@ -4,7 +4,6 @@
 - hosts: all
   vars:
     ros_release: "indigo"
-    run_build: yes
     python_code_check: "OFF"
     cpp_code_check: "OFF"
     generate_code_coverage: "OFF"
