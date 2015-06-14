@@ -8,16 +8,16 @@
 - name: Set flag build_was_cached
   set_fact:
     build_was_cached: yes
-  when: cache_folder_status.stat.exists
+  when: cache_folder_status.stat.isdir is defined and cache_folder_status.stat.isdir
 
 - name: Set flag upgrade_all_packages
   set_fact:
     upgrade_all_packages: yes
-  when: cache_folder_status.stat.exists
+  when: cache_folder_status.stat.isdir is defined and cache_folder_status.stat.isdir
 
 - name: Create special cache folder to help detected cached image {{special_cache_folder}}
   file: state=directory path={{special_cache_folder}}
-  when: not cache_folder_status.stat.exists
+  when: not build_was_cached
 
 - name: list folders
   shell: bash -c "ls -al ~/"
