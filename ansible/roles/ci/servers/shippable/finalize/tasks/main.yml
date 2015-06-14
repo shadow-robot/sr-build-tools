@@ -9,6 +9,10 @@
   fail: msg="Variable code_coverage_results_dir was not set by CI server"
   when: code_coverage_results_dir is not defined
 
+- name: Clean tests results directory in case of cached build
+  shell: bash -c "rm -rf {{test_results_dir}}/*"
+  when: build_was_cached
+
 - name: Move unit tests results
   shell: bash -c "mv -vt {{test_results_dir}} {{ros_workspace}}/build/test_results/*"
   tags:
@@ -24,6 +28,10 @@
   tags:
     - code_coverage
     - codecov_tool
+
+- name: Clean coverage results directory in case of cached build
+  shell: bash -c "rm -rf {{code_coverage_results_dir}}/*"
+  when: build_was_cached
 
 - name: Run gcovr
   shell: bash -c "gcovr -r {{ros_workspace}} --xml-pretty > {{code_coverage_results_dir}}/coverage.xml"
