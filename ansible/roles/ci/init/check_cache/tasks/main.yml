@@ -1,9 +1,15 @@
 ---
 # Playbook for check cache
 
+
+- name: list folders
+  shell: bash -c "ls -al ~/"
+
 - name: check if special folder present
   stat: path={{special_cache_folder}}
   register: cache_folder_status
+
+- debug: var=cache_folder_status
 
 - name: Set flag build_was_cached
   set_fact:
@@ -18,6 +24,3 @@
 - name: Create special cache folder to help detected cached image {{special_cache_folder}}
   file: state=directory path={{special_cache_folder}}
   when: not build_was_cached
-
-- name: list folders
-  shell: bash -c "ls -al ~/"
