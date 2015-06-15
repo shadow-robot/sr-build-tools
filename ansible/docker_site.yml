@@ -8,8 +8,8 @@
     - {role: ci/servers/shippable/init, tags: ["shippable","shippable_init"]}
     - {role: ci/build/pr_only, tags: ["build_pr_only"]}
     - {role: ci/init/check_cache, when: run_build, tags: ["check_cache"]}
-    - {role: ci/init/install, when: (run_build) and (not build_was_cached), tags: ["install"]}
-    - {role: ci/init/create_workspace, when: (run_build) and (not build_was_cached), tags: ["create_workspace"]}
+    - {role: ci/init/install, when: run_install, tags: ["install"]}
+    - {role: ci/init/create_workspace, when: run_install, tags: ["create_workspace"]}
     - {role: ci/update_dependencies, when: run_build, tags: ["update_dependencies", "build", "unit_tests", "python_code_style_check", "cpp_code_style_check", "code_style_check", "code_coverage", "codecov_tool"]}
     - {role: ci/build/catkin, when: run_build, tags: ["build", "unit_tests", "python_code_style_check", "cpp_code_style_check", "code_style_check", "code_coverage", "codecov_tool"]}
     - {role: ci/code_style_check/python, when: run_build, tags: ["python_code_style_check", "code_style_check"]}

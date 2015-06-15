@@ -15,6 +15,11 @@
     upgrade_all_packages: yes
   when: build_was_cached
 
+- name: Set flag run_install off
+  set_fact:
+    run_install: no
+  when: build_was_cached
+
 - name: Create special cache folder to help detected cached image {{special_cache_folder}}
   file: state=directory path={{special_cache_folder}}
   when: not build_was_cached
