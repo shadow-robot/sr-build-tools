@@ -16,5 +16,4 @@
     chdir={{ros_workspace}}/{{item.item}}
   with_items: "{{package_paths_and_cpp_files.results}}"
   when: item.stdout != ""
-  register: roslint_cpp_command_result
   ignore_errors: True

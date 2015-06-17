@@ -1,18 +1,10 @@
 ---
 # Playbook for unit tests
 
-- name: check if python_code_check variable was set
-  fail: msg="Variable python_code_check was not set"
-  when: python_code_check is not defined
-
-- name: check if cpp_code_check variable was set
-  fail: msg="Variable cpp_code_check was not set"
-  when: cpp_code_check is not defined
-
 - name: check if generate_code_coverage variable was set
   fail: msg="Variable generate_code_coverage was not set"
   when: generate_code_coverage is not defined
 
 - name: catkin run tests
-  shell: bash -c "source {{ros_workspace}}/devel/setup.bash && catkin_make run_tests -DSR_COMMON_PYTHON_CODE_CHECK={{python_code_check}} -DSR_COMMON_CPP_CODE_CHECK={{cpp_code_check}} -DSR_COMMON_CODE_COVERAGE={{generate_code_coverage}} "
+  shell: bash -c "source {{ros_workspace}}/devel/setup.bash && catkin_make run_tests -DSR_COMMON_CODE_COVERAGE={{generate_code_coverage}} "
     chdir={{ros_workspace}}
