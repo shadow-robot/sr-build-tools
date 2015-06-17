@@ -1,6 +1,20 @@
 ---
 # Playbook for C++ code style check
 
-- name: Set flag cpp_code_check ON
-  set_fact:
-    cpp_code_check: "ON"
+- name: Read all packages paths in workspace
+  shell: find -type f -name package.xml -printf "%h\n" chdir={{ros_workspace}}
+  register: package_paths_list
+
+- name: Find C++ files in each package
+  shell: find -type f \( -name "*.h" -o -name "*.cpp" \) -printf "%p "
+    chdir={{ros_workspace}}/{{item}}
+  with_items: "{{package_paths_list.stdout_lines}}"
+  register: package_paths_and_cpp_files
+
+- name: Execute roslint for every package and write results in unit tests format
+  shell: rosrun roslint test_wrapper {{ros_workspace}}/build/test_results/{{item.item|basename}}/roslint-cpp-{{item.item|basename}}.xml "rosrun roslint cpplint {{item.stdout}}"
+    chdir={{ros_workspace}}/{{item.item}}
+  with_items: "{{package_paths_and_cpp_files.results}}"
+  when: item.stdout != ""
+  register: roslint_cpp_command_result
+  ignore_errors: True
