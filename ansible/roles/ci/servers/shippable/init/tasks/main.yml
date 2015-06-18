@@ -13,10 +13,6 @@
   set_fact:
     ros_workspace: "~/workspace"
 
-- name: Set ros_workspace
-  set_fact:
-    ros_workspace: "~/workspace"
-
 - name: Set upgrade_all_packages
   set_fact:
     upgrade_all_packages: no
