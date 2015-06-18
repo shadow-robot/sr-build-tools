@@ -1,10 +1,16 @@
 ---
 # Playbook for unit tests
 
-- name: check if generate_code_coverage variable was set
-  fail: msg="Variable generate_code_coverage was not set"
-  when: generate_code_coverage is not defined
+- name: check if code_coverage_options variable was set
+  fail: msg="Variable code_coverage_options was not set"
+  when: code_coverage_options is not defined
 
 - name: catkin run tests
-  shell: bash -c "source {{ros_workspace}}/devel/setup.bash && catkin_make run_tests -DSR_COMMON_CODE_COVERAGE={{generate_code_coverage}} "
+  shell: bash -c "source {{ros_workspace}}/devel/setup.bash && catkin_make run_tests"
     chdir={{ros_workspace}}
+  when: code_coverage_options == ""
+
+- name: catkin run tests with code coverage
+  shell: bash -c "source {{ros_workspace}}/devel/setup.bash && catkin_make run_tests -DCMAKE_CXX_FLAGS='{{code_coverage_options}}' "
+    chdir={{ros_workspace}}
+  when: code_coverage_options != ""
