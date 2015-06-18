@@ -16,4 +16,4 @@
     chdir={{ros_workspace}}/{{item.item}}
   with_items: "{{package_paths_and_python_files.results}}"
   when: item.stdout != ""
-#  ignore_errors: True
+  ignore_errors: True
