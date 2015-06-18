@@ -12,7 +12,7 @@
   register: package_paths_and_python_files
 
 - name: Execute roslint for every package and write results in unit tests format
-  shell: rosrun roslint test_wrapper {{ros_workspace}}/build/test_results/{{item.item|basename}}/roslint-python-{{item.item|basename}}.xml "rosrun roslint pep8 {{item.stdout}}"
+  shell: bash -c "source /opt/ros/{{ros_release}}/setup.bash && rosrun roslint test_wrapper {{ros_workspace}}/build/test_results/{{item.item|basename}}/roslint-python-{{item.item|basename}}.xml 'rosrun roslint pep8 {{item.stdout}}' "
     chdir={{ros_workspace}}/{{item.item}}
   with_items: "{{package_paths_and_python_files.results}}"
   when: item.stdout != ""
