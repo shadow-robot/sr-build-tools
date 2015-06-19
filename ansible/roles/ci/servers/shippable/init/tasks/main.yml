@@ -13,10 +13,6 @@
   set_fact:
     ros_workspace: "~/workspace"
 
-- name: Set ros_workspace
-  set_fact:
-    ros_workspace: "~/workspace"
-
 - name: Set upgrade_all_packages
   set_fact:
     upgrade_all_packages: no
@@ -24,6 +20,10 @@
 - name: Set dependencies_file
   set_fact:
     dependencies_file: "{{shippable_repo_dir}}/project.rosinstall"
+
+- name: Set project source code path
+  set_fact:
+    project_sources_path: "{{shippable_repo_dir}}"
 
 - name: Set is_pull_request
   set_fact:

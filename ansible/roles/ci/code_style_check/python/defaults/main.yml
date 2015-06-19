@@ -1,4 +1,0 @@
----
-# Defaults for Python code style check variables
-
-python_code_check: "OFF"

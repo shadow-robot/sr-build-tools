@@ -1,4 +1,4 @@
 ---
 # Defaults for code coverage data variables
 
-generate_code_coverage: "OFF"
+code_coverage_options: ""
