@@ -12,12 +12,12 @@
 - name: Find C++ files in each package
   shell: find -type f \( -name "*.h" -o -name "*.cpp" \) -printf "%p "
     chdir={{project_sources_path}}/{{item}}
-  with_items: "{{package_paths_list.stdout_lines}}"
+  with_items: "{{package_paths_list.stdout_lines|list}}"
   register: package_paths_and_cpp_files
 
 - name: Execute roslint for every package and write results in unit tests format
   shell: bash -c "source /opt/ros/{{ros_release}}/setup.bash && rosrun roslint test_wrapper {{ros_workspace}}/build/test_results/{{item.item|basename}}/roslint-cpp-{{item.item|basename}}.xml 'rosrun roslint cpplint {{item.stdout}}' "
     chdir={{project_sources_path}}/{{item.item}}
-  with_items: "{{package_paths_and_cpp_files.results}}"
+  with_items: "{{package_paths_and_cpp_files.results|list}}"
   when: item.stdout != ""
   ignore_errors: True
