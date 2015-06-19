@@ -9,15 +9,23 @@
   shell: find -type f -name package.xml -printf "%h\n" chdir={{project_sources_path}}
   register: package_paths_list
 
+- name: Set variable to workaround ansible type evaluation issue
+  set_fact:
+    package_paths_list_stdout_lines: "{{package_paths_list.stdout_lines}}"
+
 - name: Find C++ files in each package
   shell: find -type f \( -name "*.h" -o -name "*.cpp" \) -printf "%p "
     chdir={{project_sources_path}}/{{item}}
-  with_items: "{{package_paths_list.stdout_lines|list}}"
+  with_items: "{{package_paths_list_stdout_lines|default([])}}"
   register: package_paths_and_cpp_files
+
+- name: Set variable to workaround ansible type evaluation issue
+  set_fact:
+    package_paths_and_cpp_files_results: "{{package_paths_and_cpp_files.results}}"
 
 - name: Execute roslint for every package and write results in unit tests format
   shell: bash -c "source /opt/ros/{{ros_release}}/setup.bash && rosrun roslint test_wrapper {{ros_workspace}}/build/test_results/{{item.item|basename}}/roslint-cpp-{{item.item|basename}}.xml 'rosrun roslint cpplint {{item.stdout}}' "
     chdir={{project_sources_path}}/{{item.item}}
-  with_items: "{{package_paths_and_cpp_files.results|list}}"
+  with_items: "{{package_paths_and_cpp_files_results|default([])}}"
   when: item.stdout != ""
   ignore_errors: True
