@@ -1,19 +1,23 @@
 ---
 # Playbook for Python code style check
 
-- name: Read all packages paths in workspace
-  shell: find -type f -name package.xml -printf "%h\n" chdir={{ros_workspace}}
+- name: check if project_sources_path variable was set
+  fail: msg="Variable project_sources_path was not set"
+  when: project_sources_path is not defined
+
+- name: Read all packages paths in project
+  shell: find -type f -name package.xml -printf "%h\n" chdir={{project_sources_path}}
   register: package_paths_list
 
 - name: Find Python files in each package
   shell: find -type f -name "*.py" -printf "%p "
-    chdir={{ros_workspace}}/{{item}}
+    chdir={{project_sources_path}}/{{item}}
   with_items: "{{package_paths_list.stdout_lines}}"
   register: package_paths_and_python_files
 
 - name: Execute roslint for every package and write results in unit tests format
   shell: bash -c "source /opt/ros/{{ros_release}}/setup.bash && rosrun roslint test_wrapper {{ros_workspace}}/build/test_results/{{item.item|basename}}/roslint-python-{{item.item|basename}}.xml 'rosrun roslint pep8 {{item.stdout}}' "
-    chdir={{ros_workspace}}/{{item.item}}
+    chdir={{project_sources_path}}/{{item.item}}
   with_items: "{{package_paths_and_python_files.results}}"
   when: item.stdout != ""
   ignore_errors: True

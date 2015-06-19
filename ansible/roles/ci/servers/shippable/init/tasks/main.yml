@@ -21,6 +21,10 @@
   set_fact:
     dependencies_file: "{{shippable_repo_dir}}/project.rosinstall"
 
+- name: Set project source code path
+  set_fact:
+    project_sources_path: "{{shippable_repo_dir}}"
+
 - name: Set is_pull_request
   set_fact:
     is_pull_request: "{{ shippable_is_pull_request is defined and shippable_is_pull_request != 'false' }}"

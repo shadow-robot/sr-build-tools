@@ -1,16 +1,32 @@
 ---
 # Playbook for unit tests
 
+- name: check if project_sources_path variable was set
+  fail: msg="Variable project_sources_path was not set"
+  when: project_sources_path is not defined
+
 - name: check if code_coverage_options variable was set
   fail: msg="Variable code_coverage_options was not set"
   when: code_coverage_options is not defined
 
+- name: Read all packages names in workspace
+  shell: find -type f -name package.xml -printf "%h\n" | xargs basename -a chdir={{ros_workspace}}
+  register: workspace_packages_list
+
+- name: Read all packages names in project
+  shell: find -type f -name package.xml -printf "%h\n" | xargs basename -a chdir={{project_sources_path}}
+  register: project_packages_list
+
+- name: Set blacklisted packages using lists substraction
+  set_fact:
+    blacklisted_packages: "{{workspace_packages_list.stdout_lines|difference(project_packages_list.stdout_lines)|join(';')}}"
+
 - name: catkin run tests
-  shell: bash -c "source {{ros_workspace}}/devel/setup.bash && catkin_make run_tests"
+  shell: bash -c 'source {{ros_workspace}}/devel/setup.bash && catkin_make run_tests -DCATKIN_BLACKLIST_PACKAGES="{{blacklisted_packages}}" '
     chdir={{ros_workspace}}
   when: code_coverage_options == ""
 
 - name: catkin run tests with code coverage
-  shell: bash -c "source {{ros_workspace}}/devel/setup.bash && catkin_make run_tests -DCMAKE_CXX_FLAGS='{{code_coverage_options}}' "
+  shell: bash -c 'source {{ros_workspace}}/devel/setup.bash && catkin_make run_tests -DCATKIN_BLACKLIST_PACKAGES="{{blacklisted_packages}}" -DCMAKE_CXX_FLAGS="{{code_coverage_options}}" '
     chdir={{ros_workspace}}
   when: code_coverage_options != ""
