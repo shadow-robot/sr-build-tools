@@ -1,17 +1,18 @@
 #!/usr/bin/env bash
 
-export server_type=$1
-export tags_list=$2
+export toolset_branch=$1
+export server_type=$2
+export tags_list=$3
 
 # Check in case of cached file system
 if [ -d "./sr-build-tools" ]; then
   # Cached
   cd ./sr-build-tools
-  git pull origin "F#126_server_cache_support"
+  git pull origin "$toolset_branch"
   cd ./ansible
 else
   # No caching
-  git clone https://github.com/shadow-robot/sr-build-tools.git -b "F#126_server_cache_support" sr-build-tools
+  git clone https://github.com/shadow-robot/sr-build-tools.git -b "$toolset_branch" sr-build-tools
   cd ./sr-build-tools/ansible
 fi
 sudo apt-get update
