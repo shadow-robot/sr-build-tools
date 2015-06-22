@@ -1,4 +1,0 @@
----
-# Variables file for pull request build only
-
-run_build: "{{is_pull_request}}"

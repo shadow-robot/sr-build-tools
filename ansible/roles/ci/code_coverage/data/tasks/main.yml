@@ -1,0 +1,10 @@
+---
+# Playbook for code coverage
+
+- name: Read C++ compiler variable from CMake
+  shell: cmake --system-information | sed -n 's/CMAKE_CXX_FLAGS == "\(.*\)"/\1/p' chdir={{ros_workspace}}
+  register: cpp_compiler_flags
+
+- name: Set options for C++ compiler
+  set_fact:
+    code_coverage_options: "{{cpp_compiler_flags.stdout}} --coverage -fprofile-arcs -ftest-coverage"

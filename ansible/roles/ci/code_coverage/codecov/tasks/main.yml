@@ -1,0 +1,15 @@
+---
+# Playbook for codecov
+
+- name: check if codecov_secure variable was set
+  fail: msg="Variable codecov_secure was not set"
+  when: (codecov_secure is not defined) or (codecov_secure == "")
+
+- name: check if code_coverage_results_dir variable was set by build server
+  fail: msg="Variable code_coverage_results_dir was not set by CI server"
+  when: code_coverage_results_dir is not defined
+
+- name: Send data to codecov
+  shell: bash -c "cd {{code_coverage_results_dir}} && bash <(curl -s https://codecov.io/bash)"
+  environment:
+        CODECOV_TOKEN: "{{codecov_secure}}"

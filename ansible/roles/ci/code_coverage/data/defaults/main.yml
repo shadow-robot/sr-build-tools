@@ -1,0 +1,4 @@
+---
+# Defaults for code coverage data variables
+
+code_coverage_options: ""

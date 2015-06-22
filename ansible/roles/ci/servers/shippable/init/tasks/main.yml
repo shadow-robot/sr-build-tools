@@ -9,4 +9,30 @@
   fail: msg="Variable shippable_is_pull_request was not set by CI server"
   when: shippable_is_pull_request is not defined
 
+- name: Set ros_workspace
+  set_fact:
+    ros_workspace: "~/workspace"
 
+- name: Set upgrade_all_packages
+  set_fact:
+    upgrade_all_packages: no
+
+- name: Set dependencies_file
+  set_fact:
+    dependencies_file: "{{shippable_repo_dir}}/project.rosinstall"
+
+- name: Set project source code path
+  set_fact:
+    project_sources_path: "{{shippable_repo_dir}}"
+
+- name: Set is_pull_request
+  set_fact:
+    is_pull_request: "{{ shippable_is_pull_request is defined and shippable_is_pull_request != 'false' }}"
+
+- name: Set test_results_dir
+  set_fact:
+    test_results_dir: "{{shippable_repo_dir}}/shippable/testresults"
+
+- name: Set code_coverage_results_dir
+  set_fact:
+    code_coverage_results_dir: "{{shippable_repo_dir}}/shippable/codecoverage"
