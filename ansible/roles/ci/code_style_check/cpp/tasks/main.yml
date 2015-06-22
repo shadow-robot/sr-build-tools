@@ -14,7 +14,7 @@
     package_paths_list_stdout_lines: "{{package_paths_list.stdout_lines}}"
 
 - name: Find C++ files in each package
-  shell: find -type f \( -name "*.h" -o -name "*.cpp" \) -printf "%p "
+  shell: find -type f \( -name "*.h" -o -name "*.hpp" -o -name "*.cpp" \) -printf "%p "
     chdir={{project_sources_path}}/{{item}}
   with_items: "{{package_paths_list_stdout_lines|default([])}}"
   register: package_paths_and_cpp_files
