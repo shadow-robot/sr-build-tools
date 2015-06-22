@@ -1,0 +1,25 @@
+---
+# Playbook for check cache
+
+- name: check if special folder present
+  stat: path={{special_cache_folder}}
+  register: cache_folder_status
+
+- name: Set flag build_was_cached
+  set_fact:
+    build_was_cached: yes
+  when: cache_folder_status.stat.isdir is defined and cache_folder_status.stat.isdir
+
+- name: Set flag upgrade_all_packages
+  set_fact:
+    upgrade_all_packages: yes
+  when: build_was_cached
+
+- name: Set flag run_install off
+  set_fact:
+    run_install: no
+  when: build_was_cached
+
+- name: Create special cache folder to help detected cached image {{special_cache_folder}}
+  file: state=directory path={{special_cache_folder}}
+  when: not build_was_cached

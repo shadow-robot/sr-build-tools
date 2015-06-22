@@ -8,3 +8,8 @@
 - name: Set flag to run the build
   set_fact:
     run_build: "{{is_pull_request}}"
+
+- name: Set flag to run installation
+  set_fact:
+    run_install: "{{is_pull_request}}"
+

@@ -1,0 +1,5 @@
+---
+# defaults file for check_cache module
+
+build_was_cached: no
+special_cache_folder: "~/build_tools_is_cached_system"
