@@ -14,7 +14,7 @@
     chdir={{ros_workspace}}/src
 
 - name: Read information from wstool
-  command: wstool info --only=URI
+  command: wstool info --only=uri
     chdir={{ros_workspace}}/src
 
 - name: Update dependencies to project
