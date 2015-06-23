@@ -10,11 +10,11 @@
   when: upgrade_all_packages
 
 - name: Add more dependencies to project
-  command: wstool merge {{dependencies_file}}
+  command: wstool merge -a -y {{dependencies_file}}
     chdir={{ros_workspace}}/src
 
 - name: Update dependencies to project
-  command: wstool update
+  command: wstool update --delete-changed-uris
     chdir={{ros_workspace}}/src
 
 - name: Install dependencies
