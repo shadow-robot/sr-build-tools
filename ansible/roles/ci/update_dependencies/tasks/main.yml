@@ -13,8 +13,12 @@
   command: wstool merge -a -y {{dependencies_file}}
     chdir={{ros_workspace}}/src
 
+- name: Read information from wstool
+  command: wstool info
+    chdir={{ros_workspace}}/src
+
 - name: Update dependencies to project
-  command: wstool update --delete-changed-uris
+  command: wstool update --delete-changed-uris --continue-on-error
     chdir={{ros_workspace}}/src
 
 - name: Install dependencies
