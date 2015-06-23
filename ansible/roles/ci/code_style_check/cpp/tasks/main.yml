@@ -13,19 +13,36 @@
   set_fact:
     package_paths_list_stdout_lines: "{{package_paths_list.stdout_lines}}"
 
-- name: Find C++ files in each package
-  shell: find -type f \( -name "*.h" -o -name "*.hpp" -o -name "*.cpp" \) -printf "%p "
+- name: Find C++ h and cpp files in each package
+  shell: find -type f \( -name "*.h" -o -name "*.cpp" \) -printf "%p "
     chdir={{project_sources_path}}/{{item}}
   with_items: "{{package_paths_list_stdout_lines|default([])}}"
-  register: package_paths_and_cpp_files
+  register: package_paths_and_h_cpp_files
 
 - name: Set variable to workaround ansible type evaluation issue
   set_fact:
-    package_paths_and_cpp_files_results: "{{package_paths_and_cpp_files.results}}"
+    package_paths_and_h_cpp_files_results: "{{package_paths_and_h_cpp_files.results}}"
 
 - name: Execute roslint for every package and write results in unit tests format
-  shell: bash -c "source /opt/ros/{{ros_release}}/setup.bash && rosrun roslint test_wrapper {{ros_workspace}}/build/test_results/{{item.item|basename}}/roslint-cpp-{{item.item|basename}}.xml 'rosrun roslint cpplint {{item.stdout}}' "
+  shell: bash -c "source /opt/ros/{{ros_release}}/setup.bash && rosrun roslint test_wrapper {{ros_workspace}}/build/test_results/{{item.item|basename}}/roslint-h-cpp-{{item.item|basename}}.xml 'rosrun roslint cpplint {{item.stdout}}' "
     chdir={{project_sources_path}}/{{item.item}}
-  with_items: "{{package_paths_and_cpp_files_results|default([])}}"
+  with_items: "{{package_paths_and_h_cpp_files_results|default([])}}"
+  when: item.stdout != ""
+  ignore_errors: True
+
+- name: Find C++ hpp files in each package (this is done due to a of such file currently in source code. In future those file would be removed)
+  shell: find -type f -name "*.hpp" -printf "%p "
+    chdir={{project_sources_path}}/{{item}}
+  with_items: "{{package_paths_list_stdout_lines|default([])}}"
+  register: package_paths_and_hpp_files
+
+- name: Set variable to workaround ansible type evaluation issue
+  set_fact:
+    package_paths_and_hpp_files_results: "{{package_paths_and_hpp_files.results}}"
+
+- name: Execute roslint for every package and write results in unit tests format. In order to skip hpp files extension validation using stdin feed to checker.
+  shell: bash -c 'source /opt/ros/{{ros_release}}/setup.bash && rosrun roslint test_wrapper {{ros_workspace}}/build/test_results/{{item.item|basename}}/roslint-hpp-{{item.item|basename}}.xml "eval cat {{item.stdout}} | rosrun roslint cpplint -" '
+    chdir={{project_sources_path}}/{{item.item}}
+  with_items: "{{package_paths_and_hpp_files_results|default([])}}"
   when: item.stdout != ""
   ignore_errors: True
