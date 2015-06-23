@@ -9,16 +9,31 @@
   apt: upgrade=dist
   when: upgrade_all_packages
 
+- name: Read information from wstool
+  shell: wstool info --only=path
+    chdir={{ros_workspace}}/src
+  register: packages_to_update_by_wstool
+
+- name: Set variable to workaround ansible type evaluation issue
+  set_fact:
+    packages_to_update_by_wstool_stdout_lines: "{{package_paths_and_h_cpp_files.stdout_lines}}"
+
+- name: Update git reset repositories manually before wstool update
+  command: git reset --hard HEAD
+    chdir={{item}}
+  with_items: "{{packages_to_update_by_wstool_stdout_lines|default([])}}"
+
+- name: Update git pull repositories manually before wstool update
+  command: git pull
+    chdir={{item}}
+  with_items: "{{packages_to_update_by_wstool_stdout_lines|default([])}}"
+
 - name: Add more dependencies to project
   command: wstool merge -a -y {{dependencies_file}}
     chdir={{ros_workspace}}/src
 
-- name: Read information from wstool
-  command: wstool info --only=path
-    chdir={{ros_workspace}}/src
-
 - name: Update dependencies to project
-  command: wstool update --delete-changed-uris --continue-on-error
+  command: wstool update
     chdir={{ros_workspace}}/src
 
 - name: Install dependencies
