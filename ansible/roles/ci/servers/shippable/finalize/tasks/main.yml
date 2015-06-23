@@ -9,6 +9,9 @@
   fail: msg="Variable code_coverage_results_dir was not set by CI server"
   when: code_coverage_results_dir is not defined
 
+- name: Make sure that tests directory exists
+  file: state=directory path={{ros_workspace}}/build/test_results
+
 - name: Clean tests results directory in case of cached build
   shell: bash -c "rm -rf {{test_results_dir}}/*"
   when: build_was_cached
