@@ -16,7 +16,7 @@
 
 - name: Set variable to workaround ansible type evaluation issue
   set_fact:
-    packages_to_update_by_wstool_stdout_lines: "{{package_paths_and_h_cpp_files.stdout_lines}}"
+    packages_to_update_by_wstool_stdout_lines: "{{packages_to_update_by_wstool.stdout_lines}}"
 
 - name: Update git reset repositories manually before wstool update
   command: git reset --hard HEAD
