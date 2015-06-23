@@ -18,7 +18,7 @@ sr-code-style-check.sh <project path (default: ./src)> <workspace path (default:
 
 ## Results 
 
-The results are written to *<workspace>/build/test_results/<package_name>* in XML format starting with *roslint* prefix.
+The results are written to *&lt;workspace&gt;/build/test_results/&lt;package_name&gt;* in XML format starting with *roslint* prefix.
 
 ## Examples
 
