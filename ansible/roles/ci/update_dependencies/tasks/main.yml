@@ -36,10 +36,11 @@
   command: wstool update
     chdir={{ros_workspace}}/src
 
-- name: Install dependencies
+- name: Update dependencies
   shell: bash -c "rosdep update -y"
          chdir={{ros_workspace}}
 
+- name: Install dependencies
   shell: bash -c "rosdep install --from-paths . --ignore-src --rosdistro {{ros_release}} -y"
          chdir={{ros_workspace}}
 

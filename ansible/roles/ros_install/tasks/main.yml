@@ -53,6 +53,3 @@
 
 - name: rosdep init
   command: rosdep init creates=/etc/ros/rosdep/sources.list.d/20-default.list
-  
-- name: Update dependencies
-  shell: bash -c "rosdep update -y"
