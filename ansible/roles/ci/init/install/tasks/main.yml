@@ -9,7 +9,7 @@
      - python-pip
 
 - name: Install PIP modules
-  pip: name={{item}}
+  pip: name={{item}} extra_args='--upgrade'
   with_items:
      - catkin_pkg
      - empy
