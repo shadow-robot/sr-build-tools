@@ -33,7 +33,7 @@
     chdir={{ros_workspace}}/src
 
 - name: Update dependencies to project
-  command: wstool update
+  command: wstool update --delete-changed-uris
     chdir={{ros_workspace}}/src
 
 - name: Update dependencies
