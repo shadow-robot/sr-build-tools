@@ -20,5 +20,5 @@
   ignore_errors: True
 
 - name: Generate xml for the coverage
-  shell: coverage xml chdir={{code_coverage_results_dir}} #TODO add --include "*name_of_the_folder*"
+  shell: coverage xml chdir={{code_coverage_results_dir}}
   ignore_errors: True
