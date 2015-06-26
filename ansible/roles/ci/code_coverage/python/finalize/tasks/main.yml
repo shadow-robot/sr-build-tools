@@ -10,7 +10,7 @@
     coverage_paths_list_stdout_lines: "{{coverage_paths_list.stdout_lines}}"
 
 - name: Loop through coverage files
-  shell: echo {{item.path}}
+  shell: echo {{item}}
   with_items: "{{coverage_paths_list_stdout_lines|default([])}}"
-  when: item.stdout != ""
+  when: item != ""
   ignore_errors: True
