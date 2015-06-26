@@ -22,11 +22,11 @@
      non_project_packages : "{{workspace_packages_list.stdout_lines|difference(project_packages_list.stdout_lines)|join(';')}}"
 
 - name: catkin run tests
-  shell: bash -c 'source {{ros_workspace}}/devel/setup.bash &&  CATKIN_TEST_COVERAGE=1 catkin_make run_tests -DCATKIN_BLACKLIST_PACKAGES="{{ non_project_packages }}" '
+  shell: bash -c 'source {{ros_workspace}}/devel/setup.bash &&  catkin_make run_tests -DCATKIN_BLACKLIST_PACKAGES="{{ non_project_packages }}" '
     chdir={{ros_workspace}}
   when: code_coverage_options == ""
 
 - name: catkin run tests with code coverage
-  shell: bash -c 'source {{ros_workspace}}/devel/setup.bash && catkin_make run_tests -DCATKIN_BLACKLIST_PACKAGES="{{ non_project_packages }}" -DCMAKE_CXX_FLAGS="{{code_coverage_options}}" '
+  shell: bash -c 'source {{ros_workspace}}/devel/setup.bash && CATKIN_TEST_COVERAGE=1 catkin_make run_tests -DCATKIN_BLACKLIST_PACKAGES="{{ non_project_packages }}" -DCMAKE_CXX_FLAGS="{{code_coverage_options}}" '
     chdir={{ros_workspace}}
   when: code_coverage_options != ""
