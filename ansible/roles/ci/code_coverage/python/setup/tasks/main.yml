@@ -4,6 +4,11 @@
 - name: Set CATKIN_TEST_COVERAGE to True
   shell: export CATKIN_TEST_COVERAGE=1
 
+- name: Install PIP coverage module
+  pip: name={{item}} extra_args='--upgrade'
+  with_items:
+     - coverage
+
 - name: Creates the coverage repository
   file: path={{ros_workspace}}/coverage state=directory
 
