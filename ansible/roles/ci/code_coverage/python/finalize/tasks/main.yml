@@ -1,3 +1,16 @@
 ---
 # Finalising the python code coverage tasks (combining files and exporting to xml)
 
+- name: Find all .coverage files in {{ros_workspace}}
+  shell: find -type f -name .coverage -printf "%h\n" chdir={{ros_workspace}}
+  register: coverage_paths_list
+
+- name: Set variable to workaround ansible type evaluation issue
+  set_fact:
+    coverage_paths_list_stdout_lines: "{{coverage_paths_list.stdout_lines}}"
+
+- name: Loop through coverage files
+  shell: echo {{item.path}}
+  with_items: "{{coverage_paths_list_stdout_lines|default([])}}"
+  when: item.stdout != ""
+  ignore_errors: True
