@@ -2,7 +2,8 @@
 # Playbook for python code coverage
 
 - name: Set CATKIN_TEST_COVERAGE to True
-  shell: export CATKIN_TEST_COVERAGE=1
+  set_fact:
+    python_code_coverage_options: "CATKIN_TEST_COVERAGE=1"
 
 - name: Install PIP coverage module
   pip: name={{item}} extra_args='--upgrade'
