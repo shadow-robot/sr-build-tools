@@ -1,10 +1,3 @@
 ---
 # Finalising the python code coverage tasks (combining files and exporting to xml)
 
-- name: Find all .coverage files in {{ros_workspace}}
-  find: paths={{ros_workspace}} patterns=.coverage recurse=yes
-  register: coverage_files
-
-- name: Loop through coverage files
-  shell: echo {{item.path}}
-  with_items: coverage_files.files

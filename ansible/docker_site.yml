@@ -12,11 +12,11 @@
     - {role: ci/init/create_workspace, when: run_install, tags: ["create_workspace"]}
     - {role: ci/update_dependencies, when: run_build, tags: ["update_dependencies", "build", "unit_tests", "code_coverage", "codecov_tool"]}
     - {role: ci/build/catkin, when: run_build, tags: ["build", "unit_tests", "code_coverage", "codecov_tool"]}
-#    - {role: ci/code_coverage/python/setup, when: run_build, tags: ["python_code_coverage", "code_coverage", "codecov_tool"]}
+    - {role: ci/code_coverage/python/setup, when: run_build, tags: ["python_code_coverage", "code_coverage", "codecov_tool"]}
     - {role: ci/code_coverage/cpp, when: run_build, tags: ["cpp_code_coverage", "code_coverage", "codecov_tool"]}
     - {role: ci/unit_tests, when: run_build, tags: ["unit_tests", "code_coverage", "codecov_tool"]}
-#    - {role: ci/code_style_check/python, when: run_build, tags: ["python_code_style_check", "code_style_check"]}
+    - {role: ci/code_style_check/python, when: run_build, tags: ["python_code_style_check", "code_style_check"]}
     - {role: ci/code_style_check/cpp, when: run_build, tags: ["cpp_code_style_check", "code_style_check"]}
     - {role: ci/servers/shippable/finalize, when: run_build, tags: ["shippable","shippable_finalize"]}
-#    - {role: ci/code_coverage/python/finalize, when: run_build, tags: ["python_code_coverage", "code_coverage", "codecov_tool"]}
+    - {role: ci/code_coverage/python/finalize, when: run_build, tags: ["python_code_coverage", "code_coverage", "codecov_tool"]}
     - {role: ci/code_coverage/codecov, when: run_build, tags: ["codecov_tool"]}
