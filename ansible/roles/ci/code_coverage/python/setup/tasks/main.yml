@@ -1,18 +1,6 @@
 ---
 # Playbook for python code coverage
 
-# this is also listed in install - but didnt install it in existing workspace.
-- name: Install more packages
-  apt: name={{item}}
-  with_items:
-     - cobertura
-
-# this is also listed in install - but didnt install it in existing workspace.
-- name: Install PIP modules
-  pip: name={{item}} extra_args='--upgrade'
-  with_items:
-     - coverage
-
 - name: Set CATKIN_TEST_COVERAGE to True
   set_fact:
     python_code_coverage_options: "CATKIN_TEST_COVERAGE=1"
