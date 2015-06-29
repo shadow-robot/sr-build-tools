@@ -20,5 +20,8 @@
   ignore_errors: True
 
 - name: Generate xml for the coverage
-  shell: coverage xml chdir={{code_coverage_results_dir}}
+  shell: coverage xml -o coverage.python.xml chdir={{code_coverage_results_dir}}
   ignore_errors: True
+
+- name: list coverage files
+  shell: ls -allh chdir={{code_coverage_results_dir}}
