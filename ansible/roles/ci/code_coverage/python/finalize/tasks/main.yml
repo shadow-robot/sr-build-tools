@@ -25,3 +25,6 @@
 
 - name: list coverage files
   shell: ls -allh chdir={{code_coverage_results_dir}}
+
+- name: merge xml coverage files
+  shell: cobertura-merge --datafile coverage.xml *.xml chdir={{code_coverage_results_dir}}
