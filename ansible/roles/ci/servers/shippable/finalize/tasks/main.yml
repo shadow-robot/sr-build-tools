@@ -9,10 +9,6 @@
   fail: msg="Variable code_coverage_results_dir was not set by CI server"
   when: code_coverage_results_dir is not defined
 
-- name: Clean tests results directory in case of cached build
-  shell: bash -c "rm -rf {{test_results_dir}}/*"
-  when: build_was_cached
-
 - name: Move unit tests results
   shell: bash -c "ls {{ros_workspace}}/build/test_results/* >/dev/null 2>&1 && mv -vt {{test_results_dir}} {{ros_workspace}}/build/test_results/*"
   ignore_errors: yes
