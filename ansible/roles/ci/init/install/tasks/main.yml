@@ -13,6 +13,7 @@
   with_items:
      - catkin_pkg
      - empy
+     - coverage
 
 - name: Update users bashrc to point to the ROS installation
   lineinfile: dest=\~/.bashrc
