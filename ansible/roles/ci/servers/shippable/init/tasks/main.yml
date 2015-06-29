@@ -36,3 +36,14 @@
 - name: Set code_coverage_results_dir
   set_fact:
     code_coverage_results_dir: "{{shippable_repo_dir}}/shippable/codecoverage"
+
+- name: Clean tests results directory in case of failure during cache build
+  shell: bash -c "rm -rf {{test_results_dir}}/*"
+
+- name: Create coverage directory
+  file: state=directory path={{code_coverage_results_dir}}
+
+- name: Clean coverage results directory in case of failure during cached build
+  shell: bash -c "rm -rf {{code_coverage_results_dir}}/*"
+
+
