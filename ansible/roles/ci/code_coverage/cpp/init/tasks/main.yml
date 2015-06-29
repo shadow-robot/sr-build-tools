@@ -1,5 +1,5 @@
 ---
-# Playbook for cpp code coverage
+# Playbook for initialising cpp code coverage
 
 - name: Read C++ compiler variable from CMake
   shell: cmake --system-information | sed -n 's/CMAKE_CXX_FLAGS == "\(.*\)"/\1/p' chdir={{ros_workspace}}

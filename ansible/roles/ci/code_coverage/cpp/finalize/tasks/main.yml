@@ -1,0 +1,11 @@
+---
+# Playbook for finalizing the cpp code coverage module
+
+- name: Run gcovr
+  shell: bash -c "gcovr -r {{ros_workspace}} --xml-pretty > {{code_coverage_results_dir}}/coverage.xml"
+    chdir={{code_coverage_results_dir}}
+  tags:
+    - cpp_code_coverage
+    - python_code_coverage
+    - code_coverage
+    - codecov_tool
