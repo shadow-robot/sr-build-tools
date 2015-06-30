@@ -7,12 +7,14 @@
      - ros-{{ros_release}}-cmake-modules
      - python-rosdep
      - python-pip
+     - cobertura
 
 - name: Install PIP modules
   pip: name={{item}} extra_args='--upgrade'
   with_items:
      - catkin_pkg
      - empy
+     - coverage
 
 - name: Update users bashrc to point to the ROS installation
   lineinfile: dest=\~/.bashrc
