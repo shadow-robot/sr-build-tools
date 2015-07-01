@@ -31,7 +31,7 @@
   ignore_errors: True
 
 - name: Find C++ hpp files in each package (this is done due to a of such file currently in source code. In future those file would be removed)
-  shell: find -type f -name "*.hpp" -printf "%p "
+  shell: find -type f -name "*.hpp" -printf "%p\n"
     chdir={{project_sources_path}}/{{item}}
   with_items: "{{package_paths_list_stdout_lines|default([])}}"
   register: package_paths_and_hpp_files
@@ -41,8 +41,10 @@
     package_paths_and_hpp_files_results: "{{package_paths_and_hpp_files.results}}"
 
 - name: Execute roslint for every package and write results in unit tests format. In order to skip hpp files extension validation using stdin feed to checker.
-  shell: bash -c 'source /opt/ros/{{ros_release}}/setup.bash && rosrun roslint test_wrapper {{ros_workspace}}/build/test_results/{{item.item|basename}}/roslint-hpp-{{item.item|basename}}.xml "eval cat {{item.stdout}} | rosrun roslint cpplint -" '
-    chdir={{project_sources_path}}/{{item.item}}
-  with_items: "{{package_paths_and_hpp_files_results|default([])}}"
-  when: item.stdout != ""
+  shell: bash -c 'source /opt/ros/{{ros_release}}/setup.bash && rosrun roslint test_wrapper {{ros_workspace}}/build/test_results/{{item.0.item|basename}}/roslint-hpp-{{item.1|basename}}.xml "eval cat {{item.1}} | rosrun roslint cpplint -" '
+    chdir={{project_sources_path}}/{{item.0.item}}
+  with_subelements:
+     - "{{package_paths_and_hpp_files_results|default([])}}"
+     - stdout_lines
+  when: item.0.stdout != ""
   ignore_errors: True
