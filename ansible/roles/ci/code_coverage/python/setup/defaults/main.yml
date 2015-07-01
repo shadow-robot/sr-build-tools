@@ -1,0 +1,4 @@
+---
+# Defaults for code coverage data variables
+
+python_code_coverage_options: ""
