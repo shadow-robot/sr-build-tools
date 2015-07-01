@@ -145,6 +145,7 @@
   sudo: yes
   vars:
     ros_release: 'indigo'
+    ros_user: 'ronexserial'
   roles:
   - ssh_auth_sock
   - ronex_user

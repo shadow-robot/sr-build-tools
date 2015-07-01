@@ -50,6 +50,12 @@
 - name: Setup soem for normal user
   shell: "setcap cap_sys_nice,cap_ipc_lock,cap_net_raw,cap_net_admin=eip {{ronexserial.installdir}}/ronexserial/bin/eepromtool"
 
+# creates the cluster if it's not yet initialised - ignores the errors if it exists
+- name: Create postgres cluster
+  sudo: yes
+  shell: pg_createcluster 9.3 main --start
+  ignore_errors: yes
+
 - name: Create postgresql database
   sudo: yes
   sudo_user: postgres
@@ -112,4 +118,3 @@
     src="~{{ros_user}}/Desktop/FlashRonexWebUi.desktop"
     dest="~{{ros_user}}/.config/autostart/FlashRonexWebUi.desktop"
     force=yes
-
