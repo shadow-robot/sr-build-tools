@@ -143,6 +143,8 @@
 
 - hosts: ronexserial
   sudo: yes
+  vars:
+    ros_release: 'indigo'
   roles:
   - ssh_auth_sock
   - ronex_user
