@@ -11,3 +11,6 @@ export LC_ALL=en_US.UTF-8
 export LANG=en_US.UTF-8
 export LANGUAGE=en_US.UTF-8
 ```
+
+## Logging in the web ui
+Default login / password is ronexserial / shadow.
