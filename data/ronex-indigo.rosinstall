@@ -1,11 +1,11 @@
 - git:
     local-name: sr-ronex
-    uri: git@github.com:shadow-robot/sr-ronex.git
+    uri: https://github.com/shadow-robot/sr-ronex.git
     version: indigo-devel
 
 - git:
     local-name: ros_ethercat
-    uri: git@github.com:shadow-robot/ros_ethercat.git
+    uri: https://github.com/shadow-robot/ros_ethercat.git
     version: indigo-devel
 
 - git:

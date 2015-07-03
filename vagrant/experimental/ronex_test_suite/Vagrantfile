@@ -11,8 +11,8 @@ vram            = ENV['VAGRANT_VRAM']    || '64'
 ansible_verbose = ENV['ANSIBLE_VERBOSE'] || ""
 
 Vagrant.configure(VAGRANTFILE_API_VERSION)  do |config|
-  config.vm.box      = "ros-hydro-desktop-precise64"
-  config.vm.box_url  = "http://files.shadowrobot.com/vagrant/ros-hydro-desktop-precise64.box"
+  config.vm.box      = "ros-indigo-desktop-trusty64"
+  config.vm.box_url  = "http://files.shadowrobot.com/vagrant/ros-indigo-desktop-trusty64.box"
   config.vm.hostname = hostname
   # For RoNeX
   config.vm.network :public_network, :public_network => 'eth1', ip: "123.123.123.123"

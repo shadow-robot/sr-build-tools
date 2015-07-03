@@ -1,4 +1,4 @@
-ros_release: 'hydro'
+ros_release: 'indigo'
 ros_user: 'ronexserial'
 ros_user_comment: 'RoNeX Program And Test'
 ros_user_password: "password"
@@ -17,4 +17,3 @@ ronexserial:
   dbhost: localhost
   dbport: 5432
 shared_folder: "{{ronexserial.installdir}}"
-

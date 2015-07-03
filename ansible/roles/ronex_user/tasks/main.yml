@@ -4,8 +4,3 @@
               line="export ETHERCAT_PORT=eth1"
               insertafter=EOF
               backup=yes
-
-- name: Setup ronex driver for normal user
-  shell: bash -i -c 'rosrun ros_grant ros_grant'
-  sudo: yes
-  sudo_user: "{{ros_user}}"
