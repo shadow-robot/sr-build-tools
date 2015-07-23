@@ -8,6 +8,8 @@
      - python-rosdep
      - python-pip
      - cobertura
+     - python-bloom
+     - fakeroot
 
 - name: Install PIP modules
   pip: name={{item}} extra_args='--upgrade'

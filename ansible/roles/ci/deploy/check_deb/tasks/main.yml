@@ -1,0 +1,31 @@
+---
+# Playbook for Deb files check
+
+- name: check if project_sources_path variable was set
+  fail: msg="Variable project_sources_path was not set"
+  when: project_sources_path is not defined
+
+- name: Build install target
+  shell: bash -c "source /opt/ros/{{ros_release}}/setup.bash && catkin_make install"
+    chdir={{ros_workspace}}
+
+- name: Read all packages paths in project
+  shell: find -type f -name package.xml -printf "%h\n" chdir={{project_sources_path}}
+  register: package_paths_list
+
+## TODO: Add code to clean all debian folders in the package in case of cached build
+
+- name: Set variable to workaround ansible type evaluation issue
+  set_fact:
+    package_paths_list_stdout_lines: "{{package_paths_list.stdout_lines}}"
+
+- name: Create debian package for every project package
+  shell: bash -c "source /opt/ros/{{ros_release}}/setup.bash && bloom-generate rosdebian --os-name ubuntu --os-version trusty --ros-distro {{ros_release}} && fakeroot debian/rules binary"
+    chdir={{project_sources_path}}/{{item}}
+  with_items: "{{package_paths_list_stdout_lines|default([])}}"
+
+## TODO: Need to iterate throug all debian packages in the project folder and install them
+#- name: Install generated deb files
+#  shell: bash -c "source /opt/ros/{{ros_release}}/setup.bash && bloom-generate rosdebian --os-name ubuntu --os-version trusty --ros-distro {{ros_release}}"
+#    chdir={{project_sources_path}}/{{item}}
+#  with_items: "{{package_paths_list_stdout_lines|default([])}}"
