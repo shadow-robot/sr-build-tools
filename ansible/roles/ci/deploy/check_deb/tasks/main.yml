@@ -13,19 +13,26 @@
   shell: find -type f -name package.xml -printf "%h\n" chdir={{project_sources_path}}
   register: package_paths_list
 
-## TODO: Add code to clean all debian folders in the package in case of cached build
-
 - name: Set variable to workaround ansible type evaluation issue
   set_fact:
     package_paths_list_stdout_lines: "{{package_paths_list.stdout_lines}}"
+
+- name: Clean debian packages folders in case of the cached build
+  shell: bash -c "rm -rf ./debian"
+    chdir={{project_sources_path}}/{{item}}
+  with_items: "{{package_paths_list_stdout_lines|default([])}}"
+  ignore_errors: True
+
+- name: Clean debian packages from project directory
+  shell: bash -c "rm *.deb"
+    chdir={{project_sources_path}}
+  ignore_errors: True
 
 - name: Create debian package for every project package
   shell: bash -c "source /opt/ros/{{ros_release}}/setup.bash && bloom-generate rosdebian --os-name ubuntu --os-version trusty --ros-distro {{ros_release}} && fakeroot debian/rules binary"
     chdir={{project_sources_path}}/{{item}}
   with_items: "{{package_paths_list_stdout_lines|default([])}}"
 
-## TODO: Need to iterate throug all debian packages in the project folder and install them
-#- name: Install generated deb files
-#  shell: bash -c "source /opt/ros/{{ros_release}}/setup.bash && bloom-generate rosdebian --os-name ubuntu --os-version trusty --ros-distro {{ros_release}}"
-#    chdir={{project_sources_path}}/{{item}}
-#  with_items: "{{package_paths_list_stdout_lines|default([])}}"
+- name: Install deb packages
+  shell: bash -c "source /opt/ros/{{ros_release}}/setup.bash && sudo dpkg -i *.deb"
+    chdir={{project_sources_path}}
