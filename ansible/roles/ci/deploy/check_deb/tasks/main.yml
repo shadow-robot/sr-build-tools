@@ -5,10 +5,6 @@
   fail: msg="Variable project_sources_path was not set"
   when: project_sources_path is not defined
 
-- name: Build install target
-  shell: bash -c "source /opt/ros/{{ros_release}}/setup.bash && catkin_make install"
-    chdir={{ros_workspace}}
-
 - name: Read all packages paths in project
   shell: find -type f -name package.xml -printf "%h\n" chdir={{project_sources_path}}
   register: package_paths_list
