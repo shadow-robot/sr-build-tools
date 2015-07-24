@@ -6,8 +6,10 @@
   with_items:
     - "{{ros_workspace}}/build"
     - "{{ros_workspace}}/devel"
+    - "{{ros_workspace}}/install"
     - "{{ros_workspace}}/build_isolated"
     - "{{ros_workspace}}/devel_isolated"
+    - "{{ros_workspace}}/install_isolated"
 
 - name: catkin make workspace
   shell: bash -c "source /opt/ros/{{ros_release}}/setup.bash && catkin_make"

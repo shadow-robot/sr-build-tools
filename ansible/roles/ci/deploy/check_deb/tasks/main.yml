@@ -18,7 +18,7 @@
     package_paths_list_stdout_lines: "{{package_paths_list.stdout_lines}}"
 
 - name: Clean debian packages folders in case of the cached build
-  shell: bash -c "rm -rf ./debian"
+  shell: bash -c "rm -rf ./debian && rm -rf ./obj-x86_64-linux-gnu"
     chdir={{project_sources_path}}/{{item}}
   with_items: "{{package_paths_list_stdout_lines|default([])}}"
   ignore_errors: True
