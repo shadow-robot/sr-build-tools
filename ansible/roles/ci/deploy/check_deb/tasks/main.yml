@@ -24,7 +24,7 @@
   ignore_errors: True
 
 - name: Clean debian packages from project directory
-  shell: bash -c "rm *.deb"
+  shell: bash -c "find . -name '*.deb' -type f -delete"
     chdir={{project_sources_path}}
   ignore_errors: True
 
