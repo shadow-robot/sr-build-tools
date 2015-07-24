@@ -33,9 +33,6 @@
     chdir={{project_sources_path}}/{{item}}
   with_items: "{{package_paths_list_stdout_lines|default([])}}"
 
-- name: DEBUG; print all deb packages in the directories
-  shell: bash -c " find . -name '*.deb'" chdir={{project_sources_path}}
-
 - name: Install deb packages
-  shell: bash -c "source /opt/ros/{{ros_release}}/setup.bash && sudo dpkg -i *.deb"
+  shell: bash -c "source /opt/ros/{{ros_release}}/setup.bash && sudo dpkg -R --install ."
     chdir={{project_sources_path}}
