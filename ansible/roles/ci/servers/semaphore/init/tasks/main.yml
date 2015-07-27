@@ -1,0 +1,52 @@
+---
+# Playbook for Semaphore CI init specific code
+
+- name: check if semaphore_repo_dir variable was set by build server
+  fail: msg="Variable semaphore_repo_dir was not set by CI server"
+  when: semaphore_repo_dir is not defined
+
+- name: check if semaphore_is_pull_request variable was set by build server
+  fail: msg="Variable semaphore_is_pull_request was not set by CI server"
+  when: semaphore_is_pull_request is not defined
+
+- name: Set ros_workspace
+  set_fact:
+    ros_workspace: "~/workspace"
+
+- name: Set upgrade_all_packages
+  set_fact:
+    upgrade_all_packages: no
+
+- name: Set dependencies_file
+  set_fact:
+    dependencies_file: "{{semaphore_repo_dir}}/project.rosinstall"
+
+- name: Set project source code path
+  set_fact:
+    project_sources_path: "{{semaphore_repo_dir}}"
+
+- name: Set is_pull_request
+  set_fact:
+    is_pull_request: "{{ semaphore_is_pull_request is defined and semaphore_is_pull_request != 'false' }}"
+
+- name: Set test_results_dir
+  set_fact:
+    test_results_dir: "{{ros_workspace}}/testresults"
+
+- name: Set code_coverage_results_dir
+  set_fact:
+    code_coverage_results_dir: "{{ros_workspace}}/codecoverage"
+
+- name: Create tests directory
+  file: state=directory path={{test_results_dir}}
+
+- name: Clean tests results directory in case of failure during cache build
+  shell: bash -c "rm -rf {{test_results_dir}}/*"
+
+- name: Create coverage directory
+  file: state=directory path={{code_coverage_results_dir}}
+
+- name: Clean coverage results directory in case of failure during cached build
+  shell: bash -c "rm -rf {{code_coverage_results_dir}}/*"
+
+

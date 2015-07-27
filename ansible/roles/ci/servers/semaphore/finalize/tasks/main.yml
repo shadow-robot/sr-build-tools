@@ -1,5 +1,5 @@
 ---
-# Playbook for Shippable CI specific code
+# Playbook for Semaphore CI specific code
 
 - name: check if test_results_dir variable was set by build server
   fail: msg="Variable test_results_dir was not set by CI server"
