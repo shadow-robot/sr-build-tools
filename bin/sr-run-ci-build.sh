@@ -32,6 +32,10 @@ case $server_type in
   mv $SEMAPHORE_PROJECT_DIR ~/workspace/src
   export new_project_dir=~/workspace/src/$project_dir_name
   sudo apt-get remove mongodb-* -y
+  sudo apt-get remove rabbitmq-* -y
+  sudo apt-get remove redis-* -y
+  sudo apt-get remove mysql-* -y
+  sudo apt-get remove cassandra-* -y
   export extra_variables="semaphore_repo_dir=$new_project_dir  semaphore_is_pull_request=$PULL_REQUEST_NUMBER codecov_secure=$CODECOV_TOKEN"
   sudo ansible-playbook -v -i "localhost," -c local docker_site.yml --tags "semaphore,$tags_list" -e "$extra_variables"
   ;;
