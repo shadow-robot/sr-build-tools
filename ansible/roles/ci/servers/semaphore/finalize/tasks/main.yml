@@ -12,3 +12,6 @@
 - name: Move unit tests results
   shell: bash -c "ls {{ros_workspace}}/build/test_results/* >/dev/null 2>&1 && mv -vt {{test_results_dir}} {{ros_workspace}}/build/test_results/*"
   ignore_errors: yes
+
+- name: Fail in case if unit tests failing
+  shell: bash -c "! grep -R '<failure' {{test_results_dir}}"
