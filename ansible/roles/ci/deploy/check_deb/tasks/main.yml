@@ -25,7 +25,7 @@
   ignore_errors: True
 
 - name: Create debian package for every project package
-  shell: bash -c "source /opt/ros/{{ros_release}}/setup.bash && bloom-generate rosdebian --os-name ubuntu --os-version trusty --ros-distro {{ros_release}} && fakeroot debian/rules binary"
+  shell: bash -c "source /opt/ros/{{ros_release}}/setup.bash && source {{ros_workspace}}/devel/setup.bash && bloom-generate rosdebian --os-name ubuntu --os-version trusty --ros-distro {{ros_release}} && fakeroot debian/rules binary"
     chdir={{project_sources_path}}/{{item}}
   with_items: "{{package_paths_list_stdout_lines|default([])}}"
 
