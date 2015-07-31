@@ -24,11 +24,26 @@
     chdir={{project_sources_path}}
   ignore_errors: True
 
-- name: Create debian package for every project package
-  shell: bash -c "source /opt/ros/{{ros_release}}/setup.bash && source {{ros_workspace}}/devel/setup.bash && bloom-generate rosdebian --os-name ubuntu --os-version trusty --ros-distro {{ros_release}} && fakeroot debian/rules binary"
-    chdir={{project_sources_path}}/{{item}}
-  with_items: "{{package_paths_list_stdout_lines|default([])}}"
+#- name: Create debian package for every project package
+#  shell: bash -c "source /opt/ros/{{ros_release}}/setup.bash && source {{ros_workspace}}/devel/setup.bash && bloom-generate rosdebian --os-name ubuntu --os-version trusty --ros-distro {{ros_release}} && fakeroot debian/rules binary"
+#    chdir={{project_sources_path}}/{{item}}
+#  with_items: "{{package_paths_list_stdout_lines|default([])}}"
+#
+#- name: Install deb packages
+#  shell: bash -c "source /opt/ros/{{ros_release}}/setup.bash && sudo dpkg -R --install ."
+#    chdir={{project_sources_path}}
 
-- name: Install deb packages
-  shell: bash -c "source /opt/ros/{{ros_release}}/setup.bash && sudo dpkg -R --install ."
-    chdir={{project_sources_path}}
+- name: create, build and install debian packages recursively in order to fix local dependencies
+  shell: bash -c "! ls {{project_sources_path}}/*{{item[1]|basename}}*.deb && source /opt/ros/{{ros_release}}/setup.bash && bloom-generate rosdebian --os-name ubuntu --os-version trusty --ros-distro {{ros_release}} {{project_sources_path}}/{{item[1]}}  && fakeroot {{project_sources_path}}/{{item[1]}}/debian/rules binary && sudo dpkg --install {{project_sources_path}}/*{{item[1]|basename}}*.deb"  chdir={{project_sources_path}}
+  ignore_errors: True
+  with_nested:
+    - "{{package_paths_list_stdout_lines|default([])}}"
+    - "{{package_paths_list_stdout_lines|default([])}}"
+
+- name: check if everything was successfully installed
+  shell: bash -c "source /opt/ros/{{ros_release}}/setup.bash && bloom-generate rosdebian --os-name ubuntu --os-version trusty --ros-distro {{ros_release}} {{project_sources_path}}/{{item}}  && fakeroot {{project_sources_path}}/{{item}}/debian/rules binary && sudo dpkg --install {{project_sources_path}}/*{{item|basename}}*.deb"  chdir={{project_sources_path}}
+  with_items:
+    - "{{package_paths_list_stdout_lines|default([])}}"
+
+- name: remove all installed packages
+  shell: bash -c "source /opt/ros/{{ros_release}}/setup.bash && sudo dpkg --purge *.deb"  chdir={{project_sources_path}}
