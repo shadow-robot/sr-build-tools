@@ -34,14 +34,14 @@
 #    chdir={{project_sources_path}}
 
 - name: create, build and install debian packages recursively in order to fix local dependencies
-  shell: bash -c "! ls {{project_sources_path}}/*{{item[1]|basename}}*.deb && source /opt/ros/{{ros_release}}/setup.bash && bloom-generate rosdebian --os-name ubuntu --os-version trusty --ros-distro {{ros_release}} && fakeroot ./debian/rules binary && sudo dpkg --install {{project_sources_path}}/*{{item[1]|basename}}*.deb"  chdir={{project_sources_path}}/{{item[1]}}
+  shell: bash -c "! ls {{project_sources_path}}/*{{item[1]|basename}}*.deb && source /opt/ros/{{ros_release}}/setup.bash && bloom-generate rosdebian --os-name ubuntu --os-version trusty --ros-distro {{ros_release}} && fakeroot ./debian/rules binary && sudo dpkg --install {{project_sources_path}}/*.deb"  chdir={{project_sources_path}}/{{item[1]}}
   ignore_errors: True
   with_nested:
     - "{{package_paths_list_stdout_lines|default([])}}"
     - "{{package_paths_list_stdout_lines|default([])}}"
 
 - name: check if everything was successfully installed
-  shell: bash -c "source /opt/ros/{{ros_release}}/setup.bash && bloom-generate rosdebian --os-name ubuntu --os-version trusty --ros-distro {{ros_release}} && fakeroot ./debian/rules binary && sudo dpkg --install {{project_sources_path}}/*{{item|basename}}*.deb"  chdir={{project_sources_path}}/{{item}}
+  shell: bash -c "source /opt/ros/{{ros_release}}/setup.bash && bloom-generate rosdebian --os-name ubuntu --os-version trusty --ros-distro {{ros_release}} && fakeroot ./debian/rules binary && sudo dpkg --install {{project_sources_path}}/*.deb"  chdir={{project_sources_path}}/{{item}}
   with_items:
     - "{{package_paths_list_stdout_lines|default([])}}"
 
