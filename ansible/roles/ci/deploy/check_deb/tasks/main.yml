@@ -37,19 +37,24 @@
 - name: Update rosdep
   shell: bash -c "rosdep update"
 
-- name: create, build and install debian packages recursively in order to fix local dependencies
-  shell: bash -c "! ls {{project_sources_path}}/{{item[1]}}/*.deb && source /opt/ros/{{ros_release}}/setup.bash && bloom-generate rosdebian --os-name ubuntu --os-version trusty --ros-distro {{ros_release}} && fakeroot ./debian/rules binary && mv -vt .  ../*.deb && sudo dpkg --install *.deb"  chdir={{project_sources_path}}/{{item[1]}}
+- name: Generate Ros debian package files
+  shell: bash -c "source /opt/ros/{{ros_release}}/setup.bash && bloom-generate rosdebian --os-name ubuntu --os-version trusty --ros-distro {{ros_release}}"  chdir={{project_sources_path}}/{{item}}
+  with_items:
+    - "{{package_paths_list_stdout_lines|default([])}}"
+
+- name: Create and install debian packages recursively in order to fix local dependencies
+  shell: bash -c "! ls {{project_sources_path}}/{{item[1]}}/*.deb && source /opt/ros/{{ros_release}}/setup.bash && fakeroot ./debian/rules binary && mv -vt .  ../*.deb && sudo dpkg --install *.deb"  chdir={{project_sources_path}}/{{item[1]}}
   ignore_errors: True
   with_nested:
     - "{{package_paths_list_stdout_lines|default([])}}"
     - "{{package_paths_list_stdout_lines|default([])}}"
 
-- name: check if everything was successfully installed
-  shell: bash -c "source /opt/ros/{{ros_release}}/setup.bash && bloom-generate rosdebian --os-name ubuntu --os-version trusty --ros-distro {{ros_release}} && fakeroot ./debian/rules binary && mv -vt .  ../*.deb && sudo dpkg --install *.deb"  chdir={{project_sources_path}}/{{item}}
+- name: Check if everything was successfully installed
+  shell: bash -c "source /opt/ros/{{ros_release}}/setup.bash && fakeroot ./debian/rules binary && mv -vt .  ../*.deb && sudo dpkg --install *.deb"  chdir={{project_sources_path}}/{{item}}
   with_items:
     - "{{package_paths_list_stdout_lines|default([])}}"
 
-- name: remove all installed packages
+- name: Remove all installed packages
   shell: bash -c "find . -name '*.deb' -print0  | xargs -0 -I {} dpkg --info  {} | sed -n -e 's/^\s*Package:\s*//p'"  chdir={{project_sources_path}}
   register: installed_packages_names
 
@@ -57,7 +62,7 @@
   set_fact:
     installed_packages_names_stdout_lines: "{{installed_packages_names.stdout_lines}}"
 
-- name: uninstall all packages
+- name: Uninstall all packages
   shell: bash -c "sudo dpkg --purge {{item}}"
   with_items:
     - "{{package_paths_list_stdout_lines|default([])}}"
