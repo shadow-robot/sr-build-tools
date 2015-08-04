@@ -23,5 +23,9 @@ if [ "shippable" == $server_type ]; then
     export extra_variables="shippable_repo_dir=$SHIPPABLE_REPO_DIR  shippable_is_pull_request=$PULL_REQUEST codecov_secure=$CODECOV_TOKEN"
     sudo ansible-playbook -v -i "localhost," -c local docker_site.yml --tags "shippable,$tags_list" -e "$extra_variables"
 else
-    echo Not supported server type $server_type
+   if [ "docker_hub" == $server_type ]; then
+        sudo ansible-playbook -v -i "localhost," -c local docker_site.yml --tags "docker_hub,$tags_list"
+    else
+        echo Not supported server type $server_type
+    fi
 fi
