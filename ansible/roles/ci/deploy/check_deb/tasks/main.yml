@@ -31,7 +31,7 @@
   ignore_errors: True
 
 - name: Append project packages to rosdep ignore list
-  shell: '"{{item|basename}}": { ubuntu: [] }' >> {{project_sources_path}}/local_custom_rosdep.yaml
+  shell: "{{item|basename}}: \{ ubuntu: [] \}" >> {{project_sources_path}}/local_custom_rosdep.yaml
   with_items: "{{package_paths_list_stdout_lines|default([])}}"
 
 - name: Update rosdep
