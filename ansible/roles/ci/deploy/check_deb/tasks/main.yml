@@ -49,12 +49,17 @@
     - "{{package_paths_list_stdout_lines|default([])}}"
     - "{{package_paths_list_stdout_lines|default([])}}"
 
-- name: Check if everything was successfully installed
-  shell: bash -c "source /opt/ros/{{ros_release}}/setup.bash && fakeroot ./debian/rules binary && mv -vt .  ../*.deb && sudo dpkg --install *.deb"  chdir={{project_sources_path}}/{{item}}
+- name: Check if debian build doesn't have any errors
+  shell: bash -c "source /opt/ros/{{ros_release}}/setup.bash && fakeroot ./debian/rules binary"  chdir={{project_sources_path}}/{{item}}
   with_items:
     - "{{package_paths_list_stdout_lines|default([])}}"
 
-- name: Remove all installed packages
+- name: Check if debian install doesn't have any errors
+  shell: bash -c "source /opt/ros/{{ros_release}}/setup.bash && sudo dpkg --install *.deb"  chdir={{project_sources_path}}/{{item}}
+  with_items:
+    - "{{package_paths_list_stdout_lines|default([])}}"
+
+- name: Read all installed packages from project
   shell: bash -c "find . -name '*.deb' -print0  | xargs -0 -I {} dpkg --info  {} | sed -n -e 's/^\s*Package:\s*//p'"  chdir={{project_sources_path}}
   register: installed_packages_names
 
