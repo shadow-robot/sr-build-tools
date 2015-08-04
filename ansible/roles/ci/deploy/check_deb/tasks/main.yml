@@ -38,7 +38,7 @@
   shell: bash -c "rosdep update"
 
 - name: create, build and install debian packages recursively in order to fix local dependencies
-  shell: bash -c "! ls {{project_sources_path}}/{{item[0]}}/*.deb && source /opt/ros/{{ros_release}}/setup.bash && bloom-generate rosdebian --os-name ubuntu --os-version trusty --ros-distro {{ros_release}} && fakeroot ./debian/rules binary && mv -vt .  ../*.deb && sudo dpkg --install *.deb"  chdir={{project_sources_path}}/{{item[0]}}
+  shell: bash -c "! ls {{project_sources_path}}/{{item[1]}}/*.deb && source /opt/ros/{{ros_release}}/setup.bash && bloom-generate rosdebian --os-name ubuntu --os-version trusty --ros-distro {{ros_release}} && fakeroot ./debian/rules binary && mv -vt .  ../*.deb && sudo dpkg --install *.deb"  chdir={{project_sources_path}}/{{item[1]}}
   ignore_errors: True
   with_nested:
     - "{{package_paths_list_stdout_lines|default([])}}"
