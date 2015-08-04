@@ -6,13 +6,14 @@
 
 FROM ubuntu:14.04
 
-MAINTAINER Shadow Robot's Software Team <software@shadowrobot.com>
+MAINTAINER Shadow Robot''s Software Team <software@shadowrobot.com>
 
 LABEL Description="This image is used to make ROS Indigo based projects build faster using build tools" Vendor="Shadow Robot" Version="1.0"
 
 RUN apt-get update
 RUN apt-get upgrade -y
 RUN apt-get install curl -y
+RUN apt-get install git -y
 
 ENV toolset_branch="F#114_add_docker_image"
 ENV server_type="docker_hub"
