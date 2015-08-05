@@ -6,9 +6,11 @@
 
 FROM ubuntu:14.04
 
-MAINTAINER Shadow Robot''s Software Team <software@shadowrobot.com>
+MAINTAINER Shadow Robot\'s Software Team <software@shadowrobot.com>
 
 LABEL Description="This image is used to make ROS Indigo based projects build faster using build tools" Vendor="Shadow Robot" Version="1.0"
+
+RUN locale-gen en_US.UTF-8
 
 RUN apt-get update
 RUN apt-get upgrade -y
