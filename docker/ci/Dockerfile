@@ -13,7 +13,6 @@ LABEL Description="This image is used to make ROS Indigo based projects build fa
 RUN apt-get update
 RUN apt-get upgrade -y
 RUN apt-get install curl -y
-RUN apt-get install git -y
 
 ENV toolset_branch="F#114_add_docker_image"
 ENV server_type="docker_hub"
