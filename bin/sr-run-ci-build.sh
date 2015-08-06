@@ -5,6 +5,7 @@ export server_type=$2
 export tags_list=$3
 
 export docker_image="andriyp/ubuntu-ros-indigo-build-tools"
+export build_tools_folder="$HOME/sr-build-tools"
 
 # Do not install all libraries for circle because we are using docker container directly
 if [ "circle" != $server_type ]; then
@@ -14,15 +15,15 @@ if [ "circle" != $server_type ]; then
 fi
 
 # Check in case of cached file system
-if [ -d "~/sr-build-tools" ]; then
+if [ -d $build_tools_folder ]; then
   # Cached
-  cd ~/sr-build-tools
+  cd $build_tools_folder
   git pull origin "$toolset_branch"
   cd ./ansible
 else
   # No caching
-  git clone https://github.com/shadow-robot/sr-build-tools.git -b "$toolset_branch" sr-build-tools
-  cd ~/sr-build-tools/ansible
+  git clone https://github.com/shadow-robot/sr-build-tools.git -b "$toolset_branch" $build_tools_folder
+  cd $build_tools_folder/ansible
 fi
 
 case $server_type in
