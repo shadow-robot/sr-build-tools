@@ -1,0 +1,63 @@
+---
+# Playbook for Circle CI init specific code
+
+- name: check if circle_repo_dir variable was set by build server
+  fail: msg="Variable circle_repo_dir was not set by CI server"
+  when: circle_repo_dir is not defined
+
+- name: check if circle_is_pull_request variable was set by build server
+  fail: msg="Variable circle_is_pull_request was not set by CI server"
+  when: circle_is_pull_request is not defined
+
+- name: check if circle_test_dir variable was set by build server
+  fail: msg="Variable circle_test_dir was not set by CI server"
+  when: circle_test_dir is not defined
+
+- name: check if circle_code_coverage_dir variable was set by build server
+  fail: msg="Variable circle_code_coverage_dir was not set by CI server"
+  when: circle_code_coverage_dir is not defined
+
+- name: Set ros_workspace
+  set_fact:
+    ros_workspace: "~/workspace"
+
+- name: Set upgrade_all_packages
+  set_fact:
+    upgrade_all_packages: no
+
+- name: Set dependencies_file
+  set_fact:
+    dependencies_file: "{{ros_workspace}}{{circle_repo_dir}}/project.rosinstall"
+
+- name: Set project source code path
+  set_fact:
+    project_sources_path: "{{ros_workspace}}{{circle_repo_dir}}"
+
+- name: Remove source directory in case of caching
+  shell: bash -c "rm -rf {{project_sources_path}}"
+
+- name: Copy source directory from host machine
+  shell: bash -c "cp -r {{circle_repo_dir}} {{project_sources_path}}"
+
+- name: Set is_pull_request
+  set_fact:
+    is_pull_request: "{{ circle_is_pull_request is defined and circle_is_pull_request != '' }}"
+
+- name: Set test_results_dir
+  set_fact:
+    test_results_dir: "{{circle_test_dir}}"
+
+- name: Set code_coverage_results_dir
+  set_fact:
+    code_coverage_results_dir: "{{circle_code_coverage_dir}}"
+
+- name: Clean tests results directory in case of failure during cache build
+  shell: bash -c "rm -rf {{test_results_dir}}/*"
+
+- name: Create coverage directory
+  file: state=directory path={{code_coverage_results_dir}}
+
+- name: Clean coverage results directory in case of failure during cached build
+  shell: bash -c "rm -rf {{code_coverage_results_dir}}/*"
+
+

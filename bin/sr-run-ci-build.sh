@@ -4,20 +4,22 @@ export toolset_branch=$1
 export server_type=$2
 export tags_list=$3
 
+export docker_image="andriyp/ubuntu-ros-indigo-build-tools"
+
 sudo apt-get update
 sudo apt-get install python-dev libxml2-dev libxslt-dev python-pip lcov wget git -y
 sudo pip install ansible gcovr
 
 # Check in case of cached file system
-if [ -d "./sr-build-tools" ]; then
+if [ -d "~/sr-build-tools" ]; then
   # Cached
-  cd ./sr-build-tools
+  cd ~/sr-build-tools
   git pull origin "$toolset_branch"
   cd ./ansible
 else
   # No caching
   git clone https://github.com/shadow-robot/sr-build-tools.git -b "$toolset_branch" sr-build-tools
-  cd ./sr-build-tools/ansible
+  cd ~/sr-build-tools/ansible
 fi
 
 case $server_type in
@@ -39,6 +41,13 @@ case $server_type in
   sudo apt-get remove cassandra-* -y
   export extra_variables="semaphore_repo_dir=$new_project_dir  semaphore_is_pull_request=$PULL_REQUEST_NUMBER codecov_secure=$CODECOV_TOKEN"
   sudo ansible-playbook -v -i "localhost," -c local docker_site.yml --tags "semaphore,$tags_list" -e "$extra_variables"
+  ;;
+
+"circle") echo "Circle CI server"
+  docker pull $docker_image
+  export extra_variables="circle_repo_dir=/host$CIRCLE_REPO_DIR  circle_is_pull_request=$CI_PULL_REQUEST circle_test_dir=/host$CI_REPORTS circle_code_coverage_dir=/host$CIRCLE_ARTIFACTS codecov_secure=$CODECOV_TOKEN"
+  # TODO Fix Path to sr-build-tools after docker hub image refresh !!!
+  docker run -w "/sr-build-tools/ansible" -v /:/host:rw $docker_image  sudo ansible-playbook -v -i "localhost," -c local docker_site.yml --tags "circle,$tags_list" -e "$extra_variables"
   ;;
 
 "docker_hub") echo "Docker Hub"
