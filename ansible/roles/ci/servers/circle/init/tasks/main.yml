@@ -36,8 +36,11 @@
 - name: Remove source directory in case of caching
   shell: bash -c "rm -rf {{project_sources_path}}"
 
+- name: Create directory again
+  shell: bash -c "mkdir -p {{project_sources_path}}"
+
 - name: Copy source directory from host machine
-  shell: bash -c "cp -r {{circle_repo_dir}} {{project_sources_path}}"
+  shell: bash -c "cp -r {{circle_repo_dir}}/* {{project_sources_path}}"
 
 - name: Set is_pull_request
   set_fact:
