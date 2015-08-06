@@ -7,7 +7,7 @@ export tags_list=$3
 export docker_image="andriyp/ubuntu-ros-indigo-build-tools"
 
 # Do not install all libraries for circle because we are using docker container directly
-if [ "$server_type" -ne "circle" ]; then
+if [ "circle" != $server_type ]; then
   sudo apt-get update
   sudo apt-get install python-dev libxml2-dev libxslt-dev python-pip lcov wget git -y
   sudo pip install ansible gcovr
