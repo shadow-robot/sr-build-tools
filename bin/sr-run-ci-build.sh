@@ -50,7 +50,7 @@ case $server_type in
   docker pull $docker_image
   export extra_variables="circle_repo_dir=/host$CIRCLE_REPO_DIR  circle_is_pull_request=$CI_PULL_REQUEST circle_test_dir=/host$CI_REPORTS circle_code_coverage_dir=/host$CIRCLE_ARTIFACTS codecov_secure=$CODECOV_TOKEN"
   # TODO Fix Path to sr-build-tools after docker hub image refresh !!!
-  docker run -w "/sr-build-tools/ansible" -v /:/host:rw $docker_image  bash -c "git pull && sudo ansible-playbook -v -i \"localhost,\" -c local docker_site.yml --tags \"circle,$tags_list\" -e \"$extra_variables\" "
+  docker run -w "/sr-build-tools/ansible" -v /:/host:rw $docker_image  bash -c "git pull && git checkout $toolset_branch && sudo ansible-playbook -v -i \"localhost,\" -c local docker_site.yml --tags \"circle,$tags_list\" -e \"$extra_variables\" "
   ;;
 
 "docker_hub") echo "Docker Hub"
