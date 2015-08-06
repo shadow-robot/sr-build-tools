@@ -37,7 +37,7 @@
   shell: bash -c "rm -rf {{project_sources_path}}"
 
 - name: Create directory again
-  shell: bash -c "mkdir -p {{project_sources_path}}"
+  file: state=directory path={{project_sources_path}}
 
 - name: Copy source directory from host machine
   shell: bash -c "cp -r {{circle_repo_dir}}/* {{project_sources_path}}"
