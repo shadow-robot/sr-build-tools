@@ -9,6 +9,7 @@
   fail: msg="Variable code_coverage_results_dir was not set by CI server"
   when: code_coverage_results_dir is not defined
 
+# Ignore errors to prevent failure in case of empty tests folder
 - name: Move unit tests results
-  shell: bash -c "ls {{ros_workspace}}/build/test_results/* >/dev/null 2>&1 && mv -vt {{test_results_dir}} {{ros_workspace}}/build/test_results/*"
+  shell: bash -c "mv -vt {{test_results_dir}} {{ros_workspace}}/build/test_results/*"
   ignore_errors: yes
