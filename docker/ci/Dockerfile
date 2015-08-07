@@ -22,3 +22,10 @@ ENV used_modules="check_cache,install,create_workspace"
 ENV remote_shell_script="https://raw.githubusercontent.com/shadow-robot/sr-build-tools/$toolset_branch/bin/sr-run-ci-build.sh"
 
 RUN curl -s "$( echo "$remote_shell_script" | sed 's/#/%23/g' )" | bash /dev/stdin "$toolset_branch" $server_type $used_modules
+
+# Caching additional packages which are often used
+RUN apt-get install ros-indigo-moveit-* -y
+RUN apt-get install ros-indigo-sr-* -y
+RUN apt-get install ros-indigo-ethercat-* -y
+RUN apt-get install ros-indigo-ros-ethercat-* -y
+RUN apt-get install ros-indigo-cob-* -y
