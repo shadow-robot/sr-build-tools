@@ -48,7 +48,7 @@ case $server_type in
   ;;
 
 "circle") echo "Circle CI server"
-  export CIRCLE_REPO_DIR: $HOME/$CIRCLE_PROJECT_REPONAME
+  export CIRCLE_REPO_DIR=$HOME/$CIRCLE_PROJECT_REPONAME
   docker pull $docker_image
   export extra_variables="circle_repo_dir=/host$CIRCLE_REPO_DIR  circle_is_pull_request=$CI_PULL_REQUEST circle_test_dir=/host$CI_REPORTS circle_code_coverage_dir=/host$CIRCLE_ARTIFACTS codecov_secure=$CODECOV_TOKEN"
   docker run -w $build_tools_folder/ansible -v /:/host:rw $docker_image  bash -c "git pull && git checkout $toolset_branch && sudo ansible-playbook -v -i \"localhost,\" -c local docker_site.yml --tags \"circle,$tags_list\" -e \"$extra_variables\" "
