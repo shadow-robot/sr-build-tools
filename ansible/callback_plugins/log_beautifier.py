@@ -3,19 +3,19 @@
 See README.md
 """
 
-from ansible.plugins.callback import CallbackBase
+from ansible.callbacks import display
 
-class CallbackModule(CallbackBase):
+class CallbackModule(object):
     FIELDS = ['cmd', 'command', 'start', 'end', 'delta', 'msg', 'stdout',
               'stderr']
 
-    def nice_log(self, res, msg_color='green'):
+    def nice_log(self, res, color='green', stderr=False):
         if type(res) == type(dict()):
             for field in self.FIELDS:
                 if field in res.keys():
                     msg = '\n{0}:\n{1}'.format(
                         field, res[field].encode('utf-8'))
-                    self._display(msg, color=msg_color)
+                    display(msg, color=color, stderr=stderr)
 
     def __init__(self, display):
         self._display = display
@@ -25,12 +25,12 @@ class CallbackModule(CallbackBase):
 
     def runner_on_failed(self, host, res, ignore_errors=False):
         if ignore_errors:
-            self.nice_log(res, msg_color='yellow')
+            self.nice_log(res, color='yellow')
         else:
-            self.nice_log(res, msg_color='red')
+            self.nice_log(res, color='red', stderr=True)
 
     def runner_on_ok(self, host, res):
-        self.nice_log(res, msg_color='green')
+        self.nice_log(res, color='green')
 
     def runner_on_error(self, host, msg):
         pass
@@ -39,19 +39,19 @@ class CallbackModule(CallbackBase):
         pass
 
     def runner_on_unreachable(self, host, res):
-        self.nice_log(res, msg_color='yellow')
+        self.nice_log(res, color='yellow')
 
     def runner_on_no_hosts(self):
         pass
 
     def runner_on_async_poll(self, host, res, jid, clock):
-        self.nice_log(res, msg_color='green')
+        self.nice_log(res, color='green')
 
     def runner_on_async_ok(self, host, res, jid):
-        self.nice_log(res, msg_color='green')
+        self.nice_log(res, color='green')
 
     def runner_on_async_failed(self, host, res, jid):
-        self.nice_log(res, msg_color='red')
+        self.nice_log(res, color='red', stderr=True)
 
     def playbook_on_start(self):
         pass
