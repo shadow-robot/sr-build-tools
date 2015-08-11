@@ -13,6 +13,6 @@ def dummy_display(msg, color=None, stderr=False, screen_only=False,
                                        log_only=log_only, runner=runner)
 
 # Monkey patch to turn off default callback logging
-if not ansible.callbacks.original_display:
+if hasattr(ansible.callbacks, 'original_display'):
     ansible.callbacks.original_display = ansible.callbacks.display
 ansible.callbacks.display = dummy_display
