@@ -17,9 +17,6 @@ class CallbackModule(object):
                         field, res[field].encode('utf-8'))
                     display(msg, color=color, stderr=stderr)
 
-    def __init__(self, display):
-        self._display = display
-
     def on_any(self, *args, **kwargs):
         pass
 
