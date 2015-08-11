@@ -4,7 +4,6 @@
 - hosts: all
   vars:
     ros_release: "indigo"
-  no_log: True
   roles:
     - {role: ci/servers/shippable/init, tags: ["shippable"]}
     - {role: ci/servers/semaphore/init, tags: ["semaphore"]}
