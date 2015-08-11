@@ -11,7 +11,7 @@ class CallbackModule(object):
 
     def nice_log(self, res, color='green', stderr=False):
         if type(res) == type(dict()):
-            print "debug =>  " +  res
+            print "debug =>  " +  str(res)
             for field in self.FIELDS:
                 if field in res.keys():
                     msg = '\n{0}:\n{1}'.format(
