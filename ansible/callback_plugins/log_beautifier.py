@@ -84,4 +84,4 @@ class CallbackModule(object):
         pass
 
     def playbook_on_stats(self, stats):
-        ansible.callbacks.original_display("debug stats ...")
+        pass
