@@ -3,11 +3,17 @@
 See README.md
 """
 
-from ansible.callbacks import display
+def dummy_display(msg, color=None, stderr=False, screen_only=False, log_only=False, runner=None):
+    pass
 
 class CallbackModule(object):
     FIELDS = ['cmd', 'command', 'start', 'end', 'delta', 'msg', 'stdout',
               'stderr']
+
+    def __init__(self):
+        # Monkey patch to turn off default callback logging
+        self._original_display = ansible.callbacks.display
+        ansible.callbacks.display = dummy_display
 
     def nice_log(self, res, color='green', stderr=False):
         if type(res) == type(dict()):
@@ -16,7 +22,7 @@ class CallbackModule(object):
                 if field in res.keys():
                     msg = '\n{0}:\n{1}'.format(
                         field, res[field].encode('utf-8'))
-                    display(msg, color=color, stderr=stderr)
+                    self._original_display(msg, color=color, stderr=stderr)
 
     def on_any(self, *args, **kwargs):
         pass
