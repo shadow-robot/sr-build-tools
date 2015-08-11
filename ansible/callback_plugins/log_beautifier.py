@@ -1,4 +1,11 @@
-class CallbackModule(object):
+#!/usr/bin/env python
+"""
+See README.md
+"""
+
+from ansible.plugins.callback import CallbackBase
+
+class CallbackModule(CallbackBase):
     FIELDS = ['cmd', 'command', 'start', 'end', 'delta', 'msg', 'stdout',
               'stderr']
 
