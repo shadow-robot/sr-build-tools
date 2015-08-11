@@ -8,7 +8,7 @@ import ansible.callbacks
 
 def dummy_display(msg, color=None, stderr=False, screen_only=False,
                   log_only=False, runner=None):
-    modified_message = msg.replace("\\n", "\n")
+    modified_message = msg.encode('utf-8').decode('unicode_escape')
     ansible.callbacks.original_display(modified_message, color=color,
                                        stderr=stderr, screen_only=screen_only,
                                        log_only=log_only, runner=runner)
@@ -84,4 +84,4 @@ class CallbackModule(object):
         pass
 
     def playbook_on_stats(self, stats):
-        pass
+        ansible.callbacks.original_display("debug stats ...")
