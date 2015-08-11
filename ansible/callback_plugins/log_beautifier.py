@@ -3,6 +3,8 @@
 See README.md
 """
 
+import ansible.callbacks
+
 def dummy_display(msg, color=None, stderr=False, screen_only=False, log_only=False, runner=None):
     pass
 
