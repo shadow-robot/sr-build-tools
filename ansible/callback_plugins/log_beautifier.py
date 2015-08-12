@@ -28,12 +28,12 @@ ansible.callbacks.display = dummy_display
 class CallbackModule(object):
 
     def __init__(self):
-        self.timer_interval = 5.0
+        self.timer_interval = 20.0
         self.progress_timer = Timer(self.timer_interval,
                                     self.in_progress_message)
 
     def in_progress_message(self):
-        ansible.callbacks.display('{"status": "operation in progress..."}',
+        ansible.callbacks.display('status: ["operation in progress..."]',
                                   color='yellow')
         self.progress_timer = Timer(self.timer_interval,
                                     self.in_progress_message)
