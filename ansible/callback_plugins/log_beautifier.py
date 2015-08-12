@@ -4,22 +4,33 @@ See README.md
 """
 
 import ansible.callbacks
+from threading import Lock
+from threading import Timer
 
+ansible.callbacks.display_lock = Lock()
 
 def dummy_display(msg, color=None, stderr=False, screen_only=False,
                   log_only=False, runner=None):
-    modified_message = msg.encode('utf-8').decode('unicode_escape')
-    ansible.callbacks.original_display(modified_message, color=color,
-                                       stderr=stderr, screen_only=screen_only,
-                                       log_only=log_only, runner=runner)
+    with ansible.callbacks.display_lock:
+        modified_message = msg.encode('utf-8').decode('unicode_escape')
+        ansible.callbacks.original_display(modified_message, color=color,
+                                           stderr=stderr,
+                                           screen_only=screen_only,
+                                           log_only=log_only, runner=runner)
 
 # Monkey patch to turn off default callback logging
 if not hasattr(ansible.callbacks, 'original_display'):
     ansible.callbacks.original_display = ansible.callbacks.display
 ansible.callbacks.display = dummy_display
 
-
 class CallbackModule(object):
+
+    def __init__(self):
+        self.progress_timer = Timer(20.0, self.in_progress_message)
+
+    @staticmethod
+    def in_progress_message():
+        ansible.callbacks.display("{operation in progress...}", color="yellow")
 
     def on_any(self, *args, **kwargs):
         pass
@@ -64,7 +75,8 @@ class CallbackModule(object):
         pass
 
     def playbook_on_task_start(self, name, is_conditional):
-        pass
+        self.progress_timer.cancel()
+        self.progress_timer.start()
 
     def playbook_on_vars_prompt(self, varname, private=True, prompt=None,
                                 encrypt=None, confirm=False,
@@ -84,4 +96,5 @@ class CallbackModule(object):
         pass
 
     def playbook_on_stats(self, stats):
-        pass
+        self.progress_timer.cancel()
+
