@@ -32,10 +32,12 @@ class CallbackModule(object):
         self.progress_timer = Timer(self.timer_interval,
                                     self.in_progress_message)
 
-    @staticmethod
-    def in_progress_message():
+    def in_progress_message(self):
         ansible.callbacks.display('{"status": "operation in progress..."}',
                                   color='yellow')
+        self.progress_timer = Timer(self.timer_interval,
+                                    self.in_progress_message)
+        self.progress_timer.start()
 
     def on_any(self, *args, **kwargs):
         pass
