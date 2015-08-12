@@ -9,6 +9,7 @@ from threading import Timer
 
 ansible.callbacks.display_lock = Lock()
 
+
 def dummy_display(msg, color=None, stderr=False, screen_only=False,
                   log_only=False, runner=None):
     with ansible.callbacks.display_lock:
@@ -23,14 +24,18 @@ if not hasattr(ansible.callbacks, 'original_display'):
     ansible.callbacks.original_display = ansible.callbacks.display
 ansible.callbacks.display = dummy_display
 
+
 class CallbackModule(object):
 
     def __init__(self):
-        self.progress_timer = Timer(20.0, self.in_progress_message)
+        self.timer_interval = 5.0
+        self.progress_timer = Timer(self.timer_interval,
+                                    self.in_progress_message)
 
     @staticmethod
     def in_progress_message():
-        ansible.callbacks.display("{operation in progress...}", color="yellow")
+        ansible.callbacks.display('{"status": "operation in progress..."}',
+                                  color='yellow')
 
     def on_any(self, *args, **kwargs):
         pass
@@ -76,7 +81,8 @@ class CallbackModule(object):
 
     def playbook_on_task_start(self, name, is_conditional):
         self.progress_timer.cancel()
-        self.progress_timer = Timer(20.0, self.in_progress_message)
+        self.progress_timer = Timer(self.timer_interval,
+                                    self.in_progress_message)
         self.progress_timer.start()
 
     def playbook_on_vars_prompt(self, varname, private=True, prompt=None,
