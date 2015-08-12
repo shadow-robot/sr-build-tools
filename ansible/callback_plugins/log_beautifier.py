@@ -76,6 +76,7 @@ class CallbackModule(object):
 
     def playbook_on_task_start(self, name, is_conditional):
         self.progress_timer.cancel()
+        self.progress_timer = Timer(20.0, self.in_progress_message)
         self.progress_timer.start()
 
     def playbook_on_vars_prompt(self, varname, private=True, prompt=None,
