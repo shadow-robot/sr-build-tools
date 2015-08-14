@@ -1,10 +1,6 @@
 ---
 # Playbook for build dependencies check
 
-- name: check if project_sources_path variable was set
-  fail: msg="Variable project_sources_path was not set"
-  when: project_sources_path is not defined
-
 - name: Read all packages paths in workspace
   shell: find -type f -name package.xml -printf "%h\n" chdir={{ros_workspace}}
   register: workspace_package_paths_list
@@ -12,14 +8,6 @@
 - name: Set variable to workaround ansible type evaluation issue
   set_fact:
     workspace_package_paths_list_stdout_lines: "{{workspace_package_paths_list.stdout_lines}}"
-
-- name: Read all packages paths in the project
-  shell: find -type f -name package.xml -printf "%h\n" chdir={{project_sources_path}}
-  register: package_paths_list
-
-- name: Set variable to workaround ansible type evaluation issue
-  set_fact:
-    package_paths_list_stdout_lines: "{{package_paths_list.stdout_lines}}"
 
 - name: Set variable to ros installation include paths
   set_fact:
@@ -51,10 +39,10 @@
     - "{{ros_workspace}}/devel_isolated"
     - "{{ros_workspace}}/install_isolated"
 
-- name: catkin make each package in the project
+- name: catkin make each package in the workspace
   shell: bash -c "source /opt/ros/{{ros_release}}/setup.bash && catkin_make --pkg {{item|basename}} && rm -rf source {{ros_workspace}}/build && rm -rf {{ros_workspace}}/devel"
     chdir={{ros_workspace}}
-  with_items: "{{package_paths_list_stdout_lines|default([])}}"
+  with_items: "{{workspace_package_paths_list_stdout_lines|default([])}}"
   register: found_failed_package_dependencies
   ignore_errors: True
 
