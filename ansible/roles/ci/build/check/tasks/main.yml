@@ -51,13 +51,8 @@
     - "{{ros_workspace}}/devel_isolated"
     - "{{ros_workspace}}/install_isolated"
 
-- name: run build in order to get devel folder with setup.bash
-  shell: bash -c "source /opt/ros/{{ros_release}}/setup.bash && catkin_make non_existing_target"
-    chdir={{ros_workspace}}
-  ignore_errors: True
-
 - name: catkin make each package in the project
-  shell: bash -c "rm -rf source {{ros_workspace}}/build && rm -rf {{ros_workspace}}/devel/include && source /opt/ros/{{ros_release}}/setup.bash && source {{ros_workspace}}/devel/setup.bash && catkin_make --pkg {{item|basename}}"
+  shell: bash -c "source /opt/ros/{{ros_release}}/setup.bash && catkin_make --pkg {{item|basename}} && rm -rf source {{ros_workspace}}/build && rm -rf {{ros_workspace}}/devel"
     chdir={{ros_workspace}}
   with_items: "{{package_paths_list_stdout_lines|default([])}}"
   register: found_failed_package_dependencies

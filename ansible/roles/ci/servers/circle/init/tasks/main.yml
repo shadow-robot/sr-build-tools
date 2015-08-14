@@ -25,13 +25,13 @@
   set_fact:
     upgrade_all_packages: no
 
-- name: Set dependencies_file
-  set_fact:
-    dependencies_file: "{{ros_workspace}}{{circle_repo_dir}}/project.rosinstall"
-
 - name: Set project source code path
   set_fact:
-    project_sources_path: "{{ros_workspace}}{{circle_repo_dir}}"
+    project_sources_path: "{{ros_workspace}}/src/{{circle_repo_dir}}"
+
+- name: Set dependencies_file
+  set_fact:
+    dependencies_file: "{{project_sources_path}}/project.rosinstall"
 
 - name: Remove source directory in case of caching
   shell: bash -c "rm -rf {{project_sources_path}}"
