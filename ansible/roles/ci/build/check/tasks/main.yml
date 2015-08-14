@@ -59,7 +59,7 @@
 #  shell: rm -rf "{{ros_installation_include_path_backup}}"
 #  ignore_errors: True
 
-- debug: var=found_failed_package_dependencies
+#- debug: var=found_failed_package_dependencies
 
 - name: Set variable to workaround ansible type evaluation issue
   set_fact:
@@ -68,7 +68,15 @@
 - name: List failed commands and errors
   command: echo "Command \n {{item.cmd}} \n Errors \n  {{item.stderr}}"
   with_items: "{{found_failed_package_dependencies_results|default([])}}"
-  when: item|failed
+#  when: item|failed
+  register: minimized_failures
+  no_log: True
+
+#- name: Set variable to workaround ansible type evaluation issue
+#  set_fact:
+#    workspace_package_paths_list_stdout_lines: "{{minimized_failures.stdout_lines}}"
+
+- debug: var=minimized_failures
 
 - name: Fail in case of errors
   fail: msg="There are some errors in the packages dependencies"
