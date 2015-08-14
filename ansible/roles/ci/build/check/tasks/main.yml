@@ -64,6 +64,7 @@
 - name: Set variable to workaround ansible type evaluation issue
   set_fact:
     found_failed_package_dependencies_results: "{{found_failed_package_dependencies.results}}"
+  no_log: True
 
 - name: Temporary file name
   set_fact:
