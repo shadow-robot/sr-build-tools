@@ -4,11 +4,12 @@ See README.md
 """
 
 import ansible.callbacks
+import ansible.constants
 from threading import Lock
 from threading import Timer
 
 ansible.callbacks.display_lock = Lock()
-
+ansible.constants.DEFAULT_LOG_PATH = "ansible_log.log"
 
 def dummy_display(msg, color=None, stderr=False, screen_only=False,
                   log_only=False, runner=None):

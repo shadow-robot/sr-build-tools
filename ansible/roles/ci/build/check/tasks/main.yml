@@ -5,9 +5,13 @@
   shell: find -type f -name package.xml -printf "%h\n" chdir={{ros_workspace}}
   register: workspace_package_paths_list
 
-- name: Set variable to workaround ansible type evaluation issue
+#- name: Set variable to workaround ansible type evaluation issue
+#  set_fact:
+#    workspace_package_paths_list_stdout_lines: "{{workspace_package_paths_list.stdout_lines}}"
+
+- name: DEBUG !!!
   set_fact:
-    workspace_package_paths_list_stdout_lines: "{{workspace_package_paths_list.stdout_lines}}"
+    workspace_package_paths_list_stdout_lines: ["./src/host/workspaces/ros/test/cob_collision_velocity_filter"]
 
 - name: Set variable to ros installation include paths
   set_fact:
@@ -45,6 +49,7 @@
   with_items: "{{workspace_package_paths_list_stdout_lines|default([])}}"
   register: found_failed_package_dependencies
   ignore_errors: True
+  no_log: True
 
 - name: Revert backuped headers
   shell: mv {{ros_installation_include_path_backup}}/* {{ros_installation_include_path}}
@@ -54,7 +59,12 @@
 #  shell: rm -rf "{{ros_installation_include_path_backup}}"
 #  ignore_errors: True
 
-- debug: var=found_failed_package_dependencies
+#- debug: var=found_failed_package_dependencies
+
+- name: List failed commands and errors
+  command: echo "Command executed: \n {{item.cmd}} \n Errors \n  {{item.stderr}}"
+  with_items: "{{found_failed_package_dependencies|default([])}}"
+  when: item|failed
 
 - name: Fail in case of errors
   fail: msg="There are some errors in the packages dependencies"
