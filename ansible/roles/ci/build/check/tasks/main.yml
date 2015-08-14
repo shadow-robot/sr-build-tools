@@ -66,17 +66,21 @@
     found_failed_package_dependencies_results: "{{found_failed_package_dependencies.results}}"
 
 - name: List failed commands and errors
-  command: echo "Command \n {{item.cmd}} \n Errors \n  {{item.stderr}}"
+  command: echo "In package {{item.item|basename}} following errors {{item.stderr}}"
   with_items: "{{found_failed_package_dependencies_results|default([])}}"
 #  when: item|failed
   register: minimized_failures
   no_log: True
 
-#- name: Set variable to workaround ansible type evaluation issue
-#  set_fact:
-#    workspace_package_paths_list_stdout_lines: "{{minimized_failures.stdout_lines}}"
+- name: Set variable to workaround ansible type evaluation issue
+  set_fact:
+    minimized_failures_results: "{{minimized_failures.results}}"
 
-- debug: var=minimized_failures
+#- debug: var=minimized_failures
+
+- name: Print errors
+  command: echo "{{item.stdout}}"
+  with_items: "{{minimized_failures_results|default([])}}"
 
 - name: Fail in case of errors
   fail: msg="There are some errors in the packages dependencies"
