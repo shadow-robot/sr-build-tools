@@ -59,11 +59,11 @@
 #  shell: rm -rf "{{ros_installation_include_path_backup}}"
 #  ignore_errors: True
 
-#- debug: var=found_failed_package_dependencies
+- debug: var=found_failed_package_dependencies
 
 - name: List failed commands and errors
   command: echo "Command \n {{item.cmd}} \n Errors \n  {{item.stderr}}"
-  with_items: "{{found_failed_package_dependencies|default([])}}"
+  with_items: "{{found_failed_package_dependencies.items|default([])}}"
   when: item|failed
 
 - name: Fail in case of errors
