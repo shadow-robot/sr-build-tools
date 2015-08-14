@@ -50,9 +50,11 @@
   shell: mv {{ros_installation_include_path_backup}}/* {{ros_installation_include_path}}
   ignore_errors: True
 
-- name: Remove backup directory if exists
-  shell: rm -rf "{{ros_installation_include_path_backup}}"
-  ignore_errors: True
+#- name: Remove backup directory if exists
+#  shell: rm -rf "{{ros_installation_include_path_backup}}"
+#  ignore_errors: True
+
+- debug: var=found_failed_package_dependencies
 
 - name: Fail in case of errors
   fail: msg="There are some errors in the packages dependencies"
