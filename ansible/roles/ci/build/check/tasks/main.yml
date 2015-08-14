@@ -65,22 +65,21 @@
   set_fact:
     found_failed_package_dependencies_results: "{{found_failed_package_dependencies.results}}"
 
-- name: List failed commands and errors
-  command: echo "In package {{item.item|basename}} following errors {{item.stderr}}"
+- name: Temporary file name
+  set_fact:
+    errors_file_name: "{{ros_workspace}}/check_build_errors.txt"
+
+- name: Create empty file or clean existing one
+  shell: bash -c "cat /dev/null > {{errors_file_name}}"
+
+- name: Write to temporary file failed commands and errors
+  shell: bash -c "echo -e 'In package {{item.item|basename}} following errors \n {{item.stderr}}' >> {{errors_file_name}}"
   with_items: "{{found_failed_package_dependencies_results|default([])}}"
 #  when: item|failed
-  register: minimized_failures
   no_log: True
 
-- name: Set variable to workaround ansible type evaluation issue
-  set_fact:
-    minimized_failures_results: "{{minimized_failures.results}}"
-
-#- debug: var=minimized_failures
-
-- name: Print errors
-  command: echo "{{item.stdout}}"
-  with_items: "{{minimized_failures_results|default([])}}"
+- name: List errors of the builds
+  shell: bash -c "cat {{errors_file_name}}"
 
 - name: Fail in case of errors
   fail: msg="There are some errors in the packages dependencies"
