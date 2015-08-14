@@ -61,9 +61,13 @@
 
 - debug: var=found_failed_package_dependencies
 
+- name: Set variable to workaround ansible type evaluation issue
+  set_fact:
+    found_failed_package_dependencies_results: "{{found_failed_package_dependencies.results}}"
+
 - name: List failed commands and errors
   command: echo "Command \n {{item.cmd}} \n Errors \n  {{item.stderr}}"
-  with_items: "{{found_failed_package_dependencies.items|default([])}}"
+  with_items: "{{found_failed_package_dependencies_results|default([])}}"
   when: item|failed
 
 - name: Fail in case of errors
