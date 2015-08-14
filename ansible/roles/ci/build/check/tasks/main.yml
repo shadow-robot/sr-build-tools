@@ -29,6 +29,9 @@
   with_items: "{{workspace_package_paths_list_stdout_lines|default([])}}"
   ignore_errors: True
 
+- name: Fail in case of errors
+  fail: msg="Debug failure"
+
 - name: catkin clean workspace directories
   file: path={{item}} state=absent
   with_items:
