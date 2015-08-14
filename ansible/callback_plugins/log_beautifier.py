@@ -17,7 +17,7 @@ ansible.constants.DEFAULT_LOG_PATH = "ansible_log.log"
 logging.basicConfig(filename=ansible.constants.DEFAULT_LOG_PATH, level=logging.DEBUG, format='%(asctime)s %(name)s %(message)s')
 mypid = str(os.getpid())
 user = getpass.getuser()
-ansible.constants.logger = logging.getLogger("p=%s u=%s | " % (mypid, user))
+ansible.callbacks.logger = logging.getLogger("p=%s u=%s | " % (mypid, user))
 
 def dummy_display(msg, color=None, stderr=False, screen_only=False,
                   log_only=False, runner=None):
