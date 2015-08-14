@@ -62,7 +62,7 @@
 #- debug: var=found_failed_package_dependencies
 
 - name: List failed commands and errors
-  command: echo "Command executed: \n {{item.cmd}} \n Errors \n  {{item.stderr}}"
+  command: echo "Command \n {{item.cmd}} \n Errors \n  {{item.stderr}}"
   with_items: "{{found_failed_package_dependencies|default([])}}"
   when: item|failed
 
