@@ -53,6 +53,7 @@
 
 - name: run build in order to get devel folder with setup.bash
   shell: bash -c "source /opt/ros/{{ros_release}}/setup.bash && catkin_make non_existing_target"
+    chdir={{ros_workspace}}
   ignore_errors: True
 
 - name: catkin make each package in the project
