@@ -71,7 +71,7 @@
   shell: bash -c "echo -e 'In package {{item.item|basename}} following errors \n {{item.stderr}}' >> {{errors_file_name}}"
   with_items: "{{found_failed_package_dependencies_results|default([])}}"
   when: item|failed
-  no_log: True
+#  no_log: True
 
 - name: List errors of the builds
   shell: bash -c "cat {{errors_file_name}}"
