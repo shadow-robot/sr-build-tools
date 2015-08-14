@@ -52,7 +52,7 @@
     - "{{ros_workspace}}/install_isolated"
 
 - name: catkin make each package in the project
-  shell: bash -c "source /opt/ros/{{ros_release}}/setup.bash && catkin_make --pkg {{item|basename}} && rm -rf source {{ros_workspace}}/build && rm -rf {{ros_workspace}}/devel"
+  shell: bash -c "source /opt/ros/{{ros_release}}/setup.bash && catkin_make --pkg {{item|basename}}1 && rm -rf source {{ros_workspace}}/build && rm -rf {{ros_workspace}}/devel"
     chdir={{ros_workspace}}
   with_items: "{{package_paths_list_stdout_lines|default([])}}"
   register: found_failed_package_dependencies
@@ -66,8 +66,6 @@
   shell: rm -rf "{{ros_installation_include_path_backup}}"
   ignore_errors: True
 
-- debug: var=found_failed_package_dependencies
-
 - name: Fail in case of errors
   fail: msg="There are some errors in the packages dependencies"
-  when: found_failed_package_dependencies.failed
+  when: found_failed_package_dependencies|failed
