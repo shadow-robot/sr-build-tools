@@ -1,13 +1,13 @@
 ---
 # Playbook for build dependencies check
 
-- name: Read all packages paths in workspace
-  shell: find -type f -name package.xml -printf "%h\n" chdir={{ros_workspace}}
-  register: workspace_package_paths_list
+- name: Read all packages in workspace
+  shell: find -type f -name package.xml -exec cat {} \; | grep -e '<name>' | sed -e 's,.*<name>\([^<]*\)</name>.*,\1,g' chdir={{ros_workspace}}
+  register: workspace_package_list
 
 - name: Set variable to workaround ansible type evaluation issue
   set_fact:
-    workspace_package_paths_list_stdout_lines: "{{workspace_package_paths_list.stdout_lines}}"
+    workspace_package_list_stdout_lines: "{{workspace_package_list.stdout_lines}}"
 
 - name: Set variable to ros installation include paths
   set_fact:
@@ -25,8 +25,8 @@
   file: state=directory path={{ros_installation_include_path_backup}}
 
 - name: Move all headers for workspace packages to backup
-  shell: mv {{ros_installation_include_path}}/{{item|basename}} {{ros_installation_include_path_backup}}
-  with_items: "{{workspace_package_paths_list_stdout_lines|default([])}}"
+  shell: mv {{ros_installation_include_path}}/{{item}} {{ros_installation_include_path_backup}}
+  with_items: "{{workspace_package_list_stdout_lines|default([])}}"
   ignore_errors: True
 
 - name: catkin clean workspace directories
@@ -47,9 +47,9 @@
   shell: bash -c "cat /dev/null > {{errors_file_name}}"
 
 - name: catkin make each package in the workspace
-  shell: bash -c "source /opt/ros/{{ros_release}}/setup.bash && echo 'Package {{item|basename}} ' >> {{errors_file_name}} &&  catkin_make --pkg {{item|basename}} 2>> {{errors_file_name}} && rm -rf source {{ros_workspace}}/build && rm -rf {{ros_workspace}}/devel"
+  shell: bash -c "source /opt/ros/{{ros_release}}/setup.bash && echo 'Package {{item}} ' >> {{errors_file_name}} &&  catkin_make --pkg {{item}} 2>> {{errors_file_name}} && rm -rf source {{ros_workspace}}/build && rm -rf {{ros_workspace}}/devel"
     chdir={{ros_workspace}}
-  with_items: "{{workspace_package_paths_list_stdout_lines|default([])}}"
+  with_items: "{{workspace_package_list_stdout_lines|default([])}}"
   register: found_failed_package_dependencies
   ignore_errors: True
   no_log: True
