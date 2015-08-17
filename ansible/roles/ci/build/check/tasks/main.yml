@@ -5,9 +5,13 @@
   shell: find -type f -name package.xml -printf "%h\n" chdir={{ros_workspace}}
   register: workspace_package_paths_list
 
-- name: Set variable to workaround ansible type evaluation issue
+#- name: Set variable to workaround ansible type evaluation issue
+#  set_fact:
+#    workspace_package_paths_list_stdout_lines: "{{workspace_package_paths_list.stdout_lines}}"
+
+- name: DEBUG !!!
   set_fact:
-    workspace_package_paths_list_stdout_lines: "{{workspace_package_paths_list.stdout_lines}}"
+    workspace_package_paths_list_stdout_lines: ["./src/host/workspaces/ros/test/cob_collision_velocity_filter"]
 
 - name: Set variable to ros installation include paths
   set_fact:
@@ -39,8 +43,15 @@
     - "{{ros_workspace}}/devel_isolated"
     - "{{ros_workspace}}/install_isolated"
 
+- name: Temporary file name
+  set_fact:
+    errors_file_name: "{{ros_workspace}}/check_build_errors.txt"
+
+- name: Create empty file or clean existing one
+  shell: bash -c "cat /dev/null > {{errors_file_name}}"
+
 - name: catkin make each package in the workspace
-  shell: bash -c "source /opt/ros/{{ros_release}}/setup.bash && catkin_make --pkg {{item|basename}} && rm -rf source {{ros_workspace}}/build && rm -rf {{ros_workspace}}/devel"
+  shell: bash -c "source /opt/ros/{{ros_release}}/setup.bash && echo 'Package {{item|basename}} ' >> {{errors_file_name}} &&  catkin_make --pkg {{item|basename}} 2>> {{errors_file_name}} && rm -rf source {{ros_workspace}}/build && rm -rf {{ros_workspace}}/devel"
     chdir={{ros_workspace}}
   with_items: "{{workspace_package_paths_list_stdout_lines|default([])}}"
   register: found_failed_package_dependencies
@@ -54,24 +65,6 @@
 - name: Remove backup directory if exists
   shell: rm -rf "{{ros_installation_include_path_backup}}"
   ignore_errors: True
-
-- name: Set variable to workaround ansible type evaluation issue
-  set_fact:
-    found_failed_package_dependencies_results: "{{found_failed_package_dependencies.results}}"
-  no_log: True
-
-- name: Temporary file name
-  set_fact:
-    errors_file_name: "{{ros_workspace}}/check_build_errors.txt"
-
-- name: Create empty file or clean existing one
-  shell: bash -c "cat /dev/null > {{errors_file_name}}"
-
-- name: Write to temporary file failed commands and errors
-  shell: bash -c "echo -e 'In package {{item.item|basename}} following errors \n {{item.stderr}}' >> {{errors_file_name}}"
-  with_items: "{{found_failed_package_dependencies_results|default([])}}"
-  when: item|failed
-#  no_log: True
 
 - name: List errors of the builds
   shell: bash -c "cat {{errors_file_name}}"
