@@ -68,6 +68,7 @@
 
 - name: List errors of the builds
   shell: bash -c "cat {{errors_file_name}}"
+  when: found_failed_package_dependencies|failed
 
 - name: Fail in case of errors
   fail: msg="There are some errors in the packages dependencies"
