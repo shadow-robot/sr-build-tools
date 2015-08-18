@@ -49,7 +49,7 @@
 
 - hosts: hand-prod
   vars:
-    ros_release: 'hydro'
+    ros_release: 'indigo'
     ros_user: 'hand'
     ros_user_comment: 'Shadow Hand'
     ros_user_password: 'hand'
