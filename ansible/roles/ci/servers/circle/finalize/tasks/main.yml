@@ -11,4 +11,4 @@
   ignore_errors: yes
 
 - name: Fail in case if unit tests failing
-  shell: bash -c "! grep -R '<failure' {{test_results_dir}}"
+  shell: bash -c "! grep -E -R '<failure|<error' {{test_results_dir}}"
