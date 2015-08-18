@@ -6,5 +6,5 @@
   when: code_coverage_results_dir is not defined
 
 - name: Run gcovr
-  shell: bash -c "gcovr -r {{ros_workspace}} --xml-pretty > {{code_coverage_results_dir}}/coverage.xml"
+  shell: bash -c "gcovr -r {{ros_workspace}} --xml-pretty > {{code_coverage_results_dir}}/coverage.cpp.xml"
     chdir={{code_coverage_results_dir}}
