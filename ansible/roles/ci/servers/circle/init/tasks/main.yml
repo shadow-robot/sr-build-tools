@@ -42,6 +42,9 @@
 - name: Copy source directory from host machine
   shell: bash -c "cp -r {{circle_repo_dir}}/* {{project_sources_path}}"
 
+- name: Debug !!!
+  shell: bash -c "ls -al {{project_sources_path}}"
+
 - name: Set is_pull_request
   set_fact:
     is_pull_request: "{{ circle_is_pull_request is defined and circle_is_pull_request != '' }}"
