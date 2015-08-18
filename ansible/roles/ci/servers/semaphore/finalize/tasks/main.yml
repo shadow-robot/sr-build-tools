@@ -5,10 +5,6 @@
   fail: msg="Variable test_results_dir was not set by CI server"
   when: test_results_dir is not defined
 
-- name: check if code_coverage_results_dir variable was set by build server
-  fail: msg="Variable code_coverage_results_dir was not set by CI server"
-  when: code_coverage_results_dir is not defined
-
 # Ignore errors to prevent failure in case of empty tests folder
 - name: Move unit tests results
   shell: bash -c "mv -vt {{test_results_dir}} {{ros_workspace}}/build/test_results/*"

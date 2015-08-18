@@ -5,6 +5,14 @@
   fail: msg="Variable local_repo_dir was not set by CI server"
   when: local_repo_dir is not defined
 
+- name: check if local_test_dir variable was set by build server
+  fail: msg="Variable local_test_dir was not set by CI server"
+  when: local_test_dir is not defined
+
+- name: check if local_code_coverage_dir variable was set by build server
+  fail: msg="Variable local_code_coverage_dir was not set by CI server"
+  when: local_code_coverage_dir is not defined
+
 - name: Set ros_workspace
   set_fact:
     ros_workspace: "{{ansible_env.HOME}}/workspace"
@@ -36,11 +44,14 @@
 
 - name: Set test_results_dir
   set_fact:
-    test_results_dir: "{{ros_workspace}}/build/test_results"
+    test_results_dir: "{{local_test_dir}}"
 
 - name: Set code_coverage_results_dir
   set_fact:
-    code_coverage_results_dir: "{{ros_workspace}}/code_coverage"
+    code_coverage_results_dir: "{{local_code_coverage_dir}}"
+
+- name: Create tests directory
+  file: state=directory path={{test_results_dir}}
 
 - name: Clean tests results directory in case of failure during cache build
   shell: bash -c "rm -rf {{test_results_dir}}/*"
