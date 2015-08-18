@@ -7,7 +7,7 @@ export tags_list=$3
 export docker_image=${docker_image_name:-"andriyp/ubuntu-ros-indigo-build-tools"}
 
 # Do not install all libraries for circle and local run because we are using docker container directly
-if  [ "circle" != $server_type ] && [ "local" != $server_type ]; then
+if  [ "circle" != $server_type ] && [ "semaphore_docker" != $server_type ] && [ "local" != $server_type ]; then
 
   export build_tools_folder="$HOME/sr-build-tools"
 
