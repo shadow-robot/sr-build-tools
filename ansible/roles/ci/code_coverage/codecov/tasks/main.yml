@@ -10,6 +10,6 @@
   when: code_coverage_results_dir is not defined
 
 - name: Send data to codecov
-  shell: bash -c "cd {{project_sources_path}} && bash <(curl -s https://codecov.io/bash) -v -f {{code_coverage_results_dir}}/coverage.*.xml"
+  shell: bash -c "cd {{project_sources_path}} && bash <(curl -s https://codecov.io/bash) -f {{code_coverage_results_dir}}/coverage.cpp.xml -f {{code_coverage_results_dir}}/coverage.python.xml"
   environment:
         CODECOV_TOKEN: "{{codecov_secure}}"
