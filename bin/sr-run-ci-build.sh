@@ -37,16 +37,20 @@ case $server_type in
 
 "semaphore") echo "Semaphore server"
   mkdir -p ~/workspace/src
-  export project_dir_name=$(basename $SEMAPHORE_PROJECT_DIR)
-  mv $SEMAPHORE_PROJECT_DIR ~/workspace/src
-  export new_project_dir=~/workspace/src/$project_dir_name
   sudo apt-get remove mongodb-* -y
   sudo apt-get remove rabbitmq-* -y
   sudo apt-get remove redis-* -y
   sudo apt-get remove mysql-* -y
   sudo apt-get remove cassandra-* -y
-  export extra_variables="semaphore_repo_dir=$new_project_dir  semaphore_is_pull_request=$PULL_REQUEST_NUMBER codecov_secure=$CODECOV_TOKEN"
+  export extra_variables="semaphore_repo_dir=$SEMAPHORE_PROJECT_DIR  semaphore_is_pull_request=$PULL_REQUEST_NUMBER codecov_secure=$CODECOV_TOKEN"
   sudo PYTHONUNBUFFERED=1 ansible-playbook -v -i "localhost," -c local docker_site.yml --tags "semaphore,$tags_list" -e "$extra_variables"
+  ;;
+
+"semaphore_docker") echo "Semaphore server with Docker support"
+
+  sudo docker pull $docker_image
+  export extra_variables="semaphore_repo_dir=/host$SEMAPHORE_PROJECT_DIR semaphore_is_pull_request=$PULL_REQUEST_NUMBER codecov_secure=$CODECOV_TOKEN"
+  sudo docker run -w "/root/sr-build-tools/ansible" -v /:/host:rw $docker_image  bash -c "git pull && git checkout $toolset_branch && sudo PYTHONUNBUFFERED=1 ansible-playbook -v -i \"localhost,\" -c local docker_site.yml --tags \"semaphore,$tags_list\" -e \"$extra_variables\" "
   ;;
 
 "circle") echo "Circle CI server"
@@ -77,7 +81,7 @@ case $server_type in
     export coverage_tests_dir="/host"coverage_tests_result_dir
   fi
   docker pull $docker_image
-  export extra_variables="local_repo_dir=/host$local_repo_dir local_test_dir=$unit_tests_dir local_code_coverage_dir=$coverage_tests_dir"
+  export extra_variables="local_repo_dir=/host$local_repo_dir local_test_dir=$unit_tests_dir local_code_coverage_dir=$coverage_tests_dir codecov_secure=$CODECOV_TOKEN"
   # Removing previous instance of container
   docker rm -f $container_name || true
   docker run -w "$image_home/sr-build-tools/ansible" --name $container_name  -v $HOME:/host:rw $docker_image  bash -c "export HOME=$image_home && git pull && git checkout $toolset_branch && sudo PYTHONUNBUFFERED=1 ansible-playbook -v -i \"localhost,\" -c local docker_site.yml --tags \"local,$tags_list\" -e \"$extra_variables\" "
