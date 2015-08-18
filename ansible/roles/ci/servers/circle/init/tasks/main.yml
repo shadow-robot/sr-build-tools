@@ -40,10 +40,7 @@
   file: state=directory path={{project_sources_path}}
 
 - name: Copy source directory from host machine
-  shell: bash -c "cp -r {{circle_repo_dir}}/* {{project_sources_path}}"
-
-- name: Debug !!!
-  shell: bash -c "ls -al {{project_sources_path}}"
+  shell: bash -c "shopt -s dotglob && cp -r {{circle_repo_dir}}/* {{project_sources_path}}"
 
 - name: Set is_pull_request
   set_fact:
