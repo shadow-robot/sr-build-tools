@@ -10,19 +10,19 @@ from threading import Timer
 ansible.callbacks.display_lock = Lock()
 
 
-# def dummy_display(msg, color=None, stderr=False, screen_only=False,
-#                   log_only=False, runner=None):
-#     with ansible.callbacks.display_lock:
-#         modified_message = msg.encode('utf-8').decode('unicode_escape')
-#         ansible.callbacks.original_display(modified_message, color=color,
-#                                            stderr=stderr,
-#                                            screen_only=screen_only,
-#                                            log_only=log_only, runner=runner)
-#
-# # Monkey patch to turn off default callback logging
-# if not hasattr(ansible.callbacks, 'original_display'):
-#     ansible.callbacks.original_display = ansible.callbacks.display
-# ansible.callbacks.display = dummy_display
+def dummy_display(msg, color=None, stderr=False, screen_only=False,
+                  log_only=False, runner=None):
+    with ansible.callbacks.display_lock:
+        modified_message = msg.encode('utf-8').decode('unicode_escape')
+        ansible.callbacks.original_display(modified_message, color=color,
+                                           stderr=stderr,
+                                           screen_only=screen_only,
+                                           log_only=log_only, runner=runner)
+
+# Monkey patch to turn off default callback logging
+if not hasattr(ansible.callbacks, 'original_display'):
+    ansible.callbacks.original_display = ansible.callbacks.display
+ansible.callbacks.display = dummy_display
 
 
 class CallbackModule(object):
@@ -106,4 +106,3 @@ class CallbackModule(object):
 
     def playbook_on_stats(self, stats):
         self.progress_timer.cancel()
-
