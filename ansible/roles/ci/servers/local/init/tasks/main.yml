@@ -1,13 +1,17 @@
 ---
-# Playbook for Semaphore CI init specific code
+# Playbook for Local CI init specific code
 
-- name: check if semaphore_repo_dir variable was set by build server
-  fail: msg="Variable semaphore_repo_dir was not set by CI server"
-  when: semaphore_repo_dir is not defined
+- name: check if local_repo_dir variable was set by build server
+  fail: msg="Variable local_repo_dir was not set by CI server"
+  when: local_repo_dir is not defined
 
-- name: check if semaphore_is_pull_request variable was set by build server
-  fail: msg="Variable semaphore_is_pull_request was not set by CI server"
-  when: semaphore_is_pull_request is not defined
+- name: check if local_test_dir variable was set by build server
+  fail: msg="Variable local_test_dir was not set by CI server"
+  when: local_test_dir is not defined
+
+- name: check if local_code_coverage_dir variable was set by build server
+  fail: msg="Variable local_code_coverage_dir was not set by CI server"
+  when: local_code_coverage_dir is not defined
 
 - name: Set ros_workspace
   set_fact:
@@ -19,7 +23,7 @@
 
 - name: Set project source code path
   set_fact:
-    project_sources_path: "{{ros_workspace}}/src/{{semaphore_repo_dir}}"
+    project_sources_path: "{{ros_workspace}}/src/{{local_repo_dir}}"
 
 - name: Set dependencies_file
   set_fact:
@@ -32,19 +36,19 @@
   file: state=directory path={{project_sources_path}}
 
 - name: Copy source directory from host machine
-  shell: bash -c "shopt -s dotglob && mv {{semaphore_repo_dir}}/* {{project_sources_path}}"
+  shell: bash -c "shopt -s dotglob && cp -r {{local_repo_dir}}/* {{project_sources_path}}"
 
 - name: Set is_pull_request
   set_fact:
-    is_pull_request: "{{ semaphore_is_pull_request is defined and semaphore_is_pull_request != 'false' }}"
+    is_pull_request: "no"
 
 - name: Set test_results_dir
   set_fact:
-    test_results_dir: "{{ros_workspace}}/testresults"
+    test_results_dir: "{{local_test_dir}}"
 
 - name: Set code_coverage_results_dir
   set_fact:
-    code_coverage_results_dir: "{{ros_workspace}}/codecoverage"
+    code_coverage_results_dir: "{{local_code_coverage_dir}}"
 
 - name: Create tests directory
   file: state=directory path={{test_results_dir}}

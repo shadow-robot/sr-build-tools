@@ -9,13 +9,15 @@
     - {role: ci/servers/semaphore/init, tags: ["semaphore"]}
     - {role: ci/servers/circle/init, tags: ["circle"]}
     - {role: ci/servers/docker_hub/init, tags: ["docker_hub"]}
+    - {role: ci/servers/local/init, tags: ["local"]}
     - {role: ci/build/pr_only, tags: ["build_pr_only"]}
     - {role: ci/init/check_cache, when: run_build, tags: ["check_cache"]}
     - {role: ci/init/install, when: run_install, tags: ["install"]}
     - {role: ci/init/create_workspace, when: run_install, tags: ["create_workspace"]}
     - {role: ci/update_dependencies, when: run_build, tags: ["update_dependencies", "build", "unit_tests",
                                                              "code_coverage", "codecov_tool", "python_code_coverage",
-                                                             "cpp_code_coverage", "check_deb"]}
+                                                             "cpp_code_coverage", "check_deb", "check_build"]}
+    - {role: ci/build/check, when: run_build, tags: ["check_build"]}
     - {role: ci/build/catkin, when: run_build, tags: ["build", "unit_tests", "code_coverage", "codecov_tool",
                                                       "python_code_coverage", "cpp_code_coverage"]}
     - {role: ci/code_coverage/python/setup, when: run_build, tags: ["python_code_coverage", "code_coverage", "codecov_tool"]}
