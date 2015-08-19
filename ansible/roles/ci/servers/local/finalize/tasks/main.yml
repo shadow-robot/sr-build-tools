@@ -1,5 +1,5 @@
 ---
-# Playbook for Semaphore CI specific code
+# Playbook for local server specific code
 
 - name: check if test_results_dir variable was set by build server
   fail: msg="Variable test_results_dir was not set by CI server"
@@ -9,6 +9,3 @@
 - name: Move unit tests results
   shell: bash -c "mv -vt {{test_results_dir}} {{ros_workspace}}/build/test_results/*"
   ignore_errors: yes
-
-- name: Fail in case if unit tests failing
-  shell: bash -c "! grep -E -R '<failure|<error' {{test_results_dir}}"

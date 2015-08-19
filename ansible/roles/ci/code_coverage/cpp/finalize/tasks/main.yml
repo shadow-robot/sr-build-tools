@@ -1,6 +1,10 @@
 ---
 # Playbook for finalizing the cpp code coverage module
 
+- name: check if code_coverage_results_dir variable was set by build server
+  fail: msg="Variable code_coverage_results_dir was not set by CI server"
+  when: code_coverage_results_dir is not defined
+
 - name: Run gcovr
-  shell: bash -c "gcovr -r {{ros_workspace}} --xml-pretty > {{code_coverage_results_dir}}/coverage.xml"
+  shell: bash -c "gcovr -r {{ros_workspace}} --xml-pretty > {{code_coverage_results_dir}}/coverage.cpp.xml"
     chdir={{code_coverage_results_dir}}
