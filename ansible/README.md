@@ -5,13 +5,6 @@ Ansible roles for installing generic ROS things as well as specific Shadow proje
 Also contains the playbook (vagrant_site.yaml) used for provisioning the Vagrant virtual machines.
 
 ## Setting up a production machine
-Here are the steps to setup a new production machine:
- - Install Ubuntu Trusty 64 bits. Create a user named **administrator**.
- - Install ansible and git: `sudo apt-get install -y ansible git`
- - Get sr-build-tools: `git clone https://github.com/shadow-robot/sr-build-tools`
- - Edit `/etc/ansible/hosts` and add the lines: 
-```
-[hand-prod]
-localhost ansible_connection=local
-```
- - Run the playbook to install everything: `ansible-playbook -v -K sr-build-tools/ansible/vagrant_site.yml`
+To install a new machine, follow those steps:
+ - Run a standard ubuntu 14.04 installation, creating a user **administration**
+ - The run the following command: `source <(curl -s https://raw.githubusercontent.com/shadow-robot/sr-build-tools/indigo-devel/bin/setup_production_machine)`
