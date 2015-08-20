@@ -6,7 +6,7 @@ Also contains the playbook (vagrant_site.yaml) used for provisioning the Vagrant
 
 ## Setting up a production machine
 Here are the steps to setup a new production machine:
- - Install Ubuntu Trusty 64 bits. Create a user named admin.
+ - Install Ubuntu Trusty 64 bits. Create a user named **administrator**.
  - Install ansible and git: `sudo apt-get install -y ansible git`
  - Get sr-build-tools: `git clone https://github.com/shadow-robot/sr-build-tools`
  - Edit `/etc/ansible/hosts` and add the lines: 
