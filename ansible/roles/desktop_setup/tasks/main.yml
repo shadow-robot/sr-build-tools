@@ -1,0 +1,24 @@
+---
+
+- name: Install pycurl
+  apt: name={{item}}
+  with_items:
+    - python-pycurl
+
+- name: Add PyCharm ppa
+  apt_repository: repo='ppa:mystic-mirage/pycharm'
+
+- name: Update package lists
+  apt: update_cache=yes
+
+- name: Install programming tools
+  apt: name={{item}}
+  with_items:
+    - pycharm-community
+
+- name: Set workspace for pycharm icon
+  lineinfile: dest=/usr/share/applications/pycharm-community.desktop regexp=^Exec= line="Exec=bash -i -c \"pycharm-community\" %F"
+
+- name: Set favorite icons
+  shell: dbus-launch --exit-with-session gsettings set com.canonical.Unity.Launcher favorites "['application://ubiquity.desktop', 'application://pycharm-community.desktop', 'application://terminator.desktop', 'application://nautilus.desktop', 'application://firefox.desktop', 'unity://running-apps', 'unity://expo-icon', 'unity://devices']"
+  sudo_user: "{{ros_user}}"

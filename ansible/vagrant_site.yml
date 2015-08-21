@@ -49,18 +49,20 @@
 
 - hosts: hand-prod
   vars:
-    ros_release: 'hydro'
+    ros_release: 'indigo'
     ros_user: 'hand'
     ros_user_comment: 'Shadow Hand'
-    ros_user_password: 'hand'
+    ros_user_password: 'shadow'
     ros_user_email: 'software@shadowrobot.com'
-    ros_user_home_files: files/home/hand_prod/
+    ros_user_home_files: "files/home/hand_prod/"
+    ros_user_background: "files/images/ShadowRobot.jpg"
     ros_workspace_install: "../data/shadow_robot-{{ros_release}}.rosinstall"
   sudo: yes
   roles:
   - ros_install
   - ros_user
   - ros_workspace
+  - desktop_setup
 
 - hosts: hand
   vars:
