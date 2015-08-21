@@ -8,26 +8,43 @@ from threading import Lock
 from threading import Timer
 
 ansible.callbacks.display_lock = Lock()
-ansible.callbacks.previous_message = ""
 
 
 def dummy_display(msg, color=None, stderr=False, screen_only=False,
                   log_only=False, runner=None):
+
     with ansible.callbacks.display_lock:
+
+        if not hasattr(dummy_display, "previous_msg"):
+            dummy_display.previous_msg = ""
+            dummy_display.previous_color = None
+            dummy_display.previous_stderr = False
+            dummy_display.previous_screen_only = False
+            dummy_display.previous_log_only = False
+            dummy_display.previous_runner = None
+
         modified_message = msg.encode('utf-8').decode('unicode_escape')
 
-        if (ansible.callbacks.previous_message.startswith("stderr: ") and
+        if (dummy_display.previous_msg.startswith("stderr: ") and
                 msg.startswith("stdout: ")):
             ansible.callbacks.original_display(
                 modified_message,
                 color=color, stderr=stderr, screen_only=screen_only,
                 log_only=log_only, runner=runner)
+            dummy_display.previous_msg = ("\n vvvvvvvvvvvvvvvvvvvvvvvvvvvvvv" +
+                                         dummy_display.previous_msg)
         else:
             ansible.callbacks.original_display(
-                ansible.callbacks.previous_message,
-                color=color, stderr=stderr, screen_only=screen_only,
-                log_only=log_only, runner=runner)
-            ansible.callbacks.previous_message = modified_message
+                dummy_display.previous_msg, dummy_display.previous_color,
+                dummy_display.previous_stderr,
+                dummy_display.previous_screen_only,
+                dummy_display.previous_log_only, dummy_display.previous_runner)
+            dummy_display.previous_msg = modified_message
+            dummy_display.previous_color = None
+            dummy_display.previous_stderr = False
+            dummy_display.previous_screen_only = False
+            dummy_display.previous_log_only = False
+            dummy_display.previous_runner = None
 
 
 # Monkey patch to turn off default callback logging
