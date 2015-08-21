@@ -1,5 +1,10 @@
 ---
 
+- name: Install pycurl
+  apt: name={{item}}
+  with_items:
+    - python-pycurl
+
 - name: Add PyCharm ppa
   apt_repository: repo='ppa:mystic-mirage/pycharm'
 
