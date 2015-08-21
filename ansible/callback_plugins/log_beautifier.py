@@ -40,11 +40,11 @@ def dummy_display(msg, color=None, stderr=False, screen_only=False,
                 dummy_display.previous_screen_only,
                 dummy_display.previous_log_only, dummy_display.previous_runner)
             dummy_display.previous_msg = modified_message
-            dummy_display.previous_color = None
-            dummy_display.previous_stderr = False
-            dummy_display.previous_screen_only = False
-            dummy_display.previous_log_only = False
-            dummy_display.previous_runner = None
+            dummy_display.previous_color = color
+            dummy_display.previous_stderr = stderr
+            dummy_display.previous_screen_only = screen_only
+            dummy_display.previous_log_only = log_only
+            dummy_display.previous_runner = runner
 
 
 # Monkey patch to turn off default callback logging
