@@ -1,9 +1,7 @@
 ---
 
 - name: Install pycurl
-  apt: name={{item}}
-  with_items:
-    - python-pycurl
+  apt: name=python-pycurl state=present
 
 - name: Add PyCharm ppa
   apt_repository: repo='ppa:mystic-mirage/pycharm'
@@ -12,9 +10,7 @@
   apt: update_cache=yes
 
 - name: Install programming tools
-  apt: name={{item}}
-  with_items:
-    - pycharm-community
+  apt: name=pycharm-community state=present
 
 - name: Set workspace for pycharm icon
   lineinfile: dest=/usr/share/applications/pycharm-community.desktop regexp=^Exec= line="Exec=bash -i -c \"pycharm-community\" %F"
