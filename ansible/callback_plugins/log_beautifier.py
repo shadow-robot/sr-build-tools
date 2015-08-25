@@ -23,15 +23,13 @@ def dummy_display(msg, color=None, stderr=False, screen_only=False,
             dummy_display.previous_log_only = False
             dummy_display.previous_runner = None
 
-        modified_message = msg.encode('utf-8').decode('unicode_escape')
-
         if (dummy_display.previous_msg.startswith("stderr: ") and
                 msg.startswith("stdout: ")):
             ansible.callbacks.original_display(
-                modified_message,
+                msg,
                 color=color, stderr=stderr, screen_only=screen_only,
                 log_only=log_only, runner=runner)
-            dummy_display.previous_msg = ("\nvvvvvvvvvvvvvvvvvvvvvvvvvvv\n\n" +
+            dummy_display.previous_msg = ("\nvvvvvvvv  STDERR  vvvvvvvvv\n\n" +
                                          dummy_display.previous_msg)
         else:
             ansible.callbacks.original_display(
@@ -39,7 +37,7 @@ def dummy_display(msg, color=None, stderr=False, screen_only=False,
                 dummy_display.previous_stderr,
                 dummy_display.previous_screen_only,
                 dummy_display.previous_log_only, dummy_display.previous_runner)
-            dummy_display.previous_msg = modified_message
+            dummy_display.previous_msg = msg
             dummy_display.previous_color = color
             dummy_display.previous_stderr = stderr
             dummy_display.previous_screen_only = screen_only
