@@ -26,11 +26,10 @@ def dummy_display(msg, color=None, stderr=False, screen_only=False,
         if (dummy_display.previous_msg.startswith("stderr: ") and
                 msg.startswith("stdout: ")):
             ansible.callbacks.original_display(
-                msg,
-                color=color, stderr=stderr, screen_only=screen_only,
+                msg, color=color, stderr=stderr, screen_only=screen_only,
                 log_only=log_only, runner=runner)
             dummy_display.previous_msg = ("\nvvvvvvvv  STDERR  vvvvvvvvv\n\n" +
-                                         dummy_display.previous_msg)
+                                          dummy_display.previous_msg)
         else:
             ansible.callbacks.original_display(
                 dummy_display.previous_msg, dummy_display.previous_color,
