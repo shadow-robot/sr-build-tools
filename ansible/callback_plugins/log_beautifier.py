@@ -12,12 +12,40 @@ ansible.callbacks.display_lock = Lock()
 
 def dummy_display(msg, color=None, stderr=False, screen_only=False,
                   log_only=False, runner=None):
+
     with ansible.callbacks.display_lock:
-        modified_message = msg.encode('utf-8').decode('unicode_escape')
-        ansible.callbacks.original_display(modified_message, color=color,
-                                           stderr=stderr,
-                                           screen_only=screen_only,
-                                           log_only=log_only, runner=runner)
+
+        if not hasattr(dummy_display, "previous_msg"):
+            dummy_display.previous_msg = ""
+            dummy_display.previous_color = None
+            dummy_display.previous_stderr = False
+            dummy_display.previous_screen_only = False
+            dummy_display.previous_log_only = False
+            dummy_display.previous_runner = None
+
+        modified_message = msg.decode('string-escape')
+
+        if (dummy_display.previous_msg.startswith("stderr: ") and
+                msg.startswith("stdout: ")):
+            ansible.callbacks.original_display(
+                modified_message,
+                color=color, stderr=stderr, screen_only=screen_only,
+                log_only=log_only, runner=runner)
+            dummy_display.previous_msg = ("\nvvvvvvvv  STDERR  vvvvvvvvv\n\n" +
+                                          dummy_display.previous_msg)
+        else:
+            ansible.callbacks.original_display(
+                dummy_display.previous_msg, dummy_display.previous_color,
+                dummy_display.previous_stderr,
+                dummy_display.previous_screen_only,
+                dummy_display.previous_log_only, dummy_display.previous_runner)
+            dummy_display.previous_msg = modified_message
+            dummy_display.previous_color = color
+            dummy_display.previous_stderr = stderr
+            dummy_display.previous_screen_only = screen_only
+            dummy_display.previous_log_only = log_only
+            dummy_display.previous_runner = runner
+
 
 # Monkey patch to turn off default callback logging
 if not hasattr(ansible.callbacks, 'original_display'):
@@ -106,3 +134,6 @@ class CallbackModule(object):
 
     def playbook_on_stats(self, stats):
         self.progress_timer.cancel()
+
+        # Pushing last message to output if any in queue
+        ansible.callbacks.display("")
