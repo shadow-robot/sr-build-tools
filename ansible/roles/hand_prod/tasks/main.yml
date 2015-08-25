@@ -1,0 +1,9 @@
+---
+
+- name: Store config branch name
+
+- name: Check if the config branch exist
+
+- name: Checkout the proper branch if it exists
+
+- name: Create the proper branch if it does not exist
