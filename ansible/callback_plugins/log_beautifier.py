@@ -31,7 +31,7 @@ def dummy_display(msg, color=None, stderr=False, screen_only=False,
                 modified_message,
                 color=color, stderr=stderr, screen_only=screen_only,
                 log_only=log_only, runner=runner)
-            dummy_display.previous_msg = ("\n vvvvvvvvvvvvvvvvvvvvvvvvvvvvvv" +
+            dummy_display.previous_msg = ("\nvvvvvvvvvvvvvvvvvvvvvvvvvvv\n\n" +
                                          dummy_display.previous_msg)
         else:
             ansible.callbacks.original_display(
