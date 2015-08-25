@@ -1,0 +1,7 @@
+---
+
+- name: Checkout or create the config branch
+  shell: git checkout -B '{{ config_branch }}'
+         chdir={{ros_workspace}}/src/sr_config
+  sudo: yes
+  sudo_user: "{{ros_user}}"

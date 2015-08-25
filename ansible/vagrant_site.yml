@@ -59,10 +59,7 @@
     ros_workspace_install: "../data/shadow_robot-{{ros_release}}.rosinstall"
   sudo: yes
   roles:
-  - ros_install
-  - ros_user
-  - ros_workspace
-  - desktop_setup
+  - hand_prod
 
 - hosts: hand
   vars:
