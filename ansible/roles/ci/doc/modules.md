@@ -1,0 +1,17 @@
+# Build Tools Modules
+
+## List of modules
+
+  * **build_pr_only** - skip build after commit if it is not PR 
+  * **check_cache** - checks if special folder is present on the file system and omit installation and workspace creation if it is.
+  * **install** - installs ROS Indigo and extra packages
+  * **create_workspace** - create workspace folder ~/workspace and setup catkin
+  * **update_dependencies** - runs apt-get upgrade and update as well as update of the packages installed from source code
+  * **build** - build project using catkin_make.
+  * **unit_tests** - run unit tests and place results in special folder if defined by CI server (e.g. artifacts for Circle CI)
+  * **check_build** - long running module. Compile independently each package in the project cleaning devel and build folder beforehand and check if all dependencies are declared in CMakeList.txt correctly.
+  * **code_style_check** - run [roslint](http://wiki.ros.org/roslint) to check C++ and Python code in all packages of the project.
+  * **check_deb** - generate Debian package files using bloom and try to install them. Check if installation is working correctly.
+  * **python_code_coverage** - generate code coverage for Python code
+  * **cpp_code_coverage** - generate code coverage for C++ code
+  * **codecov_tool** - post Python and C++ code coverage results to [CodeCov](https://codecov.io)
