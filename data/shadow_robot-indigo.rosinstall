@@ -1,78 +1,54 @@
 - git:
-    uri: 'https://github.com/shadow-robot/sr-config.git'
+    uri: 'https://github.com/shadow-robot/sr-config'
     version: 'indigo-devel'
     local-name: sr_config
 
 - git:
-    uri: 'https://github.com/shadow-robot/sr-ros-interface.git'
+    uri: 'https://github.com/shadow-robot/sr-ros-interface'
     version: 'indigo-devel'
     local-name: shadow_robot
 
 - git:
-    uri: 'https://github.com/shadow-robot/sr_common.git'
+    uri: 'https://github.com/shadow-robot/sr_common'
     version: 'indigo-devel'
     local-name: sr_common
 
 - git:
-    uri: 'https://github.com/shadow-robot/sr_core.git'
+    uri: 'https://github.com/shadow-robot/sr_core'
     version: 'indigo-devel'
     local-name: sr_core
 
 - git:
-    uri: 'https://github.com/shadow-robot/sr_interface.git'
+    uri: 'https://github.com/shadow-robot/sr_interface'
     version: 'indigo-devel'
     local-name: sr_interface
 
 - git:
-    uri: 'https://github.com/shadow-robot/sr_tools.git'
+    uri: 'https://github.com/shadow-robot/sr_tools'
     version: 'indigo-devel'
     local-name: sr_tools
 
 - git:
-    uri: 'https://github.com/shadow-robot/sr-ros-interface-ethercat.git'
+    uri: 'https://github.com/shadow-robot/sr-ros-interface-ethercat'
     version: 'indigo-devel'
     local-name: shadow_robot_ethercat
 
 - git:
-    uri: 'https://github.com/shadow-robot/sr-visualization.git'
+    uri: 'https://github.com/shadow-robot/sr-visualization'
     version: 'indigo-devel'
     local-name: sr_visualization
 
 - git:
-    uri: 'https://github.com/shadow-robot/ros_ethercat.git'
+    uri: 'https://github.com/shadow-robot/ros_ethercat'
     version: 'indigo-devel'
     local-name: ros_ethercat
 
 - git:
-    uri: 'https://github.com/shadow-robot/ethercat_grant.git'
+    uri: 'https://github.com/shadow-robot/ethercat_grant'
     version: 'indigo-devel'
     local-name: ethercat_grant
 
-# - git:
-#     local-name: sr_contrib
-#     uri: 'https://github.com/shadow-robot/sr-contrib.git'
-#     version: 'indigo-devel'
-
 - git:
     local-name: sr_teleop
-    uri: 'https://github.com/shadow-robot/sr-teleop.git'
+    uri: 'https://github.com/shadow-robot/sr-teleop'
     version: 'hydro-devel'
-
-- git:
-    local-name: cereal_port
-    uri: 'https://github.com/ozymandium/cereal-port.git'
-
-- git:
-    local-name: universal_robot
-    uri: 'https://github.com/shadow-robot/universal_robot.git'
-    version: F_sr_plugin_compatible
-
-- git:
-    local-name: lma_kinematics_plugin
-    uri: 'https://github.com/shadow-robot/lma_kinematics_plugin'
-    version: F_ik_with_joint_limits
-
-- git:
-    local-name: sr_ur_arm
-    uri: 'https://github.com/shadow-robot/sr_ur_arm.git'
-    version: indigo-devel

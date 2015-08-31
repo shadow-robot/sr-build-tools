@@ -1,4 +1,0 @@
-- bzr:
-    #uri: 'lp:~shadowrobot/sr-visualization/new_gui'
-    uri: 'bzr+ssh://bzr@minaton/sr-visualization/new_gui'
-    local-name: sr_visualization
