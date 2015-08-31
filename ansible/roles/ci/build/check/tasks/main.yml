@@ -67,5 +67,5 @@
   ignore_errors: True
 
 - name: List errors of the builds
-  shell: bash -c "! cat {{errors_file_name}} 1>&2"
+  shell: bash -c "cat {{errors_file_name}} 1>&2 && false"
   when: found_failed_package_dependencies|failed
