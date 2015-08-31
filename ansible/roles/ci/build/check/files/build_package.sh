@@ -5,14 +5,14 @@ export ros_workspace=$2
 export package_name=$3
 export errors_file_name=$4
 
-source /opt/ros/{{ros_release}}/setup.bash
-rm -rf {{ros_workspace}}/build
-rm -rf {{ros_workspace}}/devel
+source /opt/ros/$ros_release/setup.bash
+rm -rf $ros_workspace/build
+rm -rf $ros_workspace/devel
 
 cd $ros_workspace
 
 export packages_errors_file=$ros_workspace/packages_errors_file.txt
-printf '\nPackage {{item}}\n\nvvvvvvvvvvvvvvvv\n\n' > $packages_errors_file
+printf "\nPackage $package_name\n\nvvvvvvvvvvvvvvvv\n\n" > $packages_errors_file
 
 catkin_make --pkg $package_name 2>> $packages_errors_file
 
