@@ -17,10 +17,6 @@
   set_fact:
     upgrade_all_packages: no
 
-- name: Set dependencies_file
-  set_fact:
-    dependencies_file: "{{shippable_repo_dir}}/project.rosinstall"
-
 - name: Set project source code path
   set_fact:
     project_sources_path: "{{shippable_repo_dir}}"

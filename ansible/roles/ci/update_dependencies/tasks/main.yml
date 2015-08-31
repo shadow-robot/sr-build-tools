@@ -1,6 +1,10 @@
 ---
 # Playbook for workspace creation
 
+- name: Set dependencies_file
+  set_fact:
+    dependencies_file: "{{project_sources_path}}/repository.rosinstall"
+
 - name: Update package lists
   apt: update_cache=yes
   when: upgrade_all_packages

@@ -21,10 +21,6 @@
   set_fact:
     project_sources_path: "{{ros_workspace}}/src/{{semaphore_repo_dir}}"
 
-- name: Set dependencies_file
-  set_fact:
-    dependencies_file: "{{project_sources_path}}/project.rosinstall"
-
 - name: Remove source directory in case of caching
   shell: bash -c "rm -rf {{project_sources_path}}"
 
