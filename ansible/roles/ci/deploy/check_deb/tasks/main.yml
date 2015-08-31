@@ -72,5 +72,6 @@
 
 - name: Uninstall all packages
   shell: bash -c "sudo dpkg --purge {{item}}"
+  ignore_errors: True
   with_items:
     - "{{installed_packages_names_stdout_lines|default([])}}"
