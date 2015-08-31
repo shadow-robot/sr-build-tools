@@ -43,11 +43,15 @@
   set_fact:
     errors_file_name: "{{ros_workspace}}/check_build_errors.txt"
 
+- name: Package error temporary file name
+  set_fact:
+    package_errors_file_name: "{{ros_workspace}}/package_build_errors.txt"
+
 - name: Create empty file or clean existing one
   shell: bash -c "cat /dev/null > {{errors_file_name}}"
 
 - name: catkin make each package in the workspace
-  shell: bash -c "source /opt/ros/{{ros_release}}/setup.bash && echo 'Package {{item}} ' >> {{errors_file_name}} &&  catkin_make --pkg {{item}} 2>> {{errors_file_name}} && rm -rf source {{ros_workspace}}/build && rm -rf {{ros_workspace}}/devel"
+  shell: bash -c "source /opt/ros/{{ros_release}}/setup.bash &&  rm -rf source {{ros_workspace}}/build && rm -rf {{ros_workspace}}/devel && printf '\nPackage {{item}}\n\nvvvvvvvvvvvvvvvv\n\n' > {{package_errors_file_name}} &&  ! catkin_make --pkg {{item}} 2>> {{package_errors_file_name}} && cat {{package_errors_file_name}} > {{errors_file_name}} "
     chdir={{ros_workspace}}
   with_items: "{{workspace_package_list_stdout_lines|default([])}}"
   register: found_failed_package_dependencies
@@ -63,9 +67,5 @@
   ignore_errors: True
 
 - name: List errors of the builds
-  shell: bash -c "cat {{errors_file_name}}"
-  when: found_failed_package_dependencies|failed
-
-- name: Fail in case of errors
-  fail: msg="There are some errors in the packages dependencies"
+  shell: bash -c "! cat {{errors_file_name}} 1>&2"
   when: found_failed_package_dependencies|failed
