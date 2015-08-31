@@ -1,31 +1,5 @@
 ---
 
-- name: Pull source dependencies
-  shell: bash -c "for INSTALL in `find . -name \"project.rosinstall\"`; do wstool merge -y ${INSTALL} ; done"
-         chdir={{ros_workspace}}
-  sudo: yes
-
-- name: Workspace update
-  command: wstool up chdir={{ros_workspace}}/src --delete-changed-uris
-  # Run as root to allow forward keys for github access
-  sudo: yes
-
-- name: Fix perms (As we installed code as root, fix the perms.)
-  file: path={{ros_workspace}} recurse=yes owner={{ros_user}} group=ros
-
-- name: Install dependancies
-  shell: bash -c "source {{ros_workspace}}/devel/setup.bash && rosdep install --default-yes --all --ignore-src"
-         chdir={{ros_workspace}}
-  sudo: yes
-  sudo_user: "{{ros_user}}"
-
-# Now build the code we just installed.
-- name: catkin_make
-  shell: bash -c "source {{ros_workspace}}/devel/setup.bash && catkin_make"
-    chdir={{ros_workspace}}
-  sudo: yes
-  sudo_user: "{{ros_user}}"
-
 - name: Install pycurl
   apt: name=python-pycurl state=present
 
