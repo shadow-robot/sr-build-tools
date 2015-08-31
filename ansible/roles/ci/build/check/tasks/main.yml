@@ -51,7 +51,7 @@
   shell: bash -c "cat /dev/null > {{errors_file_name}}"
 
 - name: catkin make each package in the workspace
-  shell: bash -c "source /opt/ros/{{ros_release}}/setup.bash &&  rm -rf source {{ros_workspace}}/build && rm -rf {{ros_workspace}}/devel && printf '\nPackage {{item}}\n\nvvvvvvvvvvvvvvvv\n\n' > {{package_errors_file_name}} &&  ! catkin_make --pkg {{item}} 2>> {{package_errors_file_name}} && cat {{package_errors_file_name}} > {{errors_file_name}} "
+  shell: bash -c "source /opt/ros/{{ros_release}}/setup.bash &&  rm -rf source {{ros_workspace}}/build && rm -rf {{ros_workspace}}/devel && printf '\nPackage {{item}}\n\nvvvvvvvvvvvvvvvv\n\n' > {{package_errors_file_name}} &&  ! catkin_make --pkg {{item}} 2>> {{package_errors_file_name}} && cat {{package_errors_file_name}} >> {{errors_file_name}} "
     chdir={{ros_workspace}}
   with_items: "{{workspace_package_list_stdout_lines|default([])}}"
   register: found_failed_package_dependencies
