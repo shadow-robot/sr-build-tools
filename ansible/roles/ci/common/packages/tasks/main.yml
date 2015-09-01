@@ -1,0 +1,26 @@
+---
+# Playbook for build dependencies check
+
+- name: check if ros_workspace variable was set
+  fail: msg="Variable ros_workspace was not set"
+  when: ros_workspace is not defined
+
+- name: check if repo_sources_path variable was set
+  fail: msg="Variable repo_sources_path was not set"
+  when: repo_sources_path is not defined
+
+- name: Read all packages in workspace
+  script: ../files/package_list.sh {{ros_workspace}}
+  register: workspace_packages_list_temp
+
+- name: Set variable to workaround ansible type evaluation issue
+  set_fact:
+    workspace_packages_list: "{{workspace_packages_list_temp.stdout | from_json}}"
+
+- name: Read all packages in repository
+  script: ../files/package_list.sh {{repo_sources_path}}
+  register: repo_packages_list_temp
+
+- name: Set variable to workaround ansible type evaluation issue
+  set_fact:
+    repo_packages_list: "{{repo_packages_list_temp.stdout | from_json}}"
