@@ -24,7 +24,7 @@
     package_paths_and_h_cpp_files_results: "{{package_paths_and_h_cpp_files.results}}"
 
 - name: Execute roslint for every package and write results in unit tests format
-  shell: bash -c "source /opt/ros/{{ros_release}}/setup.bash && rosrun roslint test_wrapper {{ros_workspace}}/build/test_results/{{item.item|basename}}/roslint-h-cpp-{{item.item|basename}}.xml 'rosrun roslint cpplint {{item.stdout}}' "
+  shell: bash -c "source /opt/ros/{{ros_release}}/setup.bash && rosrun roslint test_wrapper {{ros_workspace}}/build/test_results/{{item.item|basename}}/roslint-h-cpp-{{item.item|basename}}.xml 'rosrun roslint cpplint --filter=-runtime/references  {{item.stdout}}' "
     chdir={{repo_sources_path}}/{{item.item}}
   with_items: "{{package_paths_and_h_cpp_files_results|default([])}}"
   when: item.stdout != ""
@@ -41,7 +41,7 @@
     package_paths_and_hpp_files_results: "{{package_paths_and_hpp_files.results}}"
 
 - name: Execute roslint for every package and write results in unit tests format. In order to skip hpp files extension validation using stdin feed to checker.
-  shell: bash -c 'source /opt/ros/{{ros_release}}/setup.bash && rosrun roslint test_wrapper {{ros_workspace}}/build/test_results/{{item.0.item|basename}}/roslint-hpp-{{item.1|basename}}.xml "eval cat {{item.1}} | rosrun roslint cpplint -" '
+  shell: bash -c 'source /opt/ros/{{ros_release}}/setup.bash && rosrun roslint test_wrapper {{ros_workspace}}/build/test_results/{{item.0.item|basename}}/roslint-hpp-{{item.1|basename}}.xml "eval cat {{item.1}} | rosrun roslint cpplint --filter=-runtime/references -" '
     chdir={{repo_sources_path}}/{{item.0.item}}
   with_subelements:
      - "{{package_paths_and_hpp_files_results|default([])}}"
