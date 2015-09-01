@@ -51,7 +51,7 @@
   with_items: "{{workspace_package_list_stdout_lines|default([])}}"
   register: found_failed_package_dependencies
   ignore_errors: True
-#  no_log: True
+  no_log: True
 
 - name: Revert backuped headers
   shell: mv {{ros_installation_include_path_backup}}/* {{ros_installation_include_path}}

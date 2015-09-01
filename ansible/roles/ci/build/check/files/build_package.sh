@@ -7,7 +7,6 @@ export errors_file_name=$4
 
 source /opt/ros/$ros_release/setup.bash
 
-echo "Executing delete for $ros_workspace/build and $ros_workspace/devel"
 rm -rf $ros_workspace/build
 rm -rf $ros_workspace/devel
 
