@@ -3,7 +3,7 @@
 
 - name: Set dependencies_file
   set_fact:
-    dependencies_file: "{{project_sources_path}}/repository.rosinstall"
+    dependencies_file: "{{repo_sources_path}}/repository.rosinstall"
 
 - name: Update package lists
   apt: update_cache=yes
@@ -36,12 +36,12 @@
   stat: path={{dependencies_file}}
   register: dependencies_file_exists
 
-- name: Add more dependencies to project
+- name: Add more dependencies to repository
   command: wstool merge -a -y {{dependencies_file}}
     chdir={{ros_workspace}}/src
   when: dependencies_file_exists.stat.exists
 
-- name: Update dependencies to project
+- name: Update dependencies to repository
   command: wstool update --delete-changed-uris
     chdir={{ros_workspace}}/src
 

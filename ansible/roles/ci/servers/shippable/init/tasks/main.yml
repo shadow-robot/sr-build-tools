@@ -17,9 +17,9 @@
   set_fact:
     upgrade_all_packages: no
 
-- name: Set project source code path
+- name: Set repository source code path
   set_fact:
-    project_sources_path: "{{shippable_repo_dir}}"
+    repo_sources_path: "{{shippable_repo_dir}}"
 
 - name: Set is_pull_request
   set_fact:

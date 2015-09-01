@@ -17,18 +17,18 @@
   set_fact:
     upgrade_all_packages: no
 
-- name: Set project source code path
+- name: Set repository source code path
   set_fact:
-    project_sources_path: "{{ros_workspace}}/src/{{semaphore_repo_dir}}"
+    repo_sources_path: "{{ros_workspace}}/src/{{semaphore_repo_dir}}"
 
 - name: Remove source directory in case of caching
-  shell: bash -c "rm -rf {{project_sources_path}}"
+  shell: bash -c "rm -rf {{repo_sources_path}}"
 
 - name: Create directory again
-  file: state=directory path={{project_sources_path}}
+  file: state=directory path={{repo_sources_path}}
 
 - name: Copy source directory from host machine
-  shell: bash -c "shopt -s dotglob && mv {{semaphore_repo_dir}}/* {{project_sources_path}}"
+  shell: bash -c "shopt -s dotglob && mv {{semaphore_repo_dir}}/* {{repo_sources_path}}"
 
 - name: Set is_pull_request
   set_fact:
