@@ -15,6 +15,9 @@ if  [ "circle" != $server_type ] && [ "semaphore_docker" != $server_type ] && [ 
   sudo apt-get install python-dev libxml2-dev libxslt-dev python-pip lcov wget git -y
   sudo pip install ansible gcovr
 
+  git config --global user.email "build.tools@example.com"
+  git config --global user.name "Build Tools"
+
   # Check in case of cached file system
   if [ -d $build_tools_folder ]; then
     # Cached
