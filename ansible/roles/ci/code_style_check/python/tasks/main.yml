@@ -17,9 +17,11 @@
   with_items: "{{repo_packages_list|default([])}}"
   register: python_files_without_extension
 
+- debug: var=python_files_without_extension
+
 - name: Set variable to workaround ansible type evaluation issue
   set_fact:
-    python_files_without_extension_results: "{{python_files_without_extension.results }}"
+    python_files_without_extension_results: "{{python_files_without_extension.results}}"
 
 - name: Execute roslint for every package and .py files and write results in unit tests format
   shell: bash -c "source /opt/ros/{{ros_release}}/setup.bash && rosrun roslint test_wrapper {{ros_workspace}}/build/test_results/{{item.item.name}}/roslint-python-py-{{item.item.name}}.xml 'rosrun roslint pep8 --max-line-length=120 {{item.stdout}}' "
