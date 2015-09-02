@@ -10,7 +10,7 @@
   when: repo_sources_path is not defined
 
 - name: Read all packages in workspace
-  script: ../files/package_list.sh {{ros_workspace}}
+  script: ../files/packages_list_with_path.sh {{ros_workspace}}
   register: workspace_packages_list_temp
 
 - name: Set variable to workaround ansible type evaluation issue
@@ -18,17 +18,25 @@
     workspace_packages_list: "{{workspace_packages_list_temp.stdout | from_json}}"
 
 - name: Read all packages in repository
-  script: ../files/package_list.sh {{repo_sources_path}}
+  script: ../files/packages_list_with_path.sh {{repo_sources_path}}
   register: repo_packages_list_temp
 
 - name: Set variable to workaround ansible type evaluation issue
   set_fact:
     repo_packages_list: "{{repo_packages_list_temp.stdout | from_json}}"
 
-- name: Read all non repository packages
-  script: ../files/not_repo_package_list.sh {{ros_workspace}} {{repo_sources_path}}
-  register: non_repo_packages_temp
+- name: Read all packages names in workspace
+  script: ../files/packages_list.sh {{ros_workspace}}
+  register: workspace_packages_names_temp
 
 - name: Set variable to workaround ansible type evaluation issue
   set_fact:
-     non_repo_packages : "{{non_repo_packages_temp.stdout}}"
+    workspace_packages_names: "{{workspace_packages_names_temp.stdout | from_json}}"
+
+- name: Read all packages names in repository
+  script: ../files/packages_list.sh {{repo_sources_path}}
+  register: repo_packages_names_temp
+
+- name: Set variable to workaround ansible type evaluation issue
+  set_fact:
+    repo_packages_names: "{{repo_packages_names_temp.stdout | from_json}}"

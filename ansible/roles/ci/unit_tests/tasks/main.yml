@@ -5,6 +5,10 @@
   fail: msg="Variable code_coverage_options was not set"
   when: code_coverage_options is not defined
 
+- name: Set non-repository packages using lists substraction
+  set_fact:
+     non_repo_packages : "{{workspace_packages_names|difference(repo_packages_names)|join(';')}}"
+
 - name: catkin run tests
   shell: bash -c 'source {{ros_workspace}}/devel/setup.bash && catkin_make run_tests -DCATKIN_BLACKLIST_PACKAGES="{{ non_repo_packages }}" '
     chdir={{ros_workspace}}
