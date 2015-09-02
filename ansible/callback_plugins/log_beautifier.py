@@ -23,7 +23,10 @@ def dummy_display(msg, color=None, stderr=False, screen_only=False,
             dummy_display.previous_log_only = False
             dummy_display.previous_runner = None
 
-        modified_message = msg.decode('string-escape')
+        try:
+            modified_message = msg.decode('string-escape')
+        except UnicodeDecodeError:
+            modified_message = msg.encode('utf-8').decode('unicode_escape')
 
         if (dummy_display.previous_msg.startswith("stderr: ") and
                 msg.startswith("stdout: ")):

@@ -1,22 +1,10 @@
 ---
 # Playbook for Python code style check
 
-- name: check if project_sources_path variable was set
-  fail: msg="Variable project_sources_path was not set"
-  when: project_sources_path is not defined
-
-- name: Read all packages paths in project
-  shell: find -type f -name package.xml -printf "%h\n" chdir={{project_sources_path}}
-  register: package_paths_list
-
-- name: Set variable to workaround ansible type evaluation issue
-  set_fact:
-    package_paths_list_stdout_lines: "{{package_paths_list.stdout_lines}}"
-
 - name: Find Python files by extension in each package
   shell: find -type f -name "*.py" -printf "%p "
-    chdir={{project_sources_path}}/{{item}}
-  with_items: "{{package_paths_list_stdout_lines|default([])}}"
+    chdir={{repo_sources_path}}/{{item.path}}
+  with_items: "{{repo_packages_list|default([])}}"
   register: python_files_with_extension
 
 - name: Set variable to workaround ansible type evaluation issue
@@ -25,8 +13,8 @@
 
 - name: Find Python files by shebang in each package
   shell: grep -R -P '^#!/usr/bin/env python' -l --exclude=*.* | xargs
-    chdir={{project_sources_path}}/{{item}}
-  with_items: "{{package_paths_list_stdout_lines|default([])}}"
+    chdir={{repo_sources_path}}/{{item.path}}
+  with_items: "{{repo_packages_list|default([])}}"
   register: python_files_without_extension
 
 - name: Set variable to workaround ansible type evaluation issue
@@ -34,15 +22,15 @@
     python_files_without_extension_results: "{{python_files_without_extension.results }}"
 
 - name: Execute roslint for every package and .py files and write results in unit tests format
-  shell: bash -c "source /opt/ros/{{ros_release}}/setup.bash && rosrun roslint test_wrapper {{ros_workspace}}/build/test_results/{{item.item|basename}}/roslint-python-py-{{item.item|basename}}.xml 'rosrun roslint pep8 --max-line-length=120 {{item.stdout}}' "
-    chdir={{project_sources_path}}/{{item.item}}
+  shell: bash -c "source /opt/ros/{{ros_release}}/setup.bash && rosrun roslint test_wrapper {{ros_workspace}}/build/test_results/{{item.item.name}}/roslint-python-py-{{item.item.name}}.xml 'rosrun roslint pep8 --max-line-length=120 {{item.stdout}}' "
+    chdir={{repo_sources_path}}/{{item.item.path}}
   with_items: "{{python_files_with_extension_results|default([])}}"
   when: item.stdout != ""
   ignore_errors: True
 
 - name: Execute roslint for every package and no extension files and write results in unit tests format
-  shell: bash -c "source /opt/ros/{{ros_release}}/setup.bash && rosrun roslint test_wrapper {{ros_workspace}}/build/test_results/{{item.item|basename}}/roslint-python-ex-{{item.item|basename}}.xml 'rosrun roslint pep8 --max-line-length=120 {{item.stdout}}' "
-    chdir={{project_sources_path}}/{{item.item}}
+  shell: bash -c "source /opt/ros/{{ros_release}}/setup.bash && rosrun roslint test_wrapper {{ros_workspace}}/build/test_results/{{item.item.name}}/roslint-python-ex-{{item.item.name}}.xml 'rosrun roslint pep8 --max-line-length=120 {{item.stdout}}' "
+    chdir={{repo_sources_path}}/{{item.item.path}}
   with_items: "{{python_files_without_extension_results|default([])}}"
   when: item.stdout != ""
   ignore_errors: True
