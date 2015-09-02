@@ -24,3 +24,11 @@
 - name: Set variable to workaround ansible type evaluation issue
   set_fact:
     repo_packages_list: "{{repo_packages_list_temp.stdout | from_json}}"
+
+- name: Read all non repository packages
+  script: ../files/not_repo_package_list.sh {{ros_workspace}} {{repo_sources_path}}
+  register: non_repo_packages_temp
+
+- name: Set variable to workaround ansible type evaluation issue
+  set_fact:
+     non_repo_packages : "{{non_repo_packages_temp.stdout}}"

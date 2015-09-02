@@ -1,25 +1,9 @@
 ---
 # Playbook for unit tests
 
-- name: check if repo_sources_path variable was set
-  fail: msg="Variable repo_sources_path was not set"
-  when: repo_sources_path is not defined
-
 - name: check if code_coverage_options variable was set
   fail: msg="Variable code_coverage_options was not set"
   when: code_coverage_options is not defined
-
-- name: Read all packages names in workspace
-  shell: find -type f -name package.xml -printf "%h\n" | xargs basename -a chdir={{ros_workspace}}
-  register: workspace_packages_list
-
-- name: Read all packages names in repository
-  shell: find -type f -name package.xml -printf "%h\n" | xargs basename -a chdir={{repo_sources_path}}
-  register: repo_packages_list
-
-- name: Set non-repository packages using lists substraction
-  set_fact:
-     non_repo_packages : "{{workspace_packages_list.stdout_lines|difference(repo_packages_list.stdout_lines)|join(';')}}"
 
 - name: catkin run tests
   shell: bash -c 'source {{ros_workspace}}/devel/setup.bash && catkin_make run_tests -DCATKIN_BLACKLIST_PACKAGES="{{ non_repo_packages }}" '
