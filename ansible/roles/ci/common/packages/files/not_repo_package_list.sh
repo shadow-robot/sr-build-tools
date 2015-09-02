@@ -31,4 +31,4 @@ do
     fi
 done
 
-echo "$result"
+echo "$result" | tr -d "\n"
