@@ -1,3 +1,0 @@
----
-dependencies:
-  - { role: ci/common/packages }

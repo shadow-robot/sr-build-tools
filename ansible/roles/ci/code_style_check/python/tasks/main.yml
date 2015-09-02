@@ -17,8 +17,6 @@
   with_items: "{{repo_packages_list|default([])}}"
   register: python_files_without_extension
 
-- debug: var=python_files_without_extension
-
 - name: Set variable to workaround ansible type evaluation issue
   set_fact:
     python_files_without_extension_results: "{{python_files_without_extension.results}}"
