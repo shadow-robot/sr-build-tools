@@ -1,6 +1,6 @@
 # How does it work
 
-The build tools was created to run on the Docker based CI servers.
+The build tools was created to run on the [Docker](https://www.docker.com/) based CI servers.
 The Docker image for all build is one hosted on [Docker Hub](https://hub.docker.com/r/shadowrobot/ubuntu-ros-indigo-build-tools)
 
 The build script is loading Ubuntu 14.04 Docker image with pre-installed ROS Indigo.
