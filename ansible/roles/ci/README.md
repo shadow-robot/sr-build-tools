@@ -5,7 +5,7 @@ In order to achieve this goal extra roles were developed for Ansible build tools
 
 For more details please read following information
 
-  * [ci/doc/how_does_it_work.md](how does it work)
-  * [ci/doc/modules.md](main modules) - Ansible roles for CI servers run.
-  * [ci/doc/best_practices.md](best practices) - recommended way of using tools
+  * [how does it work](ci/doc/how_does_it_work.md)
+  * [main modules](ci/doc/modules.md) - Ansible roles for CI servers run.
+  * [best practices](ci/doc/best_practices.md) - recommended way of using tools
 
