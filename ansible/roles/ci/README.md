@@ -8,4 +8,7 @@ For more details please read following information
   * [how does it work](doc/how_does_it_work.md)
   * [main modules](doc/modules.md) - Ansible roles for CI servers run.
   * [best practices](doc/best_practices.md) - recommended way of using tools
-
+  * Supported servers 
+    * [Shippable](doc/setup/shippable.md)
+    * [Circle](doc/setup/circle.md)
+    * [Semaphore](doc/setup/semaphore.md)
