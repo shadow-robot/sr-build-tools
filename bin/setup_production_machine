@@ -6,4 +6,4 @@ git clone https://github.com/shadow-robot/sr-build-tools
 sudo sh -c 'echo "[hand-prod]
 localhost ansible_connection=local" > /etc/ansible/hosts'
 
-ansible-playbook -v -K sr-build-tools/ansible/vagrant_site.yml
+ansible-playbook -v -K sr-build-tools/ansible/vagrant_site.yml --extra-vars "config_branch=$1"

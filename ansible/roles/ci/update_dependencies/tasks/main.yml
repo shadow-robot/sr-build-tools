@@ -1,6 +1,10 @@
 ---
 # Playbook for workspace creation
 
+- name: Set dependencies_file
+  set_fact:
+    dependencies_file: "{{repo_sources_path}}/repository.rosinstall"
+
 - name: Update package lists
   apt: update_cache=yes
   when: upgrade_all_packages
@@ -28,11 +32,16 @@
     chdir={{item}}
   with_items: "{{packages_to_update_by_wstool_stdout_lines|default([])}}"
 
-- name: Add more dependencies to project
+- name: Check if dependencies file exists
+  stat: path={{dependencies_file}}
+  register: dependencies_file_exists
+
+- name: Add more dependencies to repository
   command: wstool merge -a -y {{dependencies_file}}
     chdir={{ros_workspace}}/src
+  when: dependencies_file_exists.stat.exists
 
-- name: Update dependencies to project
+- name: Update dependencies to repository
   command: wstool update --delete-changed-uris
     chdir={{ros_workspace}}/src
 

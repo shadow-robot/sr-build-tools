@@ -4,7 +4,7 @@ export toolset_branch=$1
 export server_type=$2
 export tags_list=$3
 
-export docker_image=${docker_image_name:-"andriyp/ubuntu-ros-indigo-build-tools"}
+export docker_image=${docker_image_name:-"shadowrobot/ubuntu-ros-indigo-build-tools"}
 
 # Do not install all libraries for circle and local run because we are using docker container directly
 if  [ "circle" != $server_type ] && [ "semaphore_docker" != $server_type ] && [ "local" != $server_type ]; then
@@ -14,6 +14,9 @@ if  [ "circle" != $server_type ] && [ "semaphore_docker" != $server_type ] && [ 
   sudo apt-get update
   sudo apt-get install python-dev libxml2-dev libxslt-dev python-pip lcov wget git -y
   sudo pip install ansible gcovr
+
+  git config --global user.email "build.tools@example.com"
+  git config --global user.name "Build Tools"
 
   # Check in case of cached file system
   if [ -d $build_tools_folder ]; then
