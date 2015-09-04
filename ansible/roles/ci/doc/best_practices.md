@@ -22,7 +22,7 @@ Semaphore has scheduled build feature which can be used to run heavy repository 
 
 Open source repositories can be run free of charge on any of these server  
 
-## Run locally modules
+## Local server
 
 In case if you want to setup Docker based CI server on your local servers you can use as following
 
@@ -34,7 +34,7 @@ The following path */catkin_ws/src/build-servers-check/* is relative location of
 The absolute location is *$HOME/catkin_ws/src/build-servers-check/*
 The build tools will copy source code to Docker container file system and execute all modules on it.
 
-## Run locally modules
+## Developer's machine
 
 If you could not reproduce issues on the CI server locally you can use ability to run Docker based builds on your machine.
 
@@ -79,6 +79,12 @@ sudo PYTHONUNBUFFERED=1 ansible-playbook -v -i "localhost," -c local docker_site
 
 This command will execute build, unit_tests and code_coverage modules.
 Results of the operation will be written to local_test_dir and local_code_coverage_dir on Docker container.
+
+If you want to work with another repository is better to delete existing Docker container and create new one
+
+```bash
+sudo docker rm ros_ubuntu
+```
 
 ## Run code style check locally
 
