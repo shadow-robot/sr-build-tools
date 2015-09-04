@@ -26,4 +26,4 @@ bash -c "$(wget -O - $encoded_url)" -- "$toolset_branch" $server_type $used_modu
 ```
   * Variable **used_modules** contains list of the modules which can be used. It can be adjusted to any amount of the [modules needed](../modules.md). 
   * On "Project Setting" page on "Platform" tab select "Ubuntu ...  (beta with Docker support)"
-  * To use [CodeCov](https://codecov.io) tool you need to encrypt variable **CODECOV_TOKEN=\<UUID from CodeCov\>** and put it into "Environment Variables" tab on "Project Setting" page 
+  * To use [CodeCov](https://codecov.io) tool you need to encrypt variable **CODECOV_TOKEN** and put it into "Environment Variables" tab on "Project Setting" page 

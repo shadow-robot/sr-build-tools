@@ -19,7 +19,7 @@ The process of setting up [Shippable](https://wwww.shippable.com/) server
     * **Pull Image from** - *shadowrobot/ubuntu-ros-indigo-build-tools*
     * **Push Build** - *No*
     * **Cache Container** - *No*
-  * To use [CodeCov](https://codecov.io) tool you need to encrypt variable **CODECOV_TOKEN=\<UUID from CodeCov\>** and put it into *env* section of *shippable.yml*
+  * To use [CodeCov](https://codecov.io) tool you need to encrypt variable **CODECOV_TOKEN** and put it into *env* section of *shippable.yml*
   * You can use section *after_failure* from [build servers check](https://github.com/shadow-robot/build-servers-check) repository as example of Slack notification of the failed builds. 
     Encrypted variable **SLACK_WEB_HOOK_URL** need to be defined and put into *env* section.
    
