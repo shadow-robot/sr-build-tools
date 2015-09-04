@@ -82,5 +82,5 @@ Results of the operation will be written to local_test_dir and local_code_covera
 
 ## Run code style check locally
 
-Read description of command line utility [here](/bin)
+Read description of command line utility [here](/bin/README.md)
 
