@@ -14,6 +14,6 @@ curl https://raw.githubusercontent.com/shadow-robot/sr-build-tools/indigo-devel/
 
 ## Continous Integration servers 
 The extra roles were added to run builds and different checks of the project on the hosted servers.
-The main playbook for these tasks is (docker_site.yml).
+The main playbook for these tasks is [docker_site.yml](./docker_site.yml).
 
 More details can be found [here](roles/ci/doc/README.md)
