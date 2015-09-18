@@ -70,8 +70,8 @@
   sudo: yes
 
 - name: Pull source dependencies
-  shell: bash -c "for INSTALL in `find . -name \"project.rosinstall\"`; do wstool merge -y ${INSTALL} ; done"
-         chdir={{ros_workspace}}
+  shell: for INSTALL in `find . -name "repository.rosinstall"`; do wstool merge -y ${INSTALL} ; done
+         chdir={{ros_workspace}}/src
   sudo: yes
 
 - name: Workspace update
