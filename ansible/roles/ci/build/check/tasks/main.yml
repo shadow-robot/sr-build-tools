@@ -1,14 +1,6 @@
 ---
 # Playbook for build dependencies check
 
-- name: Read all packages in workspace
-  shell: find -type f -name package.xml -exec cat {} \; | grep -e '<name>' | sed -e 's,.*<name>\([^<]*\)</name>.*,\1,g' chdir={{ros_workspace}}
-  register: workspace_package_list
-
-- name: Set variable to workaround ansible type evaluation issue
-  set_fact:
-    workspace_package_list_stdout_lines: "{{workspace_package_list.stdout_lines}}"
-
 - name: Set variable to ros installation include paths
   set_fact:
     ros_installation_include_path: "/opt/ros/{{ros_release}}/include/"
@@ -25,8 +17,8 @@
   file: state=directory path={{ros_installation_include_path_backup}}
 
 - name: Move all headers for workspace packages to backup
-  shell: mv {{ros_installation_include_path}}/{{item}} {{ros_installation_include_path_backup}}
-  with_items: "{{workspace_package_list_stdout_lines|default([])}}"
+  shell: mv {{ros_installation_include_path}}/{{item.name}} {{ros_installation_include_path_backup}}
+  with_items: "{{workspace_packages_list|default([])}}"
   ignore_errors: True
 
 - name: catkin clean workspace directories
@@ -43,17 +35,12 @@
   set_fact:
     errors_file_name: "{{ros_workspace}}/check_build_errors.txt"
 
-- name: Package error temporary file name
-  set_fact:
-    package_errors_file_name: "{{ros_workspace}}/package_build_errors.txt"
-
 - name: Create empty file or clean existing one
   shell: bash -c "cat /dev/null > {{errors_file_name}}"
 
 - name: catkin make each package in the workspace
-  shell: bash -c "source /opt/ros/{{ros_release}}/setup.bash &&  rm -rf source {{ros_workspace}}/build && rm -rf {{ros_workspace}}/devel && printf '\nPackage {{item}}\n\nvvvvvvvvvvvvvvvv\n\n' > {{package_errors_file_name}} &&  ! catkin_make --pkg {{item}} 2>> {{package_errors_file_name}} && cat {{package_errors_file_name}} > {{errors_file_name}} "
-    chdir={{ros_workspace}}
-  with_items: "{{workspace_package_list_stdout_lines|default([])}}"
+  script: ../files/build_package.sh {{ros_release}} {{ros_workspace}} {{item.name}} {{errors_file_name}}
+  with_items: "{{workspace_packages_list|default([])}}"
   register: found_failed_package_dependencies
   ignore_errors: True
   no_log: True
@@ -67,5 +54,5 @@
   ignore_errors: True
 
 - name: List errors of the builds
-  shell: bash -c "! cat {{errors_file_name}} 1>&2"
+  shell: bash -c "cat {{errors_file_name}} 1>&2 && false"
   when: found_failed_package_dependencies|failed

@@ -2,4 +2,3 @@
 # defaults file for dependency update
 
 upgrade_all_packages: yes
-dependencies_file: repository.rosinstall

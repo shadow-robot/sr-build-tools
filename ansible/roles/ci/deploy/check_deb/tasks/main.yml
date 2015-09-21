@@ -1,69 +1,62 @@
 ---
 # Playbook for Deb files check
 
-- name: check if project_sources_path variable was set
-  fail: msg="Variable project_sources_path was not set"
-  when: project_sources_path is not defined
-
-- name: Read all packages paths in project
-  shell: find -type f -name package.xml -printf "%h\n" chdir={{project_sources_path}}
-  register: package_paths_list
-
-- name: Set variable to workaround ansible type evaluation issue
-  set_fact:
-    package_paths_list_stdout_lines: "{{package_paths_list.stdout_lines}}"
-
 - name: Clean debian packages folders in case of the cached build
   shell: bash -c "rm -rf ./debian && rm -rf ./obj-x86_64-linux-gnu"
-    chdir={{project_sources_path}}/{{item}}
-  with_items: "{{package_paths_list_stdout_lines|default([])}}"
+    chdir={{repo_sources_path}}/{{item.path}}
+  with_items: "{{repo_packages_list|default([])}}"
   ignore_errors: True
 
-- name: Clean debian packages from project directory
+- name: Clean debian packages from repository directory
   shell: bash -c "find . -name '*.deb' -type f -delete"
-    chdir={{project_sources_path}}
+    chdir={{repo_sources_path}}
   ignore_errors: True
 
 - name: Add line to rosdep package cache
-  lineinfile: dest=/etc/ros/rosdep/sources.list.d/20-default.list line="yaml file://{{project_sources_path}}/local_custom_rosdep.yaml"
+  lineinfile: dest=/etc/ros/rosdep/sources.list.d/20-default.list line="yaml file://{{repo_sources_path}}/local_custom_rosdep.yaml"
 
 - name: Create empty file or clean existing one
-  shell: bash -c "cat /dev/null > {{project_sources_path}}/local_custom_rosdep.yaml"
+  shell: bash -c "cat /dev/null > {{repo_sources_path}}/local_custom_rosdep.yaml"
 
-- name: Append project packages to rosdep ignore list
-  shell: echo "{{item|basename}}:{{' '}}{ubuntu:[]}" >> {{project_sources_path}}/local_custom_rosdep.yaml
-  with_items: "{{package_paths_list_stdout_lines|default([])}}"
+- name: Append repository packages to rosdep ignore list
+  shell: echo "{{item.name}}:{{' '}}{ubuntu:[]}" >> {{repo_sources_path}}/local_custom_rosdep.yaml
+  with_items: "{{repo_packages_list|default([])}}"
 
 - name: Update rosdep
   shell: bash -c "rosdep update"
 
 - name: Generate ROS debian package files
-  shell: bash -c "source /opt/ros/{{ros_release}}/setup.bash && bloom-generate rosdebian --os-name ubuntu --os-version trusty --ros-distro {{ros_release}}"  chdir={{project_sources_path}}/{{item}}
+  shell: bash -c "source /opt/ros/{{ros_release}}/setup.bash && bloom-generate rosdebian --os-name ubuntu --os-version trusty --ros-distro {{ros_release}}"
+    chdir={{repo_sources_path}}/{{item.path}}
   with_items:
-    - "{{package_paths_list_stdout_lines|default([])}}"
+    - "{{repo_packages_list|default([])}}"
 
 # Redundant loop count to make sure that even complex dependencies scenario is resolved
 # mv command will fail in case if package is already installed for this case there is ignore_errors
 - name: Create and install debian packages recursively in order to fix local dependencies
-  shell: bash -c "source /opt/ros/{{ros_release}}/setup.bash && fakeroot ./debian/rules binary && mv -vt .  ../*.deb && sudo dpkg --install *.deb"  chdir={{project_sources_path}}/{{item[1]}}
+  shell: bash -c "source /opt/ros/{{ros_release}}/setup.bash && fakeroot ./debian/rules binary && mv -vt .  ../*.deb && sudo dpkg --install *.deb"
+    chdir={{repo_sources_path}}/{{item[1].path}}
   ignore_errors: True
   with_nested:
-    - "{{package_paths_list_stdout_lines|default([])}}"
-    - "{{package_paths_list_stdout_lines|default([])}}"
+    - "{{repo_packages_list|default([])}}"
+    - "{{repo_packages_list|default([])}}"
 
 # In case if there is not errors fakeroot will not create new deb file just exit with 0 else it will print error
 - name: Check if debian build doesn't have any errors
-  shell: bash -c "source /opt/ros/{{ros_release}}/setup.bash && fakeroot ./debian/rules binary"  chdir={{project_sources_path}}/{{item}}
+  shell: bash -c "source /opt/ros/{{ros_release}}/setup.bash && fakeroot ./debian/rules binary"
+    chdir={{repo_sources_path}}/{{item.path}}
   with_items:
-    - "{{package_paths_list_stdout_lines|default([])}}"
+    - "{{repo_packages_list|default([])}}"
 
 - name: Check if debian install doesn't have any errors
-  shell: bash -c "source /opt/ros/{{ros_release}}/setup.bash && sudo dpkg --install *.deb"  chdir={{project_sources_path}}/{{item}}
+  shell: bash -c "source /opt/ros/{{ros_release}}/setup.bash && sudo dpkg --install *.deb"
+    chdir={{repo_sources_path}}/{{item.path}}
   with_items:
-    - "{{package_paths_list_stdout_lines|default([])}}"
+    - "{{repo_packages_list|default([])}}"
 
-- name: Read all installed packages from project
-  shell: bash -c "find . -name '*.deb' -print0  | xargs -0 -I {} dpkg --info  {} | sed -n -e 's/^\s*Package:\s*//p'"  chdir={{project_sources_path}}
+- name: Read all installed packages from repository
+  shell: bash -c "find . -name '*.deb' -print0  | xargs -0 -I {} dpkg --info  {} | sed -n -e 's/^\s*Package:\s*//p'"
+    chdir={{repo_sources_path}}
   register: installed_packages_names
 
 - name: Set variable to workaround ansible type evaluation issue

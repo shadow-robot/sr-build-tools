@@ -1,5 +1,5 @@
 ---
-# Playbook for project build
+# Playbook for repository build
 
 - name: catkin clean workspace directories
   file: path={{item}} state=absent
