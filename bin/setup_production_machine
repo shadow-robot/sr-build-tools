@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
 sudo apt-get install -y ansible git
+rm -rf sr-build-tools
 git clone https://github.com/shadow-robot/sr-build-tools
 
 sudo sh -c 'echo "[hand-prod]
