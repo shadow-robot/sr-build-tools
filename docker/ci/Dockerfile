@@ -18,7 +18,7 @@ RUN apt-get install curl -y
 
 ENV toolset_branch="master"
 ENV server_type="docker_hub"
-ENV used_modules="check_cache,install,create_workspace"
+ENV used_modules="check_cache,create_workspace"
 ENV remote_shell_script="https://raw.githubusercontent.com/shadow-robot/sr-build-tools/$toolset_branch/bin/sr-run-ci-build.sh"
 
 RUN curl -s "$( echo "$remote_shell_script" | sed 's/#/%23/g' )" | bash /dev/stdin "$toolset_branch" $server_type $used_modules
