@@ -24,6 +24,6 @@ The process of setting up a [Semaphore](https://semaphoreci.com/) server:
       bash -c "$(wget -O - $encoded_url)" -- "$toolset_branch" $server_type $used_modules
       ```
       
-      sVariable **used_modules** contains list of the modules which can be used. It can be adjusted to any amount of the [modules needed](../modules.md).
+      Variable **used_modules** contains list of the modules which can be used. It can be adjusted to any amount of the [modules needed](../modules.md).
   * On the "Project Setting" page select "Platform" tab and check "Ubuntu ... (beta with Docker support)" option.
   * To use [CodeCov](https://codecov.io) tool you need to encrypt variable **CODECOV_TOKEN** and put it into "Environment Variables" tab on "Project Setting" page. 
