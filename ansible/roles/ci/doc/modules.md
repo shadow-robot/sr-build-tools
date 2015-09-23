@@ -3,7 +3,7 @@
 ## List of modules
 
   * **build_pr_only** - skip build after commit if it is not PR 
-  * **check_cache** - checks if ROS Indigo was already installed by build tools. If not than install it. 
+  * **check_cache** - checks if ROS Indigo was already installed by build tools. If not, install it. 
   In case of [Docker Hub](https://hub.docker.com/r/shadowrobot/ubuntu-ros-indigo-build-tools/) detects installed ROS and do nothing.
   * **build** - build project using catkin_make.
   * **unit_tests** - run unit tests and place results in special folder if defined by CI server (e.g. artifacts for Circle CI)
