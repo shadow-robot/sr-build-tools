@@ -1,0 +1,4 @@
+---
+# Defaults check debian packages generation
+
+complete_debian_packages_check: no
