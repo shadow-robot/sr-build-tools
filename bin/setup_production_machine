@@ -2,7 +2,7 @@
 
 sudo apt-get install -y ansible git
 rm -rf sr-build-tools
-git clone https://github.com/shadow-robot/sr-build-tools -b F#177_icons
+git clone https://github.com/shadow-robot/sr-build-tools
 
 sudo sh -c 'echo "[hand-prod]
 localhost ansible_connection=local" > /etc/ansible/hosts'
