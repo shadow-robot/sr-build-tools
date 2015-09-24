@@ -3,8 +3,8 @@
 Version=1.0
 Type=Application
 Terminal=false
-Icon[en_GB]=/usr/share/icons/hicolor/scalable/apps/gnome-nettool.svg
+Icon[en_GB]=/usr/local/share/icons/shadowrobot/rqt.png
 Name[en_GB]=Left Hand Rosgui
 Exec=xterm -hold -title "left hand rosgui" -e "bash -i -c 'roslaunch sr_ethercat_hand_config lhand_gui.launch'"
 Name=Left Hand Rosgui
-Icon=/usr/share/icons/hicolor/scalable/apps/gnome-nettool.svg
+Icon=/usr/local/share/icons/shadowrobot/rqt.png
