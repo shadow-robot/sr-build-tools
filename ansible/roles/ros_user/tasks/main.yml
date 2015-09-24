@@ -34,12 +34,9 @@
 
 # XXX Copy seems to have a bug here when the src tree is too deep and
 # it gets confused. Running again fixes for now.
-- name: Install home directory files from {{item}}
-  copy: src="{{item}}/" dest="~{{ros_user}}/" owner={{ros_user}} group=ros
-  with_first_found:
-      - "{{ros_user_home_files}}"
-      - "{{ros_user_home_files}}"
-  when: item is defined and "{{item}}" != ""
+- name: Install home directory files from {{ros_user_home_files}}
+  copy: src="{{ros_user_home_files}}/" dest="~{{ros_user}}/" owner={{ros_user}} group=ros
+  when: {{ros_user_home_files}} is defined and "{{ros_user_home_files}}" != ""
   sudo: yes
   sudo_user: "{{ros_user}}"
 
