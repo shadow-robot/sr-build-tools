@@ -1,5 +1,5 @@
 ---
 # Playbook for check debian packages generation
 
-complete_debian_packages_check: yes
+complete_debian_packages_check: true
 
