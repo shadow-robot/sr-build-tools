@@ -3,8 +3,8 @@
 Version=1.0
 Type=Application
 Terminal=false
-Icon[en_GB]=/usr/share/icons/hicolor/scalable/apps/gnome-nettool.svg
+Icon[en_GB]=/usr/local/share/icons/shadowrobot/tactile.png
 Name[en_GB]=Right Tactile Visualize
 Exec=xterm -hold -title "tactile" -e "bash -i -c 'roslaunch sr_ethercat_hand_config rhand_tactile_gui.launch'"
 Name=Right Tactile Visualize
-Icon=/usr/share/icons/hicolor/scalable/apps/gnome-nettool.svg
+Icon=/usr/local/share/icons/shadowrobot/tactile.png
