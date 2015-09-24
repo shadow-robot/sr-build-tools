@@ -40,6 +40,11 @@
   sudo: yes
   sudo_user: "{{ros_user}}"
 
+- name: Set executable bit for icons
+  shell: "find ~{{ros_user}}/Desktop/*.desktop -exec chmod +x {}"
+  sudo: yes
+  sudo_user: "{{ros_user}}"
+
 - name: Test for existing bashrc setup
   shell: grep '^source.*/setup\.bash' ~{{ros_user}}/.bashrc
   register: setup_test_result
