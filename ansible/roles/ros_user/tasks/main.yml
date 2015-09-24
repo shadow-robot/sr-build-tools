@@ -40,6 +40,10 @@
   sudo: yes
   sudo_user: "{{ros_user}}"
 
+- name: Copy icons to /usr/local/share/icons
+  copy: src="files/icons" dest="/usr/local/share"
+  sudo: yes
+
 - name: Set executable bit for icons
   shell: "find ~{{ros_user}}/Desktop/*.desktop -exec chmod +x {} +"
   sudo: yes
