@@ -33,7 +33,7 @@
   lineinfile: "dest=/etc/sudoers state=present regexp='^{{ros_user}}' line='{{ros_user}}  ALL=(ALL) NOPASSWD:  ALL' insertafter=EOF"
 
 - name: Delete existing icons from ~{{ros_user}}
-  shell: "rm ~{{ros_user}}/Desktop/*"
+  shell: "rm -f ~{{ros_user}}/Desktop/*"
   sudo: yes
 
 - name: Install home directory files from {{ros_user_home_files}}
