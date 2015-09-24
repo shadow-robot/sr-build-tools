@@ -17,14 +17,14 @@
  - [ ] Choose U.K. keyboard layout
  - [ ] Your name: Shadow Admin at 'company_name'
   - [ ] Your PC name: shadow-'company_name'
-  - [ ] Pick a username: administration
+  - [ ] Pick a username: **sysadmin**
   - [ ] Password: hand
   - [ ]  Require my password to log in: ON
  - [ ] Once installed, add the keyboard layout of the country of destination
 
 ## Install ROS, Shadow Software and extras
 
-- Run the following command, **replacing** `shadowrobot_1234` with the name of the branch you want to use (it will create it if it doesn't exist, get it otherwise):
+- Run the following command, **replacing** `shadowrobot_1234` with the name of the branch you want to use (it will create it if it doesn't exist, get it otherwise). You can rerun this command any time logged in and from the **sysadmin** user home directory to update the installation.
 ```
 curl https://raw.githubusercontent.com/shadow-robot/sr-build-tools/master/bin/setup_production_machine | bash -s shadowrobot_1234
 ```
