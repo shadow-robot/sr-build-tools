@@ -57,6 +57,8 @@
     ros_user_home_files: "files/home/hand_prod/"
     ros_user_background: "files/images/ShadowRobot.jpg"
     ros_workspace_install: "../data/shadow_robot-{{ros_release}}.rosinstall"
+    ros_packages:
+      - ethercat-grant
   sudo: yes
   roles:
   - hand_prod
