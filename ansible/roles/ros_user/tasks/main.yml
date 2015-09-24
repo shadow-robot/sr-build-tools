@@ -38,6 +38,7 @@
   copy: src="{{item}}/" dest="~{{ros_user}}/" owner={{ros_user}} group=ros
   with_first_found:
       - "{{ros_user_home_files}}"
+      - "{{ros_user_home_files}}"
   when: item is defined and "{{item}}" != ""
   sudo: yes
   sudo_user: "{{ros_user}}"
