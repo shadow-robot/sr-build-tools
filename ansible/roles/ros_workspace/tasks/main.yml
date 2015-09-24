@@ -69,7 +69,7 @@
   sudo: yes
 
 - name: Workspace update
-  command: wstool up --delete-changed-uris
+  command: wstool up --delete-changed-uris -j5
            chdir={{ros_workspace}}/src
   # Run as root to allow forward keys for github access
   sudo: yes
@@ -79,8 +79,12 @@
          chdir={{ros_workspace}}/src
   sudo: yes
 
+- name: Delete any files in {{ros_workspace}}/src to have a fresh workspace
+  shell: "rm -rf {{ros_workspace}}/src/*"
+  sudo: yes
+
 - name: Workspace update
-  command: wstool up --delete-changed-uris
+  command: wstool up --delete-changed-uris -j5
            chdir={{ros_workspace}}/src
   # Run as root to allow forward keys for github access
   sudo: yes
