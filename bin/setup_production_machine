@@ -4,6 +4,7 @@ echo "--------"
 echo " installing config branch:  $1"
 
 if [ -n "$2" ];
+  then
     echo "   (using sr-build-tools branch: ) $2"
 fi
 
