@@ -36,7 +36,7 @@
   sudo_user: "{{ros_user}}"
 
 - name: catkin_init_workspace
-  shell: bash -c "source {{ros_workspace}}/devel/setup.bash && catkin_init_workspace"
+  shell: bash -c "source {{ros_workspace}}_deps/devel/setup.bash && catkin_init_workspace"
     chdir={{ros_workspace}}/src
     creates={{ros_workspace}}/src/CMakeLists.txt
   sudo: yes
@@ -45,7 +45,7 @@
 # Do an initial make of the empty workspace to get a setup.bash.
 # If there is one already don't do this, so we don't trigger a big make
 - name: catkin make workspace
-  shell: bash -c "source {{ros_workspace}}/devel/source && catkin_make"
+  shell: bash -c "source {{ros_workspace}}_deps/devel/source && catkin_make"
     chdir={{ros_workspace}}
     creates={{ros_workspace}}/devel/setup.bash
   sudo: yes
@@ -141,14 +141,14 @@
   sudo_user: "{{ros_user}}"
 
 - name: Install dependencies
-  shell: bash -c "source {{ros_workspace}}/devel/setup.bash && rosdep install --default-yes --all --ignore-src --skip-keys sr_ur_msgs --skip-keys cereal_port"
+  shell: bash -c "source {{ros_workspace}}_deps/devel/setup.bash && rosdep install --default-yes --all --ignore-src --skip-keys sr_ur_msgs --skip-keys cereal_port"
          chdir={{ros_workspace}}
   sudo: yes
   sudo_user: "{{ros_user}}"
 
 # Now build the code we just installed.
 - name: catkin_make
-  shell: bash -c "source {{ros_workspace}}/devel/setup.bash && catkin_make"
+  shell: bash -c "source {{ros_workspace}}_deps/devel/setup.bash && catkin_make"
     chdir={{ros_workspace}}
   sudo: yes
   sudo_user: "{{ros_user}}"
