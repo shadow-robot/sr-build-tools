@@ -1,8 +1,21 @@
 #!/usr/bin/env bash
 
+echo "--------"
+echo " installing config branch:  $1"
+
+if [ -n "$2" ];
+  then
+    echo "   (using sr-build-tools branch: ) $2"
+fi
+
 sudo apt-get install -y ansible git
 rm -rf sr-build-tools
-git clone https://github.com/shadow-robot/sr-build-tools
+if [ -z "$2" ];
+  then
+    git clone https://github.com/shadow-robot/sr-build-tools
+  else
+    git clone https://github.com/shadow-robot/sr-build-tools -b $2
+fi
 
 sudo sh -c 'echo "[hand-prod]
 localhost ansible_connection=local" > /etc/ansible/hosts'
