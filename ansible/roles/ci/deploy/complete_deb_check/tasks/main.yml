@@ -1,0 +1,6 @@
+---
+# Playbook for check debian packages generation
+
+- name: Set complete_debian_packages_check
+  set_fact:
+    complete_debian_packages_check: yes
