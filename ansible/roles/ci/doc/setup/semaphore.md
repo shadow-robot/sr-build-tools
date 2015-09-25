@@ -18,7 +18,7 @@ The process of setting up a [Semaphore](https://semaphoreci.com/) server:
 ```bash
       export toolset_branch="master"
       export server_type="semaphore_docker"
-      export used_modules="check_cache,check_build,code_style_check,unit_tests,check_deb,codecov_tool"
+      export used_modules="check_cache,check_build,code_style_check,unit_tests,check_deb_make,codecov_tool"
       export remote_shell_script="https://raw.githubusercontent.com/shadow-robot/sr-build-tools/$toolset_branch/bin/sr-run-ci-build.sh"
       export encoded_url="$( echo "$remote_shell_script" | sed 's/#/%23/g' )"
       bash -c "$(wget -O - $encoded_url)" -- "$toolset_branch" $server_type $used_modules
