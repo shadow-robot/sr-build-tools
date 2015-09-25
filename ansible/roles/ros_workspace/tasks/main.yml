@@ -6,13 +6,6 @@
   sudo: yes
   sudo_user: "{{ros_user}}"
 
-- name: Init workspace for dependencies
-  command: wstool init .
-    chdir={{ros_workspace}}_deps/src
-    creates={{ros_workspace}}_deps/src/.rosinstall
-  sudo: yes
-  sudo_user: "{{ros_user}}"
-
 - name: catkin_init_workspace deps
   shell: bash -c "source /opt/ros/{{ros_release}}/setup.bash && catkin_init_workspace"
     chdir={{ros_workspace}}_deps/src
@@ -31,13 +24,6 @@
 
 - name: Create workspace {{ros_workspace}}
   file: state=directory path={{ros_workspace}}/src owner={{ros_user}} group=ros
-  sudo: yes
-  sudo_user: "{{ros_user}}"
-
-- name: Init workspace
-  command: wstool init .
-    chdir={{ros_workspace}}/src
-    creates={{ros_workspace}}/src/.rosinstall
   sudo: yes
   sudo_user: "{{ros_user}}"
 
@@ -87,10 +73,17 @@
   when: repo_host_keys.stdout is defined repo_host_keys.stdout is not ""
 
 - name: Delete any files in {{ros_workspace}}/src to have a fresh workspace
-  shell: "rm -rf {{ros_workspace}}/src/*"
+  shell: "rm -rf {{ros_workspace}}/src"
   sudo: yes
 
-- name: Merge {{ros_workspace_install}} into workspace
+- name: Init workspace
+  command: wstool init .
+    chdir={{ros_workspace}}/src
+    creates={{ros_workspace}}/src/.rosinstall
+  sudo: yes
+  sudo_user: "{{ros_user}}"
+
+- name: Merge {{ros_workspace}} into workspace
   command: wstool merge -y /tmp/ansible-ros-workspace.rosinstall
     chdir={{ros_workspace}}/src
   # Run as root to allow forward keys for github access
@@ -102,13 +95,20 @@
   # Run as root to allow forward keys for github access
   sudo: yes
 
+- name: Delete any files in {{ros_workspace}}_deps/src to have a fresh workspace
+  shell: "rm -rf {{ros_workspace}}_deps/src"
+  sudo: yes
+
+- name: Init workspace for dependencies
+  command: wstool init .
+    chdir={{ros_workspace}}_deps/src
+    creates={{ros_workspace}}_deps/src/.rosinstall
+  sudo: yes
+  sudo_user: "{{ros_user}}"
+
 - name: Pull source dependencies to {{ros_workspace}}_deps
   shell: for INSTALL in `find {{ros_workspace}}/src -name "repository.rosinstall"`; do wstool merge -y ${INSTALL} ; done
          chdir={{ros_workspace}}_deps/src
-  sudo: yes
-
-- name: Delete any files in {{ros_workspace}}_deps/src to have a fresh workspace
-  shell: "rm -rf {{ros_workspace}}_deps/src/*"
   sudo: yes
 
 - name: Workspace update {{ros_workspace}}_deps
