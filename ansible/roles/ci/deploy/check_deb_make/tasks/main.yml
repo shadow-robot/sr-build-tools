@@ -19,6 +19,8 @@
   shell: bash -c "cat /dev/null > {{repo_sources_path}}/local_custom_rosdep.yaml"
 
 - debug: var=complete_debian_packages_check
+- debug: var=repo_packages_list
+- debug: var=workspace_packages_list
 
 - name: Append repository packages to rosdep ignore list
   shell: echo "{{item.name}}:{{' '}}{ubuntu:[]}" >> {{repo_sources_path}}/local_custom_rosdep.yaml
