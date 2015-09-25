@@ -118,7 +118,7 @@
   sudo: yes
 
 - name: Delete duplicated deps
-  command: for base_src in `ls {{ros_workspace}}/src` ; do if [ -d {{ros_workspace}}_deps/src/${base_src} ]; then rm -rf {{ros_workspace}}_deps_src/${base_src}; fi ; done
+  shell: for BASE_SRC in `ls {{ros_workspace}}/src` ; do if [ -d {{ros_workspace}}_deps/src/${BASE_SRC} ]; then rm -rf {{ros_workspace}}_deps/src/${BASE_SRC}; fi ; done
   sudo: yes
 
 - name: Fix perms (As we installed code as root, fix the perms.)
