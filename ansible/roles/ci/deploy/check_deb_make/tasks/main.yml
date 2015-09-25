@@ -18,6 +18,8 @@
 - name: Create empty file or clean existing one
   shell: bash -c "cat /dev/null > {{repo_sources_path}}/local_custom_rosdep.yaml"
 
+- debug: var=complete_debian_packages_check
+
 - name: Append repository packages to rosdep ignore list
   shell: echo "{{item.name}}:{{' '}}{ubuntu:[]}" >> {{repo_sources_path}}/local_custom_rosdep.yaml
   with_items: "{{repo_packages_list|default([])}}"
