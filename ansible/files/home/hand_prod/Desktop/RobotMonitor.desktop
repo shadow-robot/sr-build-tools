@@ -5,6 +5,6 @@ Type=Application
 Terminal=false
 Icon[en_GB]=/usr/local/share/icons/shadowrobot/robot_monitor.png
 Name[en_GB]=Robot Monitor
-Exec=xterm -hold -title "right hand robot monitor" -e "bash -i -c 'rosrun rqt_robot_monitor rqt_robot_monitor'"
+Exec=xterm -hold -title "robot monitor" -e "bash -i -c 'rosrun rqt_robot_monitor rqt_robot_monitor'"
 Name=Robot Monitor
 Icon=/usr/local/share/icons/shadowrobot/robot_monitor.png
