@@ -117,17 +117,15 @@
   # Run as root to allow forward keys for github access
   sudo: yes
 
+- name: Delete duplicated deps
+  command: for base_src in `ls {{ros_workspace}}/src` ; do if [ -d {{ros_workspace}}_deps/src/${base_src} ]; then rm -rf {{ros_workspace}}_deps_src/${base_src}; fi ; done
+  sudo: yes
+
 - name: Fix perms (As we installed code as root, fix the perms.)
   file: path={{ros_workspace}} recurse=yes owner={{ros_user}} group=ros
 
 - name: Fix perms for deps (As we installed code as root, fix the perms.)
   file: path={{ros_workspace}}_deps recurse=yes owner={{ros_user}} group=ros
-
-- name: Install dependencies
-  shell: bash -c "source {{ros_workspace}}/devel/setup.bash && rosdep install --default-yes --all --ignore-src"
-         chdir={{ros_workspace}}
-  sudo: yes
-  sudo_user: "{{ros_user}}"
 
 - name: Install dependencies of the source deps
   shell: bash -c "source {{ros_workspace}}_deps/devel/setup.bash && rosdep install --default-yes --all --ignore-src"
@@ -139,6 +137,12 @@
 - name: catkin_make for deps
   shell: bash -c "source {{ros_workspace}}_deps/devel/setup.bash && catkin_make"
     chdir={{ros_workspace}}_deps
+  sudo: yes
+  sudo_user: "{{ros_user}}"
+
+- name: Install dependencies
+  shell: bash -c "source {{ros_workspace}}/devel/setup.bash && rosdep install --default-yes --all --ignore-src"
+         chdir={{ros_workspace}}
   sudo: yes
   sudo_user: "{{ros_user}}"
 
