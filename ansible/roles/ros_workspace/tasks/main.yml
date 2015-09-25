@@ -136,6 +136,13 @@
   sudo_user: "{{ros_user}}"
 
 # Now build the code we just installed.
+- name: catkin_make for deps
+  shell: bash -c "source {{ros_workspace}}_deps/devel/setup.bash && catkin_make"
+    chdir={{ros_workspace}}_deps
+  sudo: yes
+  sudo_user: "{{ros_user}}"
+
+# Now build the code we just installed.
 - name: catkin_make
   shell: bash -c "source {{ros_workspace}}/devel/setup.bash && catkin_make"
     chdir={{ros_workspace}}
