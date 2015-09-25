@@ -1,6 +1,14 @@
 ---
 # Set up a ROS workspace, install a .rosinstall and compile.
 
+- name: Delete any files in {{ros_workspace}}/src to have a fresh workspace
+  shell: "rm -rf {{ros_workspace}}/src"
+  sudo: yes
+
+- name: Delete any files in {{ros_workspace}}_deps/src to have a fresh workspace
+  shell: "rm -rf {{ros_workspace}}_deps/src"
+  sudo: yes
+
 - name: Create workspace for dependencies {{ros_workspace}}_deps
   file: state=directory path={{ros_workspace}}_deps/src owner={{ros_user}} group=ros
   sudo: yes
@@ -72,10 +80,6 @@
   with_items: repo_host_keys.results
   when: repo_host_keys.stdout is defined repo_host_keys.stdout is not ""
 
-- name: Delete any files in {{ros_workspace}}/src to have a fresh workspace
-  shell: "rm -rf {{ros_workspace}}/src"
-  sudo: yes
-
 - name: Init workspace
   command: wstool init .
     chdir={{ros_workspace}}/src
@@ -93,10 +97,6 @@
   command: wstool up --delete-changed-uris -j5
            chdir={{ros_workspace}}/src
   # Run as root to allow forward keys for github access
-  sudo: yes
-
-- name: Delete any files in {{ros_workspace}}_deps/src to have a fresh workspace
-  shell: "rm -rf {{ros_workspace}}_deps/src"
   sudo: yes
 
 - name: Init workspace for dependencies
