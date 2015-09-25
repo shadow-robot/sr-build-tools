@@ -1,12 +1,12 @@
 ---
 # Set up a ROS workspace, install a .rosinstall and compile.
 
-- name: Delete any files in {{ros_workspace}}/src to have a fresh workspace
-  shell: "rm -rf {{ros_workspace}}/src"
+- name: Delete any files in {{ros_workspace}} to have a fresh workspace
+  shell: "rm -rf {{ros_workspace}}"
   sudo: yes
 
-- name: Delete any files in {{ros_workspace}}_deps/src to have a fresh workspace
-  shell: "rm -rf {{ros_workspace}}_deps/src"
+- name: Delete any files in {{ros_workspace}}_deps to have a fresh workspace
+  shell: "rm -rf {{ros_workspace}}_deps"
   sudo: yes
 
 - name: Create workspace for dependencies {{ros_workspace}}_deps
