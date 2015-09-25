@@ -3,10 +3,10 @@
 Version=1.0
 Type=Application
 Terminal=false
-Icon[en_GB]=gnome-panel-launcher
+Icon[en_GB]=/usr/local/share/icons/shadowrobot/demo.png
 Name[en_GB]=Both Hands Demo
 Exec=xterm -hold -title "demo" -e "bash -i -c 'roslaunch sr_ethercat_hand_config all_hands_demo.launch'"
 Name=Both Hands Demo
-Icon=/usr/share/icons/hicolor/scalable/apps/gnome-nettool.svg
+Icon=/usr/local/share/icons/shadowrobot/demo.png
 GenericName[en_GB.utf8]=Demo of the hands
 Comment[en_GB.utf8]=Press the fingertips to move the hand
