@@ -28,7 +28,7 @@
 - name: Append workspace packages to rosdep ignore list
   shell: echo "{{item.name}}:{{' '}}{ubuntu:[]}" >> {{repo_sources_path}}/local_custom_rosdep.yaml
   with_items: "{{workspace_packages_list|default([])}}"
-  when: complete_debian_packages_check == False
+  when: complete_debian_packages_check is defined
 
 - name: Update rosdep
   shell: bash -c "rosdep update"
