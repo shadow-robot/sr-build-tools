@@ -5,6 +5,6 @@ Type=Application
 Terminal=false
 Icon[en_GB]=/usr/local/share/icons/shadowrobot/hand.png
 Name[en_GB]=Left Hand Driver
-Exec=xterm -hold -title "Left Hand Driver" -e "sudo bash -i -c 'roslaunch sr_ethercat_hand_config sr_lhand.launch'"
+Exec=xterm -hold -title "Left Hand Driver" -e "bash -i -c 'roslaunch sr_ethercat_hand_config sr_lhand.launch'"
 Name=Left Hand Driver
 Icon=/usr/local/share/icons/shadowrobot/hand.png
