@@ -45,7 +45,7 @@
 # Do an initial make of the empty workspace to get a setup.bash.
 # If there is one already don't do this, so we don't trigger a big make
 - name: catkin make workspace
-  shell: bash -c "source {{ros_workspace}}_deps/devel/source && catkin_make"
+  shell: bash -c "source {{ros_workspace}}_deps/devel/setup.bash && catkin_make"
     chdir={{ros_workspace}}
     creates={{ros_workspace}}/devel/setup.bash
   sudo: yes
