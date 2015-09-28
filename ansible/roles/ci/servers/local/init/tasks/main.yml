@@ -34,6 +34,9 @@
 - name: Copy source directory from host machine
   shell: bash -c "shopt -s dotglob && cp -r {{local_repo_dir}}/* {{repo_sources_path}}"
 
+- name: Remove line from rosdep package cache
+  lineinfile: dest=/etc/ros/rosdep/sources.list.d/20-default.list state=absent line="yaml file://{{repo_sources_path}}/local_custom_rosdep.yaml"
+
 - name: Set is_pull_request
   set_fact:
     is_pull_request: "no"
