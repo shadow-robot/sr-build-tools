@@ -49,7 +49,7 @@ sudo docker pull shadowrobot/ubuntu-ros-indigo-build-tools
 Now you can start Docker container
 
 ```bash
-sudo docker run -it -w "/root/sr-build-tools/ansible" --name "ros_ubuntu" -v $HOME:/host:rw "shadowrobot/ubuntu-ros-indigo-build-tools" bash
+sudo docker run -it -w "/root/sr-build-tools/ansible" --env=HOME=/root --name "ros_ubuntu" -v $HOME:/host:rw "shadowrobot/ubuntu-ros-indigo-build-tools" bash
 ```
 
 If you've followed the steps above, you should have a Docker container named **ros_ubuntu**. You can now start and attach it:
@@ -59,17 +59,7 @@ sudo docker start ros_ubuntu
 sudo docker attach ros_ubuntu
 ```
 
-To set the correct HOME folder, run the following command inside the container:
-
-```bash
-export HOME=/root
-```
-
-Go to the build-tools folder on the container using:
-
-```bash
-cd /root/sr-build-tools/ansible/
-```
+By default you are in */root/sr-build-tools/ansible/* folder.
 
 You are ready to start build tools in the same way as it is done on the server.
 
