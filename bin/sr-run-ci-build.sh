@@ -71,10 +71,6 @@ case $server_type in
   export local_repo_dir=$4
   export image_home="/root"
 
-  export date_string=$(date +%Y%m%d%H%M%S)
-  export random_string=$(cat /dev/urandom | tr -cd [:alnum:] | head -c 4)
-  export container_name="single_run_ros_ubuntu_"$date_string"_"$random_string
-
   if [ -z "$unit_tests_result_dir" ]
   then
     export unit_tests_dir=$image_home"/workspace/test_results"
@@ -89,11 +85,7 @@ case $server_type in
   fi
   docker pull $docker_image
   export extra_variables="local_repo_dir=/host$local_repo_dir local_test_dir=$unit_tests_dir local_code_coverage_dir=$coverage_tests_dir codecov_secure=$CODECOV_TOKEN"
-  docker run -w "$image_home/sr-build-tools/ansible" -a stdout --name $container_name  -v $HOME:/host:rw $docker_image  bash -c "export HOME=$image_home && git pull && git checkout $toolset_branch && git pull && sudo PYTHONUNBUFFERED=1 ansible-playbook -v -i \"localhost,\" -c local docker_site.yml --tags \"local,$tags_list\" -e \"$extra_variables\" " | true
-  export error_code=${PIPESTATUS[0]}
-  docker stop $container_name
-  docker rm -f $container_name
-  exit $error_code
+  docker run -w "$image_home/sr-build-tools/ansible" --rm=true -v $HOME:/host:rw $docker_image  bash -c "export HOME=$image_home && git pull && git checkout $toolset_branch && git pull && sudo PYTHONUNBUFFERED=1 ansible-playbook -v -i \"localhost,\" -c local docker_site.yml --tags \"local,$tags_list\" -e \"$extra_variables\" "
   ;;
 
 *) echo "Not supported server type $server_type"
