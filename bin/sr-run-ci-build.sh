@@ -70,7 +70,11 @@ case $server_type in
 "local") echo "Local run"
   export local_repo_dir=$4
   export image_home="/root"
-  export container_name=${docker_container_name:-"single_run_ros_ubuntu"}
+
+  export date_string=$(date +%Y%m%d%H%M%S)
+  export random_string=$(cat /dev/urandom | tr -cd [:alnum:] | head -c 4)
+  export container_name="single_run_ros_ubuntu_"$date_string"_"$random_string
+
   if [ -z "$unit_tests_result_dir" ]
   then
     export unit_tests_dir=$image_home"/workspace/test_results"
