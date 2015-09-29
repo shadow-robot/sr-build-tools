@@ -1,20 +1,42 @@
 ---
 # Set up a ROS workspace, install a .rosinstall and compile.
 
+- name: Delete any files in {{ros_workspace}} to have a fresh workspace
+  shell: "rm -rf {{ros_workspace}}"
+  sudo: yes
+
+- name: Delete any files in {{ros_workspace}}_deps to have a fresh workspace
+  shell: "rm -rf {{ros_workspace}}_deps"
+  sudo: yes
+
+- name: Create workspace for dependencies {{ros_workspace}}_deps
+  file: state=directory path={{ros_workspace}}_deps/src owner={{ros_user}} group=ros
+  sudo: yes
+  sudo_user: "{{ros_user}}"
+
+- name: catkin_init_workspace deps
+  shell: bash -c "source /opt/ros/{{ros_release}}/setup.bash && catkin_init_workspace"
+    chdir={{ros_workspace}}_deps/src
+    creates={{ros_workspace}}_deps/src/CMakeLists.txt
+  sudo: yes
+  sudo_user: "{{ros_user}}"
+
+# Do an initial make of the empty workspace to get a setup.bash.
+# If there is one already don't do this, so we don't trigger a big make
+- name: catkin make workspace deps
+  shell: bash -c "source /opt/ros/{{ros_release}}/setup.bash && catkin_make"
+    chdir={{ros_workspace}}_deps
+    creates={{ros_workspace}}_deps/devel/setup.bash
+  sudo: yes
+  sudo_user: "{{ros_user}}"
+
 - name: Create workspace {{ros_workspace}}
   file: state=directory path={{ros_workspace}}/src owner={{ros_user}} group=ros
   sudo: yes
   sudo_user: "{{ros_user}}"
 
-- name: Init workspace
-  command: wstool init .
-    chdir={{ros_workspace}}/src
-    creates={{ros_workspace}}/src/.rosinstall
-  sudo: yes
-  sudo_user: "{{ros_user}}"
-
 - name: catkin_init_workspace
-  shell: bash -c "source /opt/ros/{{ros_release}}/setup.bash && catkin_init_workspace"
+  shell: bash -c "source {{ros_workspace}}_deps/devel/setup.bash && catkin_init_workspace"
     chdir={{ros_workspace}}/src
     creates={{ros_workspace}}/src/CMakeLists.txt
   sudo: yes
@@ -23,7 +45,7 @@
 # Do an initial make of the empty workspace to get a setup.bash.
 # If there is one already don't do this, so we don't trigger a big make
 - name: catkin make workspace
-  shell: bash -c "source /opt/ros/{{ros_release}}/setup.bash && catkin_make"
+  shell: bash -c "source {{ros_workspace}}_deps/devel/setup.bash && catkin_make"
     chdir={{ros_workspace}}
     creates={{ros_workspace}}/devel/setup.bash
   sudo: yes
@@ -58,11 +80,14 @@
   with_items: repo_host_keys.results
   when: repo_host_keys.stdout is defined repo_host_keys.stdout is not ""
 
-- name: Delete any files in {{ros_workspace}}/src to have a fresh workspace
-  shell: "rm -rf {{ros_workspace}}/src/*"
+- name: Init workspace
+  command: wstool init .
+    chdir={{ros_workspace}}/src
+    creates={{ros_workspace}}/src/.rosinstall
   sudo: yes
+  sudo_user: "{{ros_user}}"
 
-- name: Merge {{ros_workspace_install}} into workspace
+- name: Merge {{ros_workspace}} into workspace
   command: wstool merge -y /tmp/ansible-ros-workspace.rosinstall
     chdir={{ros_workspace}}/src
   # Run as root to allow forward keys for github access
@@ -74,33 +99,56 @@
   # Run as root to allow forward keys for github access
   sudo: yes
 
-- name: Pull source dependencies
-  shell: for INSTALL in `find . -name "repository.rosinstall"`; do wstool merge -y ${INSTALL} ; done
-         chdir={{ros_workspace}}/src
+- name: Init workspace for dependencies
+  command: wstool init .
+    chdir={{ros_workspace}}_deps/src
+    creates={{ros_workspace}}_deps/src/.rosinstall
+  sudo: yes
+  sudo_user: "{{ros_user}}"
+
+- name: Pull source dependencies to {{ros_workspace}}_deps
+  shell: for INSTALL in `find {{ros_workspace}}/src -name "repository.rosinstall"`; do wstool merge -y ${INSTALL} ; done
+         chdir={{ros_workspace}}_deps/src
   sudo: yes
 
-- name: Delete any files in {{ros_workspace}}/src to have a fresh workspace
-  shell: "rm -rf {{ros_workspace}}/src/*"
-  sudo: yes
-
-- name: Workspace update
+- name: Workspace update {{ros_workspace}}_deps
   command: wstool up --delete-changed-uris -j5
-           chdir={{ros_workspace}}/src
+           chdir={{ros_workspace}}_deps/src
   # Run as root to allow forward keys for github access
+  sudo: yes
+
+- name: Delete duplicated deps
+  shell: for BASE_SRC in `ls {{ros_workspace}}/src` ; do if [ -d {{ros_workspace}}_deps/src/${BASE_SRC} ]; then rm -rf {{ros_workspace}}_deps/src/${BASE_SRC}; fi ; done
   sudo: yes
 
 - name: Fix perms (As we installed code as root, fix the perms.)
   file: path={{ros_workspace}} recurse=yes owner={{ros_user}} group=ros
 
-- name: Install dependancies
-  shell: bash -c "source {{ros_workspace}}/devel/setup.bash && rosdep install --default-yes --all --ignore-src"
+- name: Fix perms for deps (As we installed code as root, fix the perms.)
+  file: path={{ros_workspace}}_deps recurse=yes owner={{ros_user}} group=ros
+
+- name: Install dependencies of the source deps
+  shell: bash -c "source {{ros_workspace}}_deps/devel/setup.bash && rosdep install --default-yes --all --ignore-src"
+         chdir={{ros_workspace}}_deps
+  sudo: yes
+  sudo_user: "{{ros_user}}"
+
+# Now build the code we just installed.
+- name: catkin_make for deps
+  shell: bash -c "source {{ros_workspace}}_deps/devel/setup.bash && catkin_make"
+    chdir={{ros_workspace}}_deps
+  sudo: yes
+  sudo_user: "{{ros_user}}"
+
+- name: Install dependencies
+  shell: bash -c "source {{ros_workspace}}/devel/setup.bash && rosdep install --default-yes --all --ignore-src --skip-keys sr_ur_msgs --skip-keys cereal_port"
          chdir={{ros_workspace}}
   sudo: yes
   sudo_user: "{{ros_user}}"
 
 # Now build the code we just installed.
 - name: catkin_make
-  shell: bash -c "source {{ros_workspace}}/devel/setup.bash && catkin_make"
+  shell: bash -c "source {{ros_workspace}}_deps/devel/setup.bash && catkin_make"
     chdir={{ros_workspace}}
   sudo: yes
   sudo_user: "{{ros_user}}"
