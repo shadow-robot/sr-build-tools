@@ -11,7 +11,7 @@ To setup a new production machine, [see these instructions](Production Checklist
 Structure
 ---------
 
-* [ansible](ansible) - Ansible roles and playbooks. Go there if you want to setup a new machine running Shadow software quickly.
+* [ansible](ansible) - Ansible roles and playbooks. Go there if you want to setup a new machine running Shadow software quickly or automatic build.
 * [bin](bin) - Small executables and scripts. Includes older, bash script based ROS installers being replaced by ansible. Scripts for working with ROS and Jenkins. Also a script to sync between github issues and Trello.
 * [config](config) - Config files (**not** ansible or vagrant). Just an example of the trello sync config for now.
 * [data](data) - Rosinstall files for Shadow projects.
