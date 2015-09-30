@@ -11,9 +11,9 @@ To setup a new production machine, [see these instructions](Production Checklist
 Structure
 ---------
 
-* [ansible](ansible/README.md) - Ansible roles and playbooks. Go there if you want to setup a new machine running Shadow software quickly or automatic build.
-* [bin](bin/README.md) - Small executables and scripts. Includes older, bash script based ROS installers being replaced by ansible. Scripts for working with ROS and Jenkins. Also a script to sync between github issues and Trello.
-* [config](config/README.md) - Config files (**not** ansible or vagrant). Just an example of the trello sync config for now.
-* [data](data/README.md) - Rosinstall files for Shadow projects.
-* [docker](docker/README.md) - Docker image files.
-* [vagrant](vagrant/README.md) - Vagrant virtual machines.
+* [ansible](ansible) - Ansible roles and playbooks. Go there if you want to setup a new machine running Shadow software quickly or automatic build.
+* [bin](bin) - Small executables and scripts. Includes older, bash script based ROS installers being replaced by ansible. Scripts for working with ROS and Jenkins. Also a script to sync between github issues and Trello.
+* [config](config) - Config files (**not** ansible or vagrant). Just an example of the trello sync config for now.
+* [data](data) - Rosinstall files for Shadow projects.
+* [docker](docker) - Docker image files.
+* [vagrant](vagrant) - Vagrant virtual machines.
