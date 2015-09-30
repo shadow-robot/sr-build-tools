@@ -37,6 +37,7 @@
     - {role: ci/servers/shippable/finalize, when: run_build, tags: ["shippable"]}
     - {role: ci/servers/circle/finalize, when: run_build, tags: ["circle"]}
     - {role: ci/servers/semaphore/finalize, when: run_build, tags: ["semaphore"]}
+    - {role: ci/servers/local/finalize, when: run_build, tags: ["local"]}
     - {role: ci/code_coverage/python/finalize, when: run_build, tags: ["python_code_coverage", "code_coverage", "codecov_tool"]}
     - {role: ci/code_coverage/cpp/finalize, when: run_build, tags: ["cpp_code_coverage", "code_coverage", "codecov_tool"]}
     - {role: ci/code_coverage/codecov, when: run_build, tags: ["codecov_tool"]}
