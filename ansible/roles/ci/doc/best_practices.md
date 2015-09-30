@@ -58,10 +58,9 @@ If you've followed the steps above, you should have a Docker container named **r
 sudo docker start ros_ubuntu
 sudo docker attach ros_ubuntu
 ```
+**Please note** that bash default folder is */root/sr-build-tools/ansible/*.
 
-By default you are in */root/sr-build-tools/ansible/* folder.
-
-You are ready to start build tools in the same way as it is done on the server.
+Now you are ready to start build tools in the same way as it is done on the server.
 
 ```bash
 sudo PYTHONUNBUFFERED=1 ansible-playbook -v -i "localhost," -c local docker_site.yml --tags "local,check_cache,code_coverage" -e "local_repo_dir=/host/catkin_ws/src/build-servers-check/ local_test_dir=/root/workspace/test_results local_code_coverage_dir=/root/workspace/coverage_results"
@@ -70,7 +69,7 @@ sudo PYTHONUNBUFFERED=1 ansible-playbook -v -i "localhost," -c local docker_site
 This command will execute build, unit_tests and code_coverage modules.
 Results of the operation will be written to local_test_dir and local_code_coverage_dir on Docker container.
 
-If you want to work with another repository is better to delete the existing Docker container and create a new one:
+If you want to work with another repository is better to delete the existing Docker container and create a new one or use another name instead of *ros_ubuntu*:
 
 ```bash
 sudo docker rm ros_ubuntu
@@ -80,3 +79,7 @@ sudo docker rm ros_ubuntu
 
 Read description of command line utility [here](/bin/README.md)
 
+
+## How to analyse build log
+ 
+[![How to analyse build log](http://img.youtube.com/vi/dFBWxV8WkHk/0.jpg)](http://www.youtube.com/watch?v=dFBWxV8WkHk)

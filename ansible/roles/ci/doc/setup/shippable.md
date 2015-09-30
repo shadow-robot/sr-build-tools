@@ -23,4 +23,8 @@ The process of setting up [Shippable](https://wwww.shippable.com/) server:
   * You can use section *after_failure* from [build servers check](https://github.com/shadow-robot/build-servers-check) repository as an example of setting Slack notifications of the failed builds. 
     The encrypted variable **SLACK_WEB_HOOK_URL** needs to be defined and put it into the *env* section.
    
-More information about *shippable.yml* features can be found [here](http://shippable-docs-20.readthedocs.org/en/latest/config.html#configuration). 
+More information about *shippable.yml* features can be found [here](http://shippable-docs-20.readthedocs.org/en/latest/config.html#configuration).
+ 
+## Video Tutorial
+ 
+[![Shippable CI build tools setup](http://img.youtube.com/vi/zMw_gpO72mI/0.jpg)](http://www.youtube.com/watch?v=zMw_gpO72mI)

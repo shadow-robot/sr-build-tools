@@ -17,3 +17,6 @@ The process of setting up [Circle CI](https://circleci.com/) server:
 
 More information about *circle.yml* features can be found [here](https://circleci.com/docs/configuration). 
 
+## Video Tutorial
+ 
+[![Circle CI build tools setup](http://img.youtube.com/vi/Ip_HoUXsvT4/0.jpg)](http://www.youtube.com/watch?v=Ip_HoUXsvT4)
