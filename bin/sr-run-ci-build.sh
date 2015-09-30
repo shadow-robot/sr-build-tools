@@ -70,7 +70,7 @@ case $server_type in
 "local") echo "Local run"
   export local_repo_dir=$4
   export image_home="/root"
-  export container_name="single_run_ros_ubuntu"
+
   if [ -z "$unit_tests_result_dir" ]
   then
     export unit_tests_dir=$image_home"/workspace/test_results"
@@ -85,9 +85,7 @@ case $server_type in
   fi
   docker pull $docker_image
   export extra_variables="local_repo_dir=/host$local_repo_dir local_test_dir=$unit_tests_dir local_code_coverage_dir=$coverage_tests_dir codecov_secure=$CODECOV_TOKEN"
-  # Removing previous instance of container
-  docker rm -f $container_name || true
-  docker run -w "$image_home/sr-build-tools/ansible" --name $container_name  -v $HOME:/host:rw $docker_image  bash -c "export HOME=$image_home && git pull && git checkout $toolset_branch && sudo PYTHONUNBUFFERED=1 ansible-playbook -v -i \"localhost,\" -c local docker_site.yml --tags \"local,$tags_list\" -e \"$extra_variables\" "
+  docker run -w "$image_home/sr-build-tools/ansible" --rm=true -v $HOME:/host:rw $docker_image  bash -c "export HOME=$image_home && git pull && git checkout $toolset_branch && git pull && sudo PYTHONUNBUFFERED=1 ansible-playbook -v -i \"localhost,\" -c local docker_site.yml --tags \"local,$tags_list\" -e \"$extra_variables\" "
   ;;
 
 *) echo "Not supported server type $server_type"

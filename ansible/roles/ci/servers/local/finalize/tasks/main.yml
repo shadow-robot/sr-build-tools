@@ -9,3 +9,6 @@
 - name: Move unit tests results
   shell: bash -c "mv -vt {{test_results_dir}} {{ros_workspace}}/build/test_results/*"
   ignore_errors: yes
+
+- name: Fail in case if unit tests failing
+  shell: bash -c "! grep -E -R '<failure|<error' {{test_results_dir}}"
