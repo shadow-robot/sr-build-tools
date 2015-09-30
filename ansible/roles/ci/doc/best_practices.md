@@ -46,13 +46,13 @@ Next you need to download Shadow Robot images from [Docker Hub](https://hub.dock
 sudo docker pull shadowrobot/ubuntu-ros-indigo-build-tools
 ```
 
-Now you can start Docker container
+Now you can start Docker container named **ros_ubuntu**
 
 ```bash
 sudo docker run -it -w "/root/sr-build-tools/ansible" --env=HOME=/root --name "ros_ubuntu" -v $HOME:/host:rw "shadowrobot/ubuntu-ros-indigo-build-tools" bash
 ```
 
-If you've followed the steps above, you should have a Docker container named **ros_ubuntu**. You can now start and attach it:
+If you want to use this container in the future you can use following commands to start and attach to it:
 
 ```bash
 sudo docker start ros_ubuntu
@@ -60,7 +60,7 @@ sudo docker attach ros_ubuntu
 ```
 **Please note** that bash default folder is */root/sr-build-tools/ansible/*.
 
-Now you are ready to start build tools in the same way as it is done on the server.
+In order to start build tools you need to run Ansible playbook:
 
 ```bash
 sudo PYTHONUNBUFFERED=1 ansible-playbook -v -i "localhost," -c local docker_site.yml --tags "local,check_cache,code_coverage" -e "local_repo_dir=/host/catkin_ws/src/build-servers-check/ local_test_dir=/root/workspace/test_results local_code_coverage_dir=/root/workspace/coverage_results"
