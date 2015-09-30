@@ -75,6 +75,8 @@ If you want to work with another repository is better to delete the existing Doc
 sudo docker rm ros_ubuntu
 ```
 
+The video tutorial about troubleshooting:
+
 [![How to troubleshoot build issue locally](http://img.youtube.com/vi/Ls5THum5ZGc/0.jpg)](http://www.youtube.com/watch?v=Ls5THum5ZGc)
 
 ## Run code style check locally
