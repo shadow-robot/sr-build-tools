@@ -67,7 +67,7 @@
 # http://blog.kollerie.com/2014/02/18/ansible_git_ssh/
 #
 - name: Find repo domains
-  shell: grep "uri" /tmp/ansible-ros-workspace.rosinstall | sed -n -e "s/^.*'\(.*\)'/\1/p" | sort | uniq
+  shell: 'grep "uri" /tmp/ansible-ros-workspace.rosinstall | sed -n -e "s/^.*@\(.*\):.*$/\1/p" | sort | uniq'
   register: repo_domains
 
 - name: Get repo hosts keys
