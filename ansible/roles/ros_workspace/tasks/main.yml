@@ -76,7 +76,7 @@
   register: repo_host_keys
   when: repo_domains.stdout is defined and repo_domains.stdout is not ""
 
-- name: Add host keys for repos
+- name: Add host keys for repos "{{repo_host_keys}}"
   lineinfile: create=yes dest="~/.ssh/known_hosts" line='{{ item.stdout }}' state=present
   with_items: repo_host_keys.results
   when: repo_host_keys is defined and repo_host_keys.stdout is defined and repo_host_keys.stdout is not ""
