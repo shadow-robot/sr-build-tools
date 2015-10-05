@@ -66,22 +66,21 @@
 # keys first.
 # http://blog.kollerie.com/2014/02/18/ansible_git_ssh/
 #
-- name: Find repo domains
-  shell: 'grep "uri" /tmp/ansible-ros-workspace.rosinstall | sed -n -e "s/^.*@\(.*\):.*$/\1/p" | sort | uniq'
-  register: repo_domains
+#- name: Find repo domains
+#  shell: 'grep "uri" /tmp/ansible-ros-workspace.rosinstall | sed -n -e "s/^.*@\(.*\):.*$/\1/p" | sort | uniq'
+#  register: repo_domains
 
-- name: Get repo hosts keys
-  shell: ssh-keyscan "{{item}}"
-  with_items: repo_domains.stdout_lines
-  register: repo_host_keys
-  when: repo_domains.stdout is defined and repo_domains.stdout is not ""
+#- name: Get repo hosts keys
+#  shell: ssh-keyscan "{{item}}"
+#  with_items: repo_domains.stdout_lines
+#  register: repo_host_keys
+#  when: repo_domains.stdout is defined and repo_domains.stdout is not ""
 
-- name: Add host keys for repos 
-  lineinfile: create=yes dest="~/.ssh/known_hosts" line='{{ item.stdout }}' state=present
-  with_items: repo_host_keys.results
-  when: repo_host_keys is defined and repo_host_keys.stdout is defined and repo_host_keys.stdout is not ""
-  ignore_errors: yes
-
+#- name: Add host keys for repos 
+#  lineinfile: create=yes dest="~/.ssh/known_hosts" line='{{ item.stdout }}' state=present
+#  with_items: repo_host_keys.results
+#  when: repo_host_keys is defined and repo_host_keys.stdout is defined and repo_host_keys.stdout is not ""
+ 
 - name: Init workspace
   command: wstool init .
     chdir={{ros_workspace}}/src
