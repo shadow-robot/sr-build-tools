@@ -8,8 +8,24 @@ if [ -n "$2" ];
     echo "   (using sr-build-tools branch: ) $2"
 fi
 
-sudo apt-get install -y ansible git
-rm -rf sr-build-tools
+
+echo ""
+echo " ---------------------------------"
+echo " |   Installing needed packages  |"
+echo " ---------------------------------"
+echo ""
+
+sudo apt-get install -y ansible git &
+rm -rf sr-build-tools &
+
+wait
+
+echo ""
+echo " -------------------"
+echo " |   Cloning repo  |"
+echo " -------------------"
+echo ""
+
 if [ -z "$2" ];
   then
     git clone https://github.com/shadow-robot/sr-build-tools
@@ -17,7 +33,22 @@ if [ -z "$2" ];
     git clone https://github.com/shadow-robot/sr-build-tools -b $2
 fi
 
+
+echo ""
+echo " -------------------"
+echo " | Running Ansible |"
+echo " -------------------"
+echo ""
+
 sudo sh -c 'echo "[hand-prod]
 localhost ansible_connection=local" > /etc/ansible/hosts'
 
 ansible-playbook -v -K sr-build-tools/ansible/vagrant_site.yml --extra-vars "config_branch=$1"
+
+
+
+echo ""
+echo " ------------------------------------------------"
+echo " | Install complete, please restart the machine |"
+echo " ------------------------------------------------"
+echo ""
