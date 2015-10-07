@@ -58,9 +58,9 @@ case $server_type in
 
 "circle") echo "Circle CI server"
   export CIRCLE_REPO_DIR=$HOME/$CIRCLE_PROJECT_REPONAME
-  docker pull $docker_image
+  sudo docker pull $docker_image
   export extra_variables="circle_repo_dir=/host$CIRCLE_REPO_DIR  circle_is_pull_request=$CI_PULL_REQUEST circle_test_dir=/host$CI_REPORTS circle_code_coverage_dir=/host$CIRCLE_ARTIFACTS codecov_secure=$CODECOV_TOKEN"
-  docker run -w "/root/sr-build-tools/ansible" -v /:/host:rw $docker_image  bash -c "git pull && git checkout $toolset_branch && sudo PYTHONUNBUFFERED=1 ansible-playbook -v -i \"localhost,\" -c local docker_site.yml --tags \"circle,$tags_list\" -e \"$extra_variables\" "
+  sudo docker run -w "/root/sr-build-tools/ansible" -v /:/host:rw $docker_image  bash -c "git pull && git checkout $toolset_branch && sudo PYTHONUNBUFFERED=1 ansible-playbook -v -i \"localhost,\" -c local docker_site.yml --tags \"circle,$tags_list\" -e \"$extra_variables\" "
   ;;
 
 "docker_hub") echo "Docker Hub"
@@ -83,9 +83,9 @@ case $server_type in
   else
     export coverage_tests_dir="/host"coverage_tests_result_dir
   fi
-  docker pull $docker_image
+  sudo docker pull $docker_image
   export extra_variables="local_repo_dir=/host$local_repo_dir local_test_dir=$unit_tests_dir local_code_coverage_dir=$coverage_tests_dir codecov_secure=$CODECOV_TOKEN"
-  docker run -w "$image_home/sr-build-tools/ansible" --rm=true -v $HOME:/host:rw $docker_image  bash -c "export HOME=$image_home && git pull && git checkout $toolset_branch && git pull && sudo PYTHONUNBUFFERED=1 ansible-playbook -v -i \"localhost,\" -c local docker_site.yml --tags \"local,$tags_list\" -e \"$extra_variables\" "
+  sudo docker run -w "$image_home/sr-build-tools/ansible" --rm=true -v $HOME:/host:rw $docker_image  bash -c "export HOME=$image_home && git pull && git checkout $toolset_branch && git pull && sudo PYTHONUNBUFFERED=1 ansible-playbook -v -i \"localhost,\" -c local docker_site.yml --tags \"local,$tags_list\" -e \"$extra_variables\" "
   ;;
 
 *) echo "Not supported server type $server_type"
