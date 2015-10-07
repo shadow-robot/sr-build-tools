@@ -75,13 +75,13 @@ case $server_type in
   then
     export unit_tests_dir=$image_home"/workspace/test_results"
   else
-    export unit_tests_dir="/host"$unit_tests_result_dir
+    export unit_tests_dir="/host/"$unit_tests_result_dir
   fi
   if [ -z "$coverage_tests_result_dir" ]
   then
     export coverage_tests_dir=$image_home"/workspace/coverage_results"
   else
-    export coverage_tests_dir="/host"coverage_tests_result_dir
+    export coverage_tests_dir="/host/"$coverage_tests_result_dir
   fi
   sudo docker pull $docker_image
   export extra_variables="local_repo_dir=/host$local_repo_dir local_test_dir=$unit_tests_dir local_code_coverage_dir=$coverage_tests_dir codecov_secure=$CODECOV_TOKEN"
