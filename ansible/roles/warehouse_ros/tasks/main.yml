@@ -37,13 +37,19 @@
   sudo: yes
   sudo_user: "{{ros_user}}"
 
-- name: delete the {{ros_workspace}} build
-  shell: rm -rf {{ros_workspace}}/build {{ros_workspace}}/devel
+- name: delete the {{ros_workspace}}_deps build
+  shell: rm -rf {{ros_workspace}}_deps/build {{ros_workspace}}_deps/devel
+  sudo: yes
+  sudo_user: "{{ros_user}}"
+
+- name: catkin make {{ros_workspace}}_deps
+  shell: bash -c "source {{ros_workspace}}_warehouse/devel/setup.bash && rospack profile && catkin_make"
+    chdir={{ros_workspace}}_deps
   sudo: yes
   sudo_user: "{{ros_user}}"
 
 - name: catkin make {{ros_workspace}}
-  shell: bash -c "catkin_make"
+  shell: bash -c "source {{ros_workspace}}_warehouse/devel/setup.bash && rospack profile && catkin_make"
     chdir={{ros_workspace}}
   sudo: yes
   sudo_user: "{{ros_user}}"
