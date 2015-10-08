@@ -86,8 +86,10 @@ case $server_type in
   sudo docker pull $docker_image
 
   # Remove untagged Docker images which do not have containers associated with them
+  echo "Debug start of docker cleanup loop"
   export untagged_images_list=$(sudo docker images -q --filter 'dangling=true')
   for untagged_image_name in $untagged_images_list; do
+    echo "Debug $untagged_image_name"
     export images_used_by_containers="$(sudo docker ps -a | tail -n +2 | tr -s ' ' | cut -d' ' -f2 | paste -d' ' -s)"
     if [[ $images_used_by_containers != *"$untagged_image_name"* ]]; then
       echo "Removing unused and untagged Docker image $untagged_image_name"
