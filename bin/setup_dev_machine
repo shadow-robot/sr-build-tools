@@ -40,9 +40,9 @@ echo " | Running Ansible |"
 echo " -------------------"
 echo ""
 
-export myself=`whoami`
+MYSELF=`whoami`
 sudo sh -c 'echo "[dev-machine]
-localhost ansible_connection=local ansible_user=${myself}" > /etc/ansible/hosts'
+localhost ansible_connection=local ansible_user=${MYSELF}" > /etc/ansible/hosts'
 
 ansible-playbook -v -K sr-build-tools/ansible/vagrant_site.yml --extra-vars "config_branch=$1"
 
