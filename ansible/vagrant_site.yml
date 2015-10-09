@@ -177,7 +177,7 @@
   pre_tasks:
     - group: name=ros
     - user: name="{{ ros_user }}"
-         append=yes groups=ros,adm,sudo.plugdev,cdrom
+         append=yes groups=ros,adm,sudo,plugdev,cdrom
 
   vars:
     ros_release: 'indigo'
