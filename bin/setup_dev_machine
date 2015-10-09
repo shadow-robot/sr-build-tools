@@ -40,14 +40,10 @@ echo " | Running Ansible |"
 echo " -------------------"
 echo ""
 
-MYSELF=`whoami`
-echo "[dev-machine]
-localhost ansible_connection=local ansible_user=${MYSELF}" > /tmp/ansible-hosts
+sudo sh -c 'echo "[dev-machine]
+localhost ansible_connection=local" > /etc/ansible/hosts'
 
-sudo mv /tmp/ansible-hosts /etc/ansible/hosts
-
-ansible-playbook -v -K sr-build-tools/ansible/vagrant_site.yml --extra-vars "config_branch=$1"
-
+ansible-playbook -v -K sr-build-tools/ansible/vagrant_site.yml --extra-vars "config_branch=$1" "ros_user=`whoami`"
 
 echo ""
 echo " ------------------------------------------------"
