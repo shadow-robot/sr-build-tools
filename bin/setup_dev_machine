@@ -46,7 +46,6 @@ localhost ansible_connection=local" > /etc/ansible/hosts'
 ansible-playbook -v -K sr-build-tools/ansible/vagrant_site.yml --extra-vars "config_branch=$1"
 
 
-
 echo ""
 echo " ------------------------------------------------"
 echo " | Install complete, please restart the machine |"

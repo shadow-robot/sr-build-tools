@@ -177,6 +177,8 @@
     ros_release: 'indigo'
     ros_packages:
       - ethercat-grant
+    ros_user: {{ansible_user_id}}
+    ros_workspace_install: "../data/shadow_robot-{{ros_release}}.rosinstall"
   sudo: yes
   roles:
-  - dev-machine
+  - dev_machine
