@@ -175,9 +175,11 @@
 - hosts: dev-machine
 
   pre_tasks:
-    - group: name=ros
-    - user: name="{{ ros_user }}"
-         append=yes groups=ros,adm,sudo,plugdev,cdrom
+    - name: Add ros group
+      group: name=ros
+
+    - name: Add {{ros_user}} to ros group
+      user: name={{ros_user}} append=yes groups=ros
 
   vars:
     ros_release: 'indigo'
