@@ -1,12 +1,71 @@
 #!/usr/bin/env bash
 
-echo "--------"
-echo " installing config branch:  $1"
+# Use > 1 to consume two arguments per pass in the loop (e.g. each
+# argument has a corresponding value to go with it).
+# Use > 0 to consume one or more arguments per pass in the loop (e.g.
+# some arguments don't have a corresponding value to go with it such
+# as in the --default example).
+# note: if this is set to > 0 the /etc/hosts part is not recognized ( may be a bug )
+while [[ $# > 1 ]]
+do
+key="$1"
 
-if [ -n "$2" ];
-  then
-    echo "   (using sr-build-tools branch: ) $2"
+case $key in
+    -c|--configbranch)
+    SR_CONFIG_BRANCH="$2"
+    shift # past argument
+    ;;
+    -b|--buildtoolsbranch)
+    SR_BUILD_TOOLS_BRANCH="$2"
+    shift # past argument
+    ;;
+    -w|--workspace)
+    WORKSPACE_PATH="$2"
+    shift # past argument
+    ;;
+    --default)
+    DEFAULT=YES
+    ;;
+    *)
+            # unknown option
+    ;;
+esac
+shift # past argument or value
+done
+
+
+# setting defaults
+if [ -z "${SR_CONFIG_BRANCH}" ];
+then
+    SR_CONFIG_BRANCH="indigo-devel"
 fi
+
+if [ -z "${SR_BUILD_TOOLS_BRANCH}" ];
+then
+    SR_BUILD_TOOLS_BRANCH="indigo-devel"
+fi
+
+if [ -z "${WORKSPACE_PATH}" ];
+then
+    WORKSPACE_PATH="~/indigo_ws"
+fi
+
+echo "================================================================="
+echo "|       Installing Shadow Robot development environment "
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+cat ${SCRIPT_DIR}/shadow_hand.txt
+echo "                                                                |"
+echo "================================================================="
+echo ""
+echo "possible options: "
+echo "  * -w or --workspace path you want to use for the ROS workspace. The directory will be created. (~/indigo_ws by default)"
+echo "  * -c or --configbranch which branch of the sr-config should be pulled (indigo-devel by default)"
+echo ""
+echo "example: ./setup_dev_machine -w ~/myworkspace -c shadowrobot_1234"
+echo ""
+echo "sr-config branch      = ${SR_CONFIG_BRANCH}"
+echo "sr-build-tools branch = ${SR_BUILD_TOOLS_BRANCH}"
+echo "workspace paths       = ${WORKSPACE_PATH}"
 
 
 echo ""
@@ -26,7 +85,7 @@ echo " |   Cloning repo  |"
 echo " -------------------"
 echo ""
 
-if [ -z "$2" ];
+if [ -z "${SR_BUILD_TOOLS_BRANCH}" ];
   then
     git clone https://github.com/shadow-robot/sr-build-tools
   else
@@ -43,7 +102,7 @@ echo ""
 sudo sh -c 'echo "[dev-machine]
 localhost ansible_connection=local" > /etc/ansible/hosts'
 
-ansible-playbook -v -K sr-build-tools/ansible/vagrant_site.yml --extra-vars "config_branch=$1 ros_user=`whoami`"
+ansible-playbook -v -K sr-build-tools/ansible/vagrant_site.yml --extra-vars "config_branch=${SR_BUILD_TOOLS_BRANCH} ros_user=`whoami` ros_workspace=${WORKSPACE_PATH}"
 
 echo ""
 echo " ------------------------------------------------"
