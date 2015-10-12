@@ -52,8 +52,7 @@ fi
 
 echo "================================================================="
 echo "|       Installing Shadow Robot development environment "
-SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-cat ${SCRIPT_DIR}/shadow_hand.txt
+curl https://raw.githubusercontent.com/shadow-robot/sr-build-tools/F%23203_dev_machine/bin/shadow_hand.txt
 echo "                                                                |"
 echo "================================================================="
 echo ""
@@ -89,7 +88,7 @@ if [ -z "${SR_BUILD_TOOLS_BRANCH}" ];
   then
     git clone https://github.com/shadow-robot/sr-build-tools
   else
-    git clone https://github.com/shadow-robot/sr-build-tools -b $2
+    git clone https://github.com/shadow-robot/sr-build-tools -b ${SR_BUILD_TOOLS_BRANCH}
 fi
 
 
