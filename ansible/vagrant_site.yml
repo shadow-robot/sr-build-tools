@@ -173,19 +173,6 @@
 
 
 - hosts: dev-machine
-
-  pre_tasks:
-    - name: Add ros group
-      group: name=ros
-
-    - name: Add {{ros_user}} to ros group
-      user: name={{ros_user}} append=yes groups=ros
-
-    - name: Killing all ssh connections of current user (to reset the groups)
-      delegate_to: localhost
-      shell: ssh {{ inventory_hostname }} "sudo ps -ef | grep sshd | grep `whoami` | awk '{print \"sudo kill -9\", \$2}' | sh"
-      failed_when: false
-
   vars:
     ros_release: 'indigo'
     ros_packages:

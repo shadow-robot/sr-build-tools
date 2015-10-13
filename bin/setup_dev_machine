@@ -92,6 +92,17 @@ if [ -z "${SR_BUILD_TOOLS_BRANCH}" ];
 fi
 
 
+# couldn't find a way to get this to work in ansible
+# on the current user (creating a group without logging
+# out and back in)
+echo ""
+echo " ----------------------"
+echo " | Creating ros group |"
+echo " ----------------------"
+echo ""
+sudo groupadd ros
+sudo useradd -G ros $USER
+
 echo ""
 echo " -------------------"
 echo " | Running Ansible |"
@@ -101,6 +112,7 @@ echo ""
 sudo sh -c 'echo "[dev-machine]
 localhost ansible_connection=local" > /etc/ansible/hosts'
 
+su - $USER
 ansible-playbook -v -K sr-build-tools/ansible/vagrant_site.yml --extra-vars "config_branch=${SR_BUILD_TOOLS_BRANCH} ros_user=`whoami` ros_workspace=${WORKSPACE_PATH}"
 
 echo ""
