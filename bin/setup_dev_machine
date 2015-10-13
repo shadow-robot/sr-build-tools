@@ -112,7 +112,7 @@ echo ""
 sudo sh -c 'echo "[dev-machine]
 localhost ansible_connection=local" > /etc/ansible/hosts'
 
-su - $USER
+exec su -l $USER
 ansible-playbook -v -K sr-build-tools/ansible/vagrant_site.yml --extra-vars "config_branch=${SR_BUILD_TOOLS_BRANCH} ros_user=`whoami` ros_workspace=${WORKSPACE_PATH}"
 
 echo ""
