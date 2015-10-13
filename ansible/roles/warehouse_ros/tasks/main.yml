@@ -6,7 +6,7 @@
   sudo: yes
 
 - name: Create overlay for the warehouse {{ros_workspace}}_warehouse
-  file: state=directory path={{ros_workspace}}_warehouse/src owner={{ros_user}} group=ros
+  file: state=directory path={{ros_workspace}}_warehouse/src owner={{ros_user}} group={{ros_group}}
   sudo: yes
   sudo_user: "{{ros_user}}"
 

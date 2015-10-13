@@ -15,10 +15,10 @@
   shell: pip install Django==1.5
 
 - name: Create shadow opt dir
-  file: state=directory path={{shadow_opt}} owner={{ros_user}} group=ros
+  file: state=directory path={{shadow_opt}} owner={{ros_user}} group={{ros_group}}
 
 - name: Fix perms
-  file: path={{shadow_opt}} recurse=yes owner={{ros_user}} group=ros
+  file: path={{shadow_opt}} recurse=yes owner={{ros_user}} group={{ros_group}}
 
 - name: Repo status
   git: repo={{ronexserial.repo}} dest="{{ronexserial.installdir}}" accept_hostkey=True update=no
@@ -34,7 +34,7 @@
   when: not repo.before
 
 - name: Fix perms
-  file: path={{ronexserial.installdir}} recurse=yes owner={{ros_user}} group=ros
+  file: path={{ronexserial.installdir}} recurse=yes owner={{ros_user}} group={{ros_group}}
 
 # This makes the eeprom command line tool we need for programming
 - name: Build SOEM
@@ -44,7 +44,7 @@
   sudo_user: "{{ros_user}}"
 
 - name: Create ~{{ros_user}}/logs dir
-  file: state=directory path=~{{ros_user}}/logs owner={{ros_user}} group=ros
+  file: state=directory path=~{{ros_user}}/logs owner={{ros_user}} group={{ros_group}}
 
 # So we can run without sudo and access the ethercat
 - name: Setup soem for normal user
@@ -105,7 +105,7 @@
   shell: "cat {{ronexserial.installdir}}/ronexserial/serials/sql/auth.sql | python manage.py dbshell chdir={{ronexserial.installdir}}/ronexserial"
 
 - name: Create autostart directory
-  file: state=directory path="~{{ros_user}}/.config/autostart" owner={{ros_user}} group=ros
+  file: state=directory path="~{{ros_user}}/.config/autostart" owner={{ros_user}} group={{ros_group}}
 
 - name: Start server at login
   file: state=link
