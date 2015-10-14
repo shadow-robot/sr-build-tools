@@ -74,9 +74,6 @@ Repeat all steps from this [section](#Install Jenkins)
 
   export url="https://raw.githubusercontent.com/shadow-robot/sr-build-tools/master/bin/sr-add-jenkins-slave.sh"
   bash -c "$(wget -O - $url)" -- <jenkins host name, jenkins by default> <jenkins sudo user, jenkins_sudo by default>
-  
-#  sudo su - jenkins
-#  ssh -T git@github.com # type "yes" to accept GitHub keys
 
 ```
 

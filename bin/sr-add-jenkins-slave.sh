@@ -14,9 +14,9 @@ export jenkins_user_email="$jenkins_user@example.com"
 sudo apt-get update
 sudo apt-get install ssh git docker.io openjdk-7-jdk -y
 
-#sudo useradd -d "$jenkins_home" --create-home $jenkins_user
-#sudo mkdir "$jenkins_home/.ssh"
-#sudo chmod 700 "$jenkins_home/.ssh"
+sudo useradd -d "$jenkins_home" --create-home $jenkins_user
+sudo mkdir "$jenkins_home/.ssh"
+sudo chmod 700 "$jenkins_home/.ssh"
 
 echo "Coping private key to local folder. Please provide passwords for Jenkins and local machines"
 sudo ssh -t $jenkins_master_host_sudo_user@$jenkins_master_host sudo -u jenkins scp $jenkins_master_host_home/.ssh/id_rsa $USER@$HOSTNAME:~
