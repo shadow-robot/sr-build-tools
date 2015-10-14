@@ -65,7 +65,7 @@ Press Save button
  
 ### Setup master machine
  
-Repeat all steps from this [section](#Install Jenkins)
+Repeat all steps from this [section](#install-jenkins)
 
 
 ### Setting up slave machine
@@ -91,12 +91,12 @@ Now you need to create binding between master and slave hosts.
     * Credentials: jenkins (choose from dropdown)
     * Availability: Keep this slave on-line as much as possible
   
-Now you can setup jobs as described in the following [section](#Setup job)
+Now you can setup jobs as described in the following [section](#setup-job)
 
 
 ## Best Practices
 
-In order to setup jobs for multiple project quickly. You can setup one project based on this [section](#Setup job).
+In order to setup jobs for multiple project quickly. You can setup one project based on this [section](#setup-job).
 Afterwards you can use option to copy job during "New Item..." creation and change only repository path and names.
 
 JUnit plugin is failing in case if there is no unit tests in the repository. So it is recommended to use it only when you have some tests.
