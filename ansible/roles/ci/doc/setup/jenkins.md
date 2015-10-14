@@ -71,39 +71,9 @@ Repeat all steps from this [section](#Install Jenkins)
 ### Setting up slave machine
 
 ```bash
-  export jenkins_master_host_sudo_user=jenkins_sudo
-  export jenkins_master_host=jenkins
-  export jenkins_master_host_home=/var/lib/jenkins
-  
-  export jenkins_user=jenkins
-  export jenkins_home="/home/$jenkins_user"
-  export jenkins_user_email="$jenkins_user@example.com"
 
-  sudo apt-get update 
-  sudo apt-get install openssh-server ssh git docker.io openjdk-7-jdk -y
-  
-  sudo useradd -d "$jenkins_home" --create-home $jenkins_user
-  sudo mkdir "$jenkins_home/.ssh"
-  sudo chmod 700 "$jenkins_home/.ssh"
-  
-  sudo scp $jenkins_master_host_sudo_user@$jenkins_master_host:$jenkins_master_host_home/.ssh/id_rsa.pub "$jenkins_home/.ssh/authorized_keys"
-  sudo chmod 600 "$jenkins_home/.ssh/authorized_keys"
-  sudo chown -R jenkins:jenkins "$jenkins_home/.ssh"
-
-  sudo scp $jenkins_master_host_sudo_user@$jenkins_master_host:$jenkins_master_host_home/.ssh/id_rsa "$jenkins_home/.ssh/id_rsa"
-  sudo chmod 400 "$jenkins_home/.ssh/id_rsa"
-  sudo chown $jenkins_user:$jenkins_user "$jenkins_home/.ssh/id_rsa"
-  
-  sudo scp $jenkins_master_host_sudo_user@$jenkins_master_host:$jenkins_master_host_home/.ssh/id_rsa.pub "$jenkins_home/.ssh/id_rsa.pub"
-  sudo chown $jenkins_user:$jenkins_user "$jenkins_home/.ssh/id_rsa.pub"
- 
-  sudo mkdir -v "$jenkins_home/build"
-  sudo chown "$jenkins_user:$jenkins_user" "$jenkins_home/build"
-  
-  echo "$jenkins_user  ALL=(ALL) NOPASSWD:  ALL" | (sudo EDITOR="tee -a" visudo)
-
-  sudo su - $jenkins_user -c "git config --global user.name $jenkins_user"
-  sudo su - $jenkins_user -c "git config --global user.email $jenkins_user_email"
+  export $url="https://raw.githubusercontent.com/shadow-robot/sr-build-tools/master/bin/sr-add-jenkins-slave.sh"
+  bash -c "$(wget -O - $url)" -- <jenkins host name, jenkins by default> <jenkins sudo user, jenkins_sudo by default>
   
 #  sudo su - jenkins
 #  ssh -T git@github.com # type "yes" to accept GitHub keys
