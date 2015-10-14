@@ -138,7 +138,6 @@
   shell: bash -c "source {{ros_workspace}}_deps/devel/setup.bash && rosdep install --default-yes --all --ignore-src"
          chdir={{ros_workspace}}_deps
   sudo: yes
-  sudo_user: "{{ros_user}}"
 
 # Now build the code we just installed.
 - name: catkin_make for deps
@@ -151,7 +150,6 @@
   shell: bash -c "source {{ros_workspace}}/devel/setup.bash && rosdep install --default-yes --all --ignore-src --skip-keys sr_ur_msgs --skip-keys cereal_port"
          chdir={{ros_workspace}}
   sudo: yes
-  sudo_user: "{{ros_user}}"
 
 # Now build the code we just installed.
 - name: catkin_make
