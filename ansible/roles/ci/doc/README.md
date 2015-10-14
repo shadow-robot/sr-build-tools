@@ -12,3 +12,4 @@ For more details please read following information:
     * [Shippable](setup/shippable.md)
     * [Circle](setup/circle.md)
     * [Semaphore](setup/semaphore.md)
+    * [Local Jenkins](setup/jenkins.md)
