@@ -14,12 +14,17 @@ export jenkins_user_email="$jenkins_user@example.com"
 apt-get update
 apt-get install ssh git docker.io openjdk-7-jdk -y
 
-useradd -d "$jenkins_home" --create-home $jenkins_user
-mkdir "$jenkins_home/.ssh"
-chmod 700 "$jenkins_home/.ssh"
+#useradd -d "$jenkins_home" --create-home $jenkins_user
+#mkdir "$jenkins_home/.ssh"
+#chmod 700 "$jenkins_home/.ssh"
 
-echo "Please enter jenkins server password"
-scp $jenkins_master_host_sudo_user@$jenkins_master_host:$jenkins_master_host_home/.ssh/id_rsa* "$jenkins_home/.ssh/"
+echo "Coping private key to local folder. Please provide passwords for Jenkins and local machines"
+ssh -t $jenkins_master_host_sudo_user@$jenkins_master_host sudo -u jenkins scp $jenkins_master_host_home/.ssh/id_rsa $USER@$HOSTNAME:~
+mv ~/id_rsa "$jenkins_home/.ssh"
+
+echo "Coping public key to local folder. Please provide passwords for Jenkins and local machines"
+ssh -t $jenkins_master_host_sudo_user@$jenkins_master_host sudo -u jenkins scp $jenkins_master_host_home/.ssh/id_rsa.pub $USER@$HOSTNAME:~
+mv ~/id_rsa.pub "$jenkins_home/.ssh"
 
 cp "$jenkins_home/.ssh/id_rsa.pub" "$jenkins_home/.ssh/authorized_keys"
 chmod 600 "$jenkins_home/.ssh/authorized_keys"
