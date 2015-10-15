@@ -26,7 +26,7 @@
 
 - Run the following command, **replacing** `shadowrobot_1234` with the name of the branch you want to use (it will create it if it doesn't exist, get it otherwise). You can rerun this command any time logged in and from the **sysadmin** user home directory to update the installation.
 ```
-curl https://raw.githubusercontent.com/shadow-robot/sr-build-tools/master/bin/setup_production_machine | bash -s shadowrobot_1234
+curl -L bit.ly/prod-install | bash -s shadowrobot_1234
 ```
 
 - In the [sr-config](https://github.com/shadow-robot/sr-config) folder, don't forget to modify the [sr_rhand.launch file](https://github.com/shadow-robot/sr-config/blob/indigo-devel/sr_ethercat_hand_config/launch/sr_rhand.launch) (or [sr_lhand.launch](https://github.com/shadow-robot/sr-config/blob/indigo-devel/sr_ethercat_hand_config/launch/sr_lhand.launch) for the left hand). The important thing to remember is to point to the proper ethercat port, robot description, mapping file, hand serial, pwm control:
