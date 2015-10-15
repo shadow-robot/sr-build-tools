@@ -1,4 +1,5 @@
 ros_user: 'ros'
+ros_group: "ros"
 ros_user_comment: 'ROS'
 ros_user_password: 'ros'
 ros_user_autologin: True

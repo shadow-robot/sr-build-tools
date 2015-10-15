@@ -14,7 +14,7 @@
 
 - name: Fix repo perms
   file: path={{ ros_workspace }}/src/sr_grasp_stabilisation
-        owner={{ros_user}} group=ros
+        owner={{ros_user}} group={{ros_group}}
         recurse=yes
   when: kcl_remote_test|failed
 
@@ -25,4 +25,3 @@
 - name: Setcap nice
   sudo: yes
   command: setcap cap_sys_nice=eip /usr/bin/nice
-

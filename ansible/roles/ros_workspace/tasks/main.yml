@@ -10,7 +10,7 @@
   sudo: yes
 
 - name: Create workspace for dependencies {{ros_workspace}}_deps
-  file: state=directory path={{ros_workspace}}_deps/src owner={{ros_user}} group=ros
+  file: state=directory path={{ros_workspace}}_deps/src owner={{ros_user}} group={{ros_group}}
   sudo: yes
   sudo_user: "{{ros_user}}"
 
@@ -31,7 +31,7 @@
   sudo_user: "{{ros_user}}"
 
 - name: Create workspace {{ros_workspace}}
-  file: state=directory path={{ros_workspace}}/src owner={{ros_user}} group=ros
+  file: state=directory path={{ros_workspace}}/src owner={{ros_user}} group={{ros_group}}
   sudo: yes
   sudo_user: "{{ros_user}}"
 
@@ -76,11 +76,11 @@
 #  register: repo_host_keys
 #  when: repo_domains.stdout is defined and repo_domains.stdout is not ""
 
-#- name: Add host keys for repos 
+#- name: Add host keys for repos
 #  lineinfile: create=yes dest="~/.ssh/known_hosts" line='{{ item.stdout }}' state=present
 #  with_items: repo_host_keys.results
 #  when: repo_host_keys is defined and repo_host_keys.stdout is defined and repo_host_keys.stdout is not ""
- 
+
 - name: Init workspace
   command: wstool init .
     chdir={{ros_workspace}}/src
@@ -123,16 +123,20 @@
   sudo: yes
 
 - name: Fix perms (As we installed code as root, fix the perms.)
-  file: path={{ros_workspace}} recurse=yes owner={{ros_user}} group=ros
+  file: path={{ros_workspace}} recurse=yes owner={{ros_user}} group={{ros_group}}
 
 - name: Fix perms for deps (As we installed code as root, fix the perms.)
-  file: path={{ros_workspace}}_deps recurse=yes owner={{ros_user}} group=ros
+  file: path={{ros_workspace}}_deps recurse=yes owner={{ros_user}} group={{ros_group}}
 
-- name: Install dependencies of the source deps
-  shell: bash -c "source {{ros_workspace}}_deps/devel/setup.bash && rosdep install --default-yes --all --ignore-src"
+- name: Update rosdep
+  shell: bash -c "source {{ros_workspace}}_deps/devel/setup.bash && rosdep update"
          chdir={{ros_workspace}}_deps
   sudo: yes
   sudo_user: "{{ros_user}}"
+
+- name: Install dependencies of the source deps
+  script: ../files/rosdep_install.sh {{ros_workspace}}_deps
+  sudo: yes
 
 # Now build the code we just installed.
 - name: catkin_make for deps
@@ -142,10 +146,8 @@
   sudo_user: "{{ros_user}}"
 
 - name: Install dependencies
-  shell: bash -c "source {{ros_workspace}}/devel/setup.bash && rosdep install --default-yes --all --ignore-src --skip-keys sr_ur_msgs --skip-keys cereal_port"
-         chdir={{ros_workspace}}
+  script: ../files/rosdep_install.sh {{ros_workspace}}_deps
   sudo: yes
-  sudo_user: "{{ros_user}}"
 
 # Now build the code we just installed.
 - name: catkin_make
