@@ -42,7 +42,7 @@ fi
 
 if [ -z "${SR_BUILD_TOOLS_BRANCH}" ];
 then
-    SR_BUILD_TOOLS_BRANCH="indigo-devel"
+    SR_BUILD_TOOLS_BRANCH="master"
 fi
 
 if [ -z "${WORKSPACE_PATH}" ];
@@ -52,7 +52,7 @@ fi
 
 echo "================================================================="
 echo "|       Installing Shadow Robot development environment "
-curl https://raw.githubusercontent.com/shadow-robot/sr-build-tools/F%23203_dev_machine/bin/shadow_hand.txt
+curl https://raw.githubusercontent.com/shadow-robot/sr-build-tools/master/bin/shadow_hand.txt
 echo "                                                                |"
 echo "================================================================="
 echo ""
