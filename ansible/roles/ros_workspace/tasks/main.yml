@@ -146,7 +146,7 @@
   sudo_user: "{{ros_user}}"
 
 - name: Install dependencies
-  script: ../files/rosdep_install.sh {{ros_workspace}}_deps
+  script: ../files/rosdep_install.sh {{ros_workspace}}
   sudo: yes
 
 # Now build the code we just installed.
