@@ -13,7 +13,7 @@ sudo pip install ansible
 ## Usage
 
 ```bash
-sr-code-style-check.sh <project path (default: ./src)> <workspace path (default: .)> <code-style-check-type(default: code_style_check)>
+sr-code-style-check.sh <repository path (default: ./src)> <workspace path (default: .)> <code-style-check-type(default: code_style_check)>
 ```
 
 ## Results 
@@ -27,7 +27,7 @@ The results are written to *&lt;workspace&gt;/build/test_results/&lt;package_nam
  ~/workspaces/ros/sr-build-tools/bin/sr-code-style-check.sh
 ```
 
-### Path to project files and workspace specified
+### Path to repository files and workspace specified
 ```bash
 ~/workspaces/ros/sr-build-tools/bin/sr-code-style-check.sh ~/workspaces/ros/shadow_ws/src/sr-visualization ~/workspaces/ros/shadow_ws
 ```
