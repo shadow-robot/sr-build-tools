@@ -5,6 +5,7 @@
   vars:
     ros_release: "indigo"
   roles:
+    - {role: ci/servers/travis/init, tags: ["travis"]}
     - {role: ci/servers/shippable/init, tags: ["shippable"]}
     - {role: ci/servers/semaphore/init, tags: ["semaphore"]}
     - {role: ci/servers/circle/init, tags: ["circle"]}
@@ -34,6 +35,7 @@
     - {role: ci/code_style_check/cpp, when: run_build, tags: ["cpp_code_style_check", "code_style_check"]}
     - {role: ci/deploy/complete_deb_check, when: run_build, tags: ["complete_deb_check"]}
     - {role: ci/deploy/check_deb_make, when: run_build, tags: ["check_deb_make", "complete_deb_check"]}
+    - {role: ci/servers/travis/finalize, when: run_build, tags: ["travis"]}
     - {role: ci/servers/shippable/finalize, when: run_build, tags: ["shippable"]}
     - {role: ci/servers/circle/finalize, when: run_build, tags: ["circle"]}
     - {role: ci/servers/semaphore/finalize, when: run_build, tags: ["semaphore"]}

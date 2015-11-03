@@ -33,6 +33,12 @@ fi
 
 case $server_type in
 
+"travis") echo "Travis CI server"
+  sudo docker pull $docker_image
+  export extra_variables="travis_repo_dir=/host$TRAVIS_BUILD_DIR  travis_is_pull_request=$TRAVIS_PULL_REQUEST codecov_secure=$CODECOV_TOKEN"
+  sudo docker run -w "/root/sr-build-tools/ansible" -v $TRAVIS_BUILD_DIR:/host$TRAVIS_BUILD_DIR $docker_image  bash -c "git pull && git checkout $toolset_branch && sudo PYTHONUNBUFFERED=1 ansible-playbook -v -i \"localhost,\" -c local docker_site.yml --tags \"travis,$tags_list\" -e \"$extra_variables\" "
+  ;;
+
 "shippable") echo "Shippable server"
   export extra_variables="shippable_repo_dir=$SHIPPABLE_REPO_DIR  shippable_is_pull_request=$PULL_REQUEST codecov_secure=$CODECOV_TOKEN"
   sudo PYTHONUNBUFFERED=1 ansible-playbook -v -i "localhost," -c local docker_site.yml --tags "shippable,$tags_list" -e "$extra_variables"
