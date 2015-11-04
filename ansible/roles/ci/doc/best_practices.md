@@ -2,8 +2,9 @@
 
 ## Splitting work between different CI servers
 
-Currently build tools support three hosted CI solutions 
+Currently build tools support following hosted CI solutions 
 
+  * [Travis](setup/travis.md)
   * [Shipppable](https://www.shippable.com)
   * [Semaphore](https://semaphoreci.com)
   * [Circle](https://circleci.com)
@@ -17,6 +18,8 @@ So it can be used to run fast checkup for all repositories such as roslint code 
 Also, the module *build_pr_only* can be used to build only Pull Requests in order to save server time for other repositories.
 
 Semaphore has a scheduled build feature which can be used to run heavy repository checks during the night.
+
+Travis has setting to run build only for Pull Requests.
 
 ## Open source repositories
 
