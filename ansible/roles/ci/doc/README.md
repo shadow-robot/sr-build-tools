@@ -9,6 +9,7 @@ For more details please read following information:
   * [main modules](modules.md) - Ansible roles for CI servers run.
   * [best practices](best_practices.md) - recommended way of using tools
   * supported servers 
+    * [Travis](setup/travis.md)
     * [Shippable](setup/shippable.md)
     * [Circle](setup/circle.md)
     * [Semaphore](setup/semaphore.md)
