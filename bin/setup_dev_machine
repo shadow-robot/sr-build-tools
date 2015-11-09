@@ -23,6 +23,10 @@ case $key in
     WORKSPACE_PATH="$2"
     shift # past argument
     ;;
+    -r|--rosinstall)
+    ROSINSTALL_PATH="$2"
+    shift # past argument
+    ;;
     --default)
     DEFAULT=YES
     ;;
@@ -50,6 +54,11 @@ then
     WORKSPACE_PATH="~{{ros_user}}/indigo_ws/shadow"
 fi
 
+if [ -z "${ROSINSTALL_PATH}" ];
+then
+    ROSINSTALL_PATH="shadow_robot-indigo.rosinstall"
+fi
+
 echo "================================================================="
 echo "|       Installing Shadow Robot development environment "
 curl https://raw.githubusercontent.com/shadow-robot/sr-build-tools/master/bin/shadow_hand.txt
@@ -59,12 +68,14 @@ echo ""
 echo "possible options: "
 echo "  * -w or --workspace path you want to use for the ROS workspace. The directory will be created. (~/indigo_ws by default)"
 echo "  * -c or --configbranch which branch of the sr-config should be pulled (indigo-devel by default)"
+echo "  * -r or --rosinstall alternative rosinstall file found in the data folder of the sr-build-tools repository."
 echo ""
 echo "example: ./setup_dev_machine -w ~/myworkspace -c shadowrobot_1234"
 echo ""
 echo "sr-config branch      = ${SR_CONFIG_BRANCH}"
 echo "sr-build-tools branch = ${SR_BUILD_TOOLS_BRANCH}"
 echo "workspace paths       = ${WORKSPACE_PATH}"
+echo "rosinstall file       = ${ROSINSTALL_PATH}"
 
 
 echo ""
@@ -101,7 +112,7 @@ echo ""
 sudo sh -c 'echo "[dev-machine]
 localhost ansible_connection=local" > /etc/ansible/hosts'
 
-ansible-playbook -vvv -K sr-build-tools/ansible/vagrant_site.yml --extra-vars "config_branch=${SR_CONFIG_BRANCH} ros_user=`whoami` ros_workspace=${WORKSPACE_PATH} ros_group=`whoami`"
+ansible-playbook -vvv -K sr-build-tools/ansible/vagrant_site.yml --extra-vars "config_branch=${SR_CONFIG_BRANCH} ros_user=`whoami` ros_workspace=${WORKSPACE_PATH} ros_group=`whoami` ros_workspace_install=../data/${ROSINSTALL_PATH}"
 
 echo ""
 echo " ------------------------------------------------"
