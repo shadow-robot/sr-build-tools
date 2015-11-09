@@ -47,7 +47,7 @@ fi
 
 if [ -z "${WORKSPACE_PATH}" ];
 then
-    WORKSPACE_PATH="~/indigo_ws"
+    WORKSPACE_PATH="~{{ros_user}}/indigo_ws/shadow"
 fi
 
 echo "================================================================="

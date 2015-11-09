@@ -128,12 +128,6 @@
 - name: Fix perms for deps (As we installed code as root, fix the perms.)
   file: path={{ros_workspace}}_deps recurse=yes owner={{ros_user}} group={{ros_group}}
 
-- name: Update rosdep
-  shell: bash -c "source {{ros_workspace}}_deps/devel/setup.bash && rosdep update"
-         chdir={{ros_workspace}}_deps
-  sudo: yes
-  sudo_user: "{{ros_user}}"
-
 - name: Install dependencies of the source deps
   script: ../files/rosdep_install.sh {{ros_workspace}}_deps
   sudo: yes
