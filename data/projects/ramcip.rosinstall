@@ -1,0 +1,4 @@
+- git:
+    uri: 'https://github.com/shadow-robot/ramcip.git'
+    version: 'indigo-devel'
+    local-name: ramcip
