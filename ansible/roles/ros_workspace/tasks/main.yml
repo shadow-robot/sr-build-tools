@@ -149,3 +149,10 @@
     chdir={{ros_workspace}}
   sudo: yes
   sudo_user: "{{ros_user}}"
+
+- name: Add ws_update alias for updating the workspace to ~/.bashrc
+  lineinfile: dest=\~{{ros_user}}/.bashrc
+              line="alias ws_update=\"roscd && cd ../src &&  wstool foreach --git 'git pull'\" && cd .. && catkin_make"
+              regexp='^alias ws_update.*'
+              insertafter=EOF
+              backup=yes
