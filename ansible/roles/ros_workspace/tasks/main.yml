@@ -152,7 +152,7 @@
 
 - name: Add ws_update alias for updating the workspace to ~/.bashrc
   lineinfile: dest=\~{{ros_user}}/.bashrc
-              line="alias ws_update='current_dir=$pwd && roscd && cd ../src &&  wstool foreach --git \"git pull\" && cd .. && catkin_make && cd $current_dir'"
+              line="alias ws_update='current_dir=$PWD && roscd && cd ../src &&  wstool foreach --git \"git pull\" && cd .. && catkin_make && cd $current_dir'"
               regexp='^alias ws_update.*'
               insertafter=EOF
               backup=yes
