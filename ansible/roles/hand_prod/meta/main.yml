@@ -1,4 +1,3 @@
 ---
 dependencies:
   - { role: desktop_setup }
-  - { role: warehouse_ros }

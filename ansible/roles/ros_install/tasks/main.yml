@@ -39,6 +39,7 @@
     - "{{ ros_base_package }}"
     - python-wstool
     - python-rosinstall
+    - ssh
 
 - name: Aggregate specific ROS packages names
   when: ros_packages is defined and ros_packages != ""
