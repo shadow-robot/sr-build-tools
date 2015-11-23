@@ -1,0 +1,20 @@
+- git:
+    uri: 'https://github.com/shadow-robot/autopic.git'
+    version: 'indigo-devel'
+    local-name: autopic
+
+- git:
+    uri: 'https://github.com/shadow-robot/basler_camera.git'
+    version: 'indigo-devel'
+    local-name: basler_camera
+
+- git:
+    uri: 'https://github.com/shadow-robot/video_stream_opencv.git'
+    version: 'master'
+    local-name: video_stream_opencv
+
+- git:
+    uri: 'https://github.com/shadow-robot/framework.git'
+    version: 'master'
+    local-name: framework
+
