@@ -39,6 +39,7 @@
     - "{{ ros_base_package }}"
     - python-wstool
     - python-rosinstall
+    - python-pip
     - ssh
 
 - name: Aggregate specific ROS packages names
