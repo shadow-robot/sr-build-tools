@@ -77,6 +77,7 @@ echo "sr-build-tools branch = ${SR_BUILD_TOOLS_BRANCH}"
 echo "workspace paths       = ${WORKSPACE_PATH}"
 echo "rosinstall file       = ${ROSINSTALL_PATH}"
 
+pushd /tmp
 
 echo ""
 echo " ---------------------------------"
@@ -119,3 +120,5 @@ echo " ------------------------------------------------"
 echo " | Install complete, please restart the machine |"
 echo " ------------------------------------------------"
 echo ""
+
+popd
