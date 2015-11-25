@@ -1,0 +1,5 @@
+- git:
+    uri: 'https://github.com/shadow-robot/autopic.git'
+    version: 'indigo-devel'
+    local-name: autopic
+
