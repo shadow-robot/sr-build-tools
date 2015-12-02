@@ -24,9 +24,9 @@
 
 ## Install ROS, Shadow Software and extras
 
-- Run the following command, **replacing** `shadowrobot_1234` with the name of the branch you want to use (it will create it if it doesn't exist, get it otherwise). You can rerun this command any time logged in and from the **sysadmin** user home directory to update the installation.
+- Run the following command command. You can  replace `indigo-devel` with the name of the branch you want to use (**it must exist on github**). 
 ```
-curl -L bit.ly/prod-install | bash -s shadowrobot_1234
+curl -L bit.ly/prod-install | bash -s indigo-devel
 ```
 
 - In the [sr-config](https://github.com/shadow-robot/sr-config) folder, don't forget to modify the [sr_rhand.launch file](https://github.com/shadow-robot/sr-config/blob/indigo-devel/sr_ethercat_hand_config/launch/sr_rhand.launch) (or [sr_lhand.launch](https://github.com/shadow-robot/sr-config/blob/indigo-devel/sr_ethercat_hand_config/launch/sr_lhand.launch) for the left hand). The important thing to remember is to point to the proper ethercat port, robot description, mapping file, hand serial, pwm control:
@@ -42,4 +42,11 @@ curl -L bit.ly/prod-install | bash -s shadowrobot_1234
     <arg name="sim" value="false"/>
   </include>
 </launch>
+```
+
+## Updating the installation or rerunning a failed install
+
+You can rerun the command any time logged in and from the **sysadmin** user home directory to update the installation.
+```
+curl -L bit.ly/prod-install | bash -s indigo-devel
 ```
