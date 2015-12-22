@@ -59,6 +59,16 @@ then
     ROSINSTALL_PATH="shadow_robot-indigo.rosinstall"
 fi
 
+# Check if the rosinstall path is relative or absolute
+if [[ ${ROSINSTALL_PATH} =~ ^/ ]]; then
+    # absolute, keep as is
+    ROSINSTALL_PATH = ${ROSINSTALL_PATH}
+else
+    # if relative go look for it in the data folder
+    ROSINSTALL_PATH="../data/${ROSINSTALL_PATH}"
+fi
+
+
 echo "================================================================="
 echo "|       Installing Shadow Robot development environment "
 curl https://raw.githubusercontent.com/shadow-robot/sr-build-tools/master/bin/shadow_hand.txt
@@ -113,7 +123,7 @@ echo ""
 sudo sh -c 'echo "[dev-machine]
 localhost ansible_connection=local" > /etc/ansible/hosts'
 
-ansible-playbook -vvv -K sr-build-tools/ansible/vagrant_site.yml --extra-vars "config_branch=${SR_CONFIG_BRANCH} ros_user=`whoami` ros_workspace=${WORKSPACE_PATH} ros_group=`whoami` ros_workspace_install=../data/${ROSINSTALL_PATH}"
+ansible-playbook -vvv -K sr-build-tools/ansible/vagrant_site.yml --extra-vars "config_branch=${SR_CONFIG_BRANCH} ros_user=`whoami` ros_workspace=${WORKSPACE_PATH} ros_group=`whoami` ros_workspace_install=${ROSINSTALL_PATH}"
 
 echo ""
 echo " ------------------------------------------------"
