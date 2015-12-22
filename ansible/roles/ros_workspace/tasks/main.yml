@@ -58,8 +58,8 @@
               insertafter=EOF
               backup=yes
 
-- name: Copy install file
-  copy: src={{ros_workspace_install}} dest=/tmp/ansible-ros-workspace.rosinstall
+- name: Copy install file, replacing login / password if necessary
+  template: src={{ros_workspace_install}} dest=/tmp/ansible-ros-workspace.rosinstall
 
 #
 # When using private repos ssh key checks can become a pain so we generate the
@@ -107,8 +107,18 @@
   sudo: yes
   sudo_user: "{{ros_user}}"
 
+- name: Create /tmp/{{ros_workspace}}_deps to store deps rosinstalls
+  file: state=directory path=/tmp/{{ros_workspace}}_deps owner={{ros_user}} group={{ros_group}}
+  sudo: yes
+  sudo_user: "{{ros_user}}"
+
+- name: Copy dependencies install file, replacing login / password if necessary
+  template: src={{item}} dest=/tmp/{{ros_workspace}}_deps/{{item | dirname}}.rosinstall
+  with_fileglob:
+    - '{{ros_workspace}}/src/*/repository.rosinstall'
+
 - name: Pull source dependencies to {{ros_workspace}}_deps
-  shell: for INSTALL in `find {{ros_workspace}}/src -name "repository.rosinstall"`; do wstool merge -y ${INSTALL} ; done
+  shell: for INSTALL in `find /tmp/{{ros_workspace}}_deps/ -name "*.rosinstall"`; do wstool merge -y ${INSTALL} ; done
          chdir={{ros_workspace}}_deps/src
   sudo: yes
 
