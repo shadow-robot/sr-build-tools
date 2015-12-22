@@ -108,12 +108,15 @@
   sudo_user: "{{ros_user}}"
 
 - name: Create /tmp/{{ros_workspace}}_deps to store deps rosinstalls
-  file: state=directory path=/tmp/{{ros_workspace}}_deps owner={{ros_user}} group={{ros_group}}
+  file: state=directory path=/tmp/{{ros_workspace}}_deps/{{item | dirname}} owner={{ros_user}} group={{ros_group}}
   sudo: yes
   sudo_user: "{{ros_user}}"
+  with_fileglob:
+    - '{{ros_workspace}}/src/*/repository.rosinstall'
+
 
 - name: Copy dependencies install file, replacing login / password if necessary
-  template: src={{item}} dest=/tmp/{{ros_workspace}}_deps/{{item | dirname}}.rosinstall
+  template: src={{item}} dest=/tmp/{{ros_workspace}}_deps/{{item}}.rosinstall
   with_fileglob:
     - '{{ros_workspace}}/src/*/repository.rosinstall'
 
