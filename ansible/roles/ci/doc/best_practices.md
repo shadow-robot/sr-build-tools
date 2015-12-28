@@ -94,4 +94,12 @@ Read description of command line utility [here](/bin/README.md)
 ## Running hardware tests
 
 In order to run hardware tests you might need separate machine and access to serial or ethernet ports on it.
-TODO: Finish description
+There is possibility to provide access to host machine hardware in **--privileged** mode.
+The build tools read environment variable **$docker_flags** and add any parameters from there to docker container.
+So in this case before main script execution run following command 
+```bash
+export docker_flags="--privileged"
+```
+*Please note that this only apply for local server type*
+
+
