@@ -1,4 +1,9 @@
+# Vagrant files
 .vagrant
 vagrant_ansible_inventory*
 
+# Python byte code
+*.pyc
+
+#PyCharm IDE
 .idea
