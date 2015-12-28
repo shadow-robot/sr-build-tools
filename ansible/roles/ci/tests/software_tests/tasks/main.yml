@@ -1,0 +1,6 @@
+---
+# Playbook for software tests
+
+- name: Set variable to run software tests only
+  set_fact:
+    hardware_tests_option: ""

@@ -1,0 +1,6 @@
+---
+# Playbook for all tests
+
+- name: Set variable to run software and hardware tests
+  set_fact:
+    hardware_tests_option: " -DRUN_HARDWARE_TESTS=True "
