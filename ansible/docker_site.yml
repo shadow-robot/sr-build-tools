@@ -13,23 +13,23 @@
     - {role: ci/servers/local/init, tags: ["local"]}
     - {role: ci/build/pr_only, tags: ["build_pr_only"]}
     - {role: ci/init/check_cache, when: run_build, tags: ["check_cache"]}
-    - {role: ci/init/install, when: run_install, tags: ["build", "unit_tests", "code_coverage", "codecov_tool", "python_code_coverage",
+    - {role: ci/init/install, when: run_install, tags: ["build", "unit_tests", "software_tests", "code_coverage", "codecov_tool", "python_code_coverage",
                                                         "cpp_code_coverage", "check_deb_make", "complete_deb_check", "check_build", "python_code_style_check",
                                                         "cpp_code_style_check", "code_style_check", "create_workspace"]}
-    - {role: ci/init/create_workspace, when: run_install, tags: ["build", "unit_tests", "code_coverage", "codecov_tool", "python_code_coverage",
+    - {role: ci/init/create_workspace, when: run_install, tags: ["build", "unit_tests", "software_tests", "code_coverage", "codecov_tool", "python_code_coverage",
                                                         "cpp_code_coverage", "check_deb_make", "complete_deb_check", "check_build", "python_code_style_check",
                                                         "cpp_code_style_check", "code_style_check", "create_workspace"]}
-    - {role: ci/update_dependencies, when: run_build, tags: ["build", "unit_tests", "code_coverage", "codecov_tool", "python_code_coverage",
+    - {role: ci/update_dependencies, when: run_build, tags: ["build", "unit_tests", "software_tests", "code_coverage", "codecov_tool", "python_code_coverage",
                                                         "cpp_code_coverage", "check_deb_make", "complete_deb_check", "check_build"]}
-    - {role: ci/common/packages, when: run_build, tags: ["unit_tests", "code_coverage", "codecov_tool", "python_code_coverage",
+    - {role: ci/common/packages, when: run_build, tags: ["unit_tests", "software_tests", "code_coverage", "codecov_tool", "python_code_coverage",
                                                         "cpp_code_coverage", "check_deb_make", "complete_deb_check", "python_code_style_check",
                                                         "cpp_code_style_check", "code_style_check", "check_build"]}
     - {role: ci/build/check, when: run_build, tags: ["check_build"]}
-    - {role: ci/build/catkin, when: run_build, tags: ["build", "unit_tests", "code_coverage", "codecov_tool",
+    - {role: ci/build/catkin, when: run_build, tags: ["build", "unit_tests", "software_tests", "code_coverage", "codecov_tool",
                                                       "python_code_coverage", "cpp_code_coverage"]}
     - {role: ci/code_coverage/python/setup, when: run_build, tags: ["python_code_coverage", "code_coverage", "codecov_tool"]}
     - {role: ci/code_coverage/cpp/setup, when: run_build, tags: ["cpp_code_coverage", "code_coverage", "codecov_tool"]}
-    - {role: ci/unit_tests, when: run_build, tags: ["unit_tests", "code_coverage", "codecov_tool",
+    - {role: ci/unit_tests, when: run_build, tags: ["unit_tests", "software_tests", "code_coverage", "codecov_tool",
                                                     "python_code_coverage", "cpp_code_coverage"]}
     - {role: ci/code_style_check/python, when: run_build, tags: ["python_code_style_check", "code_style_check"]}
     - {role: ci/code_style_check/cpp, when: run_build, tags: ["cpp_code_style_check", "code_style_check"]}

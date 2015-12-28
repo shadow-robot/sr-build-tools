@@ -90,3 +90,8 @@ Read description of command line utility [here](/bin/README.md)
 ## How to analyse build log
  
 [![How to analyse build log](http://img.youtube.com/vi/dFBWxV8WkHk/0.jpg)](http://www.youtube.com/watch?v=dFBWxV8WkHk)
+
+## Running hardware tests
+
+In order to run hardware tests you might need separate machine and access to serial or ethernet ports on it.
+TODO: Finish description
