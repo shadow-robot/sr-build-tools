@@ -93,13 +93,22 @@ Read description of command line utility [here](/bin/README.md)
 
 ## Running hardware tests
 
+On the software side you need to enclose appropriate rostests into IF statement in CMakeList.txt file as following
+```cmake
+if (RUN_HARDWARE_TESTS)
+  find_package(rostest REQUIRED)
+  add_rostest(test/test_simple_hardware.test)
+endif()
+```
+Also you need to specify module **all_tests** from the (modules list)[modules.md] in build configuration. 
+
 In order to run hardware tests you might need separate machine and access to serial or ethernet ports on it.
 There is possibility to provide access to host machine hardware in **--privileged** mode.
 The build tools read environment variable **$docker_flags** and add any parameters from there to docker container.
-So in this case before main script execution run following command 
+So in this case you need to execute main script using following command
 ```bash
-export docker_flags="--privileged"
+sudo docker_flags="--privileged" <build_tools_directory>/bin/sr-run-ci-build.sh master local check_cache,build /catkin_ws/src/build-servers-check/
 ```
-*Please note that this only apply for local server type*
+**Please note** that these flags are propagated to docvker container if server type is local
 
 
