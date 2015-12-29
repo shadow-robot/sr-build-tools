@@ -100,7 +100,7 @@ if (RUN_HARDWARE_TESTS)
   add_rostest(test/test_simple_hardware.test)
 endif()
 ```
-Also you need to specify module **all_tests** from the (modules list)[modules.md] in build configuration. 
+Also you need to specify module **all_tests** from the [modules list](modules.md) in build configuration. 
 
 In order to run hardware tests you might need separate machine and access to serial or ethernet ports on it.
 There is possibility to provide access to host machine hardware in **--privileged** mode.
