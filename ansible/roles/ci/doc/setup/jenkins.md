@@ -113,7 +113,7 @@ On the job level following changes need to be done in order to make hardware tes
 
   * Check *Restrict where this project can be run* option and type slave machine name for hardware tests in *Label Expression* text field
   * In execute shell script do following changes
-    * add module **all_tests** to *used_modules* varible
+    * add module **all_tests** to *used_modules* variable
     * add following variable definition  
 ```bash
 export docker_flags="--privileged"
