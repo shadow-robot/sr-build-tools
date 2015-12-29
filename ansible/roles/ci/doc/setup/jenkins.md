@@ -73,7 +73,7 @@ Repeat all steps from this [section](#install-jenkins)
 ```bash
 
   export url="https://raw.githubusercontent.com/shadow-robot/sr-build-tools/master/bin/sr-add-jenkins-slave.sh"
-  bash -c "$(wget -O - $url)" -- <jenkins host name, jenkins by default> <jenkins sudo user, jenkins_sudo by default>
+  bash -c "$(wget -O - $url)" -- <jenkins host name, jenkins by default> <jenkins host machine sudo user, jenkins_sudo by default>
 
 ```
 
@@ -96,8 +96,25 @@ Now you can setup jobs as described in the following [section](#setup-job)
 
 ## Best Practices
 
+### Setting up the job
+
 In order to setup jobs for multiple project quickly. You can setup one project based on this [section](#setup-job).
 Afterwards you can use option to copy job during "New Item..." creation and change only repository path and names.
 
+### JUnit plugin
+
 JUnit plugin is failing in case if there is no unit tests in the repository. So it is recommended to use it only when you have some tests.
 
+### Hardware tests
+
+The separate machine is used for hardware tests.
+It can be connected to Jenkins ecosystem as slave machine.
+On the job level following changes need to be done in order to make hardware tests executed.
+
+  * Check *Restrict where this project can be run* option and type slave machine name for hardware tests in *Label Expression* text field
+  * In execute shell script do following changes
+    * add module **all_tests** to *used_modules* varible
+    * add following variable definition  
+```bash
+export docker_flags="--privileged"
+```

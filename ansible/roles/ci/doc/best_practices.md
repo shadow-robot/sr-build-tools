@@ -104,11 +104,21 @@ Also you need to specify module **all_tests** from the [modules list](modules.md
 
 In order to run hardware tests you might need separate machine and access to serial or ethernet ports on it.
 There is possibility to provide access to host machine hardware in **--privileged** mode.
-The build tools read environment variable **$docker_flags** and add any parameters from there to docker container.
+The build tools read environment variable **docker_flags** and add any parameters from there to docker container.
 So in this case you need to execute main script using following command
 ```bash
 sudo docker_flags="--privileged" <build_tools_directory>/bin/sr-run-ci-build.sh master local check_cache,build /catkin_ws/src/build-servers-check/
 ```
 **Please note** that these flags are propagated to docvker container if server type is local
 
+## Using another Docker Hub image
 
+By default build tools are using *shadowrobot/ubuntu-ros-indigo-build-tools* [Docker Hub](https://hub.docker.com/r/shadowrobot/ubuntu-ros-indigo-build-tools/) image.
+You can inherit your image from it.
+The Dockerfile for *shadowrobot/ubuntu-ros-indigo-build-tools* can be found [here](https://github.com/shadow-robot/sr-build-tools/blob/master/docker/ci/Dockerfile) and it can be used as reference.
+
+In order to provide the new name of the image set environment variable **docker_image**.
+ For example
+```bash
+sudo docker_image="shadowrobot/hand-project-ubuntu-image" <build_tools_directory>/bin/sr-run-ci-build.sh master local check_cache,build /catkin_ws/src/build-servers-check/
+```
