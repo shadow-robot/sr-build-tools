@@ -1,0 +1,24 @@
+---
+# Playbook for tests
+
+- name: check if code_coverage_options variable was set
+  fail: msg="Variable code_coverage_options was not set"
+  when: code_coverage_options is not defined
+
+- name: check if hardware_tests_option variable was set
+  fail: msg="Variable hardware_tests_option was not set"
+  when: hardware_tests_option is not defined
+
+- name: Set non-repository packages using lists substraction
+  set_fact:
+     non_repo_packages : "{{workspace_packages_names|difference(repo_packages_names)|join(';')}}"
+
+- name: catkin run tests
+  shell: bash -c 'source {{ros_workspace}}/devel/setup.bash && catkin_make run_tests {{hardware_tests_option}} -DCATKIN_BLACKLIST_PACKAGES="{{ non_repo_packages }}" '
+    chdir={{ros_workspace}}
+  when: code_coverage_options == ""
+
+- name: catkin run tests with code coverage
+  shell: bash -c 'source {{ros_workspace}}/devel/setup.bash && {{python_code_coverage_options}} catkin_make run_tests {{hardware_tests_option}} -DCATKIN_BLACKLIST_PACKAGES="{{ non_repo_packages }}" -DCMAKE_CXX_FLAGS="{{code_coverage_options}}" '
+    chdir={{ros_workspace}}
+  when: code_coverage_options != ""

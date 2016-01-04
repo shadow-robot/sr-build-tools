@@ -6,7 +6,8 @@
   * **check_cache** - checks if ROS Indigo was already installed by build tools. If not, install it. 
   In case of [Docker Hub](https://hub.docker.com/r/shadowrobot/ubuntu-ros-indigo-build-tools/) detects installed ROS and do nothing.
   * **build** - build project using catkin_make.
-  * **unit_tests** - run unit tests and place results in special folder if defined by CI server (e.g. artifacts for Circle CI)
+  * **software_tests** - run unit ([gtest, unittest](http://wiki.ros.org/rosunit)) and integration ([rostest](http://wiki.ros.org/rostest)) tests and place results in special folder if defined by CI server (e.g. artifacts for Circle CI)
+  * **all_tests** - run **software_tests** tests described above as well as hardware tests
   * **check_build** - long running module. Compile independently each package in the project cleaning devel and build folder beforehand and check if all dependencies are declared in CMakeList.txt correctly.
   * **code_style_check** - run [roslint](http://wiki.ros.org/roslint) to check C++ and Python code in all packages of the project.
   * **check_deb_make** - generate Debian package files using bloom and try to install them. Check if installation is working correctly. It assumes that packages installed from source code would be available to rosdep during package deployment.
