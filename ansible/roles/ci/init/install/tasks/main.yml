@@ -19,7 +19,7 @@
      - coverage
 
 - name: Update users bashrc to point to the ROS installation
-  lineinfile: dest=\~/.bashrc
+  lineinfile: dest={{ansible_env.HOME}}/.bashrc
               line="source /opt/ros/{{ros_release}}/setup.bash"
               regexp='^source.*/setup\.bash'
               insertafter=EOF

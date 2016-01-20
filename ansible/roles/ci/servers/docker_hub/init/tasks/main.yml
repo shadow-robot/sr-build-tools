@@ -3,7 +3,7 @@
 
 - name: Set ros_workspace
   set_fact:
-    ros_workspace: "~/workspace"
+    ros_workspace: "{{ansible_env.HOME}}/workspace"
 
 - name: Set upgrade_all_packages
   set_fact:
