@@ -16,7 +16,7 @@ RUN apt-get update
 RUN apt-get upgrade -y
 RUN apt-get install curl -y
 
-ENV toolset_branch="F_adapt_ansible_v2"
+ENV toolset_branch="master"
 ENV server_type="docker_hub"
 ENV used_modules="check_cache,create_workspace"
 ENV remote_shell_script="https://raw.githubusercontent.com/shadow-robot/sr-build-tools/$toolset_branch/bin/sr-run-ci-build.sh"
