@@ -13,7 +13,7 @@ if  [ "circle" != $server_type ] && [ "semaphore_docker" != $server_type ] && [ 
 
   sudo apt-get update
   sudo apt-get install python-dev libxml2-dev libxslt-dev python-pip lcov wget git -y
-  sudo pip install ansible gcovr
+  sudo pip install --upgrade ansible gcovr
 
   git config --global user.email "build.tools@example.com"
   git config --global user.name "Build Tools"
