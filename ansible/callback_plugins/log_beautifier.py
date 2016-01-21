@@ -4,6 +4,7 @@ See README.md
 """
 from threading import Lock
 from threading import Timer
+import re
 from ansible.utils.display import Display
 from ansible.plugins.callback import CallbackBase
 
@@ -18,10 +19,14 @@ def fixed_display(self, msg, color=None, stderr=False, screen_only=False, log_on
         self._previous_log_only = False
 
     with self._display_lock:
+        # Decoding escape symbols from JSON
         try:
             modified_message = msg.decode('string-escape')
-        except UnicodeDecodeError:
+        except UnicodeEncodeError:
             modified_message = msg.encode('utf-8').decode('unicode_escape')
+
+        # Removing colour symbols from strings
+        modified_message = re.sub(u'\\\\u001b\[.*?[@-~]', '', modified_message)
 
         if self._previous_msg.startswith("stderr: ") and msg.startswith("stdout: "):
             self._original_display(modified_message, color=color, stderr=stderr, screen_only=screen_only,
