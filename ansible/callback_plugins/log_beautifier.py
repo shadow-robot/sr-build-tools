@@ -2,49 +2,27 @@
 """
 See README.md
 """
-from threading import Lock
+import json
 from threading import Timer
-import re
-from ansible.utils.display import Display
 from ansible.plugins.callback import CallbackBase
 
 
-def fixed_display(self, msg, color=None, stderr=False, screen_only=False, log_only=False):
-    if not hasattr(self, "_display_lock"):
-        self._display_lock = Lock()
-        self._previous_msg = ""
-        self._previous_color = None
-        self._previous_stderr = False
-        self._previous_screen_only = False
-        self._previous_log_only = False
+def fixed_dump_results(self, result, indent=None, sort_keys=True, keep_invocation=False):
+    json_message = self._original_dump_results(result, indent, sort_keys, keep_invocation)
+    message_dictionary = json.loads(json_message, encoding="utf-8")
+    result = ""
+    for key, value in message_dictionary.iteritems():
+        if key not in ["stderr", "stdout_lines"]:
+            result = result + "  " + key + " => " + unicode(value) + "\n"
 
-    with self._display_lock:
-        # Decoding escape symbols from JSON
-        try:
-            modified_message = msg.decode('string-escape')
-        except UnicodeEncodeError:
-            modified_message = msg.encode('utf-8').decode('unicode_escape')
-
-        # Removing colour symbols from strings
-        modified_message = re.sub(u'\\\\u001b\[.*?[@-~]', '', modified_message)
-
-        if self._previous_msg.startswith("stderr: ") and msg.startswith("stdout: "):
-            self._original_display(modified_message, color=color, stderr=stderr, screen_only=screen_only,
-                                   log_only=log_only)
-            self._previous_msg = "\nvvvvvvvv  STDERR  vvvvvvvvv\n\n" + self._previous_msg
-        else:
-            self._original_display(self._previous_msg, self._previous_color, self._previous_stderr,
-                                   self._previous_screen_only, self._previous_log_only)
-            self._previous_msg = modified_message
-            self._previous_color = color
-            self._previous_stderr = stderr
-            self._previous_screen_only = screen_only
-            self._previous_log_only = log_only
+    if "stderr" in message_dictionary and len(unicode(message_dictionary["stderr"])) > 0:
+        result = result + "\nvvvvvvvv  STDERR  vvvvvvvvv\n\n  stderr => " + unicode(message_dictionary["stderr"])
+    return result
 
 
 # Monkey patch to turn off default callback logging
-Display._original_display = Display.display
-Display.display = fixed_display
+CallbackBase._original_dump_results = CallbackBase._dump_results
+CallbackBase._dump_results = fixed_dump_results
 
 
 class CallbackModule(CallbackBase):
@@ -70,6 +48,3 @@ class CallbackModule(CallbackBase):
 
     def v2_playbook_on_stats(self, stats):
         self.__progress_timer.cancel()
-
-        # Pushing last message to output if any in queue
-        self._display.display("")
