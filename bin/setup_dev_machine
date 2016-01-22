@@ -106,10 +106,11 @@ echo " ---------------------------------"
 echo ""
 
 sudo apt-get install -y python-pip git &
-sudo pip install --upgrade ansible &
 rm -rf sr-build-tools &
 
 wait
+
+sudo pip install --upgrade ansible
 
 echo ""
 echo " -------------------"
