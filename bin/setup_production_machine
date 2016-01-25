@@ -20,7 +20,13 @@ rm -rf sr-build-tools &
 
 wait
 
+sudo rm -rf ansible
 sudo pip install --upgrade ansible
+git clone https://github.com/ansible/ansible.git
+pushd ansible
+git submodule update --init --recursive
+make && sudo make install
+popd
 
 echo ""
 echo " -------------------"
