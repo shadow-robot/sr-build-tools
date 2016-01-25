@@ -117,7 +117,6 @@
 
 - name: Copy dependencies install file, replacing login / password if necessary
   template: src={{item}} dest=/tmp/{{ros_workspace}}_deps/{{item}}.rosinstall
-  sudo: yes
   with_fileglob:
     - '{{ros_workspace}}/src/*/repository.rosinstall'
 
