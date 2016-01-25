@@ -109,6 +109,7 @@ sudo apt-get install -y python-pip git &
 rm -rf sr-build-tools &
 wait
 
+sudo apt-get remove ansible -y
 sudo rm -rf ansible
 sudo pip install --upgrade ansible
 git clone https://github.com/ansible/ansible.git
