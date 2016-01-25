@@ -10,7 +10,8 @@
   register: sources_test_result
   ignore_errors: true
   failed_when: false
-  changed_when: sources_test_result.rc == 0
+
+- debug: var=sources_test_result
 
 - name: Activate restricted, universe, multiverse
   command: sed -i".bak-{{ansible_date_time.epoch}}" "s/^#\(deb.*{{ansible_distribution_release}}\(-updates\)\? \(restricted\|universe\|multiverse\)\)/\1/" /etc/apt/sources.list
