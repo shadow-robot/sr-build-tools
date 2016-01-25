@@ -34,12 +34,14 @@ echo " |   Cloning repo  |"
 echo " -------------------"
 echo ""
 
-if [ -z "$2" ];
-  then
-    git clone https://github.com/shadow-robot/sr-build-tools
-  else
-    git clone https://github.com/shadow-robot/sr-build-tools -b $2
-fi
+#if [ -z "$2" ];
+#  then
+#    git clone https://github.com/shadow-robot/sr-build-tools
+#  else
+#    git clone https://github.com/shadow-robot/sr-build-tools -b $2
+#fi
+
+git clone https://github.com/shadow-robot/sr-build-tools -b F_fix_machine_setup
 
 
 echo ""
