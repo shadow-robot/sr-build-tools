@@ -31,16 +31,18 @@ if  [ "circle" != $server_type ] && [ "semaphore_docker" != $server_type ] && [ 
   fi
 fi
 
+export extra_variables="codecov_secure=$CODECOV_TOKEN github_login=$GITHUB_LOGIN github_password=$GITHUB_PASSWORD "
+
 case $server_type in
 
 "travis") echo "Travis CI server"
   sudo docker pull $docker_image
-  export extra_variables="travis_repo_dir=/host$TRAVIS_BUILD_DIR  travis_is_pull_request=$TRAVIS_PULL_REQUEST codecov_secure=$CODECOV_TOKEN"
+  export extra_variables="$extra_variables travis_repo_dir=/host$TRAVIS_BUILD_DIR  travis_is_pull_request=$TRAVIS_PULL_REQUEST"
   sudo docker run -w "/root/sr-build-tools/ansible" -v $TRAVIS_BUILD_DIR:/host$TRAVIS_BUILD_DIR $docker_image  bash -c "git pull && git checkout $toolset_branch && sudo PYTHONUNBUFFERED=1 ansible-playbook -v -i \"localhost,\" -c local docker_site.yml --tags \"travis,$tags_list\" -e \"$extra_variables\" "
   ;;
 
 "shippable") echo "Shippable server"
-  export extra_variables="shippable_repo_dir=$SHIPPABLE_REPO_DIR  shippable_is_pull_request=$PULL_REQUEST codecov_secure=$CODECOV_TOKEN"
+  export extra_variables="$extra_variables shippable_repo_dir=$SHIPPABLE_REPO_DIR  shippable_is_pull_request=$PULL_REQUEST"
   sudo PYTHONUNBUFFERED=1 ansible-playbook -v -i "localhost," -c local docker_site.yml --tags "shippable,$tags_list" -e "$extra_variables"
   ;;
 
@@ -51,21 +53,21 @@ case $server_type in
   sudo apt-get remove redis-* -y
   sudo apt-get remove mysql-* -y
   sudo apt-get remove cassandra-* -y
-  export extra_variables="semaphore_repo_dir=$SEMAPHORE_PROJECT_DIR  semaphore_is_pull_request=$PULL_REQUEST_NUMBER codecov_secure=$CODECOV_TOKEN"
+  export extra_variables="$extra_variables semaphore_repo_dir=$SEMAPHORE_PROJECT_DIR  semaphore_is_pull_request=$PULL_REQUEST_NUMBER"
   sudo PYTHONUNBUFFERED=1 ansible-playbook -v -i "localhost," -c local docker_site.yml --tags "semaphore,$tags_list" -e "$extra_variables"
   ;;
 
 "semaphore_docker") echo "Semaphore server with Docker support"
 
   sudo docker pull $docker_image
-  export extra_variables="semaphore_repo_dir=/host$SEMAPHORE_PROJECT_DIR semaphore_is_pull_request=$PULL_REQUEST_NUMBER codecov_secure=$CODECOV_TOKEN"
+  export extra_variables="$extra_variables semaphore_repo_dir=/host$SEMAPHORE_PROJECT_DIR semaphore_is_pull_request=$PULL_REQUEST_NUMBER"
   sudo docker run -w "/root/sr-build-tools/ansible" -v /:/host:rw $docker_image  bash -c "git pull && git checkout $toolset_branch && sudo PYTHONUNBUFFERED=1 ansible-playbook -v -i \"localhost,\" -c local docker_site.yml --tags \"semaphore,$tags_list\" -e \"$extra_variables\" "
   ;;
 
 "circle") echo "Circle CI server"
   export CIRCLE_REPO_DIR=$HOME/$CIRCLE_PROJECT_REPONAME
   sudo docker pull $docker_image
-  export extra_variables="circle_repo_dir=/host$CIRCLE_REPO_DIR  circle_is_pull_request=$CI_PULL_REQUEST circle_test_dir=/host$CI_REPORTS circle_code_coverage_dir=/host$CIRCLE_ARTIFACTS codecov_secure=$CODECOV_TOKEN"
+  export extra_variables="$extra_variables circle_repo_dir=/host$CIRCLE_REPO_DIR  circle_is_pull_request=$CI_PULL_REQUEST circle_test_dir=/host$CI_REPORTS circle_code_coverage_dir=/host$CIRCLE_ARTIFACTS"
   sudo docker run -w "/root/sr-build-tools/ansible" -v $CIRCLE_REPO_DIR:/host$CIRCLE_REPO_DIR -v $CI_REPORTS:/host$CI_REPORTS:rw -v $CIRCLE_ARTIFACTS:/host$CIRCLE_ARTIFACTS:rw $docker_image  bash -c "git pull && git checkout $toolset_branch && sudo PYTHONUNBUFFERED=1 ansible-playbook -v -i \"localhost,\" -c local docker_site.yml --tags \"circle,$tags_list\" -e \"$extra_variables\" "
   ;;
 
@@ -101,7 +103,7 @@ case $server_type in
     fi
   done
 
-  export extra_variables="local_repo_dir=/host$local_repo_dir local_test_dir=$unit_tests_dir local_code_coverage_dir=$coverage_tests_dir codecov_secure=$CODECOV_TOKEN"
+  export extra_variables="$extra_variables local_repo_dir=/host$local_repo_dir local_test_dir=$unit_tests_dir local_code_coverage_dir=$coverage_tests_dir"
   sudo docker run -w "$image_home/sr-build-tools/ansible" $docker_flags --rm=true -v $HOME:/host:rw $docker_image  bash -c "export HOME=$image_home && git pull && git checkout $toolset_branch && git pull && sudo PYTHONUNBUFFERED=1 ansible-playbook -v -i \"localhost,\" -c local docker_site.yml --tags \"local,$tags_list\" -e \"$extra_variables\" "
   ;;
 
