@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
+# Debug !!!
+set -v
+
 export toolset_branch=$1
 export server_type=$2
 export tags_list=$3
