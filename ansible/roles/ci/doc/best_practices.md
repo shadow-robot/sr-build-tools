@@ -109,7 +109,7 @@ So in this case you need to execute main script using following command
 ```bash
 sudo docker_flags="--privileged" <build_tools_directory>/bin/sr-run-ci-build.sh master local check_cache,build /catkin_ws/src/build-servers-check/
 ```
-**Please note** that these flags are propagated to docvker container if server type is local
+**Please note** that these flags are propagated to docker container if server type is local
 
 ## Using another Docker Hub image
 
@@ -122,3 +122,17 @@ In order to provide the new name of the image set environment variable **docker_
 ```bash
 sudo docker_image="shadowrobot/hand-project-ubuntu-image" <build_tools_directory>/bin/sr-run-ci-build.sh master local check_cache,build /catkin_ws/src/build-servers-check/
 ```
+
+## Private repository dependencies
+
+Some private repositories might depend on other private repositories source code.
+In this case you may refer them in *repository.rosinstall* file in the following format
+```yaml
+- git:
+    local-name: my_private_repo
+    uri: https://{{github_login}}:{{github_password}}@github.com/my-company/my_private_repo
+    version: indigo-devel
+```
+The values of the **github_login** and **github_password** variables would be replaced by the environment variables **GITHUB_LOGIN** and **GITHUB_PASSWORD** values.
+The majority of the hosted servers has ability to store encrypted environment variables.
+**GITHUB_LOGIN** and **GITHUB_PASSWORD** should store credentials which has access to needed private repository.
