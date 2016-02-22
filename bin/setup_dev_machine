@@ -111,11 +111,12 @@ wait
 
 sudo apt-get remove ansible -y
 sudo rm -rf ansible
-sudo pip install --upgrade ansible
-git clone https://github.com/ansible/ansible.git
+
+git clone --branch 'v2.0.1.0-0.2.rc2' git://github.com/ansible/ansible.git --recursive
 pushd ansible
-git submodule update --init --recursive
-make && sudo make install
+source ./hacking/env-setup
+sudo pip install paramiko PyYAML Jinja2 httplib2 six
+ansible all -m ping --ask-pass
 popd
 
 echo ""
