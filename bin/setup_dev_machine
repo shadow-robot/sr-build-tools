@@ -105,17 +105,20 @@ echo " |   Installing needed packages  |"
 echo " ---------------------------------"
 echo ""
 
+sudo apt-get update
+
 sudo apt-get install -y python-pip git &
 rm -rf sr-build-tools &
+rm -rf ansible &
 wait
 
-sudo apt-get remove ansible -y
-sudo rm -rf ansible
+sudo apt-get remove ansible -y &
+sudo pip install paramiko PyYAML Jinja2 httplib2 six &
+git clone --branch 'v2.0.1.0-0.2.rc2' git://github.com/ansible/ansible.git --recursive &
+wait
 
-git clone --branch 'v2.0.1.0-0.2.rc2' git://github.com/ansible/ansible.git --recursive
 pushd ansible
 source ./hacking/env-setup
-sudo pip install paramiko PyYAML Jinja2 httplib2 six
 ansible all -m ping --ask-pass
 popd
 
