@@ -29,6 +29,11 @@ wait
 
 pushd ansible
 source ./hacking/env-setup
+
+sudo mkdir -p  /etc/ansible
+sudo sh -c 'echo "[hand-prod]
+localhost ansible_connection=local" > /etc/ansible/hosts'
+
 ansible all -m ping --ask-pass
 popd
 
@@ -53,10 +58,6 @@ echo " -------------------"
 echo " | Running Ansible |"
 echo " -------------------"
 echo ""
-
-sudo mkdir -p  /etc/ansible
-sudo sh -c 'echo "[hand-prod]
-localhost ansible_connection=local" > /etc/ansible/hosts'
 
 ansible-playbook -v -K sr-build-tools/ansible/vagrant_site.yml --extra-vars "config_branch=$1"
 

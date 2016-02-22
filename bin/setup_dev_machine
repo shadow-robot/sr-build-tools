@@ -119,6 +119,11 @@ wait
 
 pushd ansible
 source ./hacking/env-setup
+
+sudo mkdir -p  /etc/ansible
+sudo sh -c 'echo "[dev-machine]
+localhost ansible_connection=local" > /etc/ansible/hosts'
+
 ansible all -m ping --ask-pass
 popd
 
@@ -142,10 +147,6 @@ echo " -------------------"
 echo " | Running Ansible |"
 echo " -------------------"
 echo ""
-
-sudo mkdir -p  /etc/ansible
-sudo sh -c 'echo "[dev-machine]
-localhost ansible_connection=local" > /etc/ansible/hosts'
 
 ansible-playbook -vvv -K sr-build-tools/ansible/vagrant_site.yml --extra-vars "config_branch=${SR_CONFIG_BRANCH} ros_user=`whoami` ros_workspace=${WORKSPACE_PATH} ros_group=`whoami` ros_workspace_install=${ROSINSTALL_PATH} github_login=${GITHUB_LOGIN} github_password=${GITHUB_PASSWORD}"
 
