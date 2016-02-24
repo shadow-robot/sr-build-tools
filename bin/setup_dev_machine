@@ -133,14 +133,12 @@ echo " |   Cloning repo  |"
 echo " -------------------"
 echo ""
 
-#if [ -z "${SR_BUILD_TOOLS_BRANCH}" ];
-#  then
-#    git clone https://github.com/shadow-robot/sr-build-tools
-#  else
-#    git clone https://github.com/shadow-robot/sr-build-tools -b ${SR_BUILD_TOOLS_BRANCH}
-#fi
-
-git clone https://github.com/shadow-robot/sr-build-tools -b F_fix_machine_setup
+if [ -z "${SR_BUILD_TOOLS_BRANCH}" ];
+  then
+    git clone https://github.com/shadow-robot/sr-build-tools
+  else
+    git clone https://github.com/shadow-robot/sr-build-tools -b ${SR_BUILD_TOOLS_BRANCH}
+fi
 
 echo ""
 echo " -------------------"
