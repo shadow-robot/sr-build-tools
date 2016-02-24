@@ -15,10 +15,27 @@ echo " |   Installing needed packages  |"
 echo " ---------------------------------"
 echo ""
 
-sudo apt-get install -y ansible git &
-rm -rf sr-build-tools &
+sudo apt-get update
 
+sudo apt-get install -y python-pip git libyaml-dev libpython2.7-dev &
+rm -rf sr-build-tools &
+rm -rf ansible &
 wait
+
+sudo apt-get remove ansible -y &
+sudo pip install paramiko PyYAML Jinja2 httplib2 six &
+git clone --branch 'v2.0.1.0-0.2.rc2' git://github.com/ansible/ansible.git --recursive &
+wait
+
+pushd ansible
+source ./hacking/env-setup
+
+sudo mkdir -p  /etc/ansible
+sudo sh -c 'echo "[hand-prod]
+localhost ansible_connection=local" > /etc/ansible/hosts'
+
+ansible all -m ping --ask-pass
+popd
 
 echo ""
 echo " -------------------"
@@ -33,15 +50,11 @@ if [ -z "$2" ];
     git clone https://github.com/shadow-robot/sr-build-tools -b $2
 fi
 
-
 echo ""
 echo " -------------------"
 echo " | Running Ansible |"
 echo " -------------------"
 echo ""
-
-sudo sh -c 'echo "[hand-prod]
-localhost ansible_connection=local" > /etc/ansible/hosts'
 
 ansible-playbook -v -K sr-build-tools/ansible/vagrant_site.yml --extra-vars "config_branch=$1"
 

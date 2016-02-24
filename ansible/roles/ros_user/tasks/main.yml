@@ -58,7 +58,7 @@
 
 # Add a source line to bashrc, only if there isn't already one
 - name: Update bashrc to point to ROS {{ros_release}}
-  lineinfile: dest=\~{{ros_user}}/.bashrc
+  lineinfile: dest=~{{ros_user}}/.bashrc
               line="source /opt/ros/{{ros_release}}/setup.bash"
               regexp='^source.*/setup\.bash'
               insertafter=EOF

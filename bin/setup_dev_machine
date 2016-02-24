@@ -105,10 +105,27 @@ echo " |   Installing needed packages  |"
 echo " ---------------------------------"
 echo ""
 
-sudo apt-get install -y ansible git &
-rm -rf sr-build-tools &
+sudo apt-get update
 
+sudo apt-get install -y python-pip git libyaml-dev libpython2.7-dev &
+rm -rf sr-build-tools &
+rm -rf ansible &
 wait
+
+sudo apt-get remove ansible -y &
+sudo pip install paramiko PyYAML Jinja2 httplib2 six &
+git clone --branch 'v2.0.1.0-0.2.rc2' git://github.com/ansible/ansible.git --recursive &
+wait
+
+pushd ansible
+source ./hacking/env-setup
+
+sudo mkdir -p  /etc/ansible
+sudo sh -c 'echo "[dev-machine]
+localhost ansible_connection=local" > /etc/ansible/hosts'
+
+ansible all -m ping --ask-pass
+popd
 
 echo ""
 echo " -------------------"
@@ -123,15 +140,11 @@ if [ -z "${SR_BUILD_TOOLS_BRANCH}" ];
     git clone https://github.com/shadow-robot/sr-build-tools -b ${SR_BUILD_TOOLS_BRANCH}
 fi
 
-
 echo ""
 echo " -------------------"
 echo " | Running Ansible |"
 echo " -------------------"
 echo ""
-
-sudo sh -c 'echo "[dev-machine]
-localhost ansible_connection=local" > /etc/ansible/hosts'
 
 ansible-playbook -vvv -K sr-build-tools/ansible/vagrant_site.yml --extra-vars "config_branch=${SR_CONFIG_BRANCH} ros_user=`whoami` ros_workspace=${WORKSPACE_PATH} ros_group=`whoami` ros_workspace_install=${ROSINSTALL_PATH} github_login=${GITHUB_LOGIN} github_password=${GITHUB_PASSWORD}"
 
