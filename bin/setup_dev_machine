@@ -124,7 +124,6 @@ sudo mkdir -p  /etc/ansible
 sudo sh -c 'echo "[dev-machine]
 localhost ansible_connection=local" > /etc/ansible/hosts'
 
-ansible all -m ping --ask-pass
 popd
 
 echo ""
