@@ -137,9 +137,11 @@
 
 - name: Fix perms (As we installed code as root, fix the perms.)
   file: path={{ros_workspace}} recurse=yes owner={{ros_user}} group={{ros_group}}
+  sudo: yes
 
 - name: Fix perms for deps (As we installed code as root, fix the perms.)
   file: path={{ros_workspace}}_deps recurse=yes owner={{ros_user}} group={{ros_group}}
+  sudo: yes
 
 - name: Install dependencies of the source deps
   script: ../files/rosdep_install.sh {{ros_workspace}}_deps
@@ -153,7 +155,6 @@
 
 - name: Install dependencies
   script: ../files/rosdep_install.sh {{ros_workspace}}
-  sudo: yes
 
 # Now build the code we just installed.
 - name: catkin_make
