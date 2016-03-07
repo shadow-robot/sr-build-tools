@@ -178,6 +178,5 @@
     ros_packages:
       - ethercat-grant
     ros_workspace_install: "../data/shadow_robot-{{ros_release}}.rosinstall"
-  sudo: yes
   roles:
   - dev_machine
