@@ -143,7 +143,6 @@
 
 - name: Install dependencies of the source deps
   script: ../files/rosdep_install.sh {{ros_workspace}}_deps
-  sudo: yes
 
 # Now build the code we just installed.
 - name: catkin_make for deps
