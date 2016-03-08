@@ -13,7 +13,7 @@ export previous_repo_count=0
 export loops_count=10
 
 while [ $current_repo_count -ne $previous_repo_count ]; do
-  find . -type f -name $rosintall_filename -exec cat {} \; | sed -e "s/{{github_login}}/$github_user/g" | sed -e "s/{{github_password}}/$github_password/g" | wstool merge -a -y -
+  find . -type f -name $rosintall_filename -exec sed '$a\#' {} \; | sed -e "s/{{github_login}}/$github_user/g" | sed -e "s/{{github_password}}/$github_password/g" | wstool merge -a -y -
   wstool update --delete-changed-uris
 
   export previous_repo_count=$current_repo_count
