@@ -42,7 +42,7 @@ case $server_type in
   ;;
 
 "shippable") echo "Shippable server"
-  export extra_variables="$extra_variables shippable_repo_dir=$SHIPPABLE_REPO_DIR  shippable_is_pull_request=$PULL_REQUEST"
+  export extra_variables="$extra_variables shippable_repo_dir=$SHIPPABLE_BUILD_DIR  shippable_is_pull_request=$PULL_REQUEST"
   sudo PYTHONUNBUFFERED=1 ansible-playbook -v -i "localhost," -c local docker_site.yml --tags "shippable,$tags_list" -e "$extra_variables"
   ;;
 
