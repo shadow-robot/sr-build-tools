@@ -70,7 +70,7 @@ fi
 # Check if the rosinstall path is relative or absolute
 if [[ ${ROSINSTALL_PATH} =~ ^/ ]]; then
     # absolute, keep as is
-    ROSINSTALL_PATH = ${ROSINSTALL_PATH}
+    ROSINSTALL_PATH=${ROSINSTALL_PATH}
 else
     # if relative go look for it in the data folder
     ROSINSTALL_PATH="../data/${ROSINSTALL_PATH}"
