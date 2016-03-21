@@ -94,7 +94,7 @@ case $server_type in
   sudo docker pull $docker_image
 
   # Remove untagged Docker images which do not have containers associated with them
-  export untagged_images_list=$(sudo docker images -q --filter 'dangling=true')
+  export untagged_images_list="$(sudo docker images -q --filter 'dangling=true')"
   for untagged_image_name in $untagged_images_list; do
     export images_used_by_containers="$(sudo docker ps -a | tail -n +2 | tr -s ' ' | cut -d' ' -f2 | paste -d' ' -s)"
     if [[ $images_used_by_containers != *"$untagged_image_name"* ]]; then
