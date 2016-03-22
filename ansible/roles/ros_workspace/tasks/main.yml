@@ -45,15 +45,15 @@
 # Do an initial make of the empty workspace to get a setup.bash.
 # If there is one already don't do this, so we don't trigger a big make
 - name: catkin make workspace
-  shell: bash -c "source {{ros_workspace}}_deps/devel/setup.bash && catkin_make"
+  shell: bash -c "source {{ros_workspace}}_deps/devel/setup.bash && catkin_make_isolated"
     chdir={{ros_workspace}}
-    creates={{ros_workspace}}/devel/setup.bash
+    creates={{ros_workspace}}/devel_isolated/setup.bash
   sudo: yes
   sudo_user: "{{ros_user}}"
 
 - name: Update users bashrc to point to the workspace
   lineinfile: dest=~{{ros_user}}/.bashrc
-              line="source {{ros_workspace}}/devel/setup.bash"
+              line="source {{ros_workspace}}/devel_isolated/setup.bash"
               regexp='^source.*/setup\.bash'
               insertafter=EOF
               backup=yes
@@ -158,14 +158,14 @@
 
 # Now build the code we just installed.
 - name: catkin_make
-  shell: bash -c "source {{ros_workspace}}_deps/devel/setup.bash && catkin_make"
+  shell: bash -c "source {{ros_workspace}}_deps/devel/setup.bash && catkin_make_isolated"
     chdir={{ros_workspace}}
   sudo: yes
   sudo_user: "{{ros_user}}"
 
 - name: Add ws_update alias for updating the workspace to ~/.bashrc
   lineinfile: dest=~{{ros_user}}/.bashrc
-              line="alias ws_update='current_dir=$PWD && roscd && cd ../src &&  wstool foreach --git \"git pull\" && cd .. && catkin_make && cd $current_dir'"
+              line="alias ws_update='current_dir=$PWD && roscd && cd ../src &&  wstool foreach --git \"git pull\" && cd .. && catkin_make_isolated && cd $current_dir'"
               regexp='^alias ws_update.*'
               insertafter=EOF
               backup=yes
