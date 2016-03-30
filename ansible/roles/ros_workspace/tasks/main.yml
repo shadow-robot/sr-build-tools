@@ -154,7 +154,7 @@
   sudo_user: "{{ros_user}}"
 
 - name: Install dependencies
-  script: ../files/rosdep_install.sh {{ros_workspace}}
+  script: ../files/rosdep_install.sh {{ros_workspace}} _isolated
 
 # Now build the code we just installed.
 - name: catkin_make
