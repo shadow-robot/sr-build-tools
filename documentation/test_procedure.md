@@ -82,4 +82,8 @@ Make sure to override the localization in the ssh window with
 ```bash
 export LC_ALL="C"
 ```
+It is a good idea to put this line in **.bashrc**.
+```bash
+echo export LC="\"C"\" >> ~/.bashrc
+```
 
