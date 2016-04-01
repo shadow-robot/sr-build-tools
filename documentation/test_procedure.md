@@ -1,7 +1,8 @@
 #How to test a sr-build-tools branch#
 
 ##Docker##
-Install docker [Docker install page](https://docs.docker.com/linux/step_one/).
+Start by installing docker. Check [Docker install page](https://docs.docker.com/linux/step_one/).
+
 Download Shadow robot docker image from Docker Hub.
 ```bash
 sudo docker pull shadowrobot/ubuntu-ros-indigo-build-tools
@@ -22,12 +23,19 @@ If you want to have two Docker containers you can use the same command but give 
 If you do not specify a name, Docker automatically generate a name for it.
 
 Here are some useful docker commands:
+
 docker pull <image name> : pulls the docker image
+
 docker run <image name> : run the image
+
 docker run <image name> -it : run the docker image in interactive mode
+
 sudo docker ps -a : lists the running docker images
+
 sudo docker start <name of your container> : starts a docker image
+
 sudo docker attach <name of your container> : actually gets into the docker image
+
 sudo docker rm < name of your container> : deletes the container
 
 ##Tasks on Docker image##
@@ -37,6 +45,10 @@ Install the *ubuntu-desktop* with following command.
 sudo apt-get install --no-install-recommends ubuntu-desktop
 ```
 
+**Note** dev-machine script can be installed from any user as long as it has *sudo* privilege. 
+Production script creates a **hand** user and fails if it is run from **hand** user.
+
+###Testing master branches###
 If you want to test the master branch you can use the one line script in the docker session.
 Although both devel and production scripts are checked every night in Jenkins.
 ```bash
@@ -46,7 +58,6 @@ curl -L bit.ly/prod-install | bash -s indigo-devel
 ```bash
 curl -L bit.ly/dev-machine 
 ```
-
 If you want to run a branch of sr-build-tools for development script use the following command
 ```bash
 curl -L bit.ly/dev-machine -b <branch name> 
@@ -86,4 +97,3 @@ It is a good idea to put this line in **.bashrc**.
 ```bash
 echo export LC="\"C"\" >> ~/.bashrc
 ```
-
