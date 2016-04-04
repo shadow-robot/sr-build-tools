@@ -46,7 +46,7 @@ Install the *ubuntu-desktop* with following command.
 sudo apt-get install --no-install-recommends ubuntu-desktop
 ```
 
-**Note** dev-machine script can be installed from any user as long as it has *sudo* privilege. 
+**Note** dev-machine script can be installed from any user as long as it has *sudo* privilege.
 Production script creates a **hand** user and fails if it is run from **hand** user.
 
 ##Testing master branches##
@@ -57,14 +57,14 @@ curl -L bit.ly/prod-install | bash -s indigo-devel
 ```
 
 ```bash
-curl -L bit.ly/dev-machine 
+curl -L bit.ly/dev-machine
 ```
 
 ##Testing other branches##
 
 If you want to run a branch of sr-build-tools for development script use the following command
 ```bash
-curl -L bit.ly/dev-machine -b <branch name> 
+curl -L bit.ly/dev-machine -b <branch name>
 ```
 
 For production script use
@@ -74,13 +74,13 @@ curl -L bit.ly/prod-install | bash -s indigo-devel <branch name>
 
 **NOTE** If the main script is modified (**bin/setup_production_machine** for production script and  **bin/setup_dev_machine** for development script) the bit.ly links would not work as they point to master script.
  To overcome this simply replace them with the rawgithubcontent link.
-e.g. 
+e.g.
 ```bash
 curl -L raw.githubusercontent.com/shadow-robot/sr-build-tools/F%23249_add_blockly/bin/setup_dev_machine | bash -s indigo-devel F#49_add_blockly
 ```
 will run the production script from branch *F#49_add_blockly* .
 
-After running the production script make sure to switch user to **hand**. 
+After running the production script make sure to switch user to **hand**.
 
 ##Using X with Docker##
 If you want to check Docker graphical interface, you need to install X11 and openssh on your machine (docker image has these already).
@@ -89,13 +89,13 @@ Make sure to initialize the openssh on Docker image.
 sudo /etc/init.d/ssh start
 ```
 Find the ip of Docker image with *ifconfig*.
-SSH to Docker image with 
+SSH to Docker image with
 ```bash
 ssh -X hand@ip
 ```
 **NOTE** If you run the development script you may have different user than hand.
 
-Make sure to override the localization in the ssh window with 
+Make sure to override the localization in the ssh window with
 ```bash
 export LC_ALL="C"
 ```
