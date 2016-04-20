@@ -1,0 +1,27 @@
+FROM ros:indigo
+
+# using bash instead of sh to be able to source
+RUN rm /bin/sh && ln -s /bin/bash /bin/sh
+
+ENV DEBIAN_FRONTEND noninteractive
+
+RUN sudo apt-get update && \
+    sudo apt-get install -y python-pip && \
+    sudo pip install -U rosdep rosinstall_generator wstool rosinstall && \
+    sudo pip install -U autobahn trollius
+
+RUN mkdir -p /workspace/blockly/src && \
+    cd /workspace/blockly/src && \
+    wstool init && \
+    wstool set -y -u robot_blockly --git https://github.com/shadow-robot/robot_blockly && \
+    source /opt/ros/indigo/setup.bash && \
+    cd .. && \
+    catkin_make_isolated --pkg robot_blockly --install
+
+
+
+# setup entrypoint
+COPY ./entrypoint.sh /
+
+ENTRYPOINT ["/entrypoint.sh"]
+CMD ["bash"]
