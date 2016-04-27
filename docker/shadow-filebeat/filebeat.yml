@@ -1,0 +1,16 @@
+output:
+  logstash:
+    enabled: true
+    hosts:
+      - elk:5044
+    tls:
+      certificate_authorities:
+        - /logstash-beats.crt
+    timeout: 15
+
+filebeat:
+  prospectors:
+    -
+      paths:
+        - /log/*/*.log
+      document_type: ROS
