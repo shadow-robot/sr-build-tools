@@ -45,15 +45,15 @@
 # Do an initial make of the empty workspace to get a setup.bash.
 # If there is one already don't do this, so we don't trigger a big make
 - name: catkin make workspace
-  shell: bash -c "source {{ros_workspace}}_deps/devel/setup.bash && catkin_make_isolated"
+  shell: bash -c "source {{ros_workspace}}_deps/devel/setup.bash && catkin_make"
     chdir={{ros_workspace}}
-    creates={{ros_workspace}}/devel_isolated/setup.bash
+    creates={{ros_workspace}}/devel/setup.bash
   sudo: yes
   sudo_user: "{{ros_user}}"
 
 - name: Update users bashrc to point to the workspace
   lineinfile: dest=~{{ros_user}}/.bashrc
-              line="source {{ros_workspace}}/devel_isolated/setup.bash"
+              line="source {{ros_workspace}}/devel/setup.bash"
               regexp='^source.*/setup\.bash'
               insertafter=EOF
               backup=yes
@@ -154,11 +154,11 @@
   sudo_user: "{{ros_user}}"
 
 - name: Install dependencies
-  script: ../files/rosdep_install.sh {{ros_workspace}} _isolated
+  script: ../files/rosdep_install.sh {{ros_workspace}} 
 
 # Now build the code we just installed.
 - name: catkin_make
-  shell: bash -c "source {{ros_workspace}}_deps/devel/setup.bash && catkin_make_isolated"
+  shell: bash -c "source {{ros_workspace}}_deps/devel/setup.bash && catkin_make"
     chdir={{ros_workspace}}
   sudo: yes
   sudo_user: "{{ros_user}}"
