@@ -154,7 +154,7 @@
   sudo_user: "{{ros_user}}"
 
 - name: Install dependencies
-  script: ../files/rosdep_install.sh {{ros_workspace}} 
+  script: ../files/rosdep_install.sh {{ros_workspace}}
 
 # Now build the code we just installed.
 - name: catkin_make
@@ -165,7 +165,7 @@
 
 - name: Add ws_update alias for updating the workspace to ~/.bashrc
   lineinfile: dest=~{{ros_user}}/.bashrc
-              line="alias ws_update='current_dir=$PWD && roscd && cd ../src &&  wstool foreach --git \"git pull\" && cd .. && catkin_make_isolated && cd $current_dir'"
+              line="alias ws_update='current_dir=$PWD && roscd && cd ../src &&  wstool foreach --git \"git pull\" && cd .. && catkin_make && cd $current_dir'"
               regexp='^alias ws_update.*'
               insertafter=EOF
               backup=yes
