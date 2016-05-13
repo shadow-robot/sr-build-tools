@@ -8,6 +8,21 @@ if [ -n "$2" ];
     echo "   (using sr-build-tools branch: ) $2"
 fi
 
+echo ""
+echo " ---------------------------------"
+echo " |   Checking Python version     |"
+echo " ---------------------------------"
+echo ""
+
+case "$(python --version 2>&1)" in
+    *" 2."*)
+        echo "Python 2 default, proceeding to install"
+        ;;
+    *)
+        echo "Wrong Python version, this installation script requires Python 2 to be default"
+        exit
+        ;;
+esac
 
 echo ""
 echo " ---------------------------------"
