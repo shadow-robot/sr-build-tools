@@ -107,7 +107,9 @@ echo ""
 
 sudo apt-get update
 
-sudo apt-get install -y python-pip git libyaml-dev libpython2.7-dev &
+# python-crypto is only necessary for non-desktop images
+# build-essential libssl-dev libffi-dev python-dev are necessary dependencies for the cryptography python package that is a dependency of paramiko (see http://www.paramiko.org/installing.html)
+sudo apt-get install -y python-pip git libyaml-dev libpython2.7-dev python-crypto build-essential libssl-dev libffi-dev python-dev &
 rm -rf sr-build-tools &
 rm -rf ansible &
 wait
