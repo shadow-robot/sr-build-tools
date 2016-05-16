@@ -20,7 +20,7 @@ case "$(python --version 2>&1)" in
         ;;
     *)
         echo "Wrong Python version, this installation script requires Python 2 to be default"
-        exit
+        exit 1
         ;;
 esac
 
