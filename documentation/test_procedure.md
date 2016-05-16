@@ -84,6 +84,9 @@ will run the production script from branch *F#49_add_blockly* .
 
 After running the production script make sure to switch user to **hand**.
 
+**N.B.** There are minor differences between the production script and development script. The development script uses -b for sr-build-tools and -c for sr_config branch name.
+The production script uses first argument (after bash -s) for sr_config branch and second argument for sr-build-tools branch.
+
 ##Testing full UI
 To test the UI, use VirtualBox.
 If don't already have it create a new ubuntu machine and install ubuntu on it.
