@@ -25,19 +25,19 @@ If you do not specify a name, Docker automatically generate a name for it.
 
 Here are some useful docker commands:
 
-**docker pull <image name> **: pulls the docker image
+**docker pull <image name>**: pulls the docker image
 
-**docker run <image name> ** : run the image
+**docker run <image name>** : run the image
 
-**docker run <image name> -it ** : run the docker image in interactive mode
+**docker run <image name> -it** : run the docker image in interactive mode
 
-**sudo docker ps -a **: lists the running docker images
+**sudo docker ps -a**: lists the running docker images
 
-**sudo docker start <name of your container> **: starts a docker image
+**sudo docker start <name of your container>**: starts a docker image
 
-**sudo docker attach <name of your container> **: actually gets into the docker image
+**sudo docker attach <name of your container>**: actually gets into the docker image
 
-**sudo docker rm < name of your container> **: deletes the container
+**sudo docker rm < name of your container>**: deletes the container
 
 ##Tasks on Docker image##
 Docker container does not have ubuntu desktop. This can cause problem for running production script.
