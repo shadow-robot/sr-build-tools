@@ -88,6 +88,10 @@ After running the production script make sure to switch user to **hand**.
 The production script uses first argument (after bash -s) for sr_config branch and second argument for sr-build-tools branch.
 
 ##Testing full UI
-To test the UI, use VirtualBox.
+To test the UI, use [VirtualBox](http://www.virtualbox.org/).
+```bash
+sudo apt-get install virtualbox
+```
 If don't already have it create a new ubuntu machine and install ubuntu on it.
+
 It is better to clone the machine and use the cloned one (to save ubuntu installation time for next efforts).
