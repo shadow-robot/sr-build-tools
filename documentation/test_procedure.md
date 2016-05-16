@@ -25,19 +25,19 @@ If you do not specify a name, Docker automatically generate a name for it.
 
 Here are some useful docker commands:
 
-docker pull <image name> : pulls the docker image
+**docker pull <image name> **: pulls the docker image
 
-docker run <image name> : run the image
+**docker run <image name> ** : run the image
 
-docker run <image name> -it : run the docker image in interactive mode
+**docker run <image name> -it ** : run the docker image in interactive mode
 
-sudo docker ps -a : lists the running docker images
+**sudo docker ps -a **: lists the running docker images
 
-sudo docker start <name of your container> : starts a docker image
+**sudo docker start <name of your container> **: starts a docker image
 
-sudo docker attach <name of your container> : actually gets into the docker image
+**sudo docker attach <name of your container> **: actually gets into the docker image
 
-sudo docker rm < name of your container> : deletes the container
+**sudo docker rm < name of your container> **: deletes the container
 
 ##Tasks on Docker image##
 Docker container does not have ubuntu desktop. This can cause problem for running production script.
@@ -57,8 +57,10 @@ curl -L bit.ly/prod-install | bash -s indigo-devel
 ```
 
 ```bash
-curl -L bit.ly/dev-machine
+curl -L bit.ly/dev-machine | bash -s -- -w ~{{ros_user}}/projects/shadow_robot/base
 ```
+If you want to create workspaces in a different location, specify it after -w {{ros_user}}.
+If no parameter is specified, they will be created *catkin_ws* and *catkin_ws_deps*.
 
 ##Testing other branches##
 
@@ -82,26 +84,7 @@ will run the production script from branch *F#49_add_blockly* .
 
 After running the production script make sure to switch user to **hand**.
 
-##Using X with Docker##
-If you want to check Docker graphical interface, you need to install X11 and openssh on your machine (docker image has these already).
-Make sure to initialize the openssh on Docker image.
-```bash
-sudo /etc/init.d/ssh start
-```
-Find the ip of Docker image with *ifconfig*.
-SSH to Docker image with
-```bash
-ssh -X hand@ip
-```
-**NOTE** If you run the development script you may have different user than hand.
-
-Make sure to override the localization in the ssh window with
-```bash
-export LC_ALL="C"
-```
-It is a good idea to put this line in **.bashrc**.
-```bash
-echo export LC="\"C"\" >> ~/.bashrc
-```
-
-Now you can run GUI commands over ssh.
+##Testing full UI
+To test the UI, use VirtualBox.
+If don't already have it create a new ubuntu machine and install ubuntu on it.
+It is better to clone the machine and use the cloned one (to save ubuntu installation time for next efforts).
