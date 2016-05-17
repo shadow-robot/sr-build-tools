@@ -2,42 +2,42 @@
 
 ##Docker##
 Start by installing docker. Check [Docker install page](https://docs.docker.com/linux/step_one/).
-You may also find the information on [Source install page](http://shadow-robot.readthedocs.org/en/latest/generated/shadow_robot/INSTALL.html) useful.
+You may also find useful information on [Source install page](http://shadow-robot.readthedocs.org/en/latest/generated/shadow_robot/INSTALL.html) useful.
 
-Download Shadow robot docker image from Docker Hub.
+Download plain ubuntu docker image from Docker Hub.
 ```bash
-sudo docker pull shadowrobot/ubuntu-ros-indigo-build-tools
+sudo docker pull ubuntu:14.04.4
 ```
 
-Start Docker container named ros_ubuntu
+Start Docker container named ubuntu_trusty
 
 ```bash
-sudo docker run -it -w "/root/sr-build-tools/ansible" --env=HOME=/root --name "ros_ubuntu" -v $HOME:/host:rw "shadowrobot/ubuntu-ros-indigo-build-tools" bash
+sudo docker run -it -w "/root/sr-build-tools/ansible" --env=HOME=/root --name "ubuntu_trusty" -v $HOME:/host:rw "ubuntu:14.04.4" /bin/bash
 ```
 If you exit the Docker container, it remains on the machine unless removed specifically.
 To start it again use
 ```
-sudo docker start ros_ubuntu
-sudo docker attach ros_ubuntu
+sudo docker start ubuntu_trusty
+sudo docker attach ubuntu_trusty
 ```
 If you want to have two Docker containers you can use the same command but give it a different name.
 If you do not specify a name, Docker automatically generate a name for it.
 
 Here are some useful docker commands:
 
-docker pull <image name> : pulls the docker image
+**docker pull <image name>**: pulls the docker image
 
-docker run <image name> : run the image
+**docker run <image name>** : run the image
 
-docker run <image name> -it : run the docker image in interactive mode
+**docker run <image name> -it** : run the docker image in interactive mode
 
-sudo docker ps -a : lists the running docker images
+**sudo docker ps -a**: lists the running docker images
 
-sudo docker start <name of your container> : starts a docker image
+**sudo docker start <name of your container>**: starts a docker image
 
-sudo docker attach <name of your container> : actually gets into the docker image
+**sudo docker attach <name of your container>**: actually gets into the docker image
 
-sudo docker rm < name of your container> : deletes the container
+**sudo docker rm < name of your container>**: deletes the container
 
 ##Tasks on Docker image##
 Docker container does not have ubuntu desktop. This can cause problem for running production script.
@@ -57,8 +57,10 @@ curl -L bit.ly/prod-install | bash -s indigo-devel
 ```
 
 ```bash
-curl -L bit.ly/dev-machine
+curl -L bit.ly/dev-machine | bash -s -- -w ~{{ros_user}}/projects/shadow_robot/base
 ```
+If you want to create workspaces in a different location, specify it after -w {{ros_user}}.
+If no parameter is specified, they will be created *catkin_ws* and *catkin_ws_deps*.
 
 ##Testing other branches##
 
@@ -82,26 +84,14 @@ will run the production script from branch *F#49_add_blockly* .
 
 After running the production script make sure to switch user to **hand**.
 
-##Using X with Docker##
-If you want to check Docker graphical interface, you need to install X11 and openssh on your machine (docker image has these already).
-Make sure to initialize the openssh on Docker image.
-```bash
-sudo /etc/init.d/ssh start
-```
-Find the ip of Docker image with *ifconfig*.
-SSH to Docker image with
-```bash
-ssh -X hand@ip
-```
-**NOTE** If you run the development script you may have different user than hand.
+**N.B.** There are minor differences between the production script and development script. The development script uses -b for sr-build-tools and -c for sr_config branch name.
+The production script uses first argument (after bash -s) for sr_config branch and second argument for sr-build-tools branch.
 
-Make sure to override the localization in the ssh window with
+##Testing full UI
+To test the UI, use [VirtualBox](http://www.virtualbox.org/).
 ```bash
-export LC_ALL="C"
+sudo apt-get install virtualbox
 ```
-It is a good idea to put this line in **.bashrc**.
-```bash
-echo export LC="\"C"\" >> ~/.bashrc
-```
+If don't already have it create a new ubuntu machine and install ubuntu on it.
 
-Now you can run GUI commands over ssh.
+It is better to clone the machine and use the cloned one (to save ubuntu installation time for next efforts).
