@@ -2,23 +2,23 @@
 
 ##Docker##
 Start by installing docker. Check [Docker install page](https://docs.docker.com/linux/step_one/).
-You may also find the information on [Source install page](http://shadow-robot.readthedocs.org/en/latest/generated/shadow_robot/INSTALL.html) useful.
+You may also find useful information on [Source install page](http://shadow-robot.readthedocs.org/en/latest/generated/shadow_robot/INSTALL.html) useful.
 
-Download Shadow robot docker image from Docker Hub.
+Download plain ubuntu docker image from Docker Hub.
 ```bash
-sudo docker pull shadowrobot/ubuntu-ros-indigo-build-tools
+sudo docker pull ubuntu:14.04.4
 ```
 
-Start Docker container named ros_ubuntu
+Start Docker container named ubuntu_trusty
 
 ```bash
-sudo docker run -it -w "/root/sr-build-tools/ansible" --env=HOME=/root --name "ros_ubuntu" -v $HOME:/host:rw "shadowrobot/ubuntu-ros-indigo-build-tools" bash
+sudo docker run -it -w "/root/sr-build-tools/ansible" --env=HOME=/root --name "ubuntu_trusty" -v $HOME:/host:rw "ubuntu:14.04.4" /bin/bash
 ```
 If you exit the Docker container, it remains on the machine unless removed specifically.
 To start it again use
 ```
-sudo docker start ros_ubuntu
-sudo docker attach ros_ubuntu
+sudo docker start ubuntu_trusty
+sudo docker attach ubuntu_trusty
 ```
 If you want to have two Docker containers you can use the same command but give it a different name.
 If you do not specify a name, Docker automatically generate a name for it.
