@@ -37,7 +37,7 @@
   register: dependencies_file_exists
 
 - name: Load dependencies recursively
-  script: ../files/load_repositories.sh {{ros_workspace}} {{dependencies_file}} {{github_login}} {{github_password}}
+  script: ../files/load_repositories.sh {{ros_workspace}} {{dependencies_file}} {{github_login | default('') }} {{github_password | default('') }}
   when: dependencies_file_exists.stat.exists
 
 - name: Update dependencies
