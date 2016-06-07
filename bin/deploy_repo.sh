@@ -56,6 +56,25 @@ else
     GITHUB_BRANCH_URL_PART="branches/${GITHUB_BRANCH}"
 fi
 
+echo "================================================================="
+echo "|                                                               |"
+echo "|               Shadow Robot deployment script                  |"
+echo "|                                                               |"
+echo "================================================================="
+echo ""
+echo "possible options: "
+echo "  * -o or --owner name of the GitHub repository owner (shadow-robot by default)"
+echo "  * -r or --repo name of the owners repository (sr-interface by default)"
+echo "  * -l or --githublogin github login for private repositories."
+echo "  * -p or --githubpassword github password for private repositories."
+echo "  * -b or --branch name of the repository branch name used for deployment"
+echo "  * -- mark after which would be listed parameter repository deploy script "
+echo ""
+echo "example: ./deploy_repo.sh -o shadow-robot -r sr-interface -- -t deploy -h development "
+echo ""
+echo "owner    = ${RAMCIP_OPERATION_TYPE}"
+echo "repo     = ${RAMCIP_TARGET_NAME}"
+
 if [ -z "${GITHUB_PASSWORD}" ] && [ -n "${GITHUB_LOGIN}" ]; then
     echo "git user = ${GITHUB_LOGIN}"
     echo -n "${GITHUB_LOGIN}'s GitHub password:"
@@ -65,8 +84,20 @@ fi
 
 REPOSITORY_URL="https://github.com//${REPOSITORY_OWNER}/${REPOSITORY_NAME}.git/${GITHUB_BRANCH_URL_PART}/deployment"
 
+echo ""
+echo " ---------------------------------"
+echo " |   Installing needed packages  |"
+echo " ---------------------------------"
+echo ""
+
 sudo apt-get update
 sudo apt-get install subversion -y
+
+echo ""
+echo " -------------------"
+echo " |   Cloning repo  |"
+echo " -------------------"
+echo ""
 
 pushd /tmp
 
@@ -88,3 +119,8 @@ rm -rf ./deployment
 
 popd
 
+echo ""
+echo " ------------------------------------------------"
+echo " |            Operation completed               |"
+echo " ------------------------------------------------"
+echo ""
