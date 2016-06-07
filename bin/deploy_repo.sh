@@ -72,8 +72,8 @@ echo "  * -- mark after which would be listed parameter repository deploy script
 echo ""
 echo "example: ./deploy_repo.sh -o shadow-robot -r sr-interface -- -t deploy -h development "
 echo ""
-echo "owner    = ${RAMCIP_OPERATION_TYPE}"
-echo "repo     = ${RAMCIP_TARGET_NAME}"
+echo "owner    = ${REPOSITORY_OWNER}"
+echo "repo     = ${REPOSITORY_NAME}"
 
 if [ -z "${GITHUB_PASSWORD}" ] && [ -n "${GITHUB_LOGIN}" ]; then
     echo "git user = ${GITHUB_LOGIN}"
