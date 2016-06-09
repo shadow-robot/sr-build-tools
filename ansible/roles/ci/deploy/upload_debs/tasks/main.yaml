@@ -6,5 +6,5 @@
     chdir={{repo_sources_path}}
 
 - name: Send files to aptly repository
-  shell: find . -name '*.deb' | xargs curl -X POST -F file=@{} http://10.10.10.62:8080/api/files/{}
+  shell: curl -X POST -F file=@ros-indigo-sr-benchmarking_0.0.0-0trusty_amd64.deb http://10.10.10.62:8080/api/files/ros-indigo-sr-benchmarking
     chdir={{repo_sources_path}}
