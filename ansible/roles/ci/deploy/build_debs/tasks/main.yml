@@ -28,6 +28,9 @@
   with_items: "{{workspace_packages_list|default([])}}"
   when: not complete_debian_packages_check
 
+- name: display local rosdep
+  shell: cat {{repo_sources_path}}/local_custom_rosdep.yaml
+
 - name: Update rosdep
   shell: bash -c "rosdep update"
 
