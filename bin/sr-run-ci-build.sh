@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
+set -e # fail on errors
+set -x # echo commands run
+
 export toolset_branch=$1
 export server_type=$2
 export tags_list=$3
