@@ -4,3 +4,7 @@
 - name: List all present deb packages
   shell: bash -c "ls *.deb"
     chdir={{repo_sources_path}}
+
+- name: Send files to aptly repository
+  shell: find . -name '*.deb' | xargs curl -X POST -F file=@{} http://10.10.10.62:8080/api/files/{}
+    chdir={{repo_sources_path}}
