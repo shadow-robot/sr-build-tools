@@ -4,7 +4,7 @@
 # Repository should have particular structure
 
 set -e # fail on errors
-set -x # echo commands run
+#set -x # echo commands run
 
 while [[ $# > 1 ]]
 do
