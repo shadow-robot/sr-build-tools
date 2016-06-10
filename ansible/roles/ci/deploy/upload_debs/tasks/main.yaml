@@ -5,8 +5,23 @@
   shell: bash -c "ls *.deb"
     chdir={{repo_sources_path}}
 
-- name: Send files to aptly repository
-  shell: curl -X POST -F file=@{{item}} http://10.10.10.62:8080/api/files/`dpkg --info {{item}} | grep Package | sed 's/Package: //' `
+- name: Save deb paths
+  shell: echo {{item}}
     chdir={{repo_sources_path}}
   with_fileglob:
     - "{{repo_sources_path}}/*.deb"
+  register: deb_paths
+
+- name: Cleanup deb name
+  shell: dpkg --info {{item}} | grep Package | sed 's/Package: //'
+    chdir={{repo_sources_path}}
+  with_items:
+    - "{{ deb_paths }}"
+  register: deb_names
+
+- name: Send files to aptly repository
+  shell: curl -X POST -F file=@{{ item.0 }} http://10.10.10.62:8080/api/files/{{ item.1 }}
+    chdir={{repo_sources_path}}
+  with_together:
+    - "{{ deb_paths }}"
+    - "{{ deb_names }}"
