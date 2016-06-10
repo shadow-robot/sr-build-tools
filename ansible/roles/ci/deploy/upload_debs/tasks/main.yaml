@@ -13,19 +13,19 @@
   register: deb_paths
 
 - name: Cleanup deb name first_path
-  shell: dpkg --info {{item}} | grep Package
+  shell: dpkg --info {{item.stdout}} | grep Package
   with_items:
     - "{{ deb_paths }}"
   register: deb_names_first_path
 
 - name: Finish deb name cleanup
-  shell: echo {{ item.replace('Package ', '')}}
+  shell: echo {{ item.stdout.replace('Package ', '')}}
   with_items:
     - "{{ deb_names_first_path }}"
   register: deb_names
 
 - name: Send files to aptly repository
-  shell: curl -X POST -F file=@{{ item.0 }} http://10.10.10.62:8080/api/files/{{ item.1 }}
+  shell: curl -X POST -F file=@{{ item.0.stdout }} http://10.10.10.62:8080/api/files/{{ item.1.stdout }}
   with_together:
     - "{{ deb_paths }}"
     - "{{ deb_names }}"
