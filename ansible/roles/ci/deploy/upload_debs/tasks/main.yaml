@@ -9,4 +9,4 @@
   shell: curl -X POST -F file=@{{item}} http://10.10.10.62:8080/api/files/{{item}}
     chdir={{repo_sources_path}}
   with_fileglob:
-    - {{repo_sources_path}}/*.deb
+    - "{{repo_sources_path}}/*.deb"
