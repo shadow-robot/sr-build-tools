@@ -6,7 +6,7 @@
     chdir={{repo_sources_path}}
 
 - name: Save deb paths
-  shell: bash -c "find . -name '*.deb' -print0
+  shell: bash -c "find . -name '*.deb' -print0"
     chdir={{repo_sources_path}}
   register: deb_paths
 
