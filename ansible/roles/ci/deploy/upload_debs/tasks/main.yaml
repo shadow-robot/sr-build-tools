@@ -24,7 +24,7 @@
     installed_packages_names_stdout_lines: "{{installed_packages_names.stdout_lines}}"
 
 - name: Send files to aptly repository and update it
-  shell: curl -X POST -F file=@{{ item.0 }} {{aptly_url}}/api/files/{{ item.1 }} && curl -X POST {{aptly_url}}/api/repos/repo1/file/{{ item.1 }}
+  shell: curl -X POST -F file=@{{ item.0 }} {{aptly_url}}/api/files/{{ item.1 }} && curl -X POST {{aptly_url}}/api/repos/{{repository_name}}/file/{{ item.1 }}
     chdir={{repo_sources_path}}
   with_together:
     - "{{ deb_paths_stdout_lines|default([]) }}"
