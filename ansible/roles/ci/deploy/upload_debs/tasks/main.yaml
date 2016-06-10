@@ -6,26 +6,25 @@
     chdir={{repo_sources_path}}
 
 - name: Save deb paths
-  shell: echo {{item}}
+  shell: bash -c "find . -name '*.deb' -print0
     chdir={{repo_sources_path}}
-  with_fileglob:
-    - "{{repo_sources_path}}/*.deb"
   register: deb_paths
 
-- name: Cleanup deb name first_path
-  shell: "dpkg --info {{item.results.stdout}} | grep 'Package: '"
-  with_items:
-    - "{{ deb_paths }}"
-  register: deb_names_first_path
+- name: Set variable to workaround ansible type evaluation issue
+  set_fact:
+    deb_paths_stdout_lines: "{{deb_paths.stdout_lines}}"
 
-- name: Finish deb name cleanup
-  shell: echo {{ item.results.stdout.replace('Package ', '')}}
-  with_items:
-    - "{{ deb_names_first_path }}"
-  register: deb_names
+- name: Cleanup names
+  shell: bash -c "find . -name '*.deb' -print0  | xargs -0 -I {} dpkg --info  {} | sed -n -e 's/^\s*Package:\s*//p'"
+    chdir={{repo_sources_path}}
+  register: installed_packages_names
+
+- name: Set variable to workaround ansible type evaluation issue
+  set_fact:
+    installed_packages_names_stdout_lines: "{{installed_packages_names.stdout_lines}}"
 
 - name: Send files to aptly repository
-  shell: curl -X POST -F file=@{{ item.0.results.stdout }} http://10.10.10.62:8080/api/files/{{ item.1.results.stdout }}
+  shell: curl -X POST -F file=@{{ item.0 }} http://10.10.10.62:8080/api/files/{{ item.1 }}
   with_together:
-    - "{{ deb_paths }}"
-    - "{{ deb_names }}"
+    - "{{ installed_packages_names_stdout_lines|default([]) }}"
+    - "{{ deb_paths_stdout_lines|default([]) }}"
