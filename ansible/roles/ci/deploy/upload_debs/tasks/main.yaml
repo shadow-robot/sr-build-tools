@@ -6,7 +6,7 @@
     chdir={{repo_sources_path}}
 
 - name: Send files to aptly repository
-  shell: curl -X POST -F file=@{{item}} http://10.10.10.62:8080/api/files/{{item}}.split('/')[-1].split('_')[0]
+  shell: curl -X POST -F file=@{{item}} http://10.10.10.62:8080/api/files/`dpkg --info {{item}} | grep Package | sed 's/Package: //' `
     chdir={{repo_sources_path}}
   with_fileglob:
     - "{{repo_sources_path}}/*.deb"
