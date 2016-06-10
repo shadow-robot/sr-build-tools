@@ -19,7 +19,13 @@
   register: deb_names_first_path
 
 - name: Finish deb name cleanup
-  replace: {{ item.replace('Package: ', '')}}
+  shell: echo {{ item.replace('Package: ', '')}}
   with_items:
     - "{{ deb_names_first_path }}"
   register: deb_names
+
+- name: Send files to aptly repository
+  shell: curl -X POST -F file=@{{ item.0 }} http://10.10.10.62:8080/api/files/{{ item.1 }}
+  with_together:
+    - "{{ deb_paths }}"
+    - "{{ deb_names }}"
