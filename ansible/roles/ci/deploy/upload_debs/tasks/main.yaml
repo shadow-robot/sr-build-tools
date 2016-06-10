@@ -13,7 +13,7 @@
   register: deb_paths
 
 - name: Cleanup deb name
-  shell: dpkg --info {{item}} | grep Package | sed 's/Package: //'
+  shell: bash -c "dpkg --info {{item}} | grep Package | sed 's/Package: //'"
     chdir={{repo_sources_path}}
   with_items:
     - "{{ deb_paths }}"
