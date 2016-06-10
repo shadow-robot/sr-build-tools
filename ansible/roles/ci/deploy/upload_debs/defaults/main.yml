@@ -1,0 +1,4 @@
+---
+# Defaults aptly url
+
+aptly_url: http://10.10.10.62:8080
