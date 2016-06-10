@@ -24,7 +24,7 @@
     installed_packages_names_stdout_lines: "{{installed_packages_names.stdout_lines}}"
 
 - name: Send files to aptly repository
-  shell: curl -X POST -F file=@{{ item.0 }} http://10.10.10.62:8080/api/files/{{ item.1 }}
+  shell: "curl -X POST -F file=@{{ item.0 }} http://10.10.10.62:8080/api/files/{{ item.1 }}"
     chdir={{repo_sources_path}}
   with_together:
     - "{{ deb_paths_stdout_lines|default([]) }}"
