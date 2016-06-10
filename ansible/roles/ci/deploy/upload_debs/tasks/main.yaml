@@ -19,7 +19,7 @@
   register: deb_names_first_path
 
 - name: Finish deb name cleanup
-  shell: echo {{ item.replace('Package: ', '')}}
+  shell: echo {{ item.replace('Package ', '')}}
   with_items:
     - "{{ deb_names_first_path }}"
   register: deb_names
