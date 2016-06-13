@@ -33,7 +33,7 @@
 - name: Update repository
   shell: curl -X POST {{aptly_url}}/api/repos/{{repository_name}}/file/{{ item }}?forceReplace=1
     chdir={{repo_sources_path}}
-  with:
+  with_items:
     - "{{ installed_packages_names_stdout_lines|default([]) }}"
 
 - name: Create snapshot name
