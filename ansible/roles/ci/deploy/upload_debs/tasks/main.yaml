@@ -23,9 +23,25 @@
   set_fact:
     installed_packages_names_stdout_lines: "{{installed_packages_names.stdout_lines}}"
 
-- name: Send files to aptly repository and update it
-  shell: curl -X POST -F file=@{{ item.0 }} {{aptly_url}}/api/files/{{ item.1 }} && curl -X POST {{aptly_url}}/api/repos/{{repository_name}}/file/{{ item.1 }}
+- name: Upload files to aptly repository
+  shell: curl -X POST -F file=@{{ item.0 }} {{aptly_url}}/api/files/{{ item.1 }}
     chdir={{repo_sources_path}}
   with_together:
     - "{{ deb_paths_stdout_lines|default([]) }}"
     - "{{ installed_packages_names_stdout_lines|default([]) }}"
+
+- name: Update repository
+  shell: curl -X POST {{aptly_url}}/api/repos/{{repository_name}}/file/{{ item }}?forceReplace=1
+    chdir={{repo_sources_path}}
+  with:
+    - "{{ installed_packages_names_stdout_lines|default([]) }}"
+
+- name: Create snapshot name
+  set_fact:
+    snapshot_name: "{{ansible_date_time.iso8601_micro}}"
+
+- name: Snapshot
+  shell: curl -X POST -H 'Content-Type: application/json' --data '{"Name":"{{snapshot_name}}"}' {{aptly_url}}/api/repos/{{repository_name}}/snapshots
+
+- name: Publish
+  shell: curl -X PUT -H 'Content-Type: application/json' --data '{"Snapshots": [{"Component": "main", "Name": "{{snapshot_name}}"}], "Signing": {"Batch": true, "Passphrase": "{{gpg_password}}"}}' {{aptly_url}}/api/publish//trusty
