@@ -1,3 +1,0 @@
----
-dependencies:
-  - { role: check_deb_make }

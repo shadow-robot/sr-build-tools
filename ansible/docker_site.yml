@@ -52,8 +52,8 @@
     - {role: ci/code_style_check/python, when: run_build, tags: ["python_code_style_check", "code_style_check"]}
     - {role: ci/code_style_check/cpp, when: run_build, tags: ["cpp_code_style_check", "code_style_check"]}
     - {role: ci/deploy/complete_deb_check, when: run_build, tags: ["complete_deb_check"]}
-    - {role: ci/deploy/check_deb_make, when: run_build, tags: ["check_deb_make", "complete_deb_check"]}
-    - {role: ci/deploy/upload_debs, when: run_build, tags: ["upload_debs"]}
+    - {role: ci/deploy/check_deb_make, when: run_build, tags: ["packages", "build_debs", "check_deb_make", "complete_deb_check"]}
+    - {role: ci/deploy/upload_debs, when: run_build, tags: ["packages", "build_debs", "check_deb_make", "upload_debs"]}
     - {role: ci/servers/travis/finalize, when: run_build, tags: ["travis"]}
     - {role: ci/servers/shippable/finalize, when: run_build, tags: ["shippable"]}
     - {role: ci/servers/circle/finalize, when: run_build, tags: ["circle"]}
