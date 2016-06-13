@@ -42,9 +42,3 @@
 
 - name: Test name
   shell: echo "{{ snapshot_name }}"
-
-- name: Snapshot
-  shell: curl -X POST -H 'Content-Type: application/json' --data '{"Name":"{{ snapshot_name }}"}' {{ aptly_url }}/api/repos/{{ repository_name }}/snapshots
-
-- name: Publish
-  shell: curl -X PUT -H 'Content-Type: application/json' --data '{"Snapshots": [{"Component": "main", "Name": "{{ snapshot_name }}"}], "Signing": {"Batch": true, "Passphrase": "{{ gpg_password }}"}}' {{ aptly_url }}/api/publish//trusty
