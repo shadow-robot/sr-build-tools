@@ -42,3 +42,6 @@
 
 - name: Test name
   shell: echo "{{ snapshot_name }}"
+
+- name: Snapshot
+  shell: curl -X POST -H 'Content-Type: application/json' --data '{"Name":"{{ snapshot_name }}"}' {{ aptly_url }}/api/repos/{{ repository_name }}/snapshots
