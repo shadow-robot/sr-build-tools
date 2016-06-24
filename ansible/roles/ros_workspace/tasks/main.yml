@@ -145,6 +145,7 @@
 
 - name: Install dependencies of the source deps
   script: ../files/rosdep_install.sh {{ros_workspace}}_deps
+  sudo: yes
 
 # Now build the code we just installed.
 - name: catkin_make for deps
@@ -155,6 +156,11 @@
 
 - name: Install dependencies
   script: ../files/rosdep_install.sh {{ros_workspace}}
+  sudo: yes
+
+- name: Fix persmision for rosdep
+  file: path=~{{ros_user}}/.ros recurse=yes owner={{ros_user}} group={{ros_group}} state=directory
+  sudo: yes
 
 # Now build the code we just installed.
 - name: catkin_make
