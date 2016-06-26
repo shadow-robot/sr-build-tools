@@ -107,18 +107,23 @@
   sudo: yes
   sudo_user: "{{ros_user}}"
 
+- name: Getting rosinstall files
+  shell: ls {{ros_workspace}}/src/*/repository.rosinstall
+  register: path_to_rosinstall_files
+
+- name: Set variable to workaround ansible type evaluation issue
+  set_fact:
+    path_to_rosinstall_files_stdout_lines: "{{path_to_rosinstall_files.stdout_lines}}"
+
 - name: Create /tmp/{{ros_workspace}}_deps to store deps rosinstalls
   file: state=directory path=/tmp/{{ros_workspace}}_deps/{{item | dirname}} owner={{ros_user}} group={{ros_group}}
   sudo: yes
   sudo_user: "{{ros_user}}"
-  with_fileglob:
-    - '{{ros_workspace}}/src/*/repository.rosinstall'
-
+  with_items: "{{path_to_rosinstall_files_stdout_lines|default([])}}"
 
 - name: Copy dependencies install file, replacing login / password if necessary
   template: src={{item}} dest=/tmp/{{ros_workspace}}_deps/{{item}}.rosinstall
-  with_fileglob:
-    - '{{ros_workspace}}/src/*/repository.rosinstall'
+  with_items: "{{path_to_rosinstall_files_stdout_lines|default([])}}"
 
 - name: Pull source dependencies to {{ros_workspace}}_deps
   shell: for INSTALL in `find /tmp/{{ros_workspace}}_deps/ -name "*.rosinstall"`; do wstool merge -y ${INSTALL} ; done
