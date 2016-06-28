@@ -49,6 +49,13 @@ sudo apt-get install --no-install-recommends ubuntu-desktop
 **Note** dev-machine script can be installed from any user as long as it has *sudo* privilege.
 Production script creates a **hand** user and fails if it is run from **hand** user.
 
+Before running the one-liner it might be necessary to install curl and python
+
+```bash
+sudo apt-get update
+sudo apt-get install curl python-minimal
+```
+
 ##Testing master branches##
 If you want to test the master branch you can use the one line script in the docker session.
 Although both devel and production scripts are checked every night in Jenkins.
@@ -66,7 +73,7 @@ If no parameter is specified, they will be created *catkin_ws* and *catkin_ws_de
 
 If you want to run a branch of sr-build-tools for development script use the following command
 ```bash
-curl -L bit.ly/dev-machine -b <branch name>
+curl -L bit.ly/dev-machine | bash -s -- -b <branch name> -w ~{{ros_user}}/projects/shadow_robot/base
 ```
 
 For production script use
