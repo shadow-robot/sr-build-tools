@@ -8,7 +8,7 @@ ENV DEBIAN_FRONTEND noninteractive
 RUN sudo apt-get update && \
     sudo apt-get install -y python-pip && \
     sudo pip install -U rosdep rosinstall_generator wstool rosinstall && \
-    sudo pip install -U autobahn trollius
+    sudo pip install -U autobahn trollius txaio
 
 RUN mkdir -p /workspace/blockly/src && \
     cd /workspace/blockly/src && \
