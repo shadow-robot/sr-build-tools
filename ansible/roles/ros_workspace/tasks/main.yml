@@ -1,14 +1,6 @@
 ---
 # Set up a ROS workspace, install a .rosinstall and compile.
 
-- name: Check if {{ros_workspace_install}} file exists on Ansible controller machine
-  local_action: stat path={{ros_workspace_install}}
-  register: ros_workspace_install_file_exists
-
-- name: Fail in case if there is no {{ros_workspace_install}} file
-  fail: msg="File {{ros_workspace_install}} doesn't exists"
-  when: 'not ros_workspace_install_file_exists.stat.exists'
-
 - name: Delete any files in {{ros_workspace}} to have a fresh workspace
   shell: "rm -rf {{ros_workspace}}"
   sudo: yes
