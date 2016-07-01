@@ -59,7 +59,7 @@
               backup=yes
 
 - name: Copy install file, replacing login / password if necessary
-  template: src={{ros_workspace_install}} dest=/tmp/ansible-ros-workspace.rosinstall
+  template: src={{ros_workspace_install}} dest={{ros_workspace}}/src/repository.rosinstall
 
 #
 # When using private repos ssh key checks can become a pain so we generate the
@@ -81,70 +81,21 @@
 #  with_items: repo_host_keys.results
 #  when: repo_host_keys is defined and repo_host_keys.stdout is defined and repo_host_keys.stdout is not ""
 
-- name: Init workspace
-  command: wstool init .
-    chdir={{ros_workspace}}/src
-    creates={{ros_workspace}}/src/.rosinstall
-  sudo: yes
-  sudo_user: "{{ros_user}}"
+- name: Load {{ros_workspace}} dependencies just 1 level deep
+  script: ../files/load_repositories.sh {{ros_workspace}}/src {{ros_workspace}}/src 1 {{github_login | default('') }} {{github_password | default('') }}
 
-- name: Merge {{ros_workspace}} into workspace
-  command: wstool merge -y /tmp/ansible-ros-workspace.rosinstall
-    chdir={{ros_workspace}}/src
-  # Run as root to allow forward keys for github access
-  sudo: yes
+- name: Remove initial repository.rosinstall file from src directory
+  file: path={{ros_workspace}}/src/repository.rosinstall state=absent
 
-- name: Workspace update
-  command: wstool up --delete-changed-uris -j5
-           chdir={{ros_workspace}}/src
-  # Run as root to allow forward keys for github access
-  sudo: yes
-
-- name: Init workspace for dependencies
-  command: wstool init .
-    chdir={{ros_workspace}}_deps/src
-    creates={{ros_workspace}}_deps/src/.rosinstall
-  sudo: yes
-  sudo_user: "{{ros_user}}"
-
-- name: Create /tmp/{{ros_workspace}}_deps to store deps rosinstalls
-  file: state=directory path=/tmp/{{ros_workspace}}_deps/{{item | dirname}} owner={{ros_user}} group={{ros_group}}
-  sudo: yes
-  sudo_user: "{{ros_user}}"
-  with_fileglob:
-    - '{{ros_workspace}}/src/*/repository.rosinstall'
-
-
-- name: Copy dependencies install file, replacing login / password if necessary
-  template: src={{item}} dest=/tmp/{{ros_workspace}}_deps/{{item}}.rosinstall
-  with_fileglob:
-    - '{{ros_workspace}}/src/*/repository.rosinstall'
-
-- name: Pull source dependencies to {{ros_workspace}}_deps
-  shell: for INSTALL in `find /tmp/{{ros_workspace}}_deps/ -name "*.rosinstall"`; do wstool merge -y ${INSTALL} ; done
-         chdir={{ros_workspace}}_deps/src
-  sudo: yes
-
-- name: Workspace update {{ros_workspace}}_deps
-  command: wstool up --delete-changed-uris -j5
-           chdir={{ros_workspace}}_deps/src
-  # Run as root to allow forward keys for github access
-  sudo: yes
+- name: Load {{ros_workspace}}_deps dependencies for maximum 10 levels
+  script: ../files/load_repositories.sh {{ros_workspace}}/src {{ros_workspace}}_deps/src 10 {{github_login | default('') }} {{github_password | default('') }}
 
 - name: Delete duplicated deps
   shell: for BASE_SRC in `ls {{ros_workspace}}/src` ; do if [ -d {{ros_workspace}}_deps/src/${BASE_SRC} ]; then rm -rf {{ros_workspace}}_deps/src/${BASE_SRC}; fi ; done
-  sudo: yes
-
-- name: Fix perms (As we installed code as root, fix the perms.)
-  file: path={{ros_workspace}} recurse=yes owner={{ros_user}} group={{ros_group}}
-  sudo: yes
-
-- name: Fix perms for deps (As we installed code as root, fix the perms.)
-  file: path={{ros_workspace}}_deps recurse=yes owner={{ros_user}} group={{ros_group}}
-  sudo: yes
 
 - name: Install dependencies of the source deps
   script: ../files/rosdep_install.sh {{ros_workspace}}_deps
+  sudo: yes
 
 # Now build the code we just installed.
 - name: catkin_make for deps
@@ -155,6 +106,11 @@
 
 - name: Install dependencies
   script: ../files/rosdep_install.sh {{ros_workspace}}
+  sudo: yes
+
+- name: Fix persmision for rosdep
+  file: path=~{{ros_user}}/.ros recurse=yes owner={{ros_user}} group={{ros_group}} state=directory
+  sudo: yes
 
 # Now build the code we just installed.
 - name: catkin_make
