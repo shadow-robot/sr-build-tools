@@ -92,6 +92,15 @@
 
 - name: Delete duplicated deps
   shell: for BASE_SRC in `ls {{ros_workspace}}/src` ; do if [ -d {{ros_workspace}}_deps/src/${BASE_SRC} ]; then rm -rf {{ros_workspace}}_deps/src/${BASE_SRC}; fi ; done
+  sudo: yes
+
+- name: Fix perms (As we installed code as root, fix the perms.)
+  file: path={{ros_workspace}} recurse=yes owner={{ros_user}} group={{ros_group}}
+  sudo: yes
+
+- name: Fix perms for deps (As we installed code as root, fix the perms.)
+  file: path={{ros_workspace}}_deps recurse=yes owner={{ros_user}} group={{ros_group}}
+  sudo: yes
 
 - name: Install dependencies of the source deps
   script: ../files/rosdep_install.sh {{ros_workspace}}_deps
