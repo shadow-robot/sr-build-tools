@@ -5,7 +5,7 @@ export ros_workspace=$2
 export package_name=$3
 export errors_file_name=$4
 
-source /opt/ros/$ros_release/setup.bash
+source <(grep "^export\|^source" $HOME/.bashrc)
 
 rm -rf $ros_workspace/build
 rm -rf $ros_workspace/devel

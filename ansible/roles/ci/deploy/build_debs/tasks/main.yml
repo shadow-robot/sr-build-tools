@@ -35,7 +35,7 @@
   shell: bash -c "rosdep update"
 
 - name: Generate ROS debian package files
-  shell: bash -c "source /opt/ros/{{ros_release}}/setup.bash && bloom-generate rosdebian --os-name ubuntu --os-version trusty --ros-distro {{ros_release}}"
+  shell: bash -c "source <(grep '^export\|^source' {{ansible_env.HOME}}/.bashrc) && bloom-generate rosdebian --os-name ubuntu --os-version trusty --ros-distro {{ros_release}}"
     chdir={{repo_sources_path}}/{{item.path}}
   with_items:
     - "{{repo_packages_list|default([])}}"
