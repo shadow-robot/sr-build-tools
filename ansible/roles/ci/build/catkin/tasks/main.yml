@@ -12,5 +12,5 @@
     - "{{ros_workspace}}/install_isolated"
 
 - name: catkin make workspace
-  shell: bash -c "env && source /opt/ros/{{ros_release}}/setup.bash && catkin_make"
+  shell: bash -c "source <(grep ^export /root/.bashrc) && source /opt/ros/{{ros_release}}/setup.bash && catkin_make"
     chdir={{ros_workspace}}
