@@ -8,8 +8,8 @@
     chdir={{repo_sources_path}}/{{item[1].path}}
   ignore_errors: True
   with_nested:
-    - "{{repo_packages_list|default([])}}"
-    - "{{repo_packages_list|default([])}}"
+    - "{{workspace_packages_list|default([])}}"
+    - "{{workspace_packages_list|default([])}}"
 
 # In case if there is not errors fakeroot will not create new deb file just exit with 0 else it will print error
 - name: Check if debian build doesn't have any errors
