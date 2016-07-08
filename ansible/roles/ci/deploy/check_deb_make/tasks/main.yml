@@ -5,7 +5,7 @@
 # mv command will fail in case if package is already installed for this case there is ignore_errors
 - name: Create and install debian packages recursively in order to fix local dependencies
   shell: bash -c "source <(grep '^export\|^source' {{ansible_env.HOME}}/.bashrc) && source {{ros_workspace}}/devel/setup.bash && fakeroot ./debian/rules binary && mv -vt .  ../*.deb && sudo dpkg --install *.deb"
-    chdir={{repo_sources_path}}/{{item[1].path}}
+    chdir={{ros_workspace}}/{{item[1].path}}
   ignore_errors: True
   with_nested:
     - "{{workspace_packages_list|default([])}}"
