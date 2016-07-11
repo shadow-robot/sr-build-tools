@@ -2,7 +2,7 @@
 # Playbook for uploading deb files to an apt repo
 
 - name: List all present deb packages
-  shell: bash -c "ls *.deb"
+  shell: bash -c "find . -name '*.deb'"
     chdir={{repo_sources_path}}
 
 - name: Save deb paths

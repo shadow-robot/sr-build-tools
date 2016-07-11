@@ -3,13 +3,13 @@
 
 - name: Clean debian packages folders in case of the cached build
   shell: bash -c "rm -rf ./debian && rm -rf ./obj-x86_64-linux-gnu"
-    chdir={{repo_sources_path}}/{{item.path}}
-  with_items: "{{repo_packages_list|default([])}}"
+    chdir={{ros_workspace}}/{{item.path}}
+  with_items: "{{workspace_packages_list|default([])}}"
   ignore_errors: True
 
 - name: Clean debian packages from repository directory
   shell: bash -c "find . -name '*.deb' -type f -delete"
-    chdir={{repo_sources_path}}
+    chdir={{ros_workspace}}
   ignore_errors: True
 
 - name: Add line to rosdep package cache
@@ -35,7 +35,7 @@
   shell: bash -c "rosdep update"
 
 - name: Generate ROS debian package files
-  shell: bash -c "source /opt/ros/{{ros_release}}/setup.bash && bloom-generate rosdebian --os-name ubuntu --os-version trusty --ros-distro {{ros_release}}"
-    chdir={{repo_sources_path}}/{{item.path}}
+  shell: bash -c "source <(grep '^export\|^source' {{ansible_env.HOME}}/.bashrc) && bloom-generate rosdebian --os-name ubuntu --os-version trusty --ros-distro {{ros_release}}"
+    chdir={{ros_workspace}}/{{item.path}}
   with_items:
-    - "{{repo_packages_list|default([])}}"
+    - "{{workspace_packages_list|default([])}}"
