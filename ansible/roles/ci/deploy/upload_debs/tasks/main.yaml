@@ -49,4 +49,4 @@
 
 - name: Publish
   shell: >
-   curl -X PUT -H 'Content-Type: application/json' --data '{"Snapshots": [{"Component": "main", "Name": "{{ snapshot_name }}"}], "Signing": {"Batch": true, "Passphrase": "{{ gpg_password }}"}, "ForceOverwrite": true}' {{ aptly_url }}/api/publish//trusty
+   curl -X PUT -H 'Content-Type: application/json' --data '{"Snapshots": [{"Component": "main", "Name": "{{ snapshot_name }}"}], "Signing": {"Batch": true, "Passphrase": "{{ gpg_password }}"}, "ForceOverwrite": true}' {{ aptly_url }}/api/publish/{{ repository_prefix }}/{{ repository_distribution }}
