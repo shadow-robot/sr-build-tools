@@ -1,8 +1,7 @@
 #!/usr/bin/env bash
 
 set -e # fail on errors
-set -x # echo commands run
-
+#set -x # echo commands run
 
 export package_directory=$1
 export ros_release=${2:-indigo}
