@@ -35,7 +35,6 @@
   shell: bash -c "rosdep update"
 
 - name: Generate ROS debian package files
-  script: ../files/generate_ros_debian.sh {{ros_release}}
-    chdir={{ros_workspace}}/{{item.path}}
+  script: ../files/generate_ros_debian.sh {{ros_workspace}}/{{item.path}} {{ros_release}}
   with_items:
     - "{{workspace_packages_list|default([])}}"
