@@ -42,6 +42,12 @@
     local-name: sr_teleop
     uri: 'https://github.com/shadow-robot/sr-teleop'
     version: 'indigo-devel'
+
+- git:
+    local-name: sr_blockly_blocks
+    uri: 'https://github.com/shadow-robot/sr_blockly_blocks.git'
+    version: 'master'
+
 - git:
     local-name: robot_blockly
     uri: 'https://github.com/shadow-robot/robot_blockly.git'
