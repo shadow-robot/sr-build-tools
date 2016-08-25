@@ -14,11 +14,10 @@ RUN mkdir -p /workspace/blockly/src && \
     cd /workspace/blockly/src && \
     wstool init && \
     wstool set -y -u robot_blockly --git https://github.com/shadow-robot/robot_blockly && \
+    wstool set -y -u sr_blockly_blocks --git https://github.com/shadow-robot/sr_blockly && \
     source /opt/ros/indigo/setup.bash && \
     cd .. && \
-    catkin_make_isolated --pkg robot_blockly --install
-
-
+    catkin_make
 
 # setup entrypoint
 COPY ./entrypoint.sh /
