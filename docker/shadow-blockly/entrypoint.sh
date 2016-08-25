@@ -2,5 +2,5 @@
 set -e
 
 # setup ros environment
-source "/workspace/blockly/install_isolated/setup.bash"
-roslaunch robot_blockly robot_blockly.launch
+source "/workspace/blockly/devel/setup.bash"
+roslaunch robot_blockly robot_blockly.launch block_packages:=[sr_blockly_blocks]
