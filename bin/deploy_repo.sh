@@ -90,8 +90,11 @@ echo " |   Installing needed packages  |"
 echo " ---------------------------------"
 echo ""
 
-sudo apt-get update
-sudo apt-get install subversion -y
+# Wait for apt-get lock file to be released
+while sudo fuser /var/lib/dpkg/lock >/dev/null 2>&1; do
+    sleep 1
+done
+sudo apt-get update && sudo apt-get install subversion -y
 
 echo ""
 echo " -------------------"
