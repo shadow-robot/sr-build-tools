@@ -92,6 +92,7 @@ echo ""
 
 # Wait for apt-get lock file to be released
 while sudo fuser /var/lib/dpkg/lock >/dev/null 2>&1; do
+    echo "Waiting for apt-get file lock..."
     sleep 1
 done
 sudo apt-get update && sudo apt-get install subversion -y
