@@ -90,12 +90,19 @@ echo " |   Installing needed packages  |"
 echo " ---------------------------------"
 echo ""
 
-# Wait for apt-get lock file to be released
-while sudo fuser /var/lib/dpkg/lock >/dev/null 2>&1; do
-    echo "Waiting for apt-get file lock..."
+# Wait for apt-get update lock file to be released
+while sudo fuser /var/lib/apt/lists/lock >/dev/null 2>&1; do
+    echo "Waiting for apt-get update file lock..."
     sleep 1
 done
-sudo apt-get update && sudo apt-get install subversion -y
+sudo apt-get update
+
+# Wait for apt-get install lock file to be released
+while sudo fuser /var/lib/dpkg/lock >/dev/null 2>&1; do
+    echo "Waiting for apt-get install file lock..."
+    sleep 1
+done
+sudo apt-get install subversion -y
 
 echo ""
 echo " -------------------"
