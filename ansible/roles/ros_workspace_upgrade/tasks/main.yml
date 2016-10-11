@@ -55,6 +55,10 @@
   file: path=~{{ros_user}}/.ros recurse=yes owner={{ros_user}} group={{ros_group}} state=directory
   sudo: yes
 
+- name: catkin_make to generate devel folder
+  shell: bash -c "source /opt/ros/{{ros_release}}/setup.bash && catkin_make -DCATKIN_WHITELIST_PACKAGES='my_dummy_non_existing_package' "
+    chdir={{ros_workspace}}
+
 - name: catkin_make
-  shell: bash -c "source <(grep '^export\|^source' ~{{ros_user}}/.bashrc) && catkin_make"
+  shell: bash -c "source <(grep '^export\|^source' ~{{ros_user}}/.bashrc) && catkin_make -DCATKIN_WHITELIST_PACKAGES='' "
     chdir={{ros_workspace}}
