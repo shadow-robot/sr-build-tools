@@ -1,0 +1,60 @@
+---
+# Upgrades a ROS workspace and fully reinstalls dependencies workspace.
+
+- name: catkin clean workspace directories
+  file: path={{item}} state=absent
+  with_items:
+    - "{{ros_workspace}}/build"
+    - "{{ros_workspace}}/devel"
+    - "{{ros_workspace}}/install"
+    - "{{ros_workspace}}/build_isolated"
+    - "{{ros_workspace}}/devel_isolated"
+    - "{{ros_workspace}}/install_isolated"
+
+- name: Delete any files in {{ros_workspace}}_deps to have a fresh workspace for dependecies
+  file: path={{ros_workspace}}_deps state=absent
+  sudo: yes
+
+- name: Create workspace for dependencies {{ros_workspace}}_deps
+  file: state=directory path={{ros_workspace}}_deps/src owner={{ros_user}} group={{ros_group}}
+
+- name: catkin_init_workspace deps
+  shell: bash -c "source /opt/ros/{{ros_release}}/setup.bash && catkin_init_workspace"
+    chdir={{ros_workspace}}_deps/src
+    creates={{ros_workspace}}_deps/src/CMakeLists.txt
+
+- name: catkin make workspace deps
+  shell: bash -c "source /opt/ros/{{ros_release}}/setup.bash && catkin_make"
+    chdir={{ros_workspace}}_deps
+    creates={{ros_workspace}}_deps/devel/setup.bash
+
+- name: Update main workspace source code
+  shell: bash -c 'wstool foreach -t {{ros_workspace}}/src --git "git pull"'
+    chdir={{ros_workspace}}
+
+- name: Load {{ros_workspace}}_deps dependencies for maximum 10 levels
+  script: ../../ros_workspace/files/load_repositories.sh {{ros_workspace}}/src {{ros_workspace}}_deps/src 10 {{github_login | default('') }} {{github_password | default('') }}
+
+- name: Delete duplicated deps
+  shell: for BASE_SRC in `ls {{ros_workspace}}/src` ; do if [ -d {{ros_workspace}}_deps/src/${BASE_SRC} ]; then rm -rf {{ros_workspace}}_deps/src/${BASE_SRC}; fi ; done
+  sudo: yes
+
+- name: Install dependencies of the source deps
+  script: ../../ros_workspace/files/rosdep_install.sh {{ros_workspace}}_deps
+  sudo: yes
+
+- name: catkin_make for deps
+  shell: bash -c "source <(grep '^export\|^source' ~{{ros_user}}/.bashrc) && catkin_make"
+    chdir={{ros_workspace}}_deps
+
+- name: Install dependencies
+  script: ../../ros_workspace/files/rosdep_install.sh {{ros_workspace}}
+  sudo: yes
+
+- name: Fix persmision for rosdep
+  file: path=~{{ros_user}}/.ros recurse=yes owner={{ros_user}} group={{ros_group}} state=directory
+  sudo: yes
+
+- name: catkin_make
+  shell: bash -c "source <(grep '^export\|^source' ~{{ros_user}}/.bashrc) && catkin_make"
+    chdir={{ros_workspace}}
