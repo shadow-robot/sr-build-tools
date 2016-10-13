@@ -28,6 +28,10 @@
     chdir={{ros_workspace}}_deps
     creates={{ros_workspace}}_deps/devel/setup.bash
 
+- name: catkin_make to generate devel folder
+  shell: bash -c "source /opt/ros/{{ros_release}}/setup.bash && catkin_make -DCATKIN_WHITELIST_PACKAGES='my_dummy_non_existing_package' "
+    chdir={{ros_workspace}}
+
 - name: Update main workspace source code
   shell: bash -c 'wstool foreach -t {{ros_workspace}}/src --git "git pull"'
     chdir={{ros_workspace}}
@@ -56,5 +60,5 @@
   sudo: yes
 
 - name: catkin_make
-  shell: bash -c "source <(grep '^export\|^source' ~{{ros_user}}/.bashrc) && catkin_make"
+  shell: bash -c "source <(grep '^export\|^source' ~{{ros_user}}/.bashrc) && catkin_make -DCATKIN_WHITELIST_PACKAGES='' "
     chdir={{ros_workspace}}
