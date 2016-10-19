@@ -1,9 +1,9 @@
 #!/bin/bash
 
-RT_PATCH_DIR="4.1"
-RT_PATCH_VERSION="4.1.10-rt11"
+RT_PATCH_DIR="4.6"
+RT_PATCH_VERSION="4.6.7-rt11"
 KERNEL_DIR="v4.x"
-KERNEL_VERSION="4.1.10"
+KERNEL_VERSION="4.6.7"
 
 wget https://www.kernel.org/pub/linux/kernel/projects/rt/${RT_PATCH_DIR}/patch-${RT_PATCH_VERSION}.patch.xz
 wget https://www.kernel.org/pub/linux/kernel/${KERNEL_DIR}/linux-${KERNEL_VERSION}.tar.xz
