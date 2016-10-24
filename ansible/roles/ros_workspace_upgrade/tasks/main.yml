@@ -29,7 +29,7 @@
     creates={{ros_workspace}}_deps/devel/setup.bash
 
 - name: catkin_make to generate devel folder
-  shell: bash -c "source /opt/ros/{{ros_release}}/setup.bash && catkin_make -DCATKIN_WHITELIST_PACKAGES='my_dummy_non_existing_package' "
+  shell: bash -c "source {{ros_workspace}}_deps/devel/setup.bash && catkin_make -DCATKIN_WHITELIST_PACKAGES='my_dummy_non_existing_package' "
     chdir={{ros_workspace}}
 
 - name: Update main workspace source code
