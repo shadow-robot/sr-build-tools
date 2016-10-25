@@ -10,6 +10,11 @@ MAINTAINER "Shadow Robot's Software Team <software@shadowrobot.com>"
 
 LABEL Description="This image is used to make ROS Indigo based projects build faster using build tools" Vendor="Shadow Robot" Version="1.0"
 
+# Setting up bash as default shell
+RUN rm /bin/sh && ln -s /bin/bash /bin/sh
+
+ENV DEBIAN_FRONTEND noninteractive
+
 RUN locale-gen en_US.UTF-8
 
 RUN apt-get update
@@ -23,9 +28,4 @@ ENV remote_shell_script="https://raw.githubusercontent.com/shadow-robot/sr-build
 
 RUN curl -s "$( echo "$remote_shell_script" | sed 's/#/%23/g' )" | bash /dev/stdin "$toolset_branch" $server_type $used_modules
 
-# Caching additional packages which are often used
-RUN apt-get install ros-indigo-moveit-* -y
-RUN apt-get install ros-indigo-sr-* -y
-RUN apt-get install ros-indigo-ethercat-* -y
-RUN apt-get install ros-indigo-ros-ethercat-* -y
-RUN apt-get install ros-indigo-cob-* -y
+ENTRYPOINT bash
