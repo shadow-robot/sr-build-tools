@@ -4,7 +4,7 @@
 # https://github.com/shadow-robot/sr-build-tools/
 #
 
-FROM ubuntu:14.04
+FROM ros:indigo
 
 MAINTAINER "Shadow Robot's Software Team <software@shadowrobot.com>"
 
