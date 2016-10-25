@@ -27,4 +27,7 @@ RUN echo "Setting up bash as default shell" && \
     apt-get upgrade -y && \
     apt-get install curl -y && \
     echo "Running one-liner" && \
-    (curl -s "$( echo "$remote_shell_script" | sed 's/#/%23/g' )" | bash /dev/stdin "$toolset_branch" $server_type $used_modules)
+    (curl -s "$( echo "$remote_shell_script" | sed 's/#/%23/g' )" | bash /dev/stdin "$toolset_branch" $server_type $used_modules) && \
+    echo "Removing cache" && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
