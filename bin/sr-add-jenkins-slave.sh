@@ -12,7 +12,7 @@ export jenkins_home="/home/$jenkins_user"
 export jenkins_user_email="$jenkins_user@example.com"
 
 sudo apt-get update
-sudo apt-get install ssh git docker.io openjdk-7-jdk -y
+sudo apt-get install ssh git openjdk-7-jdk -y
 
 sudo useradd -d "$jenkins_home" --create-home $jenkins_user
 sudo mkdir "$jenkins_home/.ssh"
