@@ -15,6 +15,8 @@ ENV DEBIAN_FRONTEND noninteractive
 ENV USERNAME user
 ENV PULSE_SERVER /run/pulse/native
 
+ENV GOSU_VERSION 1.10
+
 COPY entrypoint.sh /usr/local/bin/entrypoint.sh
 
 RUN set -x && \
