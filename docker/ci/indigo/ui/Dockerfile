@@ -79,7 +79,7 @@ RUN set -x && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-USER user
+#USER user
 
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
 
