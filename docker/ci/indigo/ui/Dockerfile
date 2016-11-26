@@ -70,10 +70,10 @@ RUN set -x && \
 
     echo "Setup .bashrc for ROS" && \
     echo "source /opt/ros/indigo/setup.bash" >> /home/$USERNAME/.bashrc && \
-	#Fix for qt and X server errors
-	echo "export QT_X11_NO_MITSHM=1" >> /home/$USERNAME/.bashrc && \
-	# cd to home on login
-	echo "cd" >> /home/$USERNAME/.bashrc
+    #Fix for qt and X server errors
+    echo "export QT_X11_NO_MITSHM=1" >> /home/$USERNAME/.bashrc && \
+    # cd to home on login
+    echo "cd" >> /home/$USERNAME/.bashrc && \
 
     echo "Removing cache" && \
     apt-get clean && \
