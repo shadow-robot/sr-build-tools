@@ -83,4 +83,4 @@ USER user
 
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
 
-#CMD["terminator"]
+CMD ["terminator"]
