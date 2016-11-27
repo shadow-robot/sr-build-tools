@@ -83,4 +83,4 @@ RUN set -x && \
 
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
 
-CMD ["terminator"]
+CMD ["/usr/bin/terminator"]
