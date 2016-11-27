@@ -75,7 +75,7 @@ RUN set -x && \
     echo "Running one-liner" && \
     wget -O /tmp/oneliner "$( echo "$remote_shell_script" | sed 's/#/%23/g' )" && \
     chmod 755 /tmp/oneliner && \
-    exec /usr/local/bin/gosu $USERNAME "/tmp/oneliner '$toolset_branch' $server_type $used_modules" && \
+    gosu $USERNAME /tmp/oneliner '$toolset_branch' $server_type $used_modules && \
 
     echo "Setup .bashrc for ROS" && \
     echo "source /opt/ros/indigo/setup.bash" >> /home/$USERNAME/.bashrc && \
