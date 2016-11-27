@@ -4,7 +4,7 @@
 # https://github.com/shadow-robot/sr-build-tools/
 #
 
-FROM ros:indigo
+FROM ros:indigo-perception
 
 MAINTAINER "Shadow Robot's Software Team <software@shadowrobot.com>"
 
@@ -16,6 +16,11 @@ ENV USERNAME user
 ENV PULSE_SERVER /run/pulse/native
 
 ENV GOSU_VERSION 1.10
+
+ENV toolset_branch="master"
+ENV server_type="docker_hub"
+ENV used_modules="check_cache,create_workspace"
+ENV remote_shell_script="https://raw.githubusercontent.com/shadow-robot/sr-build-tools/$toolset_branch/bin/sr-run-ci-build.sh"
 
 COPY entrypoint.sh /usr/local/bin/entrypoint.sh
 
@@ -66,6 +71,11 @@ RUN set -x && \
     usermod -aG sudo $USERNAME && \
     echo "$USERNAME ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers.d/$USERNAME && \
     chmod 0440 /etc/sudoers.d/$USERNAME && \
+
+    echo "Running one-liner" && \
+    wget -O /tmp/oneliner "$( echo "$remote_shell_script" | sed 's/#/%23/g' )" && \
+    chmod 755 /tmp/oneliner && \
+    exec /usr/local/bin/gosu $USERNAME "/tmp/oneliner '$toolset_branch' $server_type $used_modules" && \
 
     echo "Setup .bashrc for ROS" && \
     echo "source /opt/ros/indigo/setup.bash" >> /home/$USERNAME/.bashrc && \
