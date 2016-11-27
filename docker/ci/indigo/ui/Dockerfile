@@ -43,7 +43,6 @@ RUN set -x && \
     rm -r "$GNUPGHOME" /usr/local/bin/gosu.asc && \
     chmod +x /usr/local/bin/gosu && \
     gosu nobody true && \
-    apt-get purge -y --auto-remove ca-certificates wget && \
 
     echo "Intall some basic GUI and sound libs" && \
     apt-get install -y \
@@ -78,8 +77,6 @@ RUN set -x && \
     echo "Removing cache" && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
-
-#USER user
 
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
 
