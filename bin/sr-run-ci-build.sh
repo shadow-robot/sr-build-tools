@@ -75,7 +75,7 @@ case $server_type in
   ;;
 
 "docker_hub") echo "Docker Hub"
-  sudo PYTHONUNBUFFERED=1 ansible-playbook -v -i "localhost," -c local docker_site.yml --tags "docker_hub,$tags_list"
+  PYTHONUNBUFFERED=1 ansible-playbook -v -i "localhost," -c local docker_site.yml --tags "docker_hub,$tags_list"
   ;;
 
 "local") echo "Local run"
