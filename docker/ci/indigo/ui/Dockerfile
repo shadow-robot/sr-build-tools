@@ -77,6 +77,9 @@ RUN set -x && \
     chmod 755 /tmp/oneliner && \
     gosu $USERNAME /tmp/oneliner "$toolset_branch" $server_type $used_modules && \
 
+    echo "Fix permissions" && \
+    chown -R $USERNAME:$USERNAME /home/$USERNAME/.ros && \
+
     echo "Setup .bashrc for ROS" && \
     echo "source /opt/ros/indigo/setup.bash" >> /home/$USERNAME/.bashrc && \
     #Fix for qt and X server errors
