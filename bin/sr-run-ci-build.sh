@@ -94,7 +94,7 @@ case $server_type in
   else
     export coverage_tests_dir="/host/"$coverage_tests_result_dir
   fi
-  sudo docker pull $docker_image
+  docker pull $docker_image
 
   # Remove untagged Docker images which do not have containers associated with them
   export untagged_images_list="$(sudo docker images -q --filter 'dangling=true')"
@@ -107,7 +107,7 @@ case $server_type in
   done
 
   export extra_variables="$extra_variables local_repo_dir=/host$local_repo_dir local_test_dir=$unit_tests_dir local_code_coverage_dir=$coverage_tests_dir"
-  sudo docker run -w "$image_home/sr-build-tools/ansible" -e LOCAL_USER_ID=$(id -u) $docker_flags --rm -v $HOME:/host:rw $docker_image  bash -c "git pull && git checkout $toolset_branch && git pull && sudo PYTHONUNBUFFERED=1 ansible-playbook -v -i \"localhost,\" -c local docker_site.yml --tags \"local,$tags_list\" -e \"$extra_variables\" "
+  docker run -w "$image_home/sr-build-tools/ansible" -e LOCAL_USER_ID=$(id -u) $docker_flags --rm -v $HOME:/host:rw $docker_image  bash -c "git pull && git checkout $toolset_branch && git pull && sudo PYTHONUNBUFFERED=1 ansible-playbook -v -i \"localhost,\" -c local docker_site.yml --tags \"local,$tags_list\" -e \"$extra_variables\" "
   ;;
 
 *) echo "Not supported server type $server_type"
