@@ -7,10 +7,12 @@
 
 - name: Update package lists
   apt: update_cache=yes
+  sudo: yes
   when: upgrade_all_packages
 
 - name: Update all packages to the latest version
   apt: upgrade=dist
+  sudo: yes
   when: upgrade_all_packages
 
 - name: Read information from wstool
