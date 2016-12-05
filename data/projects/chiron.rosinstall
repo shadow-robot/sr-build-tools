@@ -1,4 +1,4 @@
 - git:
-    uri: 'https://{{github_login}}:{{github_password}}@github.com/shadow-robot/chiron.git'
+    uri: 'git@github.com:shadow-robot/chiron.git'
     version: 'F_docker'
     local-name: chiron
