@@ -189,7 +189,7 @@ fi
 
 echo "Ansible vars: ${EXTRA_VARS_JSON}"
 
-ansible-playbook -vvv -K sr-build-tools/ansible/vagrant_site.yml --extra-vars="'{${EXTRA_VARS_JSON}}'"
+ansible-playbook -vvv -K sr-build-tools/ansible/vagrant_site.yml --extra-vars="{${EXTRA_VARS_JSON}}"
 
 echo ""
 echo " ------------------------------------------------"
