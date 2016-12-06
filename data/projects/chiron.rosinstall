@@ -2,3 +2,8 @@
     uri: 'git@github.com:shadow-robot/chiron.git'
     version: 'F_docker'
     local-name: chiron
+
+  - git:
+      uri: 'git@github.com:ros-planning/warehouse_ros_mongo.git'
+      version: 'jade-devel'
+      local-name: warehouse_ros_mongo
