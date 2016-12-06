@@ -4,17 +4,20 @@
   apt: name=python-pycurl state=present
 
 - name: Add PyCharm ppa
-  apt_repository: repo='ppa:mystic-mirage/pycharm'
+  command: repo='ppa:ubuntu-desktop/ubuntu-make'
 
 - name: Update package lists
   apt: update_cache=yes
 
+- name: Install ubuntu make
+  apt: name=ubuntu-make state=present
+
 - name: Install programming tools
-  apt: name=pycharm-community state=present
+  command: umake ide pycharm /root/.local/share/umake/ide/pycharm
 
 - name: Set workspace for pycharm icon
-  lineinfile: dest=/usr/share/applications/pycharm-community.desktop regexp=^Exec= line="Exec=bash -i -c \"pycharm-community\" %F"
+  lineinfile: dest=/root/.local/share/applications/jetbrains-pycharm-ce.desktop regexp=^Exec= line="Exec=bash -i -c \"pycharm\" %F"
 
 - name: Set favorite icons
-  shell: dbus-launch --exit-with-session gsettings set com.canonical.Unity.Launcher favorites "['application://ubiquity.desktop', 'application://pycharm-community.desktop', 'application://terminator.desktop', 'application://nautilus.desktop', 'application://firefox.desktop', 'unity://running-apps', 'unity://expo-icon', 'unity://devices']"
+  shell: dbus-launch --exit-with-session gsettings set com.canonical.Unity.Launcher favorites "['application://ubiquity.desktop', 'application://pycharm.desktop', 'application://terminator.desktop', 'application://nautilus.desktop', 'application://firefox.desktop', 'unity://running-apps', 'unity://expo-icon', 'unity://devices']"
   sudo_user: "{{ros_user}}"
