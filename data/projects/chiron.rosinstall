@@ -7,3 +7,8 @@
     uri: 'git@github.com:shadow-robot/warehouse_ros_mongo.git'
     version: 'jade-devel'
     local-name: warehouse_ros_mongo
+
+- git:
+    uri: 'git@github.com:ros-planning/warehouse_ros.git'
+    version: 'jade-devel'
+    local-name: warehouse_ros
