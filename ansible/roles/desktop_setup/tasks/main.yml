@@ -4,7 +4,7 @@
   apt: name=python-pycurl state=present
 
 - name: Add PyCharm ppa
-  command: repo='ppa:ubuntu-desktop/ppa'
+  apt_repository: repo='ppa:ubuntu-desktop/ubuntu-make'
 
 - name: Update package lists
   apt: update_cache=yes
