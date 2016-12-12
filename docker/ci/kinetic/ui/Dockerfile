@@ -17,7 +17,7 @@ ENV PULSE_SERVER /run/pulse/native
 
 ENV GOSU_VERSION 1.10
 
-ENV toolset_branch="F_kinetic_ci"
+ENV toolset_branch="F_some_docker_refactoring"
 ENV server_type="docker_hub"
 ENV used_modules="check_cache,create_workspace"
 ENV remote_shell_script="https://raw.githubusercontent.com/shadow-robot/sr-build-tools/$toolset_branch/bin/sr-run-ci-build.sh"
