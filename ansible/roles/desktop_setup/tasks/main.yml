@@ -13,10 +13,10 @@
   apt: name=ubuntu-make state=present
 
 - name: Install programming tools
-  command: sudo umake ide pycharm /usr/share/umake/ide/pycharm
+  command: sudo umake ide pycharm /root/.local/usr/share/umake/ide/pycharm
 
 - name: Set workspace for pycharm icon
-  lineinfile: dest=/usr/share/applications/jetbrains-pycharm-ce.desktop regexp=^Exec= line="Exec="/usr/share/umake/ide/pycharm/bin/pycharm.sh" %F"
+  lineinfile: dest=/root/.local/share/applications/jetbrains-pycharm-ce.desktop regexp=^Exec= line="Exec=bash -i -c \"pycharm\" %F"
 
 - name: Set favorite icons
   shell: dbus-launch --exit-with-session gsettings set com.canonical.Unity.Launcher favorites "['application://ubiquity.desktop', 'application://jetbrains-pycharm-ce.desktop', 'application://terminator.desktop', 'application://nautilus.desktop', 'application://firefox.desktop', 'unity://running-apps', 'unity://expo-icon', 'unity://devices']"
