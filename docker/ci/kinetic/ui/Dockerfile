@@ -21,6 +21,7 @@ ENV toolset_branch="F_kinetic_ci"
 ENV server_type="docker_hub"
 ENV used_modules="check_cache,create_workspace"
 ENV remote_shell_script="https://raw.githubusercontent.com/shadow-robot/sr-build-tools/$toolset_branch/bin/sr-run-ci-build.sh"
+ENV ros_release="kinetic"
 
 COPY entrypoint.sh /usr/local/bin/entrypoint.sh
 
@@ -65,9 +66,9 @@ RUN set -x && \
     apt-get install -y \
         terminator \
         vim \
-        mc
+        mc && \
 
-RUN echo "Adding user" && \
+    echo "Adding user" && \
     useradd -m $USERNAME && \
     echo "$USERNAME:$USERNAME" | chpasswd && \
     usermod --shell /bin/bash $USERNAME && \
@@ -78,7 +79,7 @@ RUN echo "Adding user" && \
     echo "Running one-liner" && \
     wget -O /tmp/oneliner "$( echo "$remote_shell_script" | sed 's/#/%23/g' )" && \
     chmod 755 /tmp/oneliner && \
-    gosu $USERNAME /tmp/oneliner "$toolset_branch" $server_type $used_modules && \
+    gosu $USERNAME /tmp/oneliner "$toolset_branch" $server_type $used_modules $ros_release && \
 
     echo "Setup .bashrc for ROS" && \
     echo "source /opt/ros/indigo/setup.bash" >> /home/$USERNAME/.bashrc && \
