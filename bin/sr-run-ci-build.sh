@@ -6,8 +6,9 @@ set -e # fail on errors
 export toolset_branch=$1
 export server_type=$2
 export tags_list=$3
+export ros_release=${4:-"indigo"}
 
-export docker_image=${docker_image_name:-"shadowrobot/ubuntu-ros-indigo-build-tools"}
+export docker_image=${docker_image_name:-"shadowrobot/ubuntu-ros-${ros_release}-build-tools"}
 
 # Do not install all libraries for docker container CI servers
 if  [ "circle" != $server_type ] && [ "semaphore_docker" != $server_type ] && [ "local" != $server_type ] && [ "travis" != $server_type ]; then
@@ -75,7 +76,7 @@ case $server_type in
   ;;
 
 "docker_hub") echo "Docker Hub"
-  PYTHONUNBUFFERED=1 ansible-playbook -v -i "localhost," -c local docker_site.yml --tags "docker_hub,$tags_list"
+  PYTHONUNBUFFERED=1 ansible-playbook -v -i "localhost," -c local docker_site.yml --tags "docker_hub,$tags_list" --extra-vars "ros_release=${ros_release}"
   ;;
 
 "local") echo "Local run"
