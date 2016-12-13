@@ -1,0 +1,4 @@
+---
+# Defaults for PyCharm IDE installation
+
+pycharm_home: "/etc/pycharm"
