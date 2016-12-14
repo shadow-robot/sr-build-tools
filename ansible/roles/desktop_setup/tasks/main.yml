@@ -13,10 +13,11 @@
   apt: name=ubuntu-make state=present
 
 - name: Install programming tools
-  command: sudo umake ide pycharm /usr/share/umake/ide/pycharm
+  command: umake ide pycharm /usr/share/umake/ide/pycharm
 
 - name: Change pycharm app location
-  command: sudo cp /root/.local/share/applications/jetbrains-pycharm-ce.desktop /usr/share/applications
+  sudo: yes
+  command: cp /root/.local/share/applications/jetbrains-pycharm-ce.desktop /usr/share/applications
 
 - name: Set workspace for pycharm icon
   lineinfile: dest=/usr/share/applications/jetbrains-pycharm-ce.desktop regexp=^Exec= line="Exec="/usr/share/umake/ide/pycharm/bin/pycharm.sh" %F"
