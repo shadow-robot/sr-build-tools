@@ -13,7 +13,10 @@
   apt: name=ubuntu-make state=present
 
 - name: Install programming tools
-  shell: yes '' | umake ide pycharm /usr/share/umake/ide/pycharm
+  command: "{{item}}"
+  with_items:
+    - umake ide pycharm /usr/share/umake/ide/pycharm
+    - y ''
 
 - name: Change pycharm app location
   sudo: yes
