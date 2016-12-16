@@ -12,6 +12,10 @@
 - name: Install ubuntu make
   apt: name=ubuntu-make state=present
 
+- name: Create pycharm directory
+  sudo: yes
+  file: path=/usr/share/umake/ide/pycharm state=directory
+
 - name: Install programming tools
   sudo: yes
   shell: bash -c "yes '' | umake ide pycharm /usr/share/umake/ide/pycharm"
