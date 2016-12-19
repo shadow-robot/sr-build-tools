@@ -17,12 +17,10 @@
     ros_group: ros
 
 - name: Create pycharm directory
-  sudo: yes
-  file: path=/usr/share/umake/ide/pycharm state=directory mode=0777
+  file: path=/usr/share/umake/ide/pycharm state=directory mode=0777 owner={{ros_user}} group={{ros_group}}
 
 - name: Install programming tools
-  become: true
-  become_user: "{{ros_user}}"
+  sudo: yes
   shell: bash -c "yes | umake ide pycharm /usr/share/umake/ide/pycharm"
 
 - name: Change pycharm app location
