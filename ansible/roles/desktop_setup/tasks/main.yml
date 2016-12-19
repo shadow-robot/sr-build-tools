@@ -12,6 +12,10 @@
 #- name: Install ubuntu make
 #  apt: name=ubuntu-make state=present
 
+- name: Create ros group variable(DEBUG)
+  set_fact: 
+    ros_group: ros
+
 - name: Create pycharm directory
   sudo: yes
   file: path=/usr/share/umake/ide/pycharm state=directory mode=0777 owner={{ros_user}} group={{ros_group}}
