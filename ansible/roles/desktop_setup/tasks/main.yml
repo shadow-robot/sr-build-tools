@@ -18,7 +18,7 @@
 
 - name: Install programming tools
   sudo: yes
-  shell: bash -c "yes '' | umake ide pycharm /usr/share/umake/ide/pycharm"
+  shell: bash -c "yes | umake ide pycharm /usr/share/umake/ide/pycharm"
 
 - name: Change pycharm app location
   sudo: yes
