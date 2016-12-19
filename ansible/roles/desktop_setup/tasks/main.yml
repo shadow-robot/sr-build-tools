@@ -22,7 +22,7 @@
 
 - name: Install programming tools
   become: true
-  become_user: ros_user
+  become_user: "{{ros_user}}"
   shell: bash -c "yes | umake ide pycharm /usr/share/umake/ide/pycharm"
 
 - name: Change pycharm app location
