@@ -21,7 +21,8 @@
   file: path=/usr/share/umake/ide/pycharm state=directory mode=0777
 
 - name: Install programming tools
-  sudo: yes
+  become: true
+  become_user: ros_user
   shell: bash -c "yes | umake ide pycharm /usr/share/umake/ide/pycharm"
 
 - name: Change pycharm app location
