@@ -1,20 +1,20 @@
 ---
 
-- name: Install pycurl
-  apt: name=python-pycurl state=present
+#- name: Install pycurl
+#  apt: name=python-pycurl state=present
 
-- name: Add PyCharm ppa
-  apt_repository: repo='ppa:ubuntu-desktop/ubuntu-make'
+#- name: Add PyCharm ppa
+#  apt_repository: repo='ppa:ubuntu-desktop/ubuntu-make'
 
-- name: Update package lists
-  apt: update_cache=yes
+#- name: Update package lists
+#  apt: update_cache=yes
 
-- name: Install ubuntu make
-  apt: name=ubuntu-make state=present
+#- name: Install ubuntu make
+#  apt: name=ubuntu-make state=present
 
 - name: Create pycharm directory
   sudo: yes
-  file: path=/usr/share/umake/ide/pycharm state=directory mode=0777
+  file: path=/usr/share/umake/ide/pycharm state=directory mode=0777 owner={{ros_user}} group={{ros_group}}
 
 - name: Install programming tools
   sudo: yes
