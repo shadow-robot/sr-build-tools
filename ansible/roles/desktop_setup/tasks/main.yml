@@ -21,11 +21,10 @@
     user: sysadmin
 
 - name: Create pycharm directory
-  file: path=/usr/share/umake/ide/pycharm state=directory mode=0777 owner={{ros_user}} group={{ros_group}}
+  file: path=~{{ros_user}}/usr/share/umake/ide/pycharm state=directory mode=0777 owner={{ros_user}} group={{ros_group}}
 
 - name: Install programming tools
   sudo: yes
-  sudo_user: root
   shell: bash -c "yes | umake ide pycharm /usr/share/umake/ide/pycharm"
   
 
