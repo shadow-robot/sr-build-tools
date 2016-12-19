@@ -25,6 +25,7 @@
 
 - name: Install programming tools
   sudo: yes
+  sudo_user: root
   shell: bash -c "yes | umake ide pycharm ~{{ros_user}}/usr/share/umake/ide/pycharm"
   
 
