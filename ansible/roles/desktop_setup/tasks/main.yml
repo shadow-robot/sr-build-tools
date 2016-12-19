@@ -22,7 +22,7 @@
 
 - name: Change pycharm app location
   sudo: yes
-  command: cp {{ansible_env.HOME}}/.local/share/applications/jetbrains-pycharm-ce.desktop /usr/share/applications
+  command: cp ~{{ros_user}}/.local/share/applications/jetbrains-pycharm-ce.desktop /usr/share/applications
 
 - name: Set workspace for pycharm icon
   lineinfile: dest=/usr/share/applications/jetbrains-pycharm-ce.desktop regexp=^Exec= line="Exec="/usr/share/umake/ide/pycharm/bin/pycharm.sh" %F"
