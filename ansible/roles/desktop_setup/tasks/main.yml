@@ -16,8 +16,12 @@
   set_fact: 
     ros_group: ros
 
+- name: Create ros user variable(DEBUG)
+  set_fact:
+    user: sysadmin
+
 - name: Create pycharm directory
-  file: path=/usr/share/umake/ide/pycharm state=directory mode=0777 owner={{ros_user}} group={{ros_group}}
+  file: path=/usr/share/umake/ide/pycharm state=directory mode=0777 owner={{user}} group={{ros_group}}
 
 - name: Install programming tools
   sudo: yes
