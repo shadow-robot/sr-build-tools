@@ -45,7 +45,7 @@ wait
 #wait
 
 pushd ansible
-#source ./hacking/env-setup
+source ./hacking/env-setup
 
 sudo mkdir -p  /etc/ansible
 #sudo sh -c 'echo "[hand-prod]
@@ -61,9 +61,9 @@ echo ""
 
 if [ -z "$2" ];
   then
-    git clone https://github.com/shadow-robot/sr-build-tools
+    git clone --depth 1 https://github.com/shadow-robot/sr-build-tools 
   else
-    git clone https://github.com/shadow-robot/sr-build-tools -b $2
+    git clone --depth 1 https://github.com/shadow-robot/sr-build-tools -b $2
 fi
 
 echo ""
