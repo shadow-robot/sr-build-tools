@@ -18,6 +18,10 @@
 
 - name: Create pycharm directory
   sudo: yes
+  file: path=/usr/share/umake/ide/pycharm state=directory mode=0777 
+
+- name: Change pycharm directory owner and group
+  sudo: yes
   file: path=/usr/share/umake/ide/pycharm state=directory mode=0777 owner="{{ros_user}}" group="{{ros_group}}"
 
 - name: Install programming tools
