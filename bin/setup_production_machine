@@ -41,7 +41,7 @@ wait
 
 #sudo apt-get remove ansible -y &
 #sudo pip install paramiko PyYAML Jinja2 httplib2 six autobahn trollius txaio &
-git clone --branch 'v2.0.1.0-0.2.rc2' git://github.com/ansible/ansible.git --recursive &
+#git clone --branch 'v2.0.1.0-0.2.rc2' git://github.com/ansible/ansible.git --recursive &
 wait
 
 pushd ansible
