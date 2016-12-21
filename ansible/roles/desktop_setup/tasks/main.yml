@@ -1,24 +1,16 @@
 ---
 
-#- name: Install pycurl
-#  apt: name=python-pycurl state=present
+- name: Install pycurl
+  apt: name=python-pycurl state=present
 
-#- name: Add PyCharm ppa
-#  apt_repository: repo='ppa:ubuntu-desktop/ubuntu-make'
+- name: Add PyCharm ppa
+  apt_repository: repo='ppa:ubuntu-desktop/ubuntu-make'
 
-#- name: Update package lists
-#  apt: update_cache=yes
+- name: Update package lists
+  apt: update_cache=yes
 
-#- name: Install ubuntu make
-#  apt: name=ubuntu-make state=present
-
-- name: Create ros group variable(DEBUG)
-  set_fact: 
-    ros_group: ros
-
-#- name: Create pycharm directory
-#  sudo: yes
-#  file: path=/usr/share/umake/ide/pycharm state=directory mode=0777 
+- name: Install ubuntu make
+  apt: name=ubuntu-make state=present
 
 - name: Change umake directory owner and group
   sudo: yes
