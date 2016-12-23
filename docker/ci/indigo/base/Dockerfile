@@ -14,7 +14,7 @@ ENV DEBIAN_FRONTEND noninteractive
 
 ENV PULSE_SERVER /run/pulse/native
 ENV GOSU_VERSION 1.10
-ENV $USERNAME user
+ENV USERNAME user
 
 ENV toolset_branch="F_some_docker_refactoring"
 ENV server_type="docker_hub"
