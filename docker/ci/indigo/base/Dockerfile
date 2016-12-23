@@ -14,7 +14,7 @@ ENV DEBIAN_FRONTEND noninteractive
 
 ENV PULSE_SERVER /run/pulse/native
 ENV GOSU_VERSION 1.10
-ENV USERNAME user
+ENV MY_USERNAME user
 
 ENV toolset_branch="F_some_docker_refactoring"
 ENV server_type="docker_hub"
@@ -41,7 +41,7 @@ RUN set -x && \
     wget -O /tmp/oneliner "$( echo "$remote_shell_script" | sed 's/#/%23/g' )" && \
     chmod 755 /tmp/oneliner && \
     /tmp/oneliner "$toolset_branch" $server_type 'setup_docker_user' && \
-    gosu $USERNAME /tmp/oneliner "$toolset_branch" $server_type $used_modules && \
+    gosu $MY_USERNAME /tmp/oneliner "$toolset_branch" $server_type $used_modules && \
 
     echo "Removing cache" && \
     apt-get clean && \
