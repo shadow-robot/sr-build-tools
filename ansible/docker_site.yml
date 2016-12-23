@@ -5,9 +5,9 @@
   vars:
     ros_release: "indigo"
   roles:
-    - {role: docker/setup_ui, tags: ["setup_docker_user"]l}
-    - {role: docker/ide/pycharm, tags: ["setup_docker_pycharm"]l}
-    - {role: docker/ide/qtcreator, tags: ["setup_docker_qtcreator"]l}
+    - {role: docker/setup_ui, tags: ["setup_docker_user"]}
+    - {role: docker/ide/pycharm, tags: ["setup_docker_pycharm"]}
+    - {role: docker/ide/qtcreator, tags: ["setup_docker_qtcreator"]}
     - {role: ci/servers/travis/init, tags: ["travis"]}
     - {role: ci/servers/shippable/init, tags: ["shippable"]}
     - {role: ci/servers/semaphore/init, tags: ["semaphore"]}
