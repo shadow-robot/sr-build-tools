@@ -56,4 +56,4 @@
     - mc
 
 - name: Install user
-  script: ../files/install_user.sh {{docker_user}} {{docker_user_password}} {{ros_release}}
+  script: ../files/install_user.sh {{new_docker_user}} {{new_docker_user_password}} {{ros_release}}
