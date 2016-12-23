@@ -23,29 +23,29 @@ ENV remote_shell_script="https://raw.githubusercontent.com/shadow-robot/sr-build
 
 COPY entrypoint.sh /usr/local/bin/entrypoint.sh
 
-RUN # set -x && \
-
-#    echo "Setting up bash as default shell" && \
-#    rm /bin/sh && \
-#    ln -s /bin/bash /bin/sh && \
-
-#    echo "Setting locale" && \
-#    locale-gen en_US.UTF-8 && \
-
-    echo "Installing wget" && \
-    apt-get update && \
-    apt-get upgrade -y && \
-    apt-get install -y --no-install-recommends ca-certificates wget && \
-
-    echo "Running one-liner" && \
-#    wget -O /tmp/oneliner "$( echo "$remote_shell_script" | sed 's/#/%23/g' )" && \
-#    chmod 755 /tmp/oneliner && \
-#    /tmp/oneliner "$toolset_branch" $server_type 'setup_docker_user' && \
-#    gosu $USERNAME /tmp/oneliner "$toolset_branch" $server_type $used_modules && \
-
-#    echo "Removing cache" && \
-#    apt-get clean && \
-    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+#RUN # set -x && \
+#
+##    echo "Setting up bash as default shell" && \
+##    rm /bin/sh && \
+##    ln -s /bin/bash /bin/sh && \
+#
+##    echo "Setting locale" && \
+##    locale-gen en_US.UTF-8 && \
+#
+#    echo "Installing wget" && \
+#    apt-get update && \
+#    apt-get upgrade -y && \
+#    apt-get install -y --no-install-recommends ca-certificates wget && \
+#
+#    echo "Running one-liner" && \
+##    wget -O /tmp/oneliner "$( echo "$remote_shell_script" | sed 's/#/%23/g' )" && \
+##    chmod 755 /tmp/oneliner && \
+##    /tmp/oneliner "$toolset_branch" $server_type 'setup_docker_user' && \
+##    gosu $USERNAME /tmp/oneliner "$toolset_branch" $server_type $used_modules && \
+#
+##    echo "Removing cache" && \
+##    apt-get clean && \
+#    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 RUN rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
