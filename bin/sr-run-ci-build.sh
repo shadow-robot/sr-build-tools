@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 set -e # fail on errors
-#set -x # echo commands run
+set -x # echo commands run
 
 export toolset_branch=$1
 export server_type=$2
@@ -75,7 +75,7 @@ case $server_type in
   ;;
 
 "docker_hub") echo "Docker Hub"
-  PYTHONUNBUFFERED=1 ansible-playbook -v -i "localhost," -c local docker_site.yml --tags "docker_hub,$tags_list"
+  PYTHONUNBUFFERED=1 ansible-playbook -vvv -i "localhost," -c local docker_site.yml --tags "docker_hub,$tags_list"
   ;;
 
 "local") echo "Local run"
