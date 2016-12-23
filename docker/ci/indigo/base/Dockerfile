@@ -23,14 +23,14 @@ ENV remote_shell_script="https://raw.githubusercontent.com/shadow-robot/sr-build
 
 COPY entrypoint.sh /usr/local/bin/entrypoint.sh
 
-RUN set -x && \
+RUN # set -x && \
 
-    echo "Setting up bash as default shell" && \
-    rm /bin/sh && \
-    ln -s /bin/bash /bin/sh && \
+#    echo "Setting up bash as default shell" && \
+#    rm /bin/sh && \
+#    ln -s /bin/bash /bin/sh && \
 
-    echo "Setting locale" && \
-    locale-gen en_US.UTF-8 && \
+#    echo "Setting locale" && \
+#    locale-gen en_US.UTF-8 && \
 
     echo "Installing wget" && \
     apt-get update && \
@@ -43,8 +43,8 @@ RUN set -x && \
 #    /tmp/oneliner "$toolset_branch" $server_type 'setup_docker_user' && \
 #    gosu $USERNAME /tmp/oneliner "$toolset_branch" $server_type $used_modules && \
 
-    echo "Removing cache" && \
-    apt-get clean && \
+#    echo "Removing cache" && \
+#    apt-get clean && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 RUN rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
