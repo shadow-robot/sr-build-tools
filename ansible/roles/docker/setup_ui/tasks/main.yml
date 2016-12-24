@@ -19,8 +19,8 @@
     - ca-certificates
     - wget
 
-#- name: Install gosu
-#  script: ../files/install_gosu.sh
+- name: Install gosu
+  script: ../files/install_gosu.sh
 
 - name: Intall some basic GUI and sound libs
   apt: name={{item}}
@@ -56,4 +56,4 @@
     - mc
 
 - name: Install user
-  script: ../files/install_user.sh {{new_docker_user}} {{new_docker_user_password}} {{ros_release}}
+  script: ../files/create_user.sh {{new_docker_user}} {{new_docker_user_password}} {{ros_release}}
