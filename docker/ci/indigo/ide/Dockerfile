@@ -4,7 +4,7 @@
 # https://github.com/shadow-robot/sr-build-tools/
 #
 
-FROM docker pull shadowrobot/build-tools:trusty-indigo
+FROM shadowrobot/build-tools:trusty-indigo
 
 MAINTAINER "Shadow Robot's Software Team <software@shadowrobot.com>"
 
