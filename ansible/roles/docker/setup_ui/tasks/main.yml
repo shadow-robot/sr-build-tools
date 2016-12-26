@@ -19,6 +19,12 @@
     - ca-certificates
     - wget
 
+- name: Installing git and subversion
+  apt: name={{item}}
+  with_items:
+    - git
+    - subversion
+
 - name: Install gosu
   script: ../files/install_gosu.sh
 

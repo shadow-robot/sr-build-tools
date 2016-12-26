@@ -25,13 +25,6 @@ COPY entrypoint.sh /usr/local/bin/entrypoint.sh
 
 RUN set -x && \
 
-    echo "Setting up bash as default shell" && \
-    rm /bin/sh && \
-    ln -s /bin/bash /bin/sh && \
-
-    echo "Setting locale" && \
-    locale-gen en_US.UTF-8 && \
-
     echo "Installing wget" && \
     apt-get update && \
     apt-get upgrade -y && \
