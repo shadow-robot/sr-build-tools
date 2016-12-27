@@ -11,7 +11,7 @@
   with_items:
     - wget
     - git
-    - openjdk-7-jre
+    - default-jre
     - libxrender1
     - libxtst6
     - python
