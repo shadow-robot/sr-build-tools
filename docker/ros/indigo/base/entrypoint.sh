@@ -20,10 +20,3 @@ find $HOME -group $OLD_GROUP_ID -exec chgrp -h $GROUP_ID {} \;
 usermod -g $GROUP_ID $MY_USERNAME
 
 exec /usr/local/bin/gosu $MY_USERNAME "$@"
-
-
-#usermod -u <NEWUID> <LOGIN>
-#groupmod -g <NEWGID> <GROUP>
-#find / -user <OLDUID> -exec chown -h <NEWUID> {} \;
-#find / -group <OLDGID> -exec chgrp -h <NEWGID> {} \;
-#usermod -g <NEWGID> <LOGIN>
