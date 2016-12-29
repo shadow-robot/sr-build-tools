@@ -19,7 +19,7 @@ RUN set -x && \
 
     echo "Removing cache" && \
     apt-get clean && \
-    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /home/$MY_USERNAME/.ansible
 
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
 
