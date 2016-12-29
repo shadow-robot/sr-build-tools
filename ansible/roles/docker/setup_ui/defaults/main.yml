@@ -1,0 +1,5 @@
+---
+# Defaults fpr user and UI setup for docker container
+
+new_docker_user: user
+new_docker_user_password: "{{new_docker_user}}"

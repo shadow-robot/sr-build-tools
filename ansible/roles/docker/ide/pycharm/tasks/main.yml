@@ -1,0 +1,21 @@
+---
+# PyCharm IDE installation
+
+- name: Update package lists
+  apt: update_cache=yes
+  sudo: yes
+
+- name: Intall needed libs
+  apt: name={{item}} install_recommends=no
+  sudo: yes
+  with_items:
+    - wget
+    - git
+    - default-jre
+    - libxrender1
+    - libxtst6
+    - python
+
+- name: Install PyCharm
+  script: ../files/install_pycharm.sh {{pycharm_home}}
+  sudo: yes

@@ -1,0 +1,65 @@
+---
+# Setting up user and UI for docker container
+
+- name: Setting up bash as default shell
+  shell: rm /bin/sh && ln -s /bin/bash /bin/sh
+
+- name: Setting locale
+  command: locale-gen en_US.UTF-8
+
+- name: Update package lists
+  apt: update_cache=yes
+
+- name: Update all packages to the latest version
+  apt: upgrade=dist
+
+- name: Installing wget
+  apt: name={{item}} install_recommends=no
+  with_items:
+    - ca-certificates
+    - wget
+
+- name: Installing git and subversion
+  apt: name={{item}}
+  with_items:
+    - git
+    - subversion
+
+- name: Install gosu
+  script: ../files/install_gosu.sh
+
+- name: Intall some basic GUI and sound libs
+  apt: name={{item}}
+  with_items:
+    - xz-utils
+    - file
+    - locales
+    - dbus-x11
+    - pulseaudio
+    - dmz-cursor-theme
+    - fonts-dejavu
+    - fonts-liberation
+    - hicolor-icon-theme
+    - libcanberra-gtk3-0
+    - libcanberra-gtk-module
+    - libcanberra-gtk3-module
+    - libasound2
+    - libgtk2.0-0
+    - libdbus-glib-1-2
+    - libxt6
+    - libexif12
+    - libgl1-mesa-glx
+    - libgl1-mesa-dri
+
+- name: Update all packages to the latest version
+  command: update-locale LANG=C.UTF-8 LC_MESSAGES=POSIX
+
+- name: Intall some basic GUI and sound libs
+  apt: name={{item}}
+  with_items:
+    - terminator
+    - vim
+    - mc
+
+- name: Install user
+  script: ../files/create_user.sh {{new_docker_user}} {{new_docker_user_password}} {{ros_release}}
