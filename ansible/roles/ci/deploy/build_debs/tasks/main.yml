@@ -14,6 +14,7 @@
 
 - name: Add line to rosdep package cache
   lineinfile: dest=/etc/ros/rosdep/sources.list.d/20-default.list line="yaml file://{{repo_sources_path}}/local_custom_rosdep.yaml"
+  sudo: yes
 
 - name: Create empty file or clean existing one
   shell: bash -c "cat /dev/null > {{repo_sources_path}}/local_custom_rosdep.yaml"
@@ -35,6 +36,6 @@
   shell: bash -c "rosdep update"
 
 - name: Generate ROS debian package files
-  script: ../files/generate_ros_debian.sh {{ros_workspace}}/{{item.path}} {{ros_release}}
+  script: ../files/generate_ros_debian.sh {{ros_workspace}}/{{item.path}} {{ros_release}} {{ubuntu_version_name}}
   with_items:
     - "{{workspace_packages_list|default([])}}"

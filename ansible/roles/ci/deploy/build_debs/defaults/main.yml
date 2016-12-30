@@ -1,0 +1,4 @@
+---
+# Defaults check debian packages build
+
+ubuntu_version_name: "trusty"
