@@ -40,7 +40,7 @@ rm -rf ansible &
 wait
 
 sudo apt-get remove ansible -y &
-sudo pip install packaging paramiko PyYAML Jinja2 httplib2 six autobahn trollius txaio &
+sudo pip install packaging appdirs paramiko PyYAML Jinja2 httplib2 six autobahn trollius txaio &
 git clone --branch 'v2.0.1.0-0.2.rc2' git://github.com/ansible/ansible.git --recursive &
 wait
 
