@@ -40,18 +40,14 @@ rm -rf ansible &
 wait
 
 sudo apt-get remove ansible -y &
-sudo pip install paramiko PyYAML Jinja2 httplib2 six autobahn trollius txaio &
-git clone --branch 'v2.0.1.0-0.2.rc2' git://github.com/ansible/ansible.git --recursive &
+sudo pip install paramiko markupsafe PyYAML Jinja2 httplib2 six autobahn trollius txaio ansible==' 2.1.0.0' &
 wait
 
-pushd ansible
-source ./hacking/env-setup
+sudo pip install --upgrade setuptools
 
 sudo mkdir -p  /etc/ansible
 sudo sh -c 'echo "[hand-prod]
 localhost ansible_connection=local" > /etc/ansible/hosts'
-
-popd
 
 echo ""
 echo " -------------------"
