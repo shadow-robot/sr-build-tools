@@ -67,10 +67,6 @@ then
     ROS_VERSION="indigo"
 fi
 
-if [ -z "${SR_BUILD_TOOLS_BRANCH}" ]; then
-    SR_BUILD_TOOLS_BRANCH="master"
-fi
-
 echo "================================================================="
 echo "|                                                               |"
 echo "|             Shadow default installation tool                  |"
@@ -152,11 +148,11 @@ echo " -------------------"
 echo ""
 
 if [ -z "${SR_BUILD_TOOLS_BRANCH}" ]; then
-    GITHUB_BRANCH_URL_PART="trunk"
+    SR_BUILD_TOOLS_GITHUB_BRANCH_URL_PART="trunk"
 else
-    GITHUB_BRANCH_URL_PART="branches/${SR_BUILD_TOOLS_BRANCH}"
+    SR_BUILD_TOOLS_GITHUB_BRANCH_URL_PART="branches/${SR_BUILD_TOOLS_BRANCH}"
 fi
-svn export --no-auth-cache -q "https://github.com//shadow-robot/sr-build-tools.git/${GITHUB_BRANCH_URL_PART}/ansible" ${SR_BUILD_TOOLS_ANSIBLE_HOME}
+svn export --no-auth-cache -q "https://github.com//shadow-robot/sr-build-tools.git/${SR_BUILD_TOOLS_GITHUB_BRANCH_URL_PART}/ansible" ${SR_BUILD_TOOLS_ANSIBLE_HOME}
 
 echo ""
 echo " ------------------------------------"
@@ -189,7 +185,6 @@ export ROS_RELEASE_SETTINGS=" \"ros_release\":\"${ROS_VERSION}\", "
 export WORKSPACE_SETTINGS="\"ros_workspace\":\"${WORKSPACE_PATH}\", \"ros_workspace_install\":\"${SR_BUILD_TOOLS_ANSIBLE_HOME}/repository.rosinstall\" "
 export EXTERNAL_VARIABLES_JSON="{ ${GITHUB_CREDENTIALS} ${EXTRA_ANSIBLE_PARAMETER_ROS_USER} ${ROS_RELEASE_SETTINGS} ${WORKSPACE_SETTINGS} }"
 ansible-playbook ${MY_ANSIBLE_PARAMETERS} --extra-vars "${EXTERNAL_VARIABLES_JSON}"
-
 
 echo ""
 echo " ------------------------------------------------"
