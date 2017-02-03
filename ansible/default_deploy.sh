@@ -103,8 +103,8 @@ fi
 
 export SR_BUILD_TOOLS_ANSIBLE_HOME=/tmp/sr-build-tools-ansible/
 export SCRIPT_DIR="$(dirname "$(readlink -f "$0")")"
-export INVENTORY_DIR="${SR_BUILD_TOOLS_ANSIBLE_HOME}/inventory"
-export PLAYBOOKS_DIR="${SR_BUILD_TOOLS_ANSIBLE_HOME}/playbooks"
+export ANSIBLE_INVENTORY="${SR_BUILD_TOOLS_ANSIBLE_HOME}/hosts"
+export PLAYBOOKS_DIR="${SR_BUILD_TOOLS_ANSIBLE_HOME}"
 export ANSIBLE_ROLES_PATH=${SR_BUILD_TOOLS_ANSIBLE_HOME}/roles
 export ANSIBLE_CALLBACK_PLUGINS=${SR_BUILD_TOOLS_ANSIBLE_HOME}/callback_plugins
 export ANSIBLE_HOST_KEY_CHECKING=False
@@ -117,7 +117,7 @@ else
     GITHUB_CREDENTIALS=" \"github_login\":\"${GITHUB_LOGIN}\", \"github_password\":\"${GITHUB_PASSWORD}\", "
 fi
 
-export MY_ANSIBLE_PARAMETERS="-vvv  --ask-become-pass -i ${INVENTORY_DIR}/development ${PLAYBOOKS_DIR}/deployment.yml "
+export MY_ANSIBLE_PARAMETERS="-vvv  --ask-become-pass ${PLAYBOOKS_DIR}/vagrant_site.yml "
 export EXTRA_ANSIBLE_PARAMETER_ROS_USER=" \"ros_user\":\"`whoami`\", \"ros_group\":\"`whoami`\", "
 
 echo ""
@@ -181,6 +181,9 @@ echo " -------------------"
 echo " | Running Ansible |"
 echo " -------------------"
 echo ""
+
+sudo sh -c "echo \"[dev-machine]
+localhost ansible_connection=local\" > ${ANSIBLE_INVENTORY}"
 
 export ROS_RELEASE_SETTINGS=" \"ros_release\":\"${ROS_VERSION}\", "
 export WORKSPACE_SETTINGS="\"ros_workspace\":\"${WORKSPACE_PATH}\", \"ros_workspace_install\":\"${SR_BUILD_TOOLS_ANSIBLE_HOME}/repository.rosinstall\" "
