@@ -7,9 +7,7 @@
   apt_repository: repo='ppa:ubuntu-desktop/ubuntu-make'
 
 - name: Update package lists
-  apt:
-    update_cache: yes
-    upgrade: safe
+  apt: update_cache=yes
 
 - name: Install ubuntu make
   apt: name=ubuntu-make state=present
@@ -20,7 +18,7 @@
 
 - name: Install programming tools
   sudo: yes
-  sudo_user: "{{ros_user}}"
+  #sudo_user: "{{ros_user}}"
   shell: bash -c "yes | umake ide pycharm /usr/share/umake/ide/pycharm"
   
 - name: Change pycharm app location
