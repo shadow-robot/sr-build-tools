@@ -20,7 +20,7 @@
 
 - name: Change source list chmod
   sudo: yes
-  shell: bash -c "cd etc/apt/sources.list.d/ && chmod 644 ppa_ubuntu_desktop_ubuntu_make_trusty.list"
+  shell: bash -c "cd .. && cd .. && cd etc/apt/sources.list.d/ && chmod 644 ppa_ubuntu_desktop_ubuntu_make_trusty.list"
 
 - name: Install programming tools
   sudo: yes
