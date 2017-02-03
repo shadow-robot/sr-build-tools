@@ -57,9 +57,9 @@ echo ""
 
 if [ -z "$2" ];
   then
-#    git clone https://github.com/shadow-robot/sr-build-tools
+    git clone https://github.com/shadow-robot/sr-build-tools
   else
-#    git clone https://github.com/shadow-robot/sr-build-tools -b $2
+    git clone https://github.com/shadow-robot/sr-build-tools -b $2
 fi
 
 echo ""
