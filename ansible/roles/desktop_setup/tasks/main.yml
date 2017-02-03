@@ -5,7 +5,6 @@
 
 - name: Add PyCharm ppa
   sudo: yes
-  sudo_user: "{{ros_user}}"
   apt_repository: repo='ppa:ubuntu-desktop/ubuntu-make'
 
 - name: Update package lists
