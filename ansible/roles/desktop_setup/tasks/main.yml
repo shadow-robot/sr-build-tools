@@ -9,7 +9,7 @@
 - name: Update package lists
   apt:
     update_cache: yes
-    updgrade: yes
+    upgrade: yes
 
 - name: Install ubuntu make
   apt: name=ubuntu-make state=present
