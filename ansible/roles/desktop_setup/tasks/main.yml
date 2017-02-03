@@ -4,12 +4,16 @@
   apt: name=python-pycurl state=present
 
 - name: Add PyCharm ppa
+  sudo: yes
+  sudo_user: "{{ros_user}}"
   apt_repository: repo='ppa:ubuntu-desktop/ubuntu-make'
 
 - name: Update package lists
   apt: update_cache=yes
 
 - name: Install ubuntu make
+  sudo: yes
+  sudo_user: "{{ros_user}}"
   apt: name=ubuntu-make state=present
 
 - name: Change umake directory owner and group
@@ -18,7 +22,7 @@
 
 - name: Install programming tools
   sudo: yes
-  #sudo_user: "{{ros_user}}"
+  sudo_user: "{{ros_user}}"
   shell: bash -c "yes | umake ide pycharm /usr/share/umake/ide/pycharm"
   
 - name: Change pycharm app location
