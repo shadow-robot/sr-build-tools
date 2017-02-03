@@ -12,7 +12,6 @@
 
 - name: Install ubuntu make
   sudo: yes
-  sudo_user: "{{ros_user}}"
   apt: name=ubuntu-make state=present
 
 - name: Change umake directory owner and group
