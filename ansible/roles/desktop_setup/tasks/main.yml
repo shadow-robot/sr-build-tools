@@ -5,7 +5,7 @@
 
 - name: Add PyCharm ppa
   sudo: yes
-  apt_repository: repo='ppa:ubuntu-desktop/ubuntu-make' filename=ubuntu-desktop-ubuntu-make-trusty.list mode=0777
+  apt_repository: repo='ppa:ubuntu-desktop/ubuntu-make' filename='ubuntu-desktop-ubuntu-make-trusty.list' mode=0777
 
 - name: Update package lists
   apt: update_cache=yes
