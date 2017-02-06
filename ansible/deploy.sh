@@ -198,6 +198,10 @@ sudo sh -c "echo \"[dev-machine]
 localhost ansible_connection=local\" > ${ANSIBLE_INVENTORY}"
 
 export ROS_RELEASE_SETTINGS=" \"ros_release\":\"${ROS_VERSION}\", "
+if ["indigo" != "${ROS_VERSION}"]; then
+  ROS_RELEASE_SETTINGS="${ROS_RELEASE_SETTINGS} \"ros_packages\":[], "
+fi
+
 export WORKSPACE_SETTINGS="\"ros_workspace\":\"${WORKSPACE_PATH}\", \"ros_workspace_install\":\"${ROS_WORKSPACE_INSTALL_FILE}\" "
 export EXTERNAL_VARIABLES_JSON="{ ${GITHUB_CREDENTIALS} ${EXTRA_ANSIBLE_PARAMETER_ROS_USER} ${ROS_RELEASE_SETTINGS} ${WORKSPACE_SETTINGS} }"
 ansible-playbook ${MY_ANSIBLE_PARAMETERS} --extra-vars "${EXTERNAL_VARIABLES_JSON}"
