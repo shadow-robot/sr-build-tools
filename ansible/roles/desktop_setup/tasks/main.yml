@@ -7,7 +7,7 @@
   sudo: yes
   apt_repository:
     repo: 'ppa:ubuntu-desktop/ubuntu-make'
-    filename: 'ppa_ubuntu_desktop_ubuntu_make_trusty.list'
+    filename: 'ppa_ubuntu_desktop_ubuntu_make_trusty'
     mode: 0777
 
 - name: Update package lists
