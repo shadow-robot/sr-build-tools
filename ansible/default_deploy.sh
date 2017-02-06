@@ -28,6 +28,10 @@ case $key in
     ROS_VERSION="$2"
     shift
     ;;
+    -i|--installfile)
+    INSTALL_FILE="$2"
+    shift
+    ;;
     -l|--githublogin)
     GITHUB_LOGIN="$2"
     shift
@@ -43,6 +47,8 @@ esac
 shift
 done
 
+export DEFAULT_INSTALL_FILE_NAME="repository.rosinstall"
+
 if [ -z "${REPOSITORY_OWNER}" ]; then
     REPOSITORY_OWNER="shadow-robot"
 fi
@@ -51,15 +57,25 @@ if [ -z "${REPOSITORY_NAME}" ]; then
     REPOSITORY_NAME="sr_interface"
 fi
 
+export PROJECT_NAME=${REPOSITORY_NAME}
+
 if [ -z "${GITHUB_BRANCH}" ]; then
     GITHUB_BRANCH_URL_PART="trunk"
 else
     GITHUB_BRANCH_URL_PART="branches/${GITHUB_BRANCH}"
 fi
 
+if [ -z "${INSTALL_FILE}" ];
+then
+    INSTALL_FILE=${DEFAULT_INSTALL_FILE_NAME}
+else
+    PROJECT_NAME=$(basename $INSTALL_FILE)
+    PROJECT_NAME=${PROJECT_NAME%.*}
+fi
+
 if [ -z "${WORKSPACE_PATH}" ];
 then
-    WORKSPACE_PATH="~{{ ros_user }}/workspace/${REPOSITORY_NAME}/base"
+    WORKSPACE_PATH="~{{ ros_user }}/workspace/${PROJECT_NAME}/base"
 fi
 
 if [ -z "${ROS_VERSION}" ];
@@ -79,16 +95,19 @@ echo "  * -r or --repo name of the owners repository (sr-interface by default)"
 echo "  * -w or --workspace path you want to use for the ROS workspace. The directory will be created. (~/indigo_ws by default)"
 echo "  * -v or --v ROS version name (indigo by default)"
 echo "  * -b or --branch repository branch"
+echo "  * -i or --installfile relative path to rosintall file in repository (default /repository.rosinstall)"
 echo "  * -l or --githublogin github login for private repositories."
 echo "  * -p or --githubpassword github password for private repositories."
 echo ""
 echo "example: ./default_deploy.sh -o shadow-robot -r sr_interface -w ~{{ros_user}}/workspace/shadow/base  -l mygithublogin -p mysupersecretpassword"
 echo ""
-echo "owner     = ${REPOSITORY_OWNER}"
-echo "repo      = ${REPOSITORY_NAME}"
-echo "ROS       = ${ROS_VERSION}"
-echo "workspace = ${WORKSPACE_PATH}"
-echo "branch     = ${GITHUB_BRANCH:-'default'}"
+echo "owner        = ${REPOSITORY_OWNER}"
+echo "repo         = ${REPOSITORY_NAME}"
+echo "ROS          = ${ROS_VERSION}"
+echo "workspace    = ${WORKSPACE_PATH}"
+echo "branch       = ${GITHUB_BRANCH:-'default'}"
+echo "install file = ${INSTALL_FILE}"
+echo "project name = ${PROJECT_NAME}"
 
 if [ -z "${GITHUB_PASSWORD}" ] && [ -n "${GITHUB_LOGIN}" ]; then
     echo "git user = ${GITHUB_LOGIN}"
@@ -160,7 +179,7 @@ echo " |   Cloning repository.rosinstall  |"
 echo " ------------------------------------"
 echo ""
 
-ROSINSTALL_PATH="https://github.com//${REPOSITORY_OWNER}/${REPOSITORY_NAME}.git/${GITHUB_BRANCH_URL_PART}/repository.rosinstall"
+ROSINSTALL_PATH="https://github.com//${REPOSITORY_OWNER}/${REPOSITORY_NAME}.git/${GITHUB_BRANCH_URL_PART}/${INSTALL_FILE}"
 
 pushd ${SR_BUILD_TOOLS_ANSIBLE_HOME}
 
