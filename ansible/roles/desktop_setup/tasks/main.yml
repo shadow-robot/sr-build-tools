@@ -8,7 +8,7 @@
   apt_repository:
     repo: 'ppa:ubuntu-desktop/ubuntu-make'
     filename: 'ppa_ubuntu_desktop_ubuntu_make_trusty'
-    mode: 0777
+    mode: 664
 
 - name: Update package lists
   apt: update_cache=yes
