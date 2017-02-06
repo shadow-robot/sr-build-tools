@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 set -e # fail on errors
-#set -x # echo commands run
+set -x # echo commands run
 
 while [[ $# > 1 ]]
 do
@@ -180,16 +180,13 @@ echo " ------------------------------------"
 echo ""
 
 ROSINSTALL_PATH="https://github.com//${REPOSITORY_OWNER}/${REPOSITORY_NAME}.git/${GITHUB_BRANCH_URL_PART}/${INSTALL_FILE}"
-
-pushd ${SR_BUILD_TOOLS_ANSIBLE_HOME}
+ROS_WORKSPACE_INSTALL_FILE="${SR_BUILD_TOOLS_ANSIBLE_HOME}/repository.rosinstall"
 
 if [ -n "${GITHUB_LOGIN}" ]; then
-    svn export --no-auth-cache -q ${ROSINSTALL_PATH} --username ${GITHUB_LOGIN} --password ${GITHUB_PASSWORD}
+    svn export --no-auth-cache -q ${ROSINSTALL_PATH} --username ${GITHUB_LOGIN} --password ${GITHUB_PASSWORD} ${ROS_WORKSPACE_INSTALL_FILE}
 else
-    svn export --no-auth-cache -q ${ROSINSTALL_PATH}
+    svn export --no-auth-cache -q ${ROSINSTALL_PATH} ${ROS_WORKSPACE_INSTALL_FILE}
 fi
-
-popd
 
 echo ""
 echo " -------------------"
@@ -201,7 +198,7 @@ sudo sh -c "echo \"[dev-machine]
 localhost ansible_connection=local\" > ${ANSIBLE_INVENTORY}"
 
 export ROS_RELEASE_SETTINGS=" \"ros_release\":\"${ROS_VERSION}\", "
-export WORKSPACE_SETTINGS="\"ros_workspace\":\"${WORKSPACE_PATH}\", \"ros_workspace_install\":\"${SR_BUILD_TOOLS_ANSIBLE_HOME}/repository.rosinstall\" "
+export WORKSPACE_SETTINGS="\"ros_workspace\":\"${WORKSPACE_PATH}\", \"ros_workspace_install\":\"${ROS_WORKSPACE_INSTALL_FILE}\" "
 export EXTERNAL_VARIABLES_JSON="{ ${GITHUB_CREDENTIALS} ${EXTRA_ANSIBLE_PARAMETER_ROS_USER} ${ROS_RELEASE_SETTINGS} ${WORKSPACE_SETTINGS} }"
 ansible-playbook ${MY_ANSIBLE_PARAMETERS} --extra-vars "${EXTERNAL_VARIABLES_JSON}"
 
