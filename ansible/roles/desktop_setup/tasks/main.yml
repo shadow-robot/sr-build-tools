@@ -16,7 +16,7 @@
 
 - name: Change umake directory owner and group
   sudo: yes
-  file: path=/usr/share/umake/ state=directory mode=0777 owner="{{ros_user}}" group="ros" recurse=true
+  file: path=/usr/share/umake/ state=directory mode=0777 owner="{{ros_user}}" recurse=true
 
 - name: Install programming tools
   sudo: yes
