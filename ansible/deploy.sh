@@ -198,7 +198,7 @@ sudo sh -c "echo \"[dev-machine]
 localhost ansible_connection=local\" > ${ANSIBLE_INVENTORY}"
 
 export ROS_RELEASE_SETTINGS=" \"ros_release\":\"${ROS_VERSION}\", "
-if ["indigo" != "${ROS_VERSION}"]; then
+if [ "${ROS_VERSION}" != "indigo" ]; then
   ROS_RELEASE_SETTINGS="${ROS_RELEASE_SETTINGS} \"ros_packages\":[], "
 fi
 
