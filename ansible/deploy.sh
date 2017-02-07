@@ -59,12 +59,6 @@ fi
 
 export PROJECT_NAME=${REPOSITORY_NAME}
 
-if [ -z "${GITHUB_BRANCH}" ]; then
-    GITHUB_BRANCH_URL_PART="trunk"
-else
-    GITHUB_BRANCH_URL_PART="branches/${GITHUB_BRANCH}"
-fi
-
 if [ -z "${INSTALL_FILE}" ];
 then
     INSTALL_FILE=${DEFAULT_INSTALL_FILE_NAME}
@@ -116,19 +110,22 @@ if [ -z "${GITHUB_PASSWORD}" ] && [ -n "${GITHUB_LOGIN}" ]; then
     echo
 fi
 
-export SR_BUILD_TOOLS_ANSIBLE_HOME=/tmp/sr-build-tools-ansible/
+export SR_BUILD_TOOLS_HOME=/tmp/sr-build-tools/
+export PROJECT_HOME_DIR=/tmp/my_project/
 export SCRIPT_DIR="$(dirname "$(readlink -f "$0")")"
-export ANSIBLE_INVENTORY="${SR_BUILD_TOOLS_ANSIBLE_HOME}/hosts"
-export PLAYBOOKS_DIR="${SR_BUILD_TOOLS_ANSIBLE_HOME}"
-export ANSIBLE_ROLES_PATH=${SR_BUILD_TOOLS_ANSIBLE_HOME}/roles
-export ANSIBLE_CALLBACK_PLUGINS=${SR_BUILD_TOOLS_ANSIBLE_HOME}/callback_plugins
+export ANSIBLE_INVENTORY="${SR_BUILD_TOOLS_HOME}/ansible/hosts"
+export PLAYBOOKS_DIR="${SR_BUILD_TOOLS_HOME}/ansible"
+export ANSIBLE_ROLES_PATH="${SR_BUILD_TOOLS_HOME}/ansible/roles"
+export ANSIBLE_CALLBACK_PLUGINS="${SR_BUILD_TOOLS_HOME}/ansible/callback_plugins"
 export ANSIBLE_HOST_KEY_CHECKING=False
 export ANSIBLE_SSH_ARGS=" -o UserKnownHostsFile=/dev/null "
 export ANSIBLE_LOG_PATH=~/build_tools_ansible.log
 
 if [ -z "${GITHUB_LOGIN}" ]; then
+    REPOSITORY_URL="https://github.com/${REPOSITORY_OWNER}/${REPOSITORY_NAME}.git"
     GITHUB_CREDENTIALS=""
 else
+    REPOSITORY_URL="https://${GITHUB_LOGIN}:${GITHUB_PASSWORD}@github.com/${REPOSITORY_OWNER}/${REPOSITORY_NAME}.git"
     GITHUB_CREDENTIALS=" \"github_login\":\"${GITHUB_LOGIN}\", \"github_password\":\"${GITHUB_PASSWORD}\", "
 fi
 
@@ -154,7 +151,8 @@ while sudo fuser /var/lib/dpkg/lock >/dev/null 2>&1; do
     sleep 1
 done
 sudo apt-get install -y python-pip git subversion libyaml-dev libpython2.7-dev python-crypto libssl-dev libffi-dev python-dev sshpass &
-rm -rf ${SR_BUILD_TOOLS_ANSIBLE_HOME} &
+rm -rf ${SR_BUILD_TOOLS_HOME} &
+rm -rf ${PROJECT_HOME_DIR} &
 wait
 
 sudo pip install paramiko markupsafe PyYAML Jinja2 httplib2 six ansible==' 2.1.0.0'
@@ -166,12 +164,7 @@ echo " |   Cloning repo  |"
 echo " -------------------"
 echo ""
 
-if [ -z "${SR_BUILD_TOOLS_BRANCH}" ]; then
-    SR_BUILD_TOOLS_GITHUB_BRANCH_URL_PART="trunk"
-else
-    SR_BUILD_TOOLS_GITHUB_BRANCH_URL_PART="branches/${SR_BUILD_TOOLS_BRANCH}"
-fi
-svn export --no-auth-cache -q "https://github.com//shadow-robot/sr-build-tools.git/${SR_BUILD_TOOLS_GITHUB_BRANCH_URL_PART}/ansible" ${SR_BUILD_TOOLS_ANSIBLE_HOME}
+git clone --depth 1 -b ${SR_BUILD_TOOLS_BRANCH:-"master"}  https://github.com//shadow-robot/sr-build-tools.git ${SR_BUILD_TOOLS_HOME}
 
 echo ""
 echo " ------------------------------------"
@@ -179,13 +172,19 @@ echo " |   Cloning repository.rosinstall  |"
 echo " ------------------------------------"
 echo ""
 
-ROSINSTALL_PATH="https://github.com//${REPOSITORY_OWNER}/${REPOSITORY_NAME}.git/${GITHUB_BRANCH_URL_PART}/${INSTALL_FILE}"
-ROS_WORKSPACE_INSTALL_FILE="${SR_BUILD_TOOLS_ANSIBLE_HOME}/repository.rosinstall"
-
-if [ -n "${GITHUB_LOGIN}" ]; then
-    svn export --no-auth-cache -q ${ROSINSTALL_PATH} --username ${GITHUB_LOGIN} --password ${GITHUB_PASSWORD} ${ROS_WORKSPACE_INSTALL_FILE}
+if [ -z "${GITHUB_BRANCH}" ]; then
+    git clone --depth 1 ${REPOSITORY_URL} ${PROJECT_HOME_DIR}
 else
-    svn export --no-auth-cache -q ${ROSINSTALL_PATH} ${ROS_WORKSPACE_INSTALL_FILE}
+    git clone --depth 1 -b ${GITHUB_BRANCH} ${REPOSITORY_URL} ${PROJECT_HOME_DIR}
+fi
+
+ROS_WORKSPACE_INSTALL_FILE="${SR_BUILD_TOOLS_HOME}/repository.rosinstall"
+PROJECT_REPO_ROSINSTALL_FILE="${PROJECT_HOME_DIR}/${INSTALL_FILE}"
+
+if [ -f ${PROJECT_REPO_ROSINSTALL_FILE} ]; then
+    cp ${PROJECT_REPO_ROSINSTALL_FILE} ${ROS_WORKSPACE_INSTALL_FILE}
+else
+    touch ${ROS_WORKSPACE_INSTALL_FILE}
 fi
 
 echo ""
