@@ -117,7 +117,7 @@ export ANSIBLE_HOST_KEY_CHECKING=False
 export ANSIBLE_SSH_ARGS=" -o UserKnownHostsFile=/dev/null "
 export ANSIBLE_LOG_PATH=~/build_tools_ansible.log
 
-ROSINTSTALL_FILE_CONTENT="- git: {local-name: ${PROJECT_NAME}, uri: "
+ROSINTSTALL_FILE_CONTENT="- git: {local-name: \"${PROJECT_NAME}\", uri: "
 
 if [ -z "${GITHUB_LOGIN}" ]; then
     REPOSITORY_URL="https://github.com/${REPOSITORY_OWNER}/${REPOSITORY_NAME}.git"
@@ -179,7 +179,7 @@ then
     if [ -z "${GITHUB_BRANCH}" ]; then
         ROSINTSTALL_FILE_CONTENT="${ROSINTSTALL_FILE_CONTENT} }"
     else
-        ROSINTSTALL_FILE_CONTENT="${ROSINTSTALL_FILE_CONTENT}, version: ${GITHUB_BRANCH} }"
+        ROSINTSTALL_FILE_CONTENT="${ROSINTSTALL_FILE_CONTENT}, version: \"${GITHUB_BRANCH}\" }"
     fi
     echo ${ROSINTSTALL_FILE_CONTENT} > ${ROS_WORKSPACE_INSTALL_FILE}
 else
