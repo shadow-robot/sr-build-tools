@@ -93,7 +93,7 @@ echo "  * -i or --installfile relative path to rosintall file in repository (def
 echo "  * -l or --githublogin github login for private repositories."
 echo "  * -p or --githubpassword github password for private repositories."
 echo ""
-echo "example: ./default_deploy.sh -o shadow-robot -r sr_interface -w ~{{ros_user}}/workspace/shadow/base  -l mygithublogin -p mysupersecretpassword"
+echo "example: ./deploy.sh -o shadow-robot -r sr_interface -w ~{{ros_user}}/workspace/shadow/base  -l mygithublogin -p mysupersecretpassword"
 echo ""
 echo "owner        = ${REPOSITORY_OWNER}"
 echo "repo         = ${REPOSITORY_NAME}"
