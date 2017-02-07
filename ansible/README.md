@@ -28,7 +28,7 @@ The shell script has the following flags:
 
   * -o or --owner name of the GitHub repository owner (shadow-robot by default)
   * -r or --repo name of the owners repository (sr-interface by default)
-  * -w or --workspace path you want to use for the ROS workspace. The directory will be created. (~/indigo_ws by default)
+  * -w or --workspace path you want to use for the ROS workspace. The directory will be created. (~<current_user>/workspace/<project_name>/base by default)
   * -v or --v ROS version name (indigo by default)
   * -b or --branch repository branch
   * -i or --installfile relative path to rosintall file in repository (default /repository.rosinstall)
@@ -37,17 +37,26 @@ The shell script has the following flags:
 
 ### Simple repository without repository.rosinstall
 
+Install repository ros/roslint from GitHub into roslint workspace **~<current_user>/workspace/roslint/base** using ROS Indigo.
+Tries to read any possible dependencies from repositories.rosinstall and install them into **~<current_user>/workspace/roslint/base_deps**
+
 ```bash
 bash <(curl -Ls https://raw.githubusercontent.com/shadow-robot/sr-build-tools/master/ansible/deploy.sh) -o ros -r roslint -v indigo
 ```
 
 ### Simple repository with repository.rosinstall
 
+Install repository shadow-robot/build-servers-check from GitHub into build-servers-check workspace **~<current_user>/workspace/build-servers-check/base** using ROS Kinetic.
+Tries to read any possible dependencies from repositories.rosinstall and install them into **~<current_user>/workspace/build-servers-check/base_deps**
+
 ```bash
-bash <(curl -Ls https://raw.githubusercontent.com/shadow-robot/sr-build-tools/master/ansible/deploy.sh) -r "build-servers-check" -v kinetic
+bash <(curl -Ls https://raw.githubusercontent.com/shadow-robot/sr-build-tools/master/ansible/deploy.sh) -r "build-servers-check" -b "kinetic-devel" -v kinetic
 ```
 
 ### Multiple repositories from rosinstall file
+
+This script will install all repositories which are described in ros-planning/moveit GitHub repository (branch kinetic-devel) inside file moveit.rosinstall.
+Tries to read any possible dependencies from repositories.rosinstall and install them into **~<current_user>/workspace/build-servers-check/base_deps**
 
 ```bash
 bash <(curl -Ls https://raw.githubusercontent.com/shadow-robot/sr-build-tools/master/ansible/deploy.sh) -o "ros-planning" -r moveit -b "kinetic-devel" -i moveit.rosinstall -v kinetic 
