@@ -47,8 +47,6 @@ esac
 shift
 done
 
-export DEFAULT_INSTALL_FILE_NAME="repository.rosinstall"
-
 if [ -z "${REPOSITORY_OWNER}" ]; then
     REPOSITORY_OWNER="shadow-robot"
 fi
@@ -59,10 +57,8 @@ fi
 
 export PROJECT_NAME=${REPOSITORY_NAME}
 
-if [ -z "${INSTALL_FILE}" ];
+if [ -n "${INSTALL_FILE}" ];
 then
-    INSTALL_FILE=${DEFAULT_INSTALL_FILE_NAME}
-else
     PROJECT_NAME=$(basename $INSTALL_FILE)
     PROJECT_NAME=${PROJECT_NAME%.*}
 fi
@@ -86,10 +82,10 @@ echo ""
 echo "possible options: "
 echo "  * -o or --owner name of the GitHub repository owner (shadow-robot by default)"
 echo "  * -r or --repo name of the owners repository (sr-interface by default)"
-echo "  * -w or --workspace path you want to use for the ROS workspace. The directory will be created. (~/indigo_ws by default)"
+echo "  * -w or --workspace path you want to use for the ROS workspace. The directory will be created. (~<current_user>/workspace/<project_name>/base by default)"
 echo "  * -v or --v ROS version name (indigo by default)"
 echo "  * -b or --branch repository branch"
-echo "  * -i or --installfile relative path to rosintall file in repository (default /repository.rosinstall)"
+echo "  * -i or --installfile relative path to rosintall file. When specified then sources from this rosintall file are installed not repository itself"
 echo "  * -l or --githublogin github login for private repositories."
 echo "  * -p or --githubpassword github password for private repositories."
 echo ""
@@ -121,11 +117,15 @@ export ANSIBLE_HOST_KEY_CHECKING=False
 export ANSIBLE_SSH_ARGS=" -o UserKnownHostsFile=/dev/null "
 export ANSIBLE_LOG_PATH=~/build_tools_ansible.log
 
+ROSINTSTALL_FILE_CONTENT="- git: {local-name: ${PROJECT_NAME}, uri: "
+
 if [ -z "${GITHUB_LOGIN}" ]; then
     REPOSITORY_URL="https://github.com/${REPOSITORY_OWNER}/${REPOSITORY_NAME}.git"
+    ROSINTSTALL_FILE_CONTENT="${ROSINTSTALL_FILE_CONTENT}${REPOSITORY_URL}"
     GITHUB_CREDENTIALS=""
 else
     REPOSITORY_URL="https://${GITHUB_LOGIN}:${GITHUB_PASSWORD}@github.com/${REPOSITORY_OWNER}/${REPOSITORY_NAME}.git"
+    ROSINTSTALL_FILE_CONTENT="${ROSINTSTALL_FILE_CONTENT}https://{{github_login}}:{{github_password}}@github.com/${REPOSITORY_OWNER}/${REPOSITORY_NAME}.git"
     GITHUB_CREDENTIALS=" \"github_login\":\"${GITHUB_LOGIN}\", \"github_password\":\"${GITHUB_PASSWORD}\", "
 fi
 
@@ -168,23 +168,27 @@ git clone --depth 1 -b ${SR_BUILD_TOOLS_BRANCH:-"master"}  https://github.com/sh
 
 echo ""
 echo " ------------------------------------"
-echo " |   Cloning repository.rosinstall  |"
+echo " |   Creating repository.rosinstall  |"
 echo " ------------------------------------"
 echo ""
 
-if [ -z "${GITHUB_BRANCH}" ]; then
-    git clone --depth 1 ${REPOSITORY_URL} ${PROJECT_HOME_DIR}
-else
-    git clone --depth 1 -b ${GITHUB_BRANCH} ${REPOSITORY_URL} ${PROJECT_HOME_DIR}
-fi
-
 ROS_WORKSPACE_INSTALL_FILE="${SR_BUILD_TOOLS_HOME}/repository.rosinstall"
-PROJECT_REPO_ROSINSTALL_FILE="${PROJECT_HOME_DIR}/${INSTALL_FILE}"
 
-if [ -f ${PROJECT_REPO_ROSINSTALL_FILE} ]; then
-    cp ${PROJECT_REPO_ROSINSTALL_FILE} ${ROS_WORKSPACE_INSTALL_FILE}
+if [ -z "${INSTALL_FILE}" ];
+then
+    if [ -z "${GITHUB_BRANCH}" ]; then
+        ROSINTSTALL_FILE_CONTENT="${ROSINTSTALL_FILE_CONTENT} }"
+    else
+        ROSINTSTALL_FILE_CONTENT="${ROSINTSTALL_FILE_CONTENT}, version: ${GITHUB_BRANCH} }"
+    fi
+    echo ${ROSINTSTALL_FILE_CONTENT} > ${ROS_WORKSPACE_INSTALL_FILE}
 else
-    touch ${ROS_WORKSPACE_INSTALL_FILE}
+    if [ -z "${GITHUB_BRANCH}" ]; then
+        git clone --depth 1 ${REPOSITORY_URL} ${PROJECT_HOME_DIR}
+    else
+        git clone --depth 1 -b ${GITHUB_BRANCH} ${REPOSITORY_URL} ${PROJECT_HOME_DIR}
+    fi
+    cp "${PROJECT_HOME_DIR}/${INSTALL_FILE}" ${ROS_WORKSPACE_INSTALL_FILE}
 fi
 
 echo ""
