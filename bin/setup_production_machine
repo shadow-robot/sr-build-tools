@@ -30,24 +30,24 @@ echo " |   Installing needed packages  |"
 echo " ---------------------------------"
 echo ""
 
-#sudo apt-get update
+sudo apt-get update
 
 # python-crypto is only necessary for non-desktop images
 # build-essential libssl-dev libffi-dev python-dev are necessary dependencies for the cryptography python package that is a dependency of paramiko (see http://www.paramiko.org/installing.html)
-#sudo apt-get install -y python-pip git libyaml-dev libpython2.7-dev python-crypto build-essential libssl-dev libffi-dev python-dev &
+sudo apt-get install -y python-pip git libyaml-dev libpython2.7-dev python-crypto build-essential libssl-dev libffi-dev python-dev &
 rm -rf sr-build-tools &
-#rm -rf ansible &
+rm -rf ansible &
 wait
 
-#sudo apt-get remove ansible -y &
-#sudo pip install paramiko markupsafe PyYAML Jinja2 httplib2 six autobahn trollius txaio ansible==' 2.1.0.0' &
-#wait
+sudo apt-get remove ansible -y &
+sudo pip install paramiko markupsafe PyYAML Jinja2 httplib2 six autobahn trollius txaio ansible==' 2.1.0.0' &
+wait
 
 sudo pip install --upgrade setuptools
 
 sudo mkdir -p  /etc/ansible
-#sudo sh -c 'echo "[hand-prod]
-#localhost ansible_connection=local" > /etc/ansible/hosts'
+sudo sh -c 'echo "[hand-prod]
+localhost ansible_connection=local" > /etc/ansible/hosts'
 
 echo ""
 echo " -------------------"
