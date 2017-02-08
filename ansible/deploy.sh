@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 set -e # fail on errors
-set -x # echo commands run
+#set -x # echo commands run
 
 while [[ $# > 1 ]]
 do
@@ -83,7 +83,7 @@ echo "possible options: "
 echo "  * -o or --owner name of the GitHub repository owner (shadow-robot by default)"
 echo "  * -r or --repo name of the owners repository (sr-interface by default)"
 echo "  * -w or --workspace path you want to use for the ROS workspace. The directory will be created. (~<current_user>/workspace/<project_name>/base by default)"
-echo "  * -v or --v ROS version name (indigo by default)"
+echo "  * -v or --rosversion ROS version name (indigo by default)"
 echo "  * -b or --branch repository branch"
 echo "  * -i or --installfile relative path to rosintall file. When specified then sources from this rosintall file are installed not repository itself"
 echo "  * -l or --githublogin github login for private repositories."
