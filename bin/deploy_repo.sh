@@ -118,7 +118,7 @@ if [ -n "${GITHUB_LOGIN}" ]; then
     svn export --no-auth-cache -q ${REPOSITORY_URL} --username ${GITHUB_LOGIN} --password ${GITHUB_PASSWORD}
 else
     svn export --no-auth-cache -q ${REPOSITORY_URL}
- fi
+fi
 
 if [ -z "${GITHUB_LOGIN}" ]; then
     /tmp/deployment/ansible/deploy.sh "$@"
