@@ -72,6 +72,7 @@ Then modify the [sr_rhand.launch file](https://github.com/shadow-robot/sr-config
     <arg name="robot_description" value="$(find sr_description)/robots/shadowhand_motor.urdf.xacro" />
     <arg name="mapping_path" value="$(find sr_edc_launch)/mappings/default_mappings/rh_ethercat.yaml"/>
 
+    <arg name="use_moveit" value="true"/>
     <arg name="sim" value="false"/>
   </include>
 
