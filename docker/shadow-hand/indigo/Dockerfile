@@ -4,7 +4,7 @@ RUN apt-get update && \
     apt-get install -y curl && \
     echo "Running one-liner" && \
     curl -L bit.ly/dev-machine | bash -s -- -w /projects/shadow_robot/base && \
-    echo 'source /projects/shadow_robot/base/devel/setup.bash' >> /home/user/.bashrc
+    cat additional_bashrc_cmds >> /home/user/.bashrc
     
     echo "Removing cache" && \
     apt-get clean && \
