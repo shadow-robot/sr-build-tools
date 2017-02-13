@@ -12,6 +12,4 @@ RUN apt-get update && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* 
 
-ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
-
 CMD ["/usr/bin/terminator"]
