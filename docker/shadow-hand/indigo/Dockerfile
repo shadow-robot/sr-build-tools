@@ -7,7 +7,7 @@ COPY additional_bashrc_cmds /tmp/additional_bashrc_cmds
 RUN echo "Running one-liner" && \
     wget -O /tmp/oneliner "$( echo "$remote_shell_script" | sed 's/#/%23/g' )" && \
     chmod 755 /tmp/oneliner && \
-    gosu $MY_USERNAME /tmp/oneliner -b "$toolset_branch" -w ~{ros_user}/projects/shadow_robot/base  && \
+    gosu $MY_USERNAME /tmp/oneliner -b "$toolset_branch" -w /home/user/projects/shadow_robot/base  && \
     cat /tmp/additional_bashrc_cmds >> /home/user/.bashrc && \
 
     echo "Removing cache" && \
