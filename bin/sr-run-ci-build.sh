@@ -21,7 +21,7 @@ if  [ "circle" != $server_type ] && [ "semaphore_docker" != $server_type ] && [ 
   export build_tools_folder="$HOME/sr-build-tools"
 
   sudo apt-get update
-  sudo apt-get install -y python-dev libxml2-dev libxslt-dev python-pip lcov wget git libssl-dev libffi-dev
+  sudo apt-get install -y python-dev libxml2-dev libxslt-dev python-pip lcov wget git libssl-dev libffi-dev libyaml-dev
   sudo pip install --upgrade ansible gcovr
 
   git config --global user.email "build.tools@example.com"
