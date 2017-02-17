@@ -4,7 +4,11 @@ ENV remote_shell_script="https://raw.githubusercontent.com/shadow-robot/sr-build
 
 COPY additional_bashrc_cmds /tmp/additional_bashrc_cmds
 
-RUN echo "Running one-liner" && \
+RUN echo "Fixing file system" && \
+    mkdir -p /etc/apt/sources.list.d && \
+    rm -f /etc/apt/sources.list.d/ros-latest.list && \
+
+    echo "Running one-liner" && \
     wget -O /tmp/oneliner "$( echo "$remote_shell_script" | sed 's/#/%23/g' )" && \
     chmod 755 /tmp/oneliner && \
     gosu $MY_USERNAME /tmp/oneliner -b "$toolset_branch" -w /home/user/projects/shadow_robot/base  && \
