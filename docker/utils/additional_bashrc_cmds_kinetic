@@ -66,5 +66,4 @@ function catkin_make_here {
 }
 
 alias depkinetic='rosdep install --from-paths . --ignore-src --rosdistro kinetic -y'
-source /home/user/projects/shadow_robot/base/devel/setup.bash
 

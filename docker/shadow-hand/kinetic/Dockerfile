@@ -1,7 +1,6 @@
 FROM shadowrobot/build-tools:xenial-kinetic-ide
 
 ENV remote_shell_script="https://raw.githubusercontent.com/shadow-robot/sr-build-tools/master/ansible/deploy.sh"
-ENV remote_additional_bashrc_cmds="https://raw.githubusercontent.com/shadow-robot/sr-build-tools/F_new_docker_oneliner_kinetic/docker/utils/additional_bashrc_cmds_kinetic"
 
 ENV PROJECTS_WS=/home/user/projects/shadow_robot
 RUN echo "Running one-liner" && \
@@ -10,16 +9,11 @@ RUN echo "Running one-liner" && \
     chmod 755 /tmp/oneliner && \
     gosu $MY_USERNAME /tmp/oneliner -w $PROJECTS_WS/shadow_robot/base -b "kinetic-devel" -v "kinetic"  && \
     
-    echo "Updating bash commands" && \
-    wget -O /tmp/additional_bashrc_cmds "$( echo "$remote_additional_bashrc_cmds" | sed 's/#/%23/g' )" && \
-    cat /tmp/additional_bashrc_cmds >> /home/user/.bashrc && \
-
     echo "Installing mongodb" && \
     cd $PROJECTS_WS/base_deps/src && \
     
     # installing mongocxx driver for the warehouse && \
     git clone -b 26compat https://github.com/mongodb/mongo-cxx-driver.git && \
-    apt-get update && \
     apt-get -qq install -y scons mongodb && \
     cd mongo-cxx-driver && \
     scons --use-system-boost --prefix=/usr/local/ --full --disable-warnings-as-errors && \
@@ -34,7 +28,7 @@ RUN echo "Running one-liner" && \
 
     # build the workspace && \
     cd $PROJECTS_WS/base_deps && \
-    source $PROJECTS_WS/base_deps/devel/setup.bash && \
+    gosu $MY_USERNAME source $PROJECTS_WS/base_deps/devel/setup.bash && \
     gosu $MY_USERNAME catkin_make && \
 
     echo "Fixing pyassimp issue" && \
