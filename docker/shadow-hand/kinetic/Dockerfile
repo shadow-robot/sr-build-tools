@@ -4,32 +4,52 @@ ENV remote_shell_script="https://raw.githubusercontent.com/shadow-robot/sr-build
 
 COPY additional_bashrc_cmds /tmp/additional_bashrc_cmds
 
+ENV PROJECTS_WS=/home/user/projects/shadow_robot
 RUN echo "Running one-liner" && \
     apt-get update && \
     wget -O /tmp/oneliner "$( echo "$remote_shell_script" | sed 's/#/%23/g' )" && \
     chmod 755 /tmp/oneliner && \
-    gosu $MY_USERNAME /tmp/oneliner -w /home/user/projects/shadow_robot/base -b "kinetic-devel" -v "kinetic"  && \
+    gosu $MY_USERNAME /tmp/oneliner -w $PROJECTS_WS/shadow_robot/base -b "kinetic-devel" -v "kinetic"  && \
     cat /tmp/additional_bashrc_cmds >> /home/user/.bashrc && \
 
     echo "Removing cache" && \
     apt-get clean && \
-    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* && \
 
-RUN echo "Fixing mongodb" && \
-    cd /home/user/projects/shadow_robot/base_deps/src
-    # installing mongocxx driver for the warehouse
+    echo "Installing mongodb" && \
+    cd $PROJECTS_WS/base_deps/src && \
+    
+    # installing mongocxx driver for the warehouse && \
     git clone -b 26compat https://github.com/mongodb/mongo-cxx-driver.git && \
+    apt-get update && \
     apt-get -qq install -y scons mongodb && \
     cd mongo-cxx-driver && \
     scons --use-system-boost --prefix=/usr/local/ --full --disable-warnings-as-errors && \
-    cd /home/user/projects/shadow_robot/base_deps/src
-    # Download warehouse source
+    cd $PROJECTS_WS/base_deps/src && \
+    
+    # Download warehouse source && \
     wstool set -yu warehouse_ros_mongo --git https://github.com/ros-planning/warehouse_ros_mongo.git -v jade-devel && \
-    wstool set -yu warehouse_ros --git https://github.com/ros-planning/warehouse_ros.git -v jade-devel
-    # build the workspace
-    cd ..
-    catkin_make
+    wstool set -yu warehouse_ros --git https://github.com/ros-planning/warehouse_ros.git -v jade-devel && \
+    
+    #Changing folders owner
+    chown -R user:user mongo-cxx-driver warehouse_ros* && \
 
+    # build the workspace && \
+    cd $PROJECTS_WS/base_deps && \
+    source $PROJECTS_WS/base_deps/devel/setup.bash && \
+    catkin_make && \
+    echo $ROS_PACKAGE_PATH
+
+    echo "Fixing pyassimp issue" && \
+    git clone https://github.com/assimp/assimp.git && \
+    cd assimp && \
+    cmake CMakeLists.txt -G 'Unix Makefiles' && \
+    make && \
+    make install && \
+    cd port/PyAssimp/ && \
+    sudo python setup.py install
+    
+    
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
 
 CMD ["/usr/bin/terminator"]
