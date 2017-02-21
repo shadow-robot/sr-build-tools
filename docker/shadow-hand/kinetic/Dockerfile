@@ -7,7 +7,7 @@ RUN echo "Running one-liner" && \
     apt-get update && \
     wget -O /tmp/oneliner "$( echo "$remote_shell_script" | sed 's/#/%23/g' )" && \
     chmod 755 /tmp/oneliner && \
-    gosu $MY_USERNAME /tmp/oneliner -w $PROJECTS_WS/shadow_robot/base -b "kinetic-devel" -v "kinetic"  && \
+    gosu $MY_USERNAME /tmp/oneliner -w $PROJECTS_WS/base -b "kinetic-devel" -v "kinetic"  && \
     
     echo "Installing mongodb" && \
     cd $PROJECTS_WS/base_deps/src && \
