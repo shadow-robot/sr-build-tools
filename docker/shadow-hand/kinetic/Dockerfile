@@ -28,8 +28,7 @@ RUN echo "Running one-liner" && \
 
     # build the workspace && \
     cd $PROJECTS_WS/base_deps && \
-    gosu $MY_USERNAME source $PROJECTS_WS/base_deps/devel/setup.bash && \
-    gosu $MY_USERNAME catkin_make && \
+    gosu $MY_USERNAME bash -c "source /opt/ros/kinetic/setup.bash && echo $ROS_PACKAGE_PATH && catkin_make" && \
 
     echo "Fixing pyassimp issue" && \
     cd /tmp/  && \
