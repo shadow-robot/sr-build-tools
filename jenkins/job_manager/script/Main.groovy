@@ -24,12 +24,12 @@ evaluate("${baseImageUrl}/Logger.groovy".toURL().getText() + "\n" +
         "${baseImageUrl}/Repository.groovy".toURL().getText() + "\n" +
         "${baseImageUrl}/GithubRepository.groovy".toURL().getText() + "\n" +
         "${baseImageUrl}/JobManager.groovy".toURL().getText() + "\n" +
-        "println 'Here 1 !!!\n" +
+        "println 'Here 1 !!!'\n" +
         "def logger = new Logger(getBinding().out, Logger.Verbosity.DEBUG)\n" +
 //        "def jobManager = new JobManager(credentials, logger, githubRepoNames, Jenkins.instance)\n" +
 //        "if (jobManager.processRepositories()) {\n" +
 //        "    jobManager.processJobs()\n" +
         "    logger.info('Finished.')\n" +
 //        "}\n" +
-        "println 'Here 11 !!!\n" +
+        "println 'Here 11 !!!'\n" +
         "return true")
