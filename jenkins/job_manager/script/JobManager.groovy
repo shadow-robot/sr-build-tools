@@ -1,3 +1,8 @@
+import jenkins.model.Jenkins
+import hudson.plugins.git.browser.GithubWeb
+import javax.xml.transform.stream.StreamSource
+import java.util.regex.Pattern
+
 class JobManager {
     String[] githubRepoNames
     Logger logger

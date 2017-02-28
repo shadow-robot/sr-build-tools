@@ -1,3 +1,5 @@
+import org.yaml.snakeyaml.Yaml
+
 class Settings {
     String yaml
     Map config, settings

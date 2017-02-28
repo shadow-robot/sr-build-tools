@@ -1,3 +1,6 @@
+import groovy.transform.InheritConstructors
+import groovy.json.JsonSlurper
+
 @InheritConstructors
 class GithubRepository extends Repository {
     static String githubBaseUrl = 'https://github.com'
