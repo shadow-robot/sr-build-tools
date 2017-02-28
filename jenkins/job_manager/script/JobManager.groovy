@@ -162,7 +162,7 @@ class JobManager {
 
     def deleteJob(job) {
         logger.info("Deleting job: ${job.name}")
-        job.delete()
+//        job.delete()
     }
 
     def makeJob(Job job) {
