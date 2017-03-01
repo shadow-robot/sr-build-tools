@@ -22,18 +22,18 @@ def result = evaluate(
         "${baseTestUrl}/SettingsTest.groovy".toURL().getText() + "\n" +
         "return org.junit.runner.JUnitCore.runClasses(SettingsTest.class)")
 
-println "Executed " + result.getRunCount() + " tests for " + (result.getRunTime() / 1000) + " seconds"
-println "Ignored tests " + result.getIgnoreCount()
-println "Failed tests "  + result.getFailureCount()
+println "Executed " + result.getRunCount() + " test(s) for " + (result.getRunTime() / 1000) + " second(s)"
+println "Ignored test(s) count " + result.getIgnoreCount()
+println "Failed test(s) count "  + result.getFailureCount() + "\n"
 
 if (result.wasSuccessful()) {
-    println "Tests passed"
+    println "Tests passed\n"
     return true
 }
 
-println "Tests Failed"
+println "Tests Failed\n"
 result.getFailures().each {
-    println it.toString()
+    println it.toString() + "\n"
 }
 
 return false
