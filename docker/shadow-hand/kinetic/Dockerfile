@@ -21,7 +21,7 @@ RUN echo "Running one-liner" && \
     wstool set -yu warehouse_ros_mongo --git https://github.com/ros-planning/warehouse_ros_mongo.git -v jade-devel && \
     wstool set -yu warehouse_ros --git https://github.com/ros-planning/warehouse_ros.git -v jade-devel && \
     
-    #Changing folders owner && \
+    echo "Changing folders owner" && \
     chown -R user:user mongo-cxx-driver warehouse_ros* && \
 
     echo "Building the workspace" && \
