@@ -5,7 +5,7 @@ class SettingsTest {
 
     @Test
     void indexOutOfBoundsAccess() {
-        def numbers = [1,2,3,4]
+        def numbers = [1,2,3,4,5]
         shouldFail {
             numbers.get(4)
         }
