@@ -1,5 +1,5 @@
 #
-# ROS Indigo with build tools Dockerfile
+# ROS Kinetic with build tools Dockerfile
 #
 # https://github.com/shadow-robot/sr-build-tools/
 #

@@ -65,6 +65,5 @@ function catkin_make_here {
     cd $startdir
 }
 
-alias depindigo='rosdep install --from-paths . --ignore-src --rosdistro indigo -y'
-source /home/user/projects/shadow_robot/base/devel/setup.bash
+alias depkinetic='rosdep install --from-paths . --ignore-src --rosdistro kinetic -y'
 
