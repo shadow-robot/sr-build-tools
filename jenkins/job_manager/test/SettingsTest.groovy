@@ -5,7 +5,8 @@ class SettingsTest {
 
     @Test
     void basicSettingsCheck() {
-        def loggerMock = mock(Logger.class)
+//        def loggerMock = mock(Logger.class)
+        def loggerMock = new Logger()
         def simpleSettingsYaml = '''\
         settings:
             ubuntu:
