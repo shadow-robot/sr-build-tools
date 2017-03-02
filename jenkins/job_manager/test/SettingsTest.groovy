@@ -11,26 +11,24 @@ class SettingsTest {
             ubuntu:
                 version: trusty
             docker:
-                image: shadowrobot/ramcip
-                tag: main
+                image: shadowrobot/build-tools
+                tag: trusty-indigo
             ros:
                 release: indigo
             toolset:
                 template_job_name: my_template
-            modules:
-                - check_cache
-                - code_coverage'''
-        def settings = new Settings(simpleSettingsYaml, loggerMock)
+                modules:
+                    - check_cache
+                    - code_coverage'''
+        def config = new Settings(simpleSettingsYaml, loggerMock)
 
-        assert "my_template" == settings.settings.toolset.template_job_name
+        assert "trusty" == config.settings.ubuntu.version
+        assert "shadowrobot/build-tools" == config.settings.docker.image
+        assert "trusty-indigo" == config.settings.docker.tag
+        assert "indigo" == config.settings.ros.release
+        assert "my_template" == config.settings.toolset.template_job_name
+        assert 2 == config.settings.toolset.modules.size()
+        assert "check_cache" in config.settings.toolset.modules
+        assert "code_coverage" in config.settings.toolset.modules
     }
-
-    @Test
-    void indexOutOfBoundsAccess() {
-        def numbers = [1,2,3,4,5]
-        shouldFail {
-            numbers.get(4)
-        }
-    }
-
 }
