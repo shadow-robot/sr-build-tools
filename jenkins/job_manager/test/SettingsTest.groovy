@@ -89,16 +89,16 @@ class SettingsTest {
                 docker:
                     tag: xenial-kinetic'''
 
-        def configDefault = new Settings(simpleSettingsYaml, loggerMock)
+        def configDefault = new Settings(onlyTrunksSettingsYaml, loggerMock)
         checkBasicSettings(configDefault)
 
-        def configForBranch = new Settings(simpleSettingsYaml, loggerMock, "my_new_branch")
+        def configForBranch = new Settings(onlyTrunksSettingsYaml, loggerMock, "my_new_branch")
         checkBasicSettings(configForBranch)
 
-        def configForIndigoTrunk = new Settings(simpleSettingsYaml, loggerMock, "indigo-devel")
+        def configForIndigoTrunk = new Settings(onlyTrunksSettingsYaml, loggerMock, "indigo-devel")
         checkBasicSettings(configForIndigoTrunk)
 
-        def configForKineticTrunk = new Settings(simpleSettingsYaml, loggerMock, "kinetic-devel")
+        def configForKineticTrunk = new Settings(onlyTrunksSettingsYaml, loggerMock, "kinetic-devel")
         checkKineticTrunkSettings(configForKineticTrunk)
     }
 }
