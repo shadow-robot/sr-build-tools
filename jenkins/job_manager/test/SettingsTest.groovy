@@ -100,4 +100,46 @@ class SettingsTest {
         def configForKineticTrunk = new Settings(onlyTrunksSettingsYaml, loggerMock, "kinetic-devel")
         checkKineticTrunkSettings(configForKineticTrunk)
     }
+
+    @Test
+    void checkBranchInheritedSettings() {
+        def branchInheritedSettingsYaml = '''\
+        settings:
+            ubuntu:
+                version: trusty
+            docker:
+                image: shadowrobot/build-tools
+                tag: trusty-indigo
+            ros:
+                release: indigo
+            toolset:
+                template_job_name: my_template
+                modules:
+                    - check_cache
+                    - code_coverage
+        trunks:
+            - name: indigo-devel
+            - name: kinetic-devel
+              settings:
+                  ubuntu:
+                      version: xenial
+                  ros:
+                      release: kinetic
+                  docker:
+                      tag: xenial-kinetic
+        branch:
+            parent: kinetic-devel'''
+
+        def configDefault = new Settings(branchInheritedSettingsYaml, loggerMock)
+        checkBasicSettings(configDefault)
+
+        def configForBranch = new Settings(branchInheritedSettingsYaml, loggerMock, "my_kinetic_branch")
+        checkKineticTrunkSettings(configForBranch)
+
+        def configForIndigoTrunk = new Settings(branchInheritedSettingsYaml, loggerMock, "indigo-devel")
+        checkBasicSettings(configForIndigoTrunk)
+
+        def configForKineticTrunk = new Settings(branchInheritedSettingsYaml, loggerMock, "kinetic-devel")
+        checkKineticTrunkSettings(configForKineticTrunk)
+    }
 }
