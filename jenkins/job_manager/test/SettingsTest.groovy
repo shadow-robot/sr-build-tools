@@ -77,17 +77,16 @@ class SettingsTest {
                 modules:
                     - check_cache
                     - code_coverage
-
         trunks:
             - name: indigo-devel
             - name: kinetic-devel
-                settings:
-                ubuntu:
-                    version: xenial
-                ros:
-                    release: kinetic
-                docker:
-                    tag: xenial-kinetic'''
+              settings:
+                  ubuntu:
+                      version: xenial
+                  ros:
+                      release: kinetic
+                  docker:
+                      tag: xenial-kinetic'''
 
         def configDefault = new Settings(onlyTrunksSettingsYaml, loggerMock)
         checkBasicSettings(configDefault)
