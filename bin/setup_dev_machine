@@ -35,6 +35,10 @@ case $key in
     GITHUB_PASSWORD="$2"
     shift # past argument
     ;;
+    -v|--rosversion)
+    ROS_RELEASE="$2"
+    shift # past argument
+    ;;
     --default)
     DEFAULT=YES
     ;;
@@ -47,9 +51,14 @@ done
 
 
 # setting defaults
+if [ -z "${ROS_RELEASE}" ];
+then
+    ROS_RELEASE="indigo"
+fi
+
 if [ -z "${SR_CONFIG_BRANCH}" ];
 then
-    SR_CONFIG_BRANCH="indigo-devel"
+    SR_CONFIG_BRANCH="${ROS_RELEASE}-devel"
 fi
 
 if [ -z "${SR_BUILD_TOOLS_BRANCH}" ];
@@ -59,12 +68,12 @@ fi
 
 if [ -z "${WORKSPACE_PATH}" ];
 then
-    WORKSPACE_PATH="~{{ros_user}}/indigo_ws/shadow"
+    WORKSPACE_PATH="~{{ros_user}}/${ROS_RELEASE}_ws/shadow"
 fi
 
 if [ -z "${ROSINSTALL_PATH}" ];
 then
-    ROSINSTALL_PATH="shadow_robot-indigo.rosinstall"
+    ROSINSTALL_PATH="shadow_robot-${ROS_RELEASE}.rosinstall"
 fi
 
 # Check if the rosinstall path is relative or absolute
@@ -96,6 +105,7 @@ echo "sr-config branch      = ${SR_CONFIG_BRANCH}"
 echo "sr-build-tools branch = ${SR_BUILD_TOOLS_BRANCH}"
 echo "workspace paths       = ${WORKSPACE_PATH}"
 echo "rosinstall file       = ${ROSINSTALL_PATH}"
+echo "ros release           = ${ROS_RELEASE}"
 
 pushd /tmp
 
@@ -159,7 +169,23 @@ echo " | Running Ansible |"
 echo " -------------------"
 echo ""
 
-ansible-playbook -vvv -K sr-build-tools/ansible/vagrant_site.yml --extra-vars "config_branch=${SR_CONFIG_BRANCH} ros_user=`whoami` ros_workspace=${WORKSPACE_PATH} ros_group=`whoami` ros_workspace_install=${ROSINSTALL_PATH} github_login=${GITHUB_LOGIN} github_password=${GITHUB_PASSWORD}"
+# Unfortunately passing an empty list to --extra-vars requires JSON formatting,
+# and JSON formatting requires double quotes, and we require variable expansion.
+EXTRA_VARS_JSON='"config_branch":"'"${SR_CONFIG_BRANCH}"'",'\
+'"ros_user":"'`whoami`'",'\
+'"ros_workspace":"'"${WORKSPACE_PATH}"'",'\
+'"ros_group":"'`whoami`'",'\
+'"ros_workspace_install":"'"${ROSINSTALL_PATH}"'",'\
+'"github_login":"'"${GITHUB_LOGIN}"'",'\
+'"github_password":"'"${GITHUB_PASSWORD}"'",'\
+'"ros_release":"'"${ROS_RELEASE}"'"'
+if [ "${ROS_RELEASE}" != "indigo" ]; then
+        EXTRA_VARS_JSON="${EXTRA_VARS_JSON}"',"ros_packages":[]'
+fi
+
+echo "Ansible vars: ${EXTRA_VARS_JSON}"
+
+ansible-playbook -vvv -K sr-build-tools/ansible/vagrant_site.yml --extra-vars="{${EXTRA_VARS_JSON}}"
 
 echo ""
 echo " ------------------------------------------------"
