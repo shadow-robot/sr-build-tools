@@ -29,15 +29,16 @@ if (!binding.variables.containsKey("toolsetBranch")) {
 
 def baseImageUrl = "https://raw.githubusercontent.com/shadow-robot/sr-build-tools/${toolsetBranch}/jenkins/" +
         "job_manager/script/"
+def timestamp = System.currentTimeMillis()
 
-evaluate("${baseImageUrl}/Logger.groovy".toURL().getText() + "\n" +
-        "${baseImageUrl}/Settings.groovy".toURL().getText() + "\n" +
-        "${baseImageUrl}/Branch.groovy".toURL().getText() + "\n" +
-        "${baseImageUrl}/Job.groovy".toURL().getText() + "\n" +
-        "${baseImageUrl}/PullRequest.groovy".toURL().getText() + "\n" +
-        "${baseImageUrl}/Repository.groovy".toURL().getText() + "\n" +
-        "${baseImageUrl}/GithubRepository.groovy".toURL().getText() + "\n" +
-        "${baseImageUrl}/JobManager.groovy".toURL().getText() + "\n" +
+evaluate("${baseImageUrl}/Logger.groovy?u=${timestamp}".toURL().getText() + "\n" +
+        "${baseImageUrl}/Settings.groovy?u=${timestamp}".toURL().getText() + "\n" +
+        "${baseImageUrl}/Branch.groovy?u=${timestamp}".toURL().getText() + "\n" +
+        "${baseImageUrl}/Job.groovy?u=${timestamp}".toURL().getText() + "\n" +
+        "${baseImageUrl}/PullRequest.groovy?u=${timestamp}".toURL().getText() + "\n" +
+        "${baseImageUrl}/Repository.groovy?u=${timestamp}".toURL().getText() + "\n" +
+        "${baseImageUrl}/GithubRepository.groovy?u=${timestamp}".toURL().getText() + "\n" +
+        "${baseImageUrl}/JobManager.groovy?u=${timestamp}".toURL().getText() + "\n" +
         "def logger = new Logger(getBinding().out, Logger.Verbosity.DEBUG)\n" +
         "def jobManager = new JobManager(credentials, logger, githubRepoNames, Jenkins.instance)\n" +
         "if (jobManager.processRepositories()) {\n" +

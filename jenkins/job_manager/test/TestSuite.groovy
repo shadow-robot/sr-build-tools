@@ -15,11 +15,12 @@ if (!binding.variables.containsKey("toolsetBranch")) {
 def baseUrl = "https://raw.githubusercontent.com/shadow-robot/sr-build-tools/${toolsetBranch}/jenkins/job_manager"
 def baseScriptUrl = "${baseUrl}/script"
 def baseTestUrl = "${baseUrl}/test"
+def timestamp = System.currentTimeMillis()
 
 def result = evaluate(
-        "${baseScriptUrl}/Logger.groovy".toURL().getText() + "\n" +
-        "${baseScriptUrl}/Settings.groovy".toURL().getText() + "\n" +
-        "${baseTestUrl}/SettingsTest.groovy?u=200".toURL().getText() + "\n" +
+        "${baseScriptUrl}/Logger.groovy?u=${timestamp}".toURL().getText() + "\n" +
+        "${baseScriptUrl}/Settings.groovy?u=${timestamp}".toURL().getText() + "\n" +
+        "${baseTestUrl}/SettingsTest.groovy?u=${timestamp}".toURL().getText() + "\n" +
         "return org.junit.runner.JUnitCore.runClasses(SettingsTest.class)")
 
 println "Executed " + result.getRunCount() + " test(s) for " + (result.getRunTime() / 1000) + " second(s)"
