@@ -1,11 +1,13 @@
 import org.junit.Test
-import static org.mockito.Mockito.mock
+import groovy.mock.interceptor.MockFor
 
 class SettingsTest {
 
     @Test
     void basicSettingsCheck() {
-        def loggerMock = mock(Logger.class)
+        def loggerMockContext = new MockFor(Logger)
+        loggerMockContext.ignore(~".*") {}
+        def loggerMock = loggerMockContext.proxyInstance([null])
         def simpleSettingsYaml = '''\
         settings:
             ubuntu:
