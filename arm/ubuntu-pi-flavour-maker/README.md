@@ -11,12 +11,11 @@ This is by far the easiest approach.
 
 1. On your docker host terminal:
     1. `docker pull shadowrobot/ubuntu-pi-flavour-maker`
-    2. `docker run --rm -it -v ~/PiFlavourMaker:/home/user/PiFlavourMaker --privileged shadowrobot/pi-image-builder`
+    2. `docker run --rm -it -v ~/PiFlavourMaker:/root/PiFlavourMaker --privileged shadowrobot/ubuntu-pi-flavour-maker`
     
         You can replace `~/PiFlavourMaker` with some other path on your local system; this is where the resulting build and .img files will be saved.
 2. On the resulting docker container terminal:
-    1. `sudo apt-get update`
-    2. `./build.sh <flavour>`
+    1. `./build.sh <flavour>`
     
         Where `<flavour>` is any of the following:
         - ubuntu
