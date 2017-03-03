@@ -19,7 +19,7 @@ def baseTestUrl = "${baseUrl}/test"
 def result = evaluate(
         "${baseScriptUrl}/Logger.groovy".toURL().getText() + "\n" +
         "${baseScriptUrl}/Settings.groovy".toURL().getText() + "\n" +
-        "${baseTestUrl}/SettingsTest.groovy".toURL().getText() + "\n" +
+        "${baseTestUrl}/SettingsTest.groovy?u=100".toURL().getText() + "\n" +
         "return org.junit.runner.JUnitCore.runClasses(SettingsTest.class)")
 
 println "Executed " + result.getRunCount() + " test(s) for " + (result.getRunTime() / 1000) + " second(s)"
