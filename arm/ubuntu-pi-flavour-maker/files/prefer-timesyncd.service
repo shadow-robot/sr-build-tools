@@ -1,0 +1,11 @@
+[Unit]
+Description=Prefer timesyncd over ntpd
+
+[Service]
+Type=oneshot
+ExecStart=/bin/chmod -x /usr/sbin/ntpd
+ExecStop=/bin/chmod -x /usr/sbin/ntpd
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target
