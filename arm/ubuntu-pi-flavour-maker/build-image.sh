@@ -24,6 +24,21 @@ if [ $(id -u) -ne 0 ]; then
     exit 1
 fi
 
+# Check specified post build scripts exist
+if [ -z "POST_BUILD_SCRIPT" ]; then
+    echo "No post-build scripts specified."
+else
+    for var in "${POST_BUILD_SCRIPT[@]}"
+    do
+        if [ -f "post-build-scripts/${var}" ]; then
+            echo "Specified post-build script ${var} exists."
+        else
+            echo "Specified post-build script ${var} does not exist!"
+            exit 1
+        fi
+    done
+fi
+
 # Mount host system
 function mount_system() {
     # In case this is a re-run move the cofi preload out of the way
@@ -697,7 +712,16 @@ function stage_04_corrections() {
       xserver-xorg-video-vesa-hwe-16.04
     fi
 
-    # Insert other corrections here.
+    # Run post build scripts if specified
+    if [ -z "POST_BUILD_SCRIPT" ]; then
+        echo "No post-build scripts specified."
+    else
+        for var in "${POST_BUILD_SCRIPT[@]}"
+        do
+        echo "Running post-build script: ${var}"
+            source "post-build-scripts/${var}"
+        done
+    fi
 
     apt_clean
     clean_up
