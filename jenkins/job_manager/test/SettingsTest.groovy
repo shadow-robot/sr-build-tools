@@ -7,7 +7,7 @@ class SettingsTest {
     static Logger loggerMock
 
     @BeforeClass
-    void initializeMocks() {
+    static void initializeMocks() {
         def loggerMockContext = new MockFor(Logger)
         loggerMockContext.ignore(~".*") {}
         loggerMock = loggerMockContext.proxyInstance([null])
