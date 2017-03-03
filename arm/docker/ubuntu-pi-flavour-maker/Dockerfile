@@ -13,10 +13,7 @@ RUN locale-gen en_GB.UTF-8 && \
     apt-get install -y git dosfstools parted binfmt-support debootstrap f2fs-tools \
     qemu-user-static rsync ubuntu-keyring whois sudo && \
     git clone https://github.com/shadow-robot/sr-build-tools.git && \
-    cd sr-build-tools && \
-    git checkout F_add_arm_tools && \
-    cp -r arm/ubuntu-pi-flavour-maker /. && \
-    cd / && \
+    cp -r sr-build-tools/arm/ubuntu-pi-flavour-maker /. && \
     rm -rf sr-build-tools && \
     apt-get purge -y git && \
     apt-get autoremove -y && \
