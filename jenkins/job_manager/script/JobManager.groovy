@@ -52,7 +52,7 @@ class JobManager {
         logger.info("${jobsToKeep.size()} of the existing auto jobs will be preserved because they have the same name as a newly generated job.")
         logger.debug("${jobsToKeep*.name}")
 
-        // Also keep any jobs that look like they might correpsond to a repository for which I failed to get branches
+        // Also keep any jobs that look like they might correspond to a repository for which I failed to get branches
         // or pull requests. Note that an empty list of pull requests is OK, an uninitialised list is not.
         def erroredRepositories = repositories.findAll { it.branches == null || it.pullRequests == null }
         if (erroredRepositories) {
