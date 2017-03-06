@@ -1,0 +1,49 @@
+- git:
+    uri: https://github.com/shadow-robot/sr-config
+    version: kinetic-devel
+    local-name: sr_config
+
+- git:
+    uri: https://github.com/shadow-robot/sr_common
+    version: kinetic-devel
+    local-name: sr_common
+
+- git:
+    uri: https://github.com/shadow-robot/sr_core
+    version: kinetic-devel
+    local-name: sr_core
+
+- git:
+    uri: https://github.com/shadow-robot/sr_interface
+    version: kinetic-devel
+    local-name: sr_interface
+
+- git:
+    uri: https://github.com/shadow-robot/sr_tools
+    version: kinetic-devel
+    local-name: sr_tools
+    
+- git:
+    local-name: sr_benchmarking
+    uri: https://github.com/shadow-robot/sr_benchmarking
+    version: kinetic-devel
+
+- git:
+    uri: https://github.com/shadow-robot/sr-visualization
+    version: kinetic-devel
+    local-name: sr_visualization
+
+- git:
+    local-name: sr_teleop
+    uri: https://github.com/shadow-robot/sr-teleop
+    version: kinetic-devel
+
+- git:
+    local-name: sr_blockly
+    uri: https://github.com/shadow-robot/sr_blockly.git
+    version: master
+
+- git:
+    local-name: robot_blockly
+    uri: https://github.com/shadow-robot/robot_blockly.git
+    version: master

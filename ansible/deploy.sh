@@ -63,6 +63,8 @@ then
     PROJECT_NAME=${PROJECT_NAME%.*}
 fi
 
+
+
 if [ -z "${WORKSPACE_PATH}" ];
 then
     WORKSPACE_PATH="~{{ ros_user }}/workspace/${PROJECT_NAME}/base"
@@ -183,6 +185,10 @@ then
     fi
     echo ${ROSINTSTALL_FILE_CONTENT} > ${ROS_WORKSPACE_INSTALL_FILE}
 else
+    echo "Here"
+    echo ${GITHUB_BRANCH}
+    echo ${REPOSITORY_URL} 
+    echo ${PROJECT_HOME_DIR}
     if [ -z "${GITHUB_BRANCH}" ]; then
         git clone --depth 1 ${REPOSITORY_URL} ${PROJECT_HOME_DIR}
     else
