@@ -159,10 +159,15 @@ wait
 
 sudo pip install paramiko markupsafe PyYAML Jinja2 httplib2 six ansible==' 2.1.0.0'
 sudo pip install --upgrade setuptools
+    
+echo "Here"
+echo ${GITHUB_BRANCH}
+echo ${REPOSITORY_URL} 
+echo ${PROJECT_HOME_DIR}
 
 echo ""
 echo " -------------------"
-echo " |   Cloning repo  |"
+echo " |   Cloning repo Bla  |"
 echo " -------------------"
 echo ""
 
