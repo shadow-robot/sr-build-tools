@@ -2,8 +2,6 @@ FROM shadowrobot/build-tools:trusty-indigo-ide
 
 ENV remote_shell_script="https://raw.githubusercontent.com/shadow-robot/sr-build-tools/$toolset_branch/bin/setup_dev_machine"
 
-COPY additional_bashrc_cmds /tmp/additional_bashrc_cmds
-
 RUN echo "Fixing file system" && \
     mkdir -p /etc/apt/sources.list.d && \
     rm -f /etc/apt/sources.list.d/ros-latest.list && \
