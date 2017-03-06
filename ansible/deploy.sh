@@ -166,14 +166,6 @@ echo ${REPOSITORY_URL}
 echo ${PROJECT_HOME_DIR}
 
 echo ""
-echo " -------------------"
-echo " |   Cloning repo Bla  |"
-echo " -------------------"
-echo ""
-
-git clone --depth 1 -b ${SR_BUILD_TOOLS_BRANCH:-"master"}  https://github.com/shadow-robot/sr-build-tools.git ${SR_BUILD_TOOLS_HOME}
-
-echo ""
 echo " ------------------------------------"
 echo " |   Creating repository.rosinstall  |"
 echo " ------------------------------------"
@@ -201,6 +193,16 @@ else
     fi
     cp "${PROJECT_HOME_DIR}/${INSTALL_FILE}" ${ROS_WORKSPACE_INSTALL_FILE}
 fi
+
+echo ""
+echo " -------------------"
+echo " |   Cloning repo Bla  |"
+echo " -------------------"
+echo ""
+
+git clone --depth 1 -b ${SR_BUILD_TOOLS_BRANCH:-"master"}  https://github.com/shadow-robot/sr-build-tools.git ${SR_BUILD_TOOLS_HOME}
+
+
 
 echo ""
 echo " -------------------"
