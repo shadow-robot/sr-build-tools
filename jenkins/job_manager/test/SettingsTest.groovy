@@ -143,6 +143,7 @@ class SettingsTest {
         checkKineticTrunkSettings(configForKineticTrunk)
     }
 
+    @Test
     void checkModulesListOverride() {
         def branchOverridesModulesListSettingsYaml = '''\
         settings:
