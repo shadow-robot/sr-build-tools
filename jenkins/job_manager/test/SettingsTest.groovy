@@ -173,7 +173,7 @@ class SettingsTest {
                           - check_cache
                           - all_tests
         branch:
-            parent: kinetic-devel'''
+            parent: kinetic-devel
             settings:
                 toolset:
                     modules:
