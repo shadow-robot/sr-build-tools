@@ -57,9 +57,9 @@ class Settings {
                         }
                     }
                     // If there are branch specific settings
-                    if (config.branch.getSettingsFromRepository) {
+                    if (config.branch.settings) {
                         // Use them to override branch and template settings
-                        settings = merge(settings, config.branch.getSettingsFromRepository)
+                        settings = merge(settings, config.branch.settings)
                     }
                 }
             }
