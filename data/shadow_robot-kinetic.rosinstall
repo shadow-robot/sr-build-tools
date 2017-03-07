@@ -29,6 +29,11 @@
     version: kinetic-devel
 
 - git:
+    uri: https://github.com/shadow-robot/sr-visualization
+    version: kinetic-devel
+    local-name: sr_visualization
+
+- git:
     local-name: sr_teleop
     uri: https://github.com/shadow-robot/sr-teleop
     version: kinetic-devel
@@ -38,7 +43,8 @@
     uri: https://github.com/shadow-robot/sr_blockly.git
     version: master
 
+# While the PR is being merged
 - git:
     local-name: robot_blockly
     uri: https://github.com/shadow-robot/robot_blockly.git
-    version: master
+    version: F_removing_pocketsphinx_dep
