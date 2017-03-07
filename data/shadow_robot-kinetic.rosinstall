@@ -29,11 +29,6 @@
     version: kinetic-devel
 
 - git:
-    uri: https://github.com/shadow-robot/sr-visualization
-    version: kinetic-devel
-    local-name: sr_visualization
-
-- git:
     local-name: sr_teleop
     uri: https://github.com/shadow-robot/sr-teleop
     version: kinetic-devel
