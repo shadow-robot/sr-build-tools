@@ -4,6 +4,11 @@
     local-name: sr_config
 
 - git:
+    uri: https://github.com/shadow-robot/sr-ros-interface
+    version: kinetic-devel
+    local-name: shadow_robot
+
+- git:
     uri: https://github.com/shadow-robot/sr_common
     version: kinetic-devel
     local-name: sr_common
@@ -22,11 +27,11 @@
     uri: https://github.com/shadow-robot/sr_tools
     version: kinetic-devel
     local-name: sr_tools
-    
+
 - git:
-    local-name: sr_benchmarking
-    uri: https://github.com/shadow-robot/sr_benchmarking
+    uri: https://github.com/shadow-robot/sr-ros-interface-ethercat
     version: kinetic-devel
+    local-name: shadow_robot_ethercat
 
 - git:
     uri: https://github.com/shadow-robot/sr-visualization
