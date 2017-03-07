@@ -44,6 +44,11 @@
     version: kinetic-devel
 
 - git:
+    local-name: ros_ethercat
+    uri: https://github.com/shadow-robot/ros_ethercat
+    version: kinetic-devel
+
+- git:
     local-name: sr_blockly
     uri: https://github.com/shadow-robot/sr_blockly.git
     version: master
