@@ -63,8 +63,6 @@ then
     PROJECT_NAME=${PROJECT_NAME%.*}
 fi
 
-
-
 if [ -z "${WORKSPACE_PATH}" ];
 then
     WORKSPACE_PATH="~{{ ros_user }}/workspace/${PROJECT_NAME}/base"
@@ -159,11 +157,14 @@ wait
 
 sudo pip install paramiko markupsafe PyYAML Jinja2 httplib2 six ansible==' 2.1.0.0'
 sudo pip install --upgrade setuptools
-    
-echo "Here"
-echo ${GITHUB_BRANCH}
-echo ${REPOSITORY_URL} 
-echo ${PROJECT_HOME_DIR}
+
+echo ""
+echo " -------------------"
+echo " |   Cloning repo  |"
+echo " -------------------"
+echo ""
+
+git clone --depth 1 -b ${SR_BUILD_TOOLS_BRANCH:-"master"}  https://github.com/shadow-robot/sr-build-tools.git ${SR_BUILD_TOOLS_HOME}
 
 echo ""
 echo " ------------------------------------"
@@ -182,10 +183,6 @@ then
     fi
     echo ${ROSINTSTALL_FILE_CONTENT} > ${ROS_WORKSPACE_INSTALL_FILE}
 else
-    echo "Here"
-    echo ${GITHUB_BRANCH}
-    echo ${REPOSITORY_URL} 
-    echo ${PROJECT_HOME_DIR}
     if [ -z "${GITHUB_BRANCH}" ]; then
         git clone --depth 1 ${REPOSITORY_URL} ${PROJECT_HOME_DIR}
     else
@@ -193,16 +190,6 @@ else
     fi
     cp "${PROJECT_HOME_DIR}/${INSTALL_FILE}" ${ROS_WORKSPACE_INSTALL_FILE}
 fi
-
-echo ""
-echo " -------------------"
-echo " |   Cloning repo Bla  |"
-echo " -------------------"
-echo ""
-
-git clone --depth 1 -b ${SR_BUILD_TOOLS_BRANCH:-"master"}  https://github.com/shadow-robot/sr-build-tools.git ${SR_BUILD_TOOLS_HOME}
-
-
 
 echo ""
 echo " -------------------"
