@@ -58,8 +58,7 @@
     uri: https://github.com/shadow-robot/sr_blockly.git
     version: master
 
-# While the PR is being merged
 - git:
     local-name: robot_blockly
     uri: https://github.com/shadow-robot/robot_blockly.git
-    version: F_removing_pocketsphinx_dep
+    version: master
