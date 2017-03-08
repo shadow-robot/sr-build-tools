@@ -7,7 +7,7 @@ RUN echo "Running one-liner" && \
     apt-get update && \
     wget -O /tmp/oneliner "$( echo "$remote_shell_script" | sed 's/#/%23/g' )" && \
     chmod 755 /tmp/oneliner && \
-    gosu $MY_USERNAME /tmp/oneliner -w $PROJECTS_WS/base -r sr-build-tools -b F_added_kinetic_rosinstall -i data/shadow_robot-kinetic.rosinstall -v "kinetic"  && \
+    gosu $MY_USERNAME /tmp/oneliner -w $PROJECTS_WS/base -r sr-build-tools -b $toolset_branch -i data/shadow_robot-kinetic.rosinstall -v "kinetic"  && \
 
     echo "Installing mongocxx driver for the warehouse" && \
     cd $PROJECTS_WS/base_deps/src && \
@@ -20,7 +20,7 @@ RUN echo "Running one-liner" && \
     cd $PROJECTS_WS/base_deps/src && \
     wstool set -yu warehouse_ros_mongo --git https://github.com/ros-planning/warehouse_ros_mongo.git -v jade-devel && \
     wstool set -yu warehouse_ros --git https://github.com/ros-planning/warehouse_ros.git -v jade-devel && \
-    
+
     echo "Changing folders owner" && \
     chown -R user:user mongo-cxx-driver warehouse_ros* && \
 
@@ -37,11 +37,11 @@ RUN echo "Running one-liner" && \
     make install && \
     cd port/PyAssimp/ && \
     python setup.py install && \
-    
+
     echo "Removing cache" && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
-    
+
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
 
 CMD ["/usr/bin/terminator"]
