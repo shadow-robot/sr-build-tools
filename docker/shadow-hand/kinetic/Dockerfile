@@ -1,14 +1,14 @@
 FROM shadowrobot/build-tools:xenial-kinetic-ide
 
-ENV remote_shell_script="https://raw.githubusercontent.com/shadow-robot/sr-build-tools/master/ansible/deploy.sh"
+ENV remote_shell_script="https://raw.githubusercontent.com/shadow-robot/sr-build-tools/$toolset_branch/ansible/deploy.sh"
 
 ENV PROJECTS_WS=/home/user/projects/shadow_robot
 RUN echo "Running one-liner" && \
     apt-get update && \
     wget -O /tmp/oneliner "$( echo "$remote_shell_script" | sed 's/#/%23/g' )" && \
     chmod 755 /tmp/oneliner && \
-    gosu $MY_USERNAME /tmp/oneliner -w $PROJECTS_WS/base -b "kinetic-devel" -v "kinetic"  && \
-        
+    gosu $MY_USERNAME /tmp/oneliner -w $PROJECTS_WS/base -r sr-build-tools -b $toolset_branch -i data/shadow_robot-kinetic.rosinstall -v "kinetic"  && \
+
     echo "Installing mongocxx driver for the warehouse" && \
     cd $PROJECTS_WS/base_deps/src && \
     git clone -b 26compat https://github.com/mongodb/mongo-cxx-driver.git && \
@@ -20,7 +20,7 @@ RUN echo "Running one-liner" && \
     cd $PROJECTS_WS/base_deps/src && \
     wstool set -yu warehouse_ros_mongo --git https://github.com/ros-planning/warehouse_ros_mongo.git -v jade-devel && \
     wstool set -yu warehouse_ros --git https://github.com/ros-planning/warehouse_ros.git -v jade-devel && \
-    
+
     echo "Changing folders owner" && \
     chown -R user:user mongo-cxx-driver warehouse_ros* && \
 
@@ -37,11 +37,11 @@ RUN echo "Running one-liner" && \
     make install && \
     cd port/PyAssimp/ && \
     python setup.py install && \
-    
+
     echo "Removing cache" && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
-    
+
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
 
 CMD ["/usr/bin/terminator"]

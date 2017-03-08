@@ -1,47 +1,52 @@
 - git:
-    uri: https://github.com/shadow-robot/sr-config
-    version: indigo-devel
-    local-name: sr_config
-
-- git:
     uri: https://github.com/shadow-robot/sr-ros-interface
-    version: indigo-devel
+    version: kinetic-devel
     local-name: shadow_robot
 
 - git:
     uri: https://github.com/shadow-robot/sr_common
-    version: indigo-devel
+    version: kinetic-devel
     local-name: sr_common
 
 - git:
     uri: https://github.com/shadow-robot/sr_core
-    version: indigo-devel
+    version: kinetic-devel
     local-name: sr_core
 
 - git:
     uri: https://github.com/shadow-robot/sr_interface
-    version: indigo-devel
+    version: kinetic-devel
     local-name: sr_interface
 
 - git:
     uri: https://github.com/shadow-robot/sr_tools
-    version: indigo-devel
+    version: kinetic-devel
     local-name: sr_tools
 
 - git:
     uri: https://github.com/shadow-robot/sr-ros-interface-ethercat
-    version: indigo-devel
+    version: kinetic-devel
     local-name: shadow_robot_ethercat
 
 - git:
     uri: https://github.com/shadow-robot/sr-visualization
-    version: indigo-devel
+    version: kinetic-devel
     local-name: sr_visualization
 
 - git:
     local-name: sr_teleop
     uri: https://github.com/shadow-robot/sr-teleop
-    version: indigo-devel
+    version: kinetic-devel
+
+- git:
+    local-name: ros_ethercat
+    uri: https://github.com/shadow-robot/ros_ethercat
+    version: kinetic-devel
+
+- git:
+    local-name: sr_ur_arm
+    uri: https://github.com/shadow-robot/sr_ur_arm.git
+    version: kinetic-devel
 
 - git:
     local-name: sr_blockly
