@@ -1,9 +1,4 @@
 - git:
-    uri: https://github.com/shadow-robot/sr-config
-    version: kinetic-devel
-    local-name: sr_config
-
-- git:
     uri: https://github.com/shadow-robot/sr-ros-interface
     version: kinetic-devel
     local-name: shadow_robot
