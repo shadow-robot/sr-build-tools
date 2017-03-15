@@ -1,13 +1,3 @@
-// Jenkins job can have the following code
-//
-//toolsetBranch = "master"
-//def testSuiteScriptUrl = "https://raw.githubusercontent.com/shadow-robot/sr-build-tools/${toolsetBranch}/jenkins/" +
-//        "job_manager/test/TestSuite.groovy"
-//
-//evaluate(testSuiteScriptUrl.toURL().getText())
-//
-/////////////////////////////////////////////
-
 if (!binding.variables.containsKey("toolsetBranch")) {
     toolsetBranch = "master"
 }

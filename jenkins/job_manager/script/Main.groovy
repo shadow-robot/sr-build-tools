@@ -1,18 +1,3 @@
-// Jenkins job can have the following code
-//
-//credentials = [username: "jenkins_username",
-//               password: "jenkins_password",
-//               token: "jenkins_token"]
-//
-//githubRepoNames = ['sr_interface', 'build-servers-check']
-//toolsetBranch = "master"
-//def mainScriptUrl = "https://raw.githubusercontent.com/shadow-robot/sr-build-tools/${toolsetBranch}/jenkins/" +
-//        "job_manager/script/Main.groovy"
-//
-//evaluate(mainScriptUrl.toURL().getText())
-//
-/////////////////////////////////////////////
-
 if (!binding.variables.containsKey("credentials")) {
     println "Missing 'credentials' binding variable "
     return false
