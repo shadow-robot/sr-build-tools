@@ -10,7 +10,6 @@ RUN echo "Fixing file system" && \
     wget -O /tmp/oneliner "$( echo "$remote_shell_script" | sed 's/#/%23/g' )" && \
     chmod 755 /tmp/oneliner && \
     gosu $MY_USERNAME /tmp/oneliner -b "$toolset_branch" -w /home/user/projects/shadow_robot/base  && \
-    cat /tmp/additional_bashrc_cmds >> /home/user/.bashrc && \
 
     echo "Removing cache" && \
     apt-get clean && \
