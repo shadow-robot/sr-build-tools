@@ -269,5 +269,6 @@ class SettingsTest {
         assert "check_cache" in configForKineticTrunk.settings.toolset.modules
         assert "all_tests" in configForKineticTrunk.settings.toolset.modules
     }
+
+    */
 }
-*/
