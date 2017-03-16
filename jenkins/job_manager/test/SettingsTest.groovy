@@ -175,20 +175,20 @@ class SettingsTest {
         trunks:
             - name: indigo-devel
             - name: kinetic-devel
-              - settings:
-                    ubuntu:
-                        version: xenial
-                    ros:
-                        release: kinetic
-                    docker:
-                        tag: xenial-kinetic
-              - settings:
-                    ubuntu:
-                        version: xenial
-                    ros:
-                        release: kinetic
-                    docker:
-                        tag: xenial-kinetic
+                - settings:
+                      ubuntu:
+                          version: xenial
+                      ros:
+                          release: kinetic
+                      docker:
+                          tag: xenial-kinetic
+                - settings:
+                      ubuntu:
+                          version: xenial
+                      ros:
+                          release: kinetic
+                      docker:
+                          tag: xenial-kinetic
         branch:
             parent: kinetic-devel'''
 
