@@ -35,19 +35,6 @@ class SettingsTest {
         assert "code_coverage" in config.settings.toolset.modules
     }
 
-    void checkKineticTrunkMultipleSettings(Settings config) {
-        assert 2 == config.settings.ubuntu.version.size()
-        assert "xenial" in config.settings.ubuntu.version
-        assert "willy" in config.settings.ubuntu.version
-        assert "shadowrobot/build-tools" == config.settings.docker.image
-        assert "xenial-kinetic" == config.settings.docker.tag
-        assert "kinetic" == config.settings.ros.release
-        assert "my_template" == config.settings.toolset.template_job_name
-        assert 2 == config.settings.toolset.modules.size()
-        assert "check_cache" in config.settings.toolset.modules
-        assert "code_coverage" in config.settings.toolset.modules
-    }
-
     @Test
     void basicSettingsCheck() {
         def simpleSettingsYaml = '''\
@@ -65,15 +52,16 @@ class SettingsTest {
                     - check_cache
                     - code_coverage'''
 
-        def testSettingsParser = new SettingsParser(simpleSettingsYaml)
-
-        def configDefault = new Settings(testSettingsParser.config, loggerMock)
+        def SettingsParserDefault = new SettingsParser(simpleSettingsYaml)
+        def configDefault = SettingsParserDefault.settingsList.get(0)
         checkBasicSettings(configDefault)
 
-        def configForBranch = new Settings(testSettingsParser.config, loggerMock, "my_super_feature")
+        def SettingsParserBranch = new SettingsParser(simpleSettingsYaml, "my_super_feature")
+        def configForBranch = SettingsParserBranch.settingsList.get(0)
         checkBasicSettings(configForBranch)
 
-        def configForTrunk = new Settings(testSettingsParser.config, loggerMock, "kinetic-devel")
+        def SettingsParserTrunk = new SettingsParser(simpleSettingsYaml, "kinetic-devel")
+        def configForTrunk = SettingsParserTrunk.settingsList.get(0)
         checkBasicSettings(configForTrunk)
     }
 /*
@@ -100,7 +88,7 @@ class SettingsTest {
                   ubuntu:
                       version: xenial
                   ros:
-                      release: kinetic
+                      release: kinetic"${baseScriptUrl}/Logger.groovy?u=${timestamp}".toURL().getText() + "\n" +
                   docker:
                       tag: xenial-kinetic'''
 
