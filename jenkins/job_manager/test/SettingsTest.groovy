@@ -156,7 +156,7 @@ class SettingsTest {
         checkKineticTrunkSettings(configForKineticTrunk)
     }
 
-    @Test
+/*    @Test
     void checkBranchInheritedMultipleSettings() {
         def branchInheritedMultipleSettingsYaml = '''\
         settings:
@@ -204,6 +204,7 @@ class SettingsTest {
         def configForKineticTrunk = new Settings(branchInheritedMultipleSettingsYaml, loggerMock, "kinetic-devel")
         checkKineticTrunkMultipleSettings(configForKineticTrunk)
     }
+    */
 
     @Test
     void checkModulesListOverride() {

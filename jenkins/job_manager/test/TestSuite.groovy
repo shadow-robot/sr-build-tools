@@ -1,5 +1,6 @@
 if (!binding.variables.containsKey("toolsetBranch")) {
-    toolsetBranch = "master"
+    // change that back to master later
+    toolsetBranch = "F_multiple_settings_parsing"
 }
 
 def baseUrl = "https://raw.githubusercontent.com/shadow-robot/sr-build-tools/${toolsetBranch}/jenkins/job_manager"
