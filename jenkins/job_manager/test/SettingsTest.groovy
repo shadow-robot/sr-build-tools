@@ -35,6 +35,19 @@ class SettingsTest {
         assert "code_coverage" in config.settings.toolset.modules
     }
 
+    void checkKineticTrunkMultipleSettings(Settings config) {
+        assert 2 == config.settings.ubuntu.version.size()
+        assert "xenial" in config.settings.ubuntu.version
+        assert "willy" in config.settings.ubuntu.version
+        assert "shadowrobot/build-tools" == config.settings.docker.image
+        assert "xenial-kinetic" == config.settings.docker.tag
+        assert "kinetic" == config.settings.ros.release
+        assert "my_template" == config.settings.toolset.template_job_name
+        assert 2 == config.settings.toolset.modules.size()
+        assert "check_cache" in config.settings.toolset.modules
+        assert "code_coverage" in config.settings.toolset.modules
+    }
+
     @Test
     void basicSettingsCheck() {
         def simpleSettingsYaml = '''\
@@ -141,6 +154,55 @@ class SettingsTest {
 
         def configForKineticTrunk = new Settings(branchInheritedSettingsYaml, loggerMock, "kinetic-devel")
         checkKineticTrunkSettings(configForKineticTrunk)
+    }
+
+    @Test
+    void checkBranchInheritedMultipleSettings() {
+        def branchInheritedMultipleSettingsYaml = '''\
+        settings:
+            ubuntu:
+                version: trusty
+            docker:
+                image: shadowrobot/build-tools
+                tag: trusty-indigo
+            ros:
+                release: indigo
+            toolset:
+                template_job_name: my_template
+                modules:
+                    - check_cache
+                    - code_coverage
+        trunks:
+            - name: indigo-devel
+            - name: kinetic-devel
+              - settings:
+                  ubuntu:
+                      version: xenial
+                  ros:
+                      release: kinetic
+                  docker:
+                      tag: xenial-kinetic
+              - settings:
+                  ubuntu:
+                      version: xenial
+                  ros:
+                      release: kinetic
+                  docker:
+                      tag: xenial-kinetic
+        branch:
+            parent: kinetic-devel'''
+
+        def configDefault = new Settings(branchInheritedMultipleSettingsYaml, loggerMock)
+        checkBasicSettings(configDefault)
+
+        def configForBranch = new Settings(branchInheritedMultipleSettingsYaml, loggerMock, "my_kinetic_branch")
+        checkKineticTrunkMultipleSettings(configForBranch)
+
+        def configForIndigoTrunk = new Settings(branchInheritedMultipleSettingsYaml, loggerMock, "indigo-devel")
+        checkBasicSettings(configForIndigoTrunk)
+
+        def configForKineticTrunk = new Settings(branchInheritedMultipleSettingsYaml, loggerMock, "kinetic-devel")
+        checkKineticTrunkMultipleSettings(configForKineticTrunk)
     }
 
     @Test
