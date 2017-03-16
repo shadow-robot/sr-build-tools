@@ -10,6 +10,7 @@ def timestamp = System.currentTimeMillis()
 
 def result = evaluate(
         "${baseScriptUrl}/Logger.groovy?u=${timestamp}".toURL().getText() + "\n" +
+        "${baseScriptUrl}/SettingsParser.groovy?u=${timestamp}".toURL().getText() + "\n" +
         "${baseScriptUrl}/Settings.groovy?u=${timestamp}".toURL().getText() + "\n" +
         "${baseTestUrl}/SettingsTest.groovy?u=${timestamp}".toURL().getText() + "\n" +
         "return org.junit.runner.JUnitCore.runClasses(SettingsTest.class)")

@@ -1,7 +1,4 @@
-import org.yaml.snakeyaml.Yaml
-
 class Settings {
-    String yaml
     Map config, settings
     enum Status {
         ERROR, NONE, GOOD
@@ -19,17 +16,11 @@ class Settings {
         if (noJenkinsYml) status = Status.NONE
     }
 
-    Settings(String yaml, Logger logger, String branchName = null) {
+    Settings(Map config, Logger logger, String branchName = null) {
+        this.config = config
         this.logger = logger
-        parseYaml(yaml)
         processConfig(branchName)
         status = Status.GOOD
-    }
-
-    def parseYaml(newYaml = null) {
-        if (newYaml) yaml = newYaml
-        def parser = new Yaml()
-        config = parser.load(yaml)
     }
 
     def processConfig(String branchName = null) {

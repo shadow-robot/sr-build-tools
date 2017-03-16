@@ -64,16 +64,19 @@ class SettingsTest {
                 modules:
                     - check_cache
                     - code_coverage'''
-        def configDefault = new Settings(simpleSettingsYaml, loggerMock)
+
+        def testSettingsParser = new SettingsParser(simpleSettingsYaml)
+
+        def configDefault = new Settings(testSettingsParser.config, loggerMock)
         checkBasicSettings(configDefault)
 
-        def configForBranch = new Settings(simpleSettingsYaml, loggerMock, "my_super_feature")
+        def configForBranch = new Settings(testSettingsParser.config, loggerMock, "my_super_feature")
         checkBasicSettings(configForBranch)
 
-        def configForTrunk = new Settings(simpleSettingsYaml, loggerMock, "kinetic-devel")
+        def configForTrunk = new Settings(testSettingsParser.config, loggerMock, "kinetic-devel")
         checkBasicSettings(configForTrunk)
     }
-
+/*
     @Test
     void onlyTrunksConfiguration() {
         def onlyTrunksSettingsYaml = '''\
@@ -267,3 +270,4 @@ class SettingsTest {
         assert "all_tests" in configForKineticTrunk.settings.toolset.modules
     }
 }
+*/
