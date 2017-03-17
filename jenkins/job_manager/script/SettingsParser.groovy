@@ -19,9 +19,10 @@ class SettingsParser {
             parentName = config.branch.parent
         }
 
-        // if there are multiple settings create list of maps
+        // if there are multiple settings, create list of maps
         if (config.trunks && 'kinetic-devel' in config.trunks.name && trunk.settings.getClass() == ArrayList &&
-                ((branchName == 'kinetic-devel' && !config.branch) || (parentName == 'kinetic-devel' && !(!branchName || branchName == 'indigo-devel')))){
+                ((branchName == 'kinetic-devel' && !config.branch) ||
+                        (parentName == 'kinetic-devel' && !(!branchName || branchName == 'indigo-devel')))){
 
                 def numOfKineticSettings = trunk.settings.size()
                 def kineticSettings = trunk.settings.clone()

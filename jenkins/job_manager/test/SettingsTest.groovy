@@ -215,7 +215,6 @@ class SettingsTest {
         assert 2 == SettingsParserKineticTrunk.settingsList.size()
         checkKineticTrunkSettings(SettingsParserKineticTrunk.settingsList.get(0))
         checkKineticTrunkWilly(SettingsParserKineticTrunk.settingsList.get(1))
-
     }
 
     @Test
@@ -269,7 +268,6 @@ class SettingsTest {
         assert 2 == SettingsParserKineticTrunk.settingsList.size()
         checkKineticTrunkSettings(SettingsParserKineticTrunk.settingsList.get(0))
         checkKineticTrunkWilly(SettingsParserKineticTrunk.settingsList.get(1))
-
     }
 
     @Test
@@ -312,7 +310,6 @@ class SettingsTest {
 
         def SettingsParserDefault = new SettingsParser(branchOverridesModulesListSettingsYaml)
         def configDefault = SettingsParserDefault.settingsList.get(0)
-  //      def configDefault = new Settings(branchOverridesModulesListSettingsYaml, loggerMock)
         checkBasicSettings(configDefault)
 
         def SettingsForBranch = new SettingsParser(branchOverridesModulesListSettingsYaml, "my_new_kinetic_branch")
@@ -339,8 +336,5 @@ class SettingsTest {
         assert "check_cache" in configForKineticTrunk.settings.toolset.modules
         assert "all_tests" in configForKineticTrunk.settings.toolset.modules
 
-
     }
-
-
 }
