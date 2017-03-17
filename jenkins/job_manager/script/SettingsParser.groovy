@@ -11,9 +11,17 @@ class SettingsParser {
     SettingsParser(String yaml, String branchName = null) {
         initializeMocks()
         parseYaml(yaml)
-        def trunk = config.trunks.find {it.name == "kinetic-devel"}
 
-        if (config.trunks && 'kinetic-devel' in config.trunks.name && trunk.settings.getClass() == ArrayList){
+        def trunk = config.trunks.find {it.name == "kinetic-devel"}
+        def parentName = null
+
+        if (config.branch) {
+            parentName = config.branch.parent
+        }
+
+        // if there are multiple settings create list of maps
+        if (config.trunks && 'kinetic-devel' in config.trunks.name && trunk.settings.getClass() == ArrayList &&
+                ((branchName == 'kinetic-devel' && !config.branch) || (parentName == 'kinetic-devel' && !(!branchName || branchName == 'indigo-devel')))){
 
                 def numOfKineticSettings = trunk.settings.size()
                 def kineticSettings = trunk.settings.clone()
@@ -24,6 +32,7 @@ class SettingsParser {
                     settingsList.add(new Settings(config, loggerMock, branchName))
                 }
 
+            //otherwise, just pass the parsed map
         } else {
               settingsList.add(new Settings(config, loggerMock, branchName))
         }
