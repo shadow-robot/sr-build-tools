@@ -64,7 +64,7 @@ class SettingsTest {
         def configForTrunk = SettingsParserTrunk.settingsList.get(0)
         checkBasicSettings(configForTrunk)
     }
-/*
+
     @Test
     void onlyTrunksConfiguration() {
         def onlyTrunksSettingsYaml = '''\
@@ -88,20 +88,24 @@ class SettingsTest {
                   ubuntu:
                       version: xenial
                   ros:
-                      release: kinetic"${baseScriptUrl}/Logger.groovy?u=${timestamp}".toURL().getText() + "\n" +
+                      release: kinetic
                   docker:
                       tag: xenial-kinetic'''
 
-        def configDefault = new Settings(onlyTrunksSettingsYaml, loggerMock)
+        def SettingsParserDefault = new SettingsParser(onlyTrunksSettingsYaml)
+        def configDefault = SettingsParserDefault.settingsList.get(0)
         checkBasicSettings(configDefault)
 
-        def configForBranch = new Settings(onlyTrunksSettingsYaml, loggerMock, "my_new_branch")
+        def SettingsParserBranch = new SettingsParser(onlyTrunksSettingsYaml, "my_super_feature")
+        def configForBranch = SettingsParserBranch.settingsList.get(0)
         checkBasicSettings(configForBranch)
 
-        def configForIndigoTrunk = new Settings(onlyTrunksSettingsYaml, loggerMock, "indigo-devel")
+        def SettingsParserIndigoTrunk = new SettingsParser(onlyTrunksSettingsYaml, "indigo-devel")
+        def configForIndigoTrunk = SettingsParserIndigoTrunk.settingsList.get(0)
         checkBasicSettings(configForIndigoTrunk)
 
-        def configForKineticTrunk = new Settings(onlyTrunksSettingsYaml, loggerMock, "kinetic-devel")
+        def SettingsParserKineticTrunk = new SettingsParser(onlyTrunksSettingsYaml, "kinetic-devel")
+        def configForKineticTrunk = SettingsParserKineticTrunk.settingsList.get(0)
         checkKineticTrunkSettings(configForKineticTrunk)
     }
 
@@ -134,16 +138,20 @@ class SettingsTest {
         branch:
             parent: kinetic-devel'''
 
-        def configDefault = new Settings(branchInheritedSettingsYaml, loggerMock)
+        def SettingsParserDefault = new SettingsParser(branchInheritedSettingsYaml)
+        def configDefault = SettingsParserDefault.settingsList.get(0)
         checkBasicSettings(configDefault)
 
-        def configForBranch = new Settings(branchInheritedSettingsYaml, loggerMock, "my_kinetic_branch")
+        def SettingsParserBranch = new SettingsParser(branchInheritedSettingsYaml, "my_kinetic_branch")
+        def configForBranch = SettingsParserBranch.settingsList.get(0)
         checkKineticTrunkSettings(configForBranch)
 
-        def configForIndigoTrunk = new Settings(branchInheritedSettingsYaml, loggerMock, "indigo-devel")
+        def SettingsParserIndigoTrunk = new SettingsParser(branchInheritedSettingsYaml, "indigo-devel")
+        def configForIndigoTrunk = SettingsParserIndigoTrunk.settingsList.get(0)
         checkBasicSettings(configForIndigoTrunk)
 
-        def configForKineticTrunk = new Settings(branchInheritedSettingsYaml, loggerMock, "kinetic-devel")
+        def SettingsParserKineticTrunk = new SettingsParser(branchInheritedSettingsYaml, "kinetic-devel")
+        def configForKineticTrunk = SettingsParserKineticTrunk.settingsList.get(0)
         checkKineticTrunkSettings(configForKineticTrunk)
     }
 
@@ -166,36 +174,30 @@ class SettingsTest {
         trunks:
             - name: indigo-devel
             - name: kinetic-devel
-            - settings:
-                ubuntu:
-                    version: xenial
-                ros:
-                    release: kinetic
-                docker:
-                    tag: xenial-kinetic
-            - settings:
-                ubuntu:
-                    version: xenial
-                ros:
-                    release: kinetic
-                docker:
-                    tag: xenial-kinetic
+              settings:
+                  - ubuntu:
+                        version: xenial
+                    ros:
+                        release: kinetic
+                    docker:
+                        tag: xenial-kinetic
+                  - ubuntu:
+                        version: willy
+                    ros:
+                        release: kinetic
+                    docker:
+                        tag: xenial-kinetic
         branch:
             parent: kinetic-devel'''
 
-        def configDefault = new Settings(branchInheritedMultipleSettingsYaml, loggerMock)
-        checkBasicSettings(configDefault)
 
-        def configForBranch = new Settings(branchInheritedMultipleSettingsYaml, loggerMock, "my_kinetic_branch")
-        checkKineticTrunkMultipleSettings(configForBranch)
+        def SettingsParserDefault = new SettingsParser(branchInheritedMultipleSettingsYaml)
+        assert 2 == SettingsParserDefault.settingsList.size()
+        def config0 = SettingsParserDefault.settingsList.get(0)
+        //println config0
 
-        def configForIndigoTrunk = new Settings(branchInheritedMultipleSettingsYaml, loggerMock, "indigo-devel")
-        checkBasicSettings(configForIndigoTrunk)
-
-        def configForKineticTrunk = new Settings(branchInheritedMultipleSettingsYaml, loggerMock, "kinetic-devel")
-        checkKineticTrunkMultipleSettings(configForKineticTrunk)
     }
-
+/*
 
     @Test
     void checkModulesListOverride() {
