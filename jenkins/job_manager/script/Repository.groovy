@@ -56,7 +56,9 @@ class Repository {
                 }
             } else {
                 try {
-                    return new Settings(settingsYaml, logger, branchName)
+                    def settingsParserInstance = new SettingsParser(settingsYaml, logger, branchName)
+                    def settingsInstance = settingsParserInstance.settingsList.get(0)
+                    return settingsInstance
                 } catch (Exception e) {
                     logger.warn("Failed to parse ${filePath}. Contents:")
                     logger.warn(settingsYaml)
