@@ -1,5 +1,4 @@
 if (!binding.variables.containsKey("toolsetBranch")) {
-    // change that back to master later
     toolsetBranch = "master"
 }
 

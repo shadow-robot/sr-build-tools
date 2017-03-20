@@ -29,17 +29,17 @@ class SettingsParser {
                 def trunk = config.trunks.find { it.name == branchName }
 
                 if (trunk.settings && trunk.settings.getClass() == ArrayList) {
-                    FillSettingsList(trunk, branchName)
+                    fillSettingsList(trunk, branchName)
                 }
             } else {
                 if (config.branch && config.branch.parent) {
                     def trunk = config.trunks.find { it.name == config.branch.parent }
 
                     if (trunk.settings && trunk.settings.getClass() == ArrayList) {
-                        FillSettingsList(trunk, branchName)
+                        fillSettingsList(trunk, branchName)
                     }
                     if (config.branch.settings && config.branch.settings.getClass() == ArrayList) {
-                        FillSettingsList(config.branch, branchName)
+                        fillSettingsList(config.branch, branchName)
                     }
                 }
             }
@@ -50,7 +50,7 @@ class SettingsParser {
         }
     }
 
-    def FillSettingsList(Map trunk, String branchName = null){
+    def fillSettingsList(Map trunk, String branchName = null){
         createdMultipleSettings = true
         def trunkSettingsList = trunk.settings.clone()
         trunk.settings.clear()
