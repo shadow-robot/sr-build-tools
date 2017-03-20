@@ -14,83 +14,51 @@ class SettingsParser {
     }
 
     def parseYaml(newYaml = null) {
-        if (newYaml) yaml = newYaml
+        if (newYaml) {
+            yaml = newYaml
+        }
         def parser = new Yaml()
         config = parser.load(yaml)
     }
 
-
     def generateSettingsList(String branchName = null) {
-
         createdMultipleSettings = false
 
         if (branchName) {
             if (config.trunks && branchName in config.trunks.name) {
-                // This is a main branch
                 def trunk = config.trunks.find { it.name == branchName }
-                // If there are settings defined in this main branch
-                if (trunk.settings) {
-                    //if there are multiple settings
-                    if (trunk.settings.getClass() == ArrayList){
 
-                        createdMultipleSettings = true
-
-                        def trunkSettingsList = trunk.settings.clone()
-                        trunk.settings.clear()
-                        for (int j=0; j < trunkSettingsList.size(); j++){
-                            trunk.settings = trunkSettingsList[j]
-                            settingsList.add(new Settings(config, logger, branchName))
-                        }
-                    }
+                if (trunk.settings && trunk.settings.getClass() == ArrayList) {
+                    FillSettingsList(trunk, branchName)
                 }
             } else {
-                // This is not a main branch
-                // If a template main branch is specified
-                if (config.branch) {
-                    if (config.branch.parent) {
-                        // Find the main branch
-                        def trunk = config.trunks.find { it.name == config.branch.parent }
-                        // If the main branch has settings
-                        if (trunk.settings) {
-                            //if there are multiple settings
-                            if (trunk.settings.getClass() == ArrayList){
+                if (config.branch && config.branch.parent) {
+                    def trunk = config.trunks.find { it.name == config.branch.parent }
 
-                                createdMultipleSettings = true
+                    if (trunk.settings && trunk.settings.getClass() == ArrayList) {
+                        FillSettingsList(trunk, branchName)
+                    }
 
-                                def trunkSettingsList = trunk.settings.clone()
-                                trunk.settings.clear()
-                                for (int j=0; j < trunkSettingsList.size(); j++){
-                                    trunk.settings = trunkSettingsList[j]
-                                    settingsList.add(new Settings(config, logger, branchName))
-                                }
-                            }
-                        }
-
-                        //if different toolsets specified for a parent
-                        if(config.branch.settings){
-                            if (config.branch.settings.getClass() == ArrayList){
-
-                                createdMultipleSettings = true
-
-                                def toolsetSettingsList = config.branch.settings.clone()
-                                config.branch.settings.clear()
-                                for (int j=0; j < toolsetSettingsList.size(); j++){
-                                    config.branch.settings = toolsetSettingsList[j]
-                                    settingsList.add(new Settings(config, logger, branchName))
-                                }
-
-                            }
-
-                        }
+                    if (config.branch.settings && config.branch.settings.getClass() == ArrayList) {
+                        FillSettingsList(config.branch, branchName)
                     }
                 }
             }
-
         }
 
         if (!createdMultipleSettings){
             settingsList.add(new Settings(config, logger, branchName))
         }
 
+    }
+
+    def FillSettingsList(Map trunk, String branchName = null){
+        createdMultipleSettings = true
+        def trunkSettingsList = trunk.settings.clone()
+        trunk.settings.clear()
+        for (int j = 0; j < trunkSettingsList.size(); j++) {
+            trunk.settings = trunkSettingsList[j]
+            settingsList.add(new Settings(config, logger, branchName))
+        }
     }
 }

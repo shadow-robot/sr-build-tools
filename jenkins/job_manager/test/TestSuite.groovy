@@ -1,6 +1,6 @@
-if (!binding.variables.containsKey("toolsetBranch")) {
+/*if (!binding.variables.containsKey("toolsetBranch")) {
     // change that back to master later
-    toolsetBranch = "F_multiple_settings_parsing"
+    toolsetBranch = "master"
 }
 
 def baseUrl = "https://raw.githubusercontent.com/shadow-robot/sr-build-tools/${toolsetBranch}/jenkins/job_manager"
@@ -14,6 +14,14 @@ def result = evaluate(
         "${baseScriptUrl}/Settings.groovy?u=${timestamp}".toURL().getText() + "\n" +
         "${baseTestUrl}/SettingsTest.groovy?u=${timestamp}".toURL().getText() + "\n" +
         "return org.junit.runner.JUnitCore.runClasses(SettingsTest.class)")
+*/
+
+def result = evaluate(
+        new File("/home/michal/sr-build-tools/jenkins/job_manager/script/Logger.groovy").text + "\n" +
+                new File("/home/michal/sr-build-tools/jenkins/job_manager/script/SettingsParser.groovy").text + "\n" +
+                new File("/home/michal/sr-build-tools/jenkins/job_manager/script/Settings.groovy").text + "\n" +
+                new File("/home/michal/sr-build-tools/jenkins/job_manager/test/SettingsTest.groovy").text + "\n" +
+                "return org.junit.runner.JUnitCore.runClasses(SettingsTest.class)")
 
 println "Executed " + result.getRunCount() + " test(s) for " + (result.getRunTime() / 1000) + " second(s)"
 println "Ignored test(s) count " + result.getIgnoreCount()
