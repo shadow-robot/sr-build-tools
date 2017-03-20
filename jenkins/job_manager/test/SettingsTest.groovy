@@ -450,7 +450,7 @@ class SettingsTest {
         def configDefault = settingsParserDefault.settingsList.get(0)
         checkBasicSettings(configDefault)
 
-        def settingsForBranch = new SettingsParser(branchMultipleToolsetsYaml, loggerMock, "my_new_kinetic_branch")
+        def settingsForBranch = new SettingsParser(branchMultipleToolsetsYaml, loggerMock, "my_new_version_branch")
         assert 2 == settingsForBranch.settingsList.size()
 
         def configForBranch0 = settingsForBranch.settingsList.get(0)
@@ -467,7 +467,7 @@ class SettingsTest {
         assert "trusty" == configForBranch1.settings.ubuntu.version
         assert "trusty-indigo" == configForBranch1.settings.docker.tag
         assert "indigo" == configForBranch1.settings.ros.release
-        assert 1 == configForBranch1.settingIndigos.toolset.modules.size()
+        assert 1 == configForBranch1.settings.toolset.modules.size()
         assert "code_style_check" in configForBranch1.settings.toolset.modules
 
 
