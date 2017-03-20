@@ -18,6 +18,7 @@ def timestamp = System.currentTimeMillis()
 
 evaluate("${baseImageUrl}/Logger.groovy?u=${timestamp}".toURL().getText() + "\n" +
         "${baseImageUrl}/Settings.groovy?u=${timestamp}".toURL().getText() + "\n" +
+        "${baseImageUrl}/SettingsParser.groovy?u=${timestamp}".toURL().getText() + "\n" +
         "${baseImageUrl}/Branch.groovy?u=${timestamp}".toURL().getText() + "\n" +
         "${baseImageUrl}/Job.groovy?u=${timestamp}".toURL().getText() + "\n" +
         "${baseImageUrl}/PullRequest.groovy?u=${timestamp}".toURL().getText() + "\n" +
