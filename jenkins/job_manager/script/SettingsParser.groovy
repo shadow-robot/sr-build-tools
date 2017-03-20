@@ -1,42 +1,16 @@
 import org.yaml.snakeyaml.Yaml
-import groovy.mock.interceptor.MockFor
 
 class SettingsParser {
     String yaml
     Map config
     List<Settings> settingsList = []
+    Logger logger
+    boolean createdMultipleSettings
 
-    static Logger loggerMock
-
-    SettingsParser(String yaml, String branchName = null) {
-        initializeMocks()
+    SettingsParser(String yaml, Logger logger, String branchName = null) {
+        this.logger = logger
         parseYaml(yaml)
-
-        def trunk = config.trunks.find {it.name == "kinetic-devel"}
-        def parentName = null
-
-        if (config.branch) {
-            parentName = config.branch.parent
-        }
-
-        // if there are multiple settings, create list of maps
-        if (config.trunks && 'kinetic-devel' in config.trunks.name && trunk.settings.getClass() == ArrayList &&
-                ((branchName == 'kinetic-devel' && !config.branch) ||
-                        (parentName == 'kinetic-devel' && !(!branchName || branchName == 'indigo-devel')))){
-
-                def numOfKineticSettings = trunk.settings.size()
-                def kineticSettings = trunk.settings.clone()
-                trunk.settings.clear()
-
-                for (def i=0; i < numOfKineticSettings; i++) {
-                    trunk.settings = kineticSettings[i]
-                    settingsList.add(new Settings(config, loggerMock, branchName))
-                }
-
-            //otherwise, just pass the parsed map
-        } else {
-              settingsList.add(new Settings(config, loggerMock, branchName))
-        }
+        generateSettingsList(branchName)
     }
 
     def parseYaml(newYaml = null) {
@@ -45,9 +19,78 @@ class SettingsParser {
         config = parser.load(yaml)
     }
 
-    static void initializeMocks() {
-        def loggerMockContext = new MockFor(Logger)
-        loggerMockContext.ignore(~".*") {}
-        loggerMock = loggerMockContext.proxyInstance([null])
+
+    def generateSettingsList(String branchName = null) {
+
+        createdMultipleSettings = false
+
+        if (branchName) {
+            if (config.trunks && branchName in config.trunks.name) {
+                // This is a main branch
+                def trunk = config.trunks.find { it.name == branchName }
+                // If there are settings defined in this main branch
+                if (trunk.settings) {
+                    //if there are multiple settings
+                    if (trunk.settings.getClass() == ArrayList){
+
+                        createdMultipleSettings = true
+
+                        def trunkSettingsList = trunk.settings.clone()
+                        trunk.settings.clear()
+                        for (int j=0; j < trunkSettingsList.size(); j++){
+                            trunk.settings = trunkSettingsList[j]
+                            settingsList.add(new Settings(config, logger, branchName))
+                        }
+                    }
+                }
+            } else {
+                // This is not a main branch
+                // If a template main branch is specified
+                if (config.branch) {
+                    if (config.branch.parent) {
+                        // Find the main branch
+                        def trunk = config.trunks.find { it.name == config.branch.parent }
+                        // If the main branch has settings
+                        if (trunk.settings) {
+                            //if there are multiple settings
+                            if (trunk.settings.getClass() == ArrayList){
+
+                                createdMultipleSettings = true
+
+                                def trunkSettingsList = trunk.settings.clone()
+                                trunk.settings.clear()
+                                for (int j=0; j < trunkSettingsList.size(); j++){
+                                    trunk.settings = trunkSettingsList[j]
+                                    settingsList.add(new Settings(config, logger, branchName))
+                                }
+                            }
+                        }
+
+                        //if different toolsets specified for a parent
+                        if(config.branch.settings){
+                            if (config.branch.settings.getClass() == ArrayList){
+
+                                createdMultipleSettings = true
+
+                                def toolsetSettingsList = config.branch.settings.clone()
+                                config.branch.settings.clear()
+                                for (int j=0; j < toolsetSettingsList.size(); j++){
+                                    config.branch.settings = toolsetSettingsList[j]
+                                    settingsList.add(new Settings(config, logger, branchName))
+                                }
+
+                            }
+
+                        }
+                    }
+                }
+            }
+
+        }
+
+        if (!createdMultipleSettings){
+            settingsList.add(new Settings(config, logger, branchName))
+        }
+
     }
 }

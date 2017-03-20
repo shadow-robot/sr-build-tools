@@ -38,7 +38,7 @@ class SettingsTest {
     void checkKineticTrunkWilly(Settings config) {
         assert "willy" == config.settings.ubuntu.version
         assert "shadowrobot/build-tools" == config.settings.docker.image
-        assert "xenial-kinetic" == config.settings.docker.tag
+        assert "willy-kinetic" == config.settings.docker.tag
         assert "kinetic" == config.settings.ros.release
         assert "my_template" == config.settings.toolset.template_job_name
         assert 2 == config.settings.toolset.modules.size()
@@ -63,16 +63,17 @@ class SettingsTest {
                     - check_cache
                     - code_coverage'''
 
-        def SettingsParserDefault = new SettingsParser(simpleSettingsYaml)
-        def configDefault = SettingsParserDefault.settingsList.get(0)
+        def settingsParserDefault = new SettingsParser(simpleSettingsYaml, loggerMock)
+        assert 1 == settingsParserDefault.settingsList.size()
+        def configDefault = settingsParserDefault.settingsList.get(0)
         checkBasicSettings(configDefault)
 
-        def SettingsParserBranch = new SettingsParser(simpleSettingsYaml, "my_super_feature")
-        def configForBranch = SettingsParserBranch.settingsList.get(0)
+        def settingsParserBranch = new SettingsParser(simpleSettingsYaml, loggerMock, "my_super_feature")
+        def configForBranch = settingsParserBranch.settingsList.get(0)
         checkBasicSettings(configForBranch)
 
-        def SettingsParserTrunk = new SettingsParser(simpleSettingsYaml, "kinetic-devel")
-        def configForTrunk = SettingsParserTrunk.settingsList.get(0)
+        def settingsParserTrunk = new SettingsParser(simpleSettingsYaml, loggerMock, "kinetic-devel")
+        def configForTrunk = settingsParserTrunk.settingsList.get(0)
         checkBasicSettings(configForTrunk)
     }
 
@@ -103,20 +104,20 @@ class SettingsTest {
                   docker:
                       tag: xenial-kinetic'''
 
-        def SettingsParserDefault = new SettingsParser(onlyTrunksSettingsYaml)
-        def configDefault = SettingsParserDefault.settingsList.get(0)
+        def settingsParserDefault = new SettingsParser(onlyTrunksSettingsYaml, loggerMock)
+        def configDefault = settingsParserDefault.settingsList.get(0)
         checkBasicSettings(configDefault)
 
-        def SettingsParserBranch = new SettingsParser(onlyTrunksSettingsYaml, "my_super_feature")
-        def configForBranch = SettingsParserBranch.settingsList.get(0)
+        def settingsParserBranch = new SettingsParser(onlyTrunksSettingsYaml, loggerMock, "my_super_feature")
+        def configForBranch = settingsParserBranch.settingsList.get(0)
         checkBasicSettings(configForBranch)
 
-        def SettingsParserIndigoTrunk = new SettingsParser(onlyTrunksSettingsYaml, "indigo-devel")
-        def configForIndigoTrunk = SettingsParserIndigoTrunk.settingsList.get(0)
+        def settingsParserIndigoTrunk = new SettingsParser(onlyTrunksSettingsYaml, loggerMock, "indigo-devel")
+        def configForIndigoTrunk = settingsParserIndigoTrunk.settingsList.get(0)
         checkBasicSettings(configForIndigoTrunk)
 
-        def SettingsParserKineticTrunk = new SettingsParser(onlyTrunksSettingsYaml, "kinetic-devel")
-        def configForKineticTrunk = SettingsParserKineticTrunk.settingsList.get(0)
+        def settingsParserKineticTrunk = new SettingsParser(onlyTrunksSettingsYaml, loggerMock, "kinetic-devel")
+        def configForKineticTrunk = settingsParserKineticTrunk.settingsList.get(0)
         checkKineticTrunkSettings(configForKineticTrunk)
     }
 
@@ -149,20 +150,20 @@ class SettingsTest {
         branch:
             parent: kinetic-devel'''
 
-        def SettingsParserDefault = new SettingsParser(branchInheritedSettingsYaml)
-        def configDefault = SettingsParserDefault.settingsList.get(0)
+        def settingsParserDefault = new SettingsParser(branchInheritedSettingsYaml, loggerMock)
+        def configDefault = settingsParserDefault.settingsList.get(0)
         checkBasicSettings(configDefault)
 
-        def SettingsParserBranch = new SettingsParser(branchInheritedSettingsYaml, "my_kinetic_branch")
-        def configForBranch = SettingsParserBranch.settingsList.get(0)
+        def settingsParserBranch = new SettingsParser(branchInheritedSettingsYaml, loggerMock, "my_kinetic_branch")
+        def configForBranch = settingsParserBranch.settingsList.get(0)
         checkKineticTrunkSettings(configForBranch)
 
-        def SettingsParserIndigoTrunk = new SettingsParser(branchInheritedSettingsYaml, "indigo-devel")
-        def configForIndigoTrunk = SettingsParserIndigoTrunk.settingsList.get(0)
+        def settingsParserIndigoTrunk = new SettingsParser(branchInheritedSettingsYaml, loggerMock, "indigo-devel")
+        def configForIndigoTrunk = settingsParserIndigoTrunk.settingsList.get(0)
         checkBasicSettings(configForIndigoTrunk)
 
-        def SettingsParserKineticTrunk = new SettingsParser(branchInheritedSettingsYaml, "kinetic-devel")
-        def configForKineticTrunk = SettingsParserKineticTrunk.settingsList.get(0)
+        def settingsParserKineticTrunk = new SettingsParser(branchInheritedSettingsYaml, loggerMock, "kinetic-devel")
+        def configForKineticTrunk = settingsParserKineticTrunk.settingsList.get(0)
         checkKineticTrunkSettings(configForKineticTrunk)
     }
 
@@ -197,24 +198,27 @@ class SettingsTest {
                     ros:
                         release: kinetic
                     docker:
-                        tag: xenial-kinetic'''
+                        tag: willy-kinetic'''
 
-        def SettingsParserDefault = new SettingsParser(onlyTrunksMultipleSettingsYaml)
-        def configDefault = SettingsParserDefault.settingsList.get(0)
+        def settingsParserDefault = new SettingsParser(onlyTrunksMultipleSettingsYaml, loggerMock)
+        assert 1 == settingsParserDefault.settingsList.size()
+        def configDefault = settingsParserDefault.settingsList.get(0)
         checkBasicSettings(configDefault)
 
-        def SettingsParserBranch = new SettingsParser(onlyTrunksMultipleSettingsYaml, "my_super_feature")
-        def configForBranch = SettingsParserBranch.settingsList.get(0)
+        def settingsParserBranch = new SettingsParser(onlyTrunksMultipleSettingsYaml, loggerMock, "my_super_feature")
+        assert 1 == settingsParserBranch.settingsList.size()
+        def configForBranch = settingsParserBranch.settingsList.get(0)
         checkBasicSettings(configForBranch)
 
-        def SettingsParserIndigoTrunk = new SettingsParser(onlyTrunksMultipleSettingsYaml, "indigo-devel")
-        def configForIndigoTrunk = SettingsParserIndigoTrunk.settingsList.get(0)
+        def settingsParserIndigoTrunk = new SettingsParser(onlyTrunksMultipleSettingsYaml, loggerMock, "indigo-devel")
+        assert 1 == settingsParserIndigoTrunk.settingsList.size()
+        def configForIndigoTrunk = settingsParserIndigoTrunk.settingsList.get(0)
         checkBasicSettings(configForIndigoTrunk)
 
-        def SettingsParserKineticTrunk = new SettingsParser(onlyTrunksMultipleSettingsYaml, "kinetic-devel")
-        assert 2 == SettingsParserKineticTrunk.settingsList.size()
-        checkKineticTrunkSettings(SettingsParserKineticTrunk.settingsList.get(0))
-        checkKineticTrunkWilly(SettingsParserKineticTrunk.settingsList.get(1))
+        def settingsParserKineticTrunk = new SettingsParser(onlyTrunksMultipleSettingsYaml, loggerMock, "kinetic-devel")
+        assert 2 == settingsParserKineticTrunk.settingsList.size()
+        checkKineticTrunkSettings(settingsParserKineticTrunk.settingsList.get(0))
+        checkKineticTrunkWilly(settingsParserKineticTrunk.settingsList.get(1))
     }
 
     @Test
@@ -248,26 +252,29 @@ class SettingsTest {
                     ros:
                         release: kinetic
                     docker:
-                        tag: xenial-kinetic
+                        tag: willy-kinetic
         branch:
             parent: kinetic-devel'''
 
-        def SettingsParserDefault = new SettingsParser(branchInheritedMultipleSettingsYaml)
-        def configDefault = SettingsParserDefault.settingsList.get(0)
+        def settingsParserDefault = new SettingsParser(branchInheritedMultipleSettingsYaml, loggerMock)
+        assert 1 == settingsParserDefault.settingsList.size()
+        def configDefault = settingsParserDefault.settingsList.get(0)
         checkBasicSettings(configDefault)
 
-        def SettingsParserBranch = new SettingsParser(branchInheritedMultipleSettingsYaml, "my_kinetic_branch")
-        def configForBranch = SettingsParserBranch.settingsList.get(0)
-        checkKineticTrunkSettings(configForBranch)
-
-        def SettingsParserIndigoTrunk = new SettingsParser(branchInheritedMultipleSettingsYaml, "indigo-devel")
-        def configForIndigoTrunk = SettingsParserIndigoTrunk.settingsList.get(0)
+        def settingsParserIndigoTrunk = new SettingsParser(branchInheritedMultipleSettingsYaml, loggerMock, "indigo-devel")
+        assert 1 == settingsParserIndigoTrunk.settingsList.size()
+        def configForIndigoTrunk = settingsParserIndigoTrunk.settingsList.get(0)
         checkBasicSettings(configForIndigoTrunk)
 
-        def SettingsParserKineticTrunk = new SettingsParser(branchInheritedMultipleSettingsYaml, "kinetic-devel")
-        assert 2 == SettingsParserKineticTrunk.settingsList.size()
-        checkKineticTrunkSettings(SettingsParserKineticTrunk.settingsList.get(0))
-        checkKineticTrunkWilly(SettingsParserKineticTrunk.settingsList.get(1))
+        def settingsParserBranch = new SettingsParser(branchInheritedMultipleSettingsYaml, loggerMock, "my_kinetic_branch")
+        assert 2 == settingsParserBranch.settingsList.size()
+        checkKineticTrunkSettings(settingsParserBranch.settingsList.get(0))
+        checkKineticTrunkWilly(settingsParserBranch.settingsList.get(1))
+
+        def settingsParserKineticTrunk = new SettingsParser(branchInheritedMultipleSettingsYaml, loggerMock, "kinetic-devel")
+        assert 2 == settingsParserKineticTrunk.settingsList.size()
+        checkKineticTrunkSettings(settingsParserKineticTrunk.settingsList.get(0))
+        checkKineticTrunkWilly(settingsParserKineticTrunk.settingsList.get(1))
     }
 
     @Test
@@ -308,12 +315,12 @@ class SettingsTest {
                         - check_cache
                         - software_tests'''
 
-        def SettingsParserDefault = new SettingsParser(branchOverridesModulesListSettingsYaml)
-        def configDefault = SettingsParserDefault.settingsList.get(0)
+        def settingsParserDefault = new SettingsParser(branchOverridesModulesListSettingsYaml, loggerMock)
+        def configDefault = settingsParserDefault.settingsList.get(0)
         checkBasicSettings(configDefault)
 
-        def SettingsForBranch = new SettingsParser(branchOverridesModulesListSettingsYaml, "my_new_kinetic_branch")
-        def configForBranch = SettingsForBranch.settingsList.get(0)
+        def settingsForBranch = new SettingsParser(branchOverridesModulesListSettingsYaml, loggerMock, "my_new_kinetic_branch")
+        def configForBranch = settingsForBranch.settingsList.get(0)
 
         assert "xenial" == configForBranch.settings.ubuntu.version
         assert "xenial-kinetic" == configForBranch.settings.docker.tag
@@ -322,12 +329,12 @@ class SettingsTest {
         assert "check_cache" in configForBranch.settings.toolset.modules
         assert "software_tests" in configForBranch.settings.toolset.modules
 
-        def SettingsForIndigoTrunk = new SettingsParser(branchOverridesModulesListSettingsYaml, "indigo-devel")
-        def configForIndigoTrunk = SettingsForIndigoTrunk.settingsList.get(0)
+        def settingsForIndigoTrunk = new SettingsParser(branchOverridesModulesListSettingsYaml, loggerMock, "indigo-devel")
+        def configForIndigoTrunk = settingsForIndigoTrunk.settingsList.get(0)
         checkBasicSettings(configForIndigoTrunk)
 
-        def SettingsForKineticTrunk = new SettingsParser(branchOverridesModulesListSettingsYaml, "kinetic-devel")
-        def configForKineticTrunk = SettingsForKineticTrunk.settingsList.get(0)
+        def settingsForKineticTrunk = new SettingsParser(branchOverridesModulesListSettingsYaml, loggerMock, "kinetic-devel")
+        def configForKineticTrunk = settingsForKineticTrunk.settingsList.get(0)
 
         assert "xenial" == configForKineticTrunk.settings.ubuntu.version
         assert "xenial-kinetic" == configForKineticTrunk.settings.docker.tag
@@ -336,5 +343,143 @@ class SettingsTest {
         assert "check_cache" in configForKineticTrunk.settings.toolset.modules
         assert "all_tests" in configForKineticTrunk.settings.toolset.modules
 
+    }
+
+    @Test
+    void checkBranchMultipleBranchSettings() {
+        def MultipleBranchSettingsYaml = '''\
+        settings:
+            ubuntu:
+                version: trusty
+            docker:
+                image: shadowrobot/build-tools
+                tag: trusty-indigo
+            ros:
+                release: indigo
+            toolset:
+                template_job_name: my_template
+                modules:
+                    - check_cache
+                    - code_coverage
+        trunks:
+            - name: super-new-version-devel
+              settings:
+                  - ubuntu:
+                        version: xenial
+                    ros:
+                        release: kinetic
+                    docker:
+                        tag: xenial-kinetic
+                  - ubuntu:
+                        version: willy
+                    ros:
+                        release: kinetic
+                    docker:
+                        tag: willy-kinetic
+            - name: kinetic-devel
+              settings:
+                  ubuntu:
+                      version: xenial
+                  ros:
+                      release: kinetic
+                  docker:
+                      tag: xenial-kinetic
+        branch:
+            parent: kinetic-devel'''
+
+        def settingsParserDefault = new SettingsParser(MultipleBranchSettingsYaml, loggerMock)
+        def configDefault = settingsParserDefault.settingsList.get(0)
+        checkBasicSettings(configDefault)
+
+        def settingsParserBranch = new SettingsParser(MultipleBranchSettingsYaml, loggerMock, "my_kinetic_branch")
+        assert 1 == settingsParserBranch.settingsList.size()
+        def configForBranch = settingsParserBranch.settingsList.get(0)
+        checkKineticTrunkSettings(configForBranch)
+
+        def settingsParserNewTrunk = new SettingsParser(MultipleBranchSettingsYaml, loggerMock, "super-new-version-devel")
+        assert 2 == settingsParserNewTrunk.settingsList.size()
+        checkKineticTrunkSettings(settingsParserNewTrunk.settingsList.get(0))
+        checkKineticTrunkWilly(settingsParserNewTrunk.settingsList.get(1))
+
+        def settingsParserKineticTrunk = new SettingsParser(MultipleBranchSettingsYaml, loggerMock, "kinetic-devel")
+        assert 1 == settingsParserKineticTrunk.settingsList.size()
+        checkKineticTrunkSettings(settingsParserKineticTrunk.settingsList.get(0))
+    }
+
+    @Test
+    void checkBranchMultipleToolsets() {
+        def branchMultipleToolsetsYaml = '''\
+        settings:
+            ubuntu:
+                version: trusty
+            docker:
+                image: shadowrobot/build-tools
+                tag: trusty-indigo
+            ros:
+                release: indigo
+            toolset:
+                template_job_name: my_template
+                modules:
+                    - check_cache
+                    - code_coverage
+        trunks:
+            - name: new-version-devel
+            - name: kinetic-devel
+              settings:
+                  ubuntu:
+                      version: xenial
+                  ros:
+                      release: kinetic
+                  docker:
+                      tag: xenial-kinetic
+
+        branch:
+            parent: new-version-devel
+            settings:
+                - toolset:
+                      modules:
+                          - check_cache
+                          - software_tests
+                - toolset:
+                      template_job_name: my_second_template
+                      modules:
+                        - code_style_check'''
+
+        def settingsParserDefault = new SettingsParser(branchMultipleToolsetsYaml, loggerMock)
+        assert 1 == settingsParserDefault.settingsList.size()
+        def configDefault = settingsParserDefault.settingsList.get(0)
+        checkBasicSettings(configDefault)
+
+        def settingsForBranch = new SettingsParser(branchMultipleToolsetsYaml, loggerMock, "my_new_kinetic_branch")
+        assert 2 == settingsForBranch.settingsList.size()
+
+        def configForBranch0 = settingsForBranch.settingsList.get(0)
+
+        assert "trusty" == configForBranch0.settings.ubuntu.version
+        assert "trusty-indigo" == configForBranch0.settings.docker.tag
+        assert "indigo" == configForBranch0.settings.ros.release
+        assert 2 == configForBranch0.settings.toolset.modules.size()
+        assert "check_cache" in configForBranch0.settings.toolset.modules
+        assert "software_tests" in configForBranch0.settings.toolset.modules
+
+        def configForBranch1 = settingsForBranch.settingsList.get(1)
+
+        assert "trusty" == configForBranch1.settings.ubuntu.version
+        assert "trusty-indigo" == configForBranch1.settings.docker.tag
+        assert "indigo" == configForBranch1.settings.ros.release
+        assert 1 == configForBranch1.settingIndigos.toolset.modules.size()
+        assert "code_style_check" in configForBranch1.settings.toolset.modules
+
+
+        def settingsForKineticTrunk = new SettingsParser(branchMultipleToolsetsYaml, loggerMock, "kinetic-devel")
+        assert 1 == settingsForKineticTrunk.settingsList.size()
+        def configForKineticTrunk = settingsForKineticTrunk.settingsList.get(0)
+
+        assert "xenial" == configForKineticTrunk.settings.ubuntu.version
+        assert "xenial-kinetic" == configForKineticTrunk.settings.docker.tag
+        assert "kinetic" == configForKineticTrunk.settings.ros.release
+        assert 2 == configForKineticTrunk.settings.toolset.modules.size()
+        assert "check_cache" in configForKineticTrunk.settings.toolset.modules
+        assert "code_coverage" in configForKineticTrunk.settings.toolset.modules
     }
 }
