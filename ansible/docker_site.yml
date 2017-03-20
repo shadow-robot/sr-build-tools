@@ -42,7 +42,8 @@
     - {role: ci/build/check, when: run_build, tags: ["check_build"]}
     - {role: ci/build/catkin, when: run_build, tags: ["build", "unit_tests", "software_tests", "all_tests",
                                                       "code_coverage", "codecov_tool",
-                                                      "python_code_coverage", "cpp_code_coverage"]}
+                                                      "python_code_coverage", "cpp_code_coverage", "benchmarking"]}
+    - {role: ci/benchmarking, when: run_build, tags: ["benchmarking"]}
     - {role: ci/code_coverage/python/setup, when: run_build, tags: ["python_code_coverage", "code_coverage",
                                                                     "codecov_tool"]}
     - {role: ci/code_coverage/cpp/setup, when: run_build, tags: ["cpp_code_coverage", "code_coverage", "codecov_tool"]}
