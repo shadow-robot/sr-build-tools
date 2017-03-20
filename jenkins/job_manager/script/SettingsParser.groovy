@@ -38,7 +38,6 @@ class SettingsParser {
                     if (trunk.settings && trunk.settings.getClass() == ArrayList) {
                         FillSettingsList(trunk, branchName)
                     }
-
                     if (config.branch.settings && config.branch.settings.getClass() == ArrayList) {
                         FillSettingsList(config.branch, branchName)
                     }
@@ -49,7 +48,6 @@ class SettingsParser {
         if (!createdMultipleSettings){
             settingsList.add(new Settings(config, logger, branchName))
         }
-
     }
 
     def FillSettingsList(Map trunk, String branchName = null){
