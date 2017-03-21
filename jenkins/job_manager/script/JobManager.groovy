@@ -21,7 +21,7 @@ class JobManager {
 
     def processJobs() {
         logger.info("Processing jobs...")
-        fetchCurrentJenkinsJobs()ettingsYaml,
+        fetchCurrentJenkinsJobs()
         def newAutoJobs = repositories.jobs.flatten()
         def goodNewAutoJobs = newAutoJobs.findAll { it.settings.status != Settings.Status.ERROR }
         def newJobsWithBranchConfigs = goodNewAutoJobs.findAll { it.settings.source == Settings.Source.BRANCH }
@@ -175,7 +175,7 @@ class JobManager {
             return false
         }
         logger.info("Creating new Jenkins job: ${job.name}...")
-        logger.debug("${job.settings}")
+        logger.debug("${job.settings}")logger.debug(settings.toString())
         // Get template job
         def template = Jenkins.instance.getItem(job.settings.settings.toolset.template_job_name)
         if (!(template instanceof hudson.model.Job)) {
