@@ -78,7 +78,7 @@ class SettingsTest {
         def configForTrunk = settingsParserTrunk.settingsList.get(0)
         checkBasicSettings(configForTrunk)
     }
-
+ranch
     @Test
     void onlyTrunksConfiguration() {
         def onlyTrunksSettingsYaml = '''\

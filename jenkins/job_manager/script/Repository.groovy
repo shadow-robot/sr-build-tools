@@ -18,7 +18,8 @@ class Repository {
 
     def process(Settings defaultSettings) {
         if (!getReferences()) return false
-        settings = getSettingsFromFile()
+        def settingsList = getSettingsFromFile()
+        settings = settingsList.get(0)
         settings.source = Settings.Source.TRUNK
         markTrunks()
         branches.findAll { it.head || it.trunk || it.pullRequests }.each { it.getSettingsFromRepository() }
@@ -39,14 +40,14 @@ class Repository {
         return null
     }
 
-    Settings getSettingsFromFile(String filePath = 'jenkins.yml', String branchName = null, Integer retries = 5) {
+    List<Settings> getSettingsFromFile(String filePath = 'jenkins.yml', String branchName = null, Integer retries = 5) {
         for (attempt in 1..retries) {
             def settingsYaml = getFileContents(filePath, branchName)
             if (settingsYaml instanceof Integer) {
                 switch (settingsYaml) {
                     case 404:
                         logger.warn("${url} does not have a ${filePath} in the ${branchName ?: 'main'} branch.")
-                        return new Settings(true, logger)
+                        return [new Settings(true, logger)]
                     case 400:
                         logger.warn("Attempted curl of ${filePath} from ${url} resulted in a 400: Bad Request error.")
                         break
@@ -57,7 +58,7 @@ class Repository {
             } else {
                 try {
                     def settingsParserInstance = new SettingsParser(settingsYaml, logger, branchName)
-                    def settingsInstance = settingsParserInstance.settingsList.get(0)
+                    def settingsInstance = settingsParserInstance.settingsList
                     return settingsInstance
                 } catch (Exception e) {
                     logger.warn("Failed to parse ${filePath}. Contents:")
@@ -68,7 +69,7 @@ class Repository {
             logger.info("Retrying ${retries - attempt} more times.")
         }
         logger.error("Ultimately failed to get settings from jenkins.yml from ${url} after ${retries} attempts.")
-        return new Settings(false, logger)
+        return [new Settings(false, logger)]
     }
 
     def getReferences() {

@@ -130,7 +130,8 @@ class JobManager {
     def fetchDefaultSettings() {
         logger.info("Fetching default job settings...")
         def defaultSettingsRepository = new GithubRepository('shadow-robot', 'sr-build-tools', credentials, logger)
-        defaultSettings = defaultSettingsRepository.getSettingsFromFile('config/default_jenkins.yml', 'master')
+        def defaultSettingsList = defaultSettingsRepository.getSettingsFromFile('config/default_jenkins.yml', 'master')
+        defaultSettings = defaultSettingsList.get(0)
         if (!defaultSettings) {
             logger.info("Failed to obtain default settings. Aborting.")
             return false
