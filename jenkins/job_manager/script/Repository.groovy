@@ -89,7 +89,7 @@ class Repository {
         def headMatcher = output =~ /(?m)^([0-9a-f]*)\s*HEAD$/
         if (headMatcher.getCount()) {
             headSha = headMatcher[0][1]
-        } else {defaultSettings
+        } else {
             logger.warn("No HEAD found for ${url}")
         }
         def branchMatcher = output =~ /(?m)^([0-9a-f]*)\s*refs\/heads\/(.*)$/
