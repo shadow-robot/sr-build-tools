@@ -5,7 +5,7 @@ class Job {
     Branch branch
     Repository repository
 
-    Job(Branch branch, Settings defaultSettings, int settingsIndex = 0) {
+    Job(Branch branch, Settings defaultSettings, Integer settingsIndex = 0) {
         this.branch = branch
         this.logger = branch.logger
         this.repository = branch.repository
@@ -48,10 +48,9 @@ class Job {
         } else {
             makeName()
         }
-
     }
 
-    def makeName(int settingsIndex = null) {
+    def makeName(settingsIndex = null) {
         if (settings.status == Settings.Status.ERROR) {
             this.name = "auto_${repository.name}_${branch.name.replace("#", "_no_")}_"
         } else {
