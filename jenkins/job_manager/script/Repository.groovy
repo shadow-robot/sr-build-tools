@@ -68,7 +68,7 @@ class Repository {
                 }
             }
             logger.info("Retrying ${retries - attempt} more times.")
-        }ettingsY
+        }
         logger.error("Ultimately failed to get settings from jenkins.yml from ${url} after ${retries} attempts.")
         return [new Settings(false, logger)]
     }
