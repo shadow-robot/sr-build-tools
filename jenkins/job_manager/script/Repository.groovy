@@ -1,6 +1,6 @@
 class Repository {
     String url, authenticatedUrl, headSha, name
-    //Settings settings
+    Settings settings
     Logger logger
     ArrayList<Branch> branches
     ArrayList<PullRequest> pullRequests
@@ -18,10 +18,10 @@ class Repository {
 
     def process(Settings defaultSettings) {
         if (!getReferences()) return false
-       // def settingsList = getSettingsFromFile()
-       // settings = settingsList.get(0)
-      //  settings.source = Settings.Source.TRUNK
-       // markTrunks()
+        def settingsList = getSettingsFromFile()
+        settings = settingsList.get(0)
+        settings.source = Settings.Source.TRUNK
+        markTrunks()
         branches.findAll { it.head || it.trunk || it.pullRequests }.each { it.getSettingsFromRepository() }
         generateJobs(defaultSettings)
         logger.debug("Processed ${this}")
