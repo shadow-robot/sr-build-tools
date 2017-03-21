@@ -44,7 +44,6 @@ class Job {
         }
 
         if (branch.settings.size() > 1){
-            logger.debug("Entered with multiple branch settings")
             makeName(settingsIndex)
         } else {
             makeName()
@@ -56,6 +55,7 @@ class Job {
             this.name = "auto_${repository.name}_${branch.name.replace("#", "_no_")}_"
         } else {
             if (settingsIndex) {
+                logger.debug("Entered with multiple branch settings")
                 this.name = "auto_${repository.name}_${branch.name.replace("#", "_no_")}_${settings.settings.ros.release}_${settingsIndex}"
             } else {
                 this.name = "auto_${repository.name}_${branch.name.replace("#", "_no_")}_${settings.settings.ros.release}"
