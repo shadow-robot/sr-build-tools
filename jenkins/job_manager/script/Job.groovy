@@ -54,7 +54,7 @@ class Job {
         if (settings.status == Settings.Status.ERROR) {
             this.name = "auto_${repository.name}_${branch.name.replace("#", "_no_")}_"
         } else {
-            if (settingsIndex) {
+            if (settingsIndex != null) {
                 logger.debug("Entered with multiple branch settings")
                 this.name = "auto_${repository.name}_${branch.name.replace("#", "_no_")}_${settings.settings.ros.release}_${settingsIndex}"
             } else {
