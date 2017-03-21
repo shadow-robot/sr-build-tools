@@ -44,6 +44,7 @@ class Job {
         }
 
         if (branch.settings.size() > 1){
+            logger.debug("Entered with multiple branch settings")
             makeName(settingsIndex)
         } else {
             makeName()
