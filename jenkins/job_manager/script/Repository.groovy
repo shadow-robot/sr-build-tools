@@ -112,7 +112,7 @@ class Repository {
             prMatcher.each { match ->
                 def pullRequest = new PullRequest(match[2].toInteger(), match[1])
                 def branch = branches.find { it.sha == pullRequest.sha }
-                if (branch) {        
+                if (branch) {
                     pullRequest.branch = branch
                     branch.pullRequests.push(pullRequest)
                     pullRequests.push(pullRequest)

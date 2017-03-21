@@ -15,7 +15,6 @@ class JobManager {
         this.credentials = credentials
         this.githubRepoNames = githubRepoNames
         this.jenkinsInstance = jenkinsInstance
-        logger.info("Script from branch F_multiple_jobs")
         logger.info("Job manager created.")
     }
 
@@ -175,7 +174,7 @@ class JobManager {
             return false
         }
         logger.info("Creating new Jenkins job: ${job.name}...")
-        logger.debug("${job.settings}")logger.debug(settings.toString())
+        logger.debug("${job.settings}")
         // Get template job
         def template = Jenkins.instance.getItem(job.settings.settings.toolset.template_job_name)
         if (!(template instanceof hudson.model.Job)) {
