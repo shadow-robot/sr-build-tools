@@ -5,16 +5,16 @@ class Job {
     Branch branch
     Repository repository
 
-    Job(Branch branch, Settings defaultSettings) {
+    Job(Branch branch, Settings defaultSettings, int settingsIndex = 0) {
         this.branch = branch
         this.logger = branch.logger
         this.repository = branch.repository
         this.defaultSettings = defaultSettings
-        logger.debug("Default settings: ${defaultSettings}")
-        this.branchSettings = branch.settings.get(0)
-        logger.debug("Branch settings: ${branchSettings}")
+        //logger.debug("Default settings: ${defaultSettings}")
+        this.branchSettings = branch.settings.get(settingsIndex)
+        //logger.debug("Branch settings: ${branchSettings}")
         this.trunkSettings = repository.settings
-        logger.debug("Trunk settings: ${trunkSettings}")
+        //logger.debug("Trunk settings: ${trunkSettings}")
         switch (branchSettings.status) {
             case Settings.Status.GOOD:
                 settings = branchSettings
