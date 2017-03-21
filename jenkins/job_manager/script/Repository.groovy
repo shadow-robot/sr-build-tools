@@ -136,10 +136,24 @@ class Repository {
 
     def generateJobs(Settings defaultSettings) {
         branches.findAll { it.trunk || it.head }.each { branch ->
-            jobs.push(new Job(branch, defaultSettings))
+
+            if (branch.settings.size() > 1){
+                for (int i = 0; i < branch.settings.size(); i++){
+                    jobs.push(new Job(branch, defaultSettings, i))
+                }
+            }else {
+                jobs.push(new Job(branch, defaultSettings))
+            }
         }
         pullRequests.findAll { it.branch }.each { pullRequest ->
-            jobs.push(new Job(pullRequest, defaultSettings))
+
+            if (pullRequest.settings.size() > 1){
+                for (int i = 0; i < branch.settings.size(); i++){
+                    jobs.push(new Job(pullRequest, defaultSettings, i))
+                }
+            }else {
+                jobs.push(new Job(pullRequest, defaultSettings))
+            }
         }
     }
 }
