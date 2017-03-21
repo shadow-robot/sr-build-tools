@@ -15,6 +15,7 @@ class JobManager {
         this.credentials = credentials
         this.githubRepoNames = githubRepoNames
         this.jenkinsInstance = jenkinsInstance
+        logger.info("Script from branch F_multiple_jobs")
         logger.info("Job manager created.")
     }
 
