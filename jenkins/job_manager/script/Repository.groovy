@@ -48,7 +48,7 @@ class Repository {
                     case 404:
                         logger.warn("${url} does not have a ${filePath} in the ${branchName ?: 'main'} branch.")
                         return [new Settings(true, logger)]
-                    case 400:        branches.findAll { it.head || it.trunk || it.pullRequests }.each { it.getSettingsFromRepository() }
+                    case 400:
                         logger.warn("Attempted curl of ${filePath} from ${url} resulted in a 400: Bad Request error.")
                         break
                     case -1:
