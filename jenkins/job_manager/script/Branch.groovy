@@ -2,7 +2,7 @@ class Branch {
     String name, sha
     Boolean trunk, head
     Repository repository
-    Settings settings
+    List<Settings> settings
     Logger logger
     ArrayList<PullRequest> pullRequests = new ArrayList<PullRequest>()
 
@@ -15,8 +15,7 @@ class Branch {
     }
 
     def getSettingsFromRepository() {
-        def settingsList = repository.getSettingsFromFile('jenkins.yml', name)
-        settings = settingsList.get(0)
+        settings = repository.getSettingsFromFile('jenkins.yml', name)
         logger.debug(settings.toString())
     }
 
