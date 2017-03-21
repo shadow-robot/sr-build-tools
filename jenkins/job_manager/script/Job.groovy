@@ -11,9 +11,9 @@ class Job {
         this.repository = branch.repository
         this.defaultSettings = defaultSettings
         //logger.debug("Default settings: ${defaultSettings}")
-        this.branchSettings = branch.settings
+        this.branchSettings = branch.settings.get(0)
         //logger.debug("Branch settings: ${branchSettings}")
-        this.trunkSettings = repository.settings
+        this.trunkSettings = repository.settings.get(0)
         //logger.debug("Trunk settings: ${trunkSettings}")
         switch (branchSettings.status) {
             case Settings.Status.GOOD:
