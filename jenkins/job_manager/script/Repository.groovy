@@ -88,7 +88,7 @@ class Repository {
         }
         def headMatcher = output =~ /(?m)^([0-9a-f]*)\s*HEAD$/
         if (headMatcher.getCount()) {
-            headSha = headMatcher[0][1]ettingsY
+            headSha = headMatcher[0][1]
         } else {defaultSettings
             logger.warn("No HEAD found for ${url}")
         }
