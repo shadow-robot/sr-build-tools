@@ -15,8 +15,7 @@ class Branch {
     }
 
     def getSettingsFromRepository() {
-        def settingsList = repository.getSettingsFromFile('jenkins.yml', name)
-        settings = settingsList
+        settings = repository.getSettingsFromFile('jenkins.yml', name)
         logger.debug(settings.toString())
     }
 
