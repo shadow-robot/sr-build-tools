@@ -42,14 +42,20 @@ class Job {
                 settings = branchSettings
                 break
         }
-        makeName()
+
+        if (branch.settings.size() > 1){
+            makeName(settingsIndex)
+        } else {
+            makeName()
+        }
+
     }
 
-    def makeName() {
+    def makeName(int settingsIndex = null) {
         if (settings.status == Settings.Status.ERROR) {
             this.name = "auto_${repository.name}_${branch.name.replace("#", "_no_")}_"
         } else {
-            if (branch.settings.size() > 1) {
+            if (settingsIndex) {
                 this.name = "auto_${repository.name}_${branch.name.replace("#", "_no_")}_${settings.settings.ros.release}_${settingsIndex}"
             } else {
                 this.name = "auto_${repository.name}_${branch.name.replace("#", "_no_")}_${settings.settings.ros.release}"
