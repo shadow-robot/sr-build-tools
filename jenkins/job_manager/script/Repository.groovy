@@ -147,8 +147,8 @@ class Repository {
         }
         pullRequests.findAll { it.branch }.each { pullRequest ->
 
-            if (pullRequest.settings.size() > 1){
-                for (int i = 0; i < branch.settings.size(); i++){
+            if (pullRequest.branch.settings.size() > 1){
+                for (int i = 0; i < pullRequest.branch.settings.size(); i++){
                     jobs.push(new Job(pullRequest, defaultSettings, i))
                 }
             }else {
