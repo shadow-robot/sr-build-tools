@@ -18,10 +18,10 @@ class Repository {
 
     def process(Settings defaultSettings) {
         if (!getReferences()) return false
-      //  def settingsList = getSettingsFromFile()
-       // settings = settingsList.get(0)
-      //  settings.source = Settings.Source.TRUNK
-      //  markTrunks()
+        def settingsList = getSettingsFromFile()
+        settings = settingsList.get(0)
+        settings.source = Settings.Source.TRUNK
+        markTrunks()
         branches.findAll { it.head || it.trunk || it.pullRequests }.each { it.getSettingsFromRepository() }
         generateJobs(defaultSettings)
         logger.debug("Processed ${this}")
@@ -48,7 +48,7 @@ class Repository {
                     case 404:
                         logger.warn("${url} does not have a ${filePath} in the ${branchName ?: 'main'} branch.")
                         return [new Settings(true, logger)]
-                    case 400:
+                    case 400:        branches.findAll { it.head || it.trunk || it.pullRequests }.each { it.getSettingsFromRepository() }
                         logger.warn("Attempted curl of ${filePath} from ${url} resulted in a 400: Bad Request error.")
                         break
                     case -1:
@@ -112,7 +112,9 @@ class Repository {
             prMatcher.each { match ->
                 def pullRequest = new PullRequest(match[2].toInteger(), match[1])
                 def branch = branches.find { it.sha == pullRequest.sha }
-                if (branch) {
+                if (branch) {        settings = settingsList.get(0)
+        settings.source = Settings.Source.TRUNK
+        markTrunks()
                     pullRequest.branch = branch
                     branch.pullRequests.push(pullRequest)
                     pullRequests.push(pullRequest)
