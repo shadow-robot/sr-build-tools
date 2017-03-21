@@ -21,7 +21,7 @@ class JobManager {
 
     def processJobs() {
         logger.info("Processing jobs...")
-        fetchCurrentJenkinsJobs()
+        fetchCurrentJenkinsJobs()ettingsYaml,
         def newAutoJobs = repositories.jobs.flatten()
         def goodNewAutoJobs = newAutoJobs.findAll { it.settings.status != Settings.Status.ERROR }
         def newJobsWithBranchConfigs = goodNewAutoJobs.findAll { it.settings.source == Settings.Source.BRANCH }
