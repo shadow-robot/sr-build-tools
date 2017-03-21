@@ -44,6 +44,7 @@ class Job {
         }
 
         if (branch.settings.size() > 1){
+            logger.debug("One of multiple jobs created")
             makeName(settingsIndex)
         } else {
             makeName()
