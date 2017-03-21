@@ -62,8 +62,8 @@ class Job {
         }
     }
 
-    Job(PullRequest pullRequest, Settings defaultSettings) {
-        this(pullRequest.branch, defaultSettings)
+    Job(PullRequest pullRequest, Settings defaultSettings, Integer settingsIndex = 0) {
+        this(pullRequest.branch, defaultSettings, settingsIndex)
     }
 
     String toString() {
