@@ -49,7 +49,11 @@ class Job {
         if (settings.status == Settings.Status.ERROR) {
             this.name = "auto_${repository.name}_${branch.name.replace("#", "_no_")}_"
         } else {
-            this.name = "auto_${repository.name}_${branch.name.replace("#", "_no_")}_${settings.settings.ros.release}"
+            if (branch.settings.size() > 1) {
+                this.name = "auto_${repository.name}_${branch.name.replace("#", "_no_")}_${settings.settings.ros.release}_${settingsIndex}"
+            } else {
+                this.name = "auto_${repository.name}_${branch.name.replace("#", "_no_")}_${settings.settings.ros.release}"
+            }
         }
     }
 
