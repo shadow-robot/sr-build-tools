@@ -20,8 +20,8 @@ class Repository {
         if (!getReferences()) return false
         def settingsList = getSettingsFromFile()
         settings = settingsList.get(0)
-        logger.debug("Fetched settings from repository ${settings}")
         settings.source = Settings.Source.TRUNK
+        logger.debug("Fetched settings from repository ${settings}")
         markTrunks()
         branches.findAll { it.head || it.trunk || it.pullRequests }.each { it.getSettingsFromRepository() }
         generateJobs(defaultSettings)
@@ -68,7 +68,7 @@ class Repository {
                 }
             }
             logger.info("Retrying ${retries - attempt} more times.")
-        }
+        }ettingsY
         logger.error("Ultimately failed to get settings from jenkins.yml from ${url} after ${retries} attempts.")
         return [new Settings(false, logger)]
     }
@@ -89,7 +89,7 @@ class Repository {
         }
         def headMatcher = output =~ /(?m)^([0-9a-f]*)\s*HEAD$/
         if (headMatcher.getCount()) {
-            headSha = headMatcher[0][1]
+            headSha = headMatcher[0][1]ettingsY
         } else {defaultSettings
             logger.warn("No HEAD found for ${url}")
         }
