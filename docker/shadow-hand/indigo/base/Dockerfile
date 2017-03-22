@@ -1,3 +1,9 @@
+#
+# Indigo with build tools Dockerfile
+#
+# https://github.com/shadow-robot/sr-build-tools/
+#
+
 FROM shadowrobot/build-tools:trusty-indigo-ide
 
 ENV remote_shell_script="https://raw.githubusercontent.com/shadow-robot/sr-build-tools/$toolset_branch/bin/setup_dev_machine"
