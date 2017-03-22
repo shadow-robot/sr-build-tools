@@ -56,7 +56,7 @@ class Job {
             this.name = "auto_${repository.name}_${branch.name.replace("#", "_no_")}_"
         } else {
             if (settingsIndex != null) {
-                this.name = "auto_${repository.name}_${branch.name.replace("#", "_no_")}_${settings.settings.ros.release}_${settingsIndex}"
+                this.name = "auto_${repository.name}_${branch.name.replace("#", "_no_")}_${settingsIndex}_${settings.settings.ros.release}"
             } else {
                 this.name = "auto_${repository.name}_${branch.name.replace("#", "_no_")}_${settings.settings.ros.release}"
             }
