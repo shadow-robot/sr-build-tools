@@ -1,4 +1,4 @@
-if (!binding.variables.containsKey("toolsetBranch")) {
+/*if (!binding.variables.containsKey("toolsetBranch")) {
     toolsetBranch = "master"
 }
 
@@ -6,10 +6,10 @@ if (!binding.variables.containsKey("githubRepoNames")) {
     println "Missing 'githubRepoNames' binding variable"
     return false
 }
+*/
 
-if (!binding.variables.containsKey("toolsetBranch")) {
-    toolsetBranch = "master"
-}
+githubRepoNames = ['sr_core'] // Put here needed repositories
+toolsetBranch = "F_multiple_jobs"
 
 def baseUrl = "https://raw.githubusercontent.com/shadow-robot/sr-build-tools/${toolsetBranch}/jenkins/job_manager"
 def baseScriptUrl = "${baseUrl}/script"
