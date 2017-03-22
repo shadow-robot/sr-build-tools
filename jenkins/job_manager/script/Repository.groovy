@@ -43,6 +43,7 @@ class Repository {
     List<Settings> getSettingsFromFile(String filePath = 'jenkins.yml', String branchName = null, Integer retries = 5) {
         for (attempt in 1..retries) {
             def settingsYaml = getFileContents(filePath, branchName)
+            logger.debug("Got following yml file ${settingsYaml}")
             if (settingsYaml instanceof Integer) {
                 switch (settingsYaml) {
                     case 404:
