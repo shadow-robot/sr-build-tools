@@ -1,12 +1,6 @@
-#
-# Kinetic with build tools Dockerfile
-#
-# https://github.com/shadow-robot/sr-build-tools/
-#
-
 FROM shadowrobot/dexterous-hand:kinetic
 
-LABEL Description="This image is used to make ROS Kinetic based projects build faster using build tools. It includes IDE environments. Nvidia compatible" Vendor="Shadow Robot" Version="1.0"
+LABEL Description="This ROS Kinetic image contains Shadow's dexterous hand software with build tools. It includes IDE environments. Nvidia compatible" Vendor="Shadow Robot" Version="1.0"
 
 # nvidia-docker hooks
 LABEL com.nvidia.volumes.needed="nvidia_driver"
