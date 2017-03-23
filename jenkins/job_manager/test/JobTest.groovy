@@ -11,7 +11,7 @@ class JobTest{
     static void initializeMocks() {
         def branchMockContext = new MockFor(Branch)
         def repositoryMockContext = new MockFor(Repository)
-        repositoryMock = repositoryMockContext.proxyInstance()
+        repositoryMock = repositoryMockContext.proxyInstance([null])
         println repositoryMock.name
     }
 

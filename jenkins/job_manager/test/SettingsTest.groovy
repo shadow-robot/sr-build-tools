@@ -33,7 +33,7 @@ class SettingsTest {
         assert 2 == config.settings.toolset.modules.size()
         assert "check_cache" in config.settings.toolset.modules
         assert "code_coverage" in config.settings.toolset.modules
-    }created
+    }
 
     void checkKineticTrunkWilly(Settings config) {
         assert "willy" == config.settings.ubuntu.version
