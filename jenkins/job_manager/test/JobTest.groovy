@@ -4,6 +4,9 @@ import groovy.mock.interceptor.MockFor
 
 class JobTest{
 
+    def credentials = [username: "jenkins_username",
+                   password: "jenkins_password",
+                   token: "jenkins_token"]
     static Branch branchMock
     static Repository repositoryMock
     static Logger loggerMock
@@ -17,7 +20,7 @@ class JobTest{
        // def branchMockContext = new MockFor(Branch)
         def repositoryMockContext = new MockFor(Repository)
         def argList = ["a", "b", null, loggerMock]
-        repositoryMock = repositoryMockContext.proxyInstance(["a", "b", null, loggerMock] as Object[])
+        repositoryMock = repositoryMockContext.proxyInstance(["a", "b", credentials, loggerMock] as Object[])
        // println repositoryMock.name
     }
 
