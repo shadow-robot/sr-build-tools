@@ -15,7 +15,7 @@ def baseUrl = "https://raw.githubusercontent.com/shadow-robot/sr-build-tools/${t
 def baseScriptUrl = "${baseUrl}/script"
 def baseTestUrl = "${baseUrl}/test"
 def timestamp = System.currentTimeMillis()
-
+/*
 def result = evaluate("${baseScriptUrl}/Logger.groovy?u=${timestamp}".toURL().getText() + "\n" +
         "${baseScriptUrl}/Settings.groovy?u=${timestamp}".toURL().getText() + "\n" +
         "${baseScriptUrl}/SettingsParser.groovy?u=${timestamp}".toURL().getText() + "\n" +
@@ -26,6 +26,18 @@ def result = evaluate("${baseScriptUrl}/Logger.groovy?u=${timestamp}".toURL().ge
         "${baseScriptUrl}/GithubRepository.groovy?u=${timestamp}".toURL().getText() + "\n" +
         "${baseTestUrl}/JobTest.groovy?u=${timestamp}".toURL().getText() + "\n" +
         "return org.junit.runner.JUnitCore.runClasses(JobTest.class)")
+*/
+def result = evaluate(
+        new File("/home/michal/sr-build-tools/jenkins/job_manager/script/Logger.groovy").text + "\n" +
+                new File("/home/michal/sr-build-tools/jenkins/job_manager/script/SettingsParser.groovy").text + "\n" +
+                new File("/home/michal/sr-build-tools/jenkins/job_manager/script/Settings.groovy").text + "\n" +
+                new File("/home/michal/sr-build-tools/jenkins/job_manager/script/Branch.groovy").text + "\n" +
+                new File("/home/michal/sr-build-tools/jenkins/job_manager/script/Job.groovy").text + "\n" +
+                new File("/home/michal/sr-build-tools/jenkins/job_manager/script/PullRequest.groovy").text + "\n" +
+                new File("/home/michal/sr-build-tools/jenkins/job_manager/script/Repository.groovy").text + "\n" +
+                new File("/home/michal/sr-build-tools/jenkins/job_manager/script/GithubRepository.groovy").text + "\n" +
+                new File("/home/michal/sr-build-tools/jenkins/job_manager/test/JobTest.groovy").text + "\n" +
+                "return org.junit.runner.JUnitCore.runClasses(JobTest.class)")
 
 
 println "Executed " + result.getRunCount() + " test(s) for " + (result.getRunTime() / 1000) + " second(s)"
