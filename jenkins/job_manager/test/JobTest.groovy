@@ -9,8 +9,10 @@ class JobTest{
 
     @BeforeClass
     static void initializeMocks() {
-     //   branchMock = new MockFor(Branch)
-     //   repositoryMock = new MockFor(Repository)
+        branchMockContext = new MockFor(Branch)
+        repositoryMockContext = new MockFor(Repository)
+        repositoryMock = repositoryMockContext.proxyInstance()
+        println repositoryMock.name
     }
 
     @Test
