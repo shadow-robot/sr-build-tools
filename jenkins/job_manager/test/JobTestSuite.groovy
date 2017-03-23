@@ -1,4 +1,4 @@
-/*if (!binding.variables.containsKey("toolsetBranch")) {
+if (!binding.variables.containsKey("toolsetBranch")) {
     toolsetBranch = "master"
 }
 
@@ -6,7 +6,6 @@ if (!binding.variables.containsKey("githubRepoNames")) {
     println "Missing 'githubRepoNames' binding variable"
     return false
 }
-*/
 
 githubRepoNames = ['sr_core'] // Put here needed repositories
 toolsetBranch = "F_multiple_jobs"
@@ -26,6 +25,7 @@ def result = evaluate("${baseScriptUrl}/Logger.groovy?u=${timestamp}".toURL().ge
         "${baseScriptUrl}/GithubRepository.groovy?u=${timestamp}".toURL().getText() + "\n" +
         "${baseTestUrl}/JobTest.groovy?u=${timestamp}".toURL().getText() + "\n" +
         "return org.junit.runner.JUnitCore.runClasses(JobTest.class)")
+
 
 println "Executed " + result.getRunCount() + " test(s) for " + (result.getRunTime() / 1000) + " second(s)"
 println "Ignored test(s) count " + result.getIgnoreCount()
