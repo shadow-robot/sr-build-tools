@@ -7,7 +7,7 @@ class Job {
     boolean indexedJob
 
     Job(Branch branch, Settings defaultSettings, Integer settingsIndex = 0) {
-        this.indexedJob = False
+        this.indexedJob = false
         this.branch = branch
         this.logger = branch.logger
         this.repository = branch.repository
