@@ -1,5 +1,7 @@
 FROM shadowrobot/build-tools:trusty-indigo-ide
 
+LABEL Description="This ROS Indigo image contains Shadow's dexterous hand software with build tools. It includes IDE environments" Vendor="Shadow Robot" Version="1.0"
+
 ENV remote_shell_script="https://raw.githubusercontent.com/shadow-robot/sr-build-tools/$toolset_branch/bin/setup_dev_machine"
 
 RUN echo "Fixing file system" && \
