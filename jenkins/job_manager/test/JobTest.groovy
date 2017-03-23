@@ -9,8 +9,8 @@ class JobTest{
 
     @BeforeClass
     static void initializeMocks() {
-        branchMock = new MockFor(Branch)
-        repositoryMock = new MockFor(Repository)
+     //   branchMock = new MockFor(Branch)
+     //   repositoryMock = new MockFor(Repository)
     }
 
     @Test
