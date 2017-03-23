@@ -4,8 +4,10 @@ class Job {
     Logger logger
     Branch branch
     Repository repository
+    boolean indexedJob
 
     Job(Branch branch, Settings defaultSettings, Integer settingsIndex = 0) {
+        this.indexedJob = False
         this.branch = branch
         this.logger = branch.logger
         this.repository = branch.repository
@@ -44,7 +46,7 @@ class Job {
         }
 
         if (branch.settings.size() > 1){
-            logger.debug("One of multiple jobs created")
+            indexedJob = true
             makeName(settingsIndex)
         } else {
             makeName()

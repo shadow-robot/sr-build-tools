@@ -44,7 +44,7 @@ class JobManager {
             goodNewAutoJobs.each { goodNewAutoJob ->
                 logger.debug("CurrentJenkinsJob: ${currentJenkinsJob}")
                 logger.debug("goodNewAutoJob: ${goodNewAutoJob.getClass()}")
-                if (currentJenkinsJob.name == goodNewAutoJob.name) {
+                if (currentJenkinsJob.name == goodNewAutoJob.name && !goodNewAutoJob.indexedJob) {
                     jobsToDelete.remove(currentJenkinsJob)
                     jobsToKeep.add(currentJenkinsJob)
                     jobsToMake.remove(goodNewAutoJob)
