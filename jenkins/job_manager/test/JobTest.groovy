@@ -4,15 +4,16 @@ import groovy.mock.interceptor.MockFor
 
 class JobTest{
 
-    def credentials = [username: "jenkins_username",
-                   password: "jenkins_password",
-                   token: "jenkins_token"]
     static Branch branchMock
     static Repository repositoryMock
     static Logger loggerMock
 
     @BeforeClass
     static void initializeMocks() {
+        def credentials = [username: "jenkins_username",
+                           password: "jenkins_password",
+                           token: "jenkins_token"]
+
         def loggerMockContext = new MockFor(Logger)
         loggerMockContext.ignore(~".*") {}
         loggerMock = loggerMockContext.proxyInstance([null])
