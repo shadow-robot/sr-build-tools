@@ -100,6 +100,12 @@ case $server_type in
   else
     export coverage_tests_dir="/host/"$coverage_tests_result_dir
   fi
+  if [ -z "$benchmarking_result_dir" ]
+  then
+    export benchmarking_dir="$docker_user_home/workspace/benchmarking_results"
+  else
+    export benchmarking_dir="/host/"$benchmarking_result_dir
+  fi
   docker pull $docker_image
 
   # Remove untagged Docker images which do not have containers associated with them
@@ -113,6 +119,7 @@ case $server_type in
   done
 
   export extra_variables="$extra_variables local_repo_dir=/host$local_repo_dir local_test_dir=$unit_tests_dir local_code_coverage_dir=$coverage_tests_dir"
+  export extra_variables="$extra_variables local_benchmarking_dir=$benchmarking_dir"
   docker run -w "$docker_user_home/sr-build-tools/ansible" -e LOCAL_USER_ID=$(id -u) $docker_flags --rm -v $HOME:/host:rw $docker_image  bash -c "git pull && git checkout $toolset_branch && git pull && PYTHONUNBUFFERED=1 ansible-playbook -v -i \"localhost,\" -c local docker_site.yml --tags \"local,$tags_list\" -e \"$extra_variables\" "
   ;;
 
