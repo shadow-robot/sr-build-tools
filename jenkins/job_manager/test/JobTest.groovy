@@ -76,9 +76,8 @@ class JobTest{
 
     @Test
     void testNamingConvensionVer2(){
-
         initializeMocks()
-        def onlyTrunksMultipleSettingsYaml = '''\
+        def onlyTrunksMultipleSettingsInheretedYaml = '''\
         settings:
            ubuntu:
                version: trusty
@@ -117,7 +116,7 @@ class JobTest{
         branch:
            parent: kinetic-devel'''
 
-        def settingsExample = new SettingsParser(onlyTrunksMultipleSettingsYaml, loggerMock, "my_branch")
+        def settingsExample = new SettingsParser(onlyTrunksMultipleSettingsInheretedYaml, loggerMock, "my_branch")
         def branchExample = new Branch("my_branch", " ", repositoryMock)
 
         branchExample.settings = [settingsExample.settingsList.get(0)]
