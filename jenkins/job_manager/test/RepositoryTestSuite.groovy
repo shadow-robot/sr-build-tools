@@ -18,7 +18,7 @@ def result = evaluate("${baseScriptUrl}/Logger.groovy?u=${timestamp}".toURL().ge
         "${baseScriptUrl}/Repository.groovy?u=${timestamp}".toURL().getText() + "\n" +
         "${baseScriptUrl}/GithubRepository.groovy?u=${timestamp}".toURL().getText() + "\n" +
         "${baseTestUrl}/JobTest.groovy?u=${timestamp}".toURL().getText() + "\n" +
-        "return org.junit.runner.JUnitCore.runClasses(JobTest.class)")
+        "return org.junit.runner.JUnitCore.runClasses(RepositoryTest.class)")
 
 
 println "Executed " + result.getRunCount() + " test(s) for " + (result.getRunTime() / 1000) + " second(s)"
