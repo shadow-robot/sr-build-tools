@@ -2,11 +2,6 @@ if (!binding.variables.containsKey("toolsetBranch")) {
     toolsetBranch = "master"
 }
 
-if (!binding.variables.containsKey("githubRepoNames")) {
-    println "Missing 'githubRepoNames' binding variable"
-    return false
-}
-
 def baseUrl = "https://raw.githubusercontent.com/shadow-robot/sr-build-tools/${toolsetBranch}/jenkins/job_manager"
 def baseScriptUrl = "${baseUrl}/script"
 def baseTestUrl = "${baseUrl}/test"
