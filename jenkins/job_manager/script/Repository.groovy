@@ -156,10 +156,4 @@ class Repository implements GroovyInterceptable {
             }
         }
     }
-
-    def testFunc(String xx){
-
-        return getFileContents("asd", "asd")
-
-    }
 }
