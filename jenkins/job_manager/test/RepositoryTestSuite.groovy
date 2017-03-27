@@ -2,6 +2,8 @@ if (!binding.variables.containsKey("toolsetBranch")) {
     toolsetBranch = "master"
 }
 
+toolsetBranch = "F_multiple_jobs"
+
 def baseUrl = "https://raw.githubusercontent.com/shadow-robot/sr-build-tools/${toolsetBranch}/jenkins/job_manager"
 def baseScriptUrl = "${baseUrl}/script"
 def baseTestUrl = "${baseUrl}/test"
