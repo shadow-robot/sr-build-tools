@@ -1,4 +1,4 @@
-class Repository {
+class Repository implements GroovyInterceptable {
     String url, authenticatedUrl, headSha, name
     Settings settings
     Logger logger
@@ -151,9 +151,15 @@ class Repository {
                 for (int i = 0; i < pullRequest.branch.settings.size(); i++){
                     jobs.push(new Job(pullRequest, defaultSettings, i))
                 }
-            }else {
+            } else {
                 jobs.push(new Job(pullRequest, defaultSettings))
             }
         }
+    }
+
+    def testFunc(String xx){
+
+        return getFileContents("asd", "asd")
+
     }
 }
