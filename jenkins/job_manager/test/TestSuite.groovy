@@ -11,8 +11,15 @@ def result = evaluate(
         "${baseScriptUrl}/Logger.groovy?u=${timestamp}".toURL().getText() + "\n" +
         "${baseScriptUrl}/SettingsParser.groovy?u=${timestamp}".toURL().getText() + "\n" +
         "${baseScriptUrl}/Settings.groovy?u=${timestamp}".toURL().getText() + "\n" +
+        "${baseScriptUrl}/Branch.groovy?u=${timestamp}".toURL().getText() + "\n" +
+        "${baseScriptUrl}/Job.groovy?u=${timestamp}".toURL().getText() + "\n" +
+        "${baseScriptUrl}/PullRequest.groovy?u=${timestamp}".toURL().getText() + "\n" +
+        "${baseScriptUrl}/Repository.groovy?u=${timestamp}".toURL().getText() + "\n" +
+        "${baseScriptUrl}/GithubRepository.groovy?u=${timestamp}".toURL().getText() + "\n" +
         "${baseTestUrl}/SettingsTest.groovy?u=${timestamp}".toURL().getText() + "\n" +
-        "return org.junit.runner.JUnitCore.runClasses(SettingsTest.class)")
+        "${baseTestUrl}/JobTest.groovy?u=${timestamp}".toURL().getText() + "\n" +
+        "${baseTestUrl}/RepositoryTest.groovy?u=${timestamp}".toURL().getText() + "\n" +
+        "return org.junit.runner.JUnitCore.runClasses(SettingsTest.class, JobTest.class, RepositoryTest.class)")
 
 println "Executed " + result.getRunCount() + " test(s) for " + (result.getRunTime() / 1000) + " second(s)"
 println "Ignored test(s) count " + result.getIgnoreCount()
