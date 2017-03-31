@@ -8,6 +8,7 @@
   * **build** - build project using catkin_make.
   * **software_tests** - run unit ([gtest, unittest](http://wiki.ros.org/rosunit)) and integration ([rostest](http://wiki.ros.org/rostest)) tests and place results in special folder if defined by CI server (e.g. artifacts for Circle CI)
   * **all_tests** - run **software_tests** tests described above as well as hardware tests
+  * **benchmarking** - run benchmarking of the functionality based on rostest
   * **check_build** - long running module. Compile independently each package in the project cleaning devel and build folder beforehand and check if all dependencies are declared in CMakeList.txt correctly.
   * **code_style_check** - run [roslint](http://wiki.ros.org/roslint) to check C++ and Python code in all packages of the project.
   * **build_debs** - generate Debian package files using bloom
