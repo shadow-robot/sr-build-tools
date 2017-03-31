@@ -42,9 +42,9 @@ class JobManager {
         // If any of the new jobs match names with the current jobs, keep the job, and don't make a new one
         currentJenkinsJobs.each { currentJenkinsJob ->
             goodNewAutoJobs.each { goodNewAutoJob ->
-                if (currentJenkinsJob.name == goodNewAutoJob.name && !goodNewAutoJob.indexedJob) {
+                if (currentJenkinsJob.name == goodNewAutoJob.name) {
                     jobsToDelete.remove(currentJenkinsJob)
-                    jobsToKeep.add(currentJenkinsJob)
+                    jobsToKeep.add(goodNewAutoJob)
                     jobsToMake.remove(goodNewAutoJob)
                 }
             }
@@ -111,15 +111,20 @@ class JobManager {
         }
 
         deleteJobs(jobsToDelete)
-        makeJobs(jobsToMake)
+        makeNewJobs(jobsToMake)
+        refreshExistingJobs(jobsToKeep)
     }
 
-    def makeJobs(jobs) {
+    def makeNewJobs(jobs) {
         logger.info("Making ${jobs.size()} new jobs")
         logger.info("${jobs*.name}")
-        def madeJobsNames = new ArrayList<String>()
-        jobs.each { madeJobsNames.push(makeJob(it)) }
-        return madeJobsNames
+        jobs.each { makeJob(it) }
+    }
+
+    def refreshExistingJobs(jobs) {
+        logger.info("Refreshing ${jobs.size()} existing jobs")
+        logger.info("${jobs*.name}")
+        jobs.each { makeJob(it, false) }
     }
 
     def deleteJobs(jobs) {
@@ -166,23 +171,37 @@ class JobManager {
         job.delete()
     }
 
-    def makeJob(Job job) {
-        // If a job already exists, do nothing for now
-        def existingJob = Jenkins.instance.projects.find { it.name == job.name }
-        if (existingJob instanceof hudson.model.Job) {
-            logger.error("${job.name} already exists.")
-            return false
-        }
-        logger.info("Creating new Jenkins job: ${job.name}...")
-        logger.debug("${job.settings}")
-        // Get template job
+    def makeJob(Job job, boolean generateNew=true) {
+
         def template = Jenkins.instance.getItem(job.settings.settings.toolset.template_job_name)
         if (!(template instanceof hudson.model.Job)) {
             logger.error("Could not find template job \'${job.settings.settings.toolset.template_job_name}\'")
             return false
         }
-        // Create a copy of the template job. N.B.: This actually creates a job!
-        def newJob = Jenkins.instance.copy(template, job.name)
+
+        def existingJob = Jenkins.instance.projects.find { it.name == job.name }
+        def newJob = null
+        if (generateNew) {
+            if (existingJob instanceof hudson.model.Job) {
+                logger.error("${job.name} already exists.")
+                return false
+            }
+            logger.info("Creating new Jenkins job: ${job.name}...")
+            logger.debug("${job.settings}")
+
+            newJob = Jenkins.instance.copy(template, job.name)
+        }
+        else {
+            if (null == existingJob) {
+                logger.error("${job.name} doesn't exist but want to be refreshed.")
+                return false
+            }
+            newJob = existingJob
+            def jobXmlFile = template.getConfigFile()
+            def file = jobXmlFile.getFile()
+            newJob.updateByXml(new StreamSource(new FileInputStream(file)))
+        }
+
         newJob.description = "Job for ${job.branch.name} branch of ${job.repository.url}, based on template " +
                 "${template.name} using ros release ${job.settings.settings.ros.release}"
         newJob.disabled = false
@@ -223,7 +242,12 @@ class JobManager {
         def file = jobXmlFile.getFile()
         newJob.updateByXml(new StreamSource(new FileInputStream(file)))
         newJob.save()
-        println("Created new job => " + newJob.name)
+        if (generateNew) {
+            logger.info("Created new Jenkins job: ${job.name}")
+        }
+        else {
+            logger.info("Refreshed existing Jenkins job: ${job.name}")
+        }
         return newJob.name
     }
 }

@@ -4,10 +4,8 @@ class Job {
     Logger logger
     Branch branch
     Repository repository
-    boolean indexedJob
 
     Job(Branch branch, Settings defaultSettings, Integer settingsIndex = 0) {
-        this.indexedJob = false
         this.branch = branch
         this.logger = branch.logger
         this.repository = branch.repository
@@ -46,7 +44,6 @@ class Job {
         }
 
         if (branch.settings.size() > 1){
-            indexedJob = true
             makeName(settingsIndex)
         } else {
             makeName()
