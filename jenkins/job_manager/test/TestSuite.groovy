@@ -1,6 +1,8 @@
-if (!binding.variables.containsKey("toolsetBranch")) {
-    toolsetBranch = "master"
-}
+//if (!binding.variables.containsKey("toolsetBranch")) {
+//    toolsetBranch = "master"
+//}
+
+toolsetBranch = "F_multiple_jobs"
 
 def baseUrl = "https://raw.githubusercontent.com/shadow-robot/sr-build-tools/${toolsetBranch}/jenkins/job_manager"
 def baseScriptUrl = "${baseUrl}/script"
@@ -20,6 +22,7 @@ def result = evaluate(
         "${baseTestUrl}/JobTest.groovy?u=${timestamp}".toURL().getText() + "\n" +
         "${baseTestUrl}/RepositoryTest.groovy?u=${timestamp}".toURL().getText() + "\n" +
         "return org.junit.runner.JUnitCore.runClasses(SettingsTest.class, JobTest.class, RepositoryTest.class)")
+
 
 println "Executed " + result.getRunCount() + " test(s) for " + (result.getRunTime() / 1000) + " second(s)"
 println "Ignored test(s) count " + result.getIgnoreCount()

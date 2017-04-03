@@ -5,9 +5,12 @@ import groovy.mock.interceptor.*
 class RepositoryTest {
     static Logger loggerMock
     static Map credentialsMock
+    static Settings settingsMock
+    static Branch branchMock
 
     @BeforeClass
     static void initializeMocks() {
+
         credentialsMock = [username: " ",
                            password: " ",
                            token: " "]
@@ -15,6 +18,13 @@ class RepositoryTest {
         def loggerMockContext = new MockFor(Logger)
         loggerMockContext.ignore(~".*") {}
         loggerMock = loggerMockContext.proxyInstance([null])
+
+        def settingsMockContext = new StubFor(Settings)
+        settingsMockContext.demand.with{
+            getStatus(1..8) {Settings.Status.GOOD}
+            getSettings(1..4){[ros:[release:'mock']]}
+        }
+        settingsMock = settingsMockContext.proxyInstance([[:], loggerMock] as Object[])
     }
 
     @Test
@@ -65,5 +75,27 @@ class RepositoryTest {
         assert "willy" == testSettings[1].settings.ubuntu.version
         assert "kinetic" == testSettings[1].settings.ros.release
         assert "willy-kinetic" == testSettings[1].settings.docker.tag
+    }
+
+    @Test
+    void generateJobsTest(){
+        def testRepository = new GithubRepository("mockOrganisation", "mockName", credentialsMock, loggerMock)
+
+        def branchMockContext = new StubFor(Branch)
+        branchMockContext.ignore('getLogger')
+        branchMockContext.ignore('getName')
+        branchMockContext.ignore('getRepository')
+        branchMockContext.demand.with{
+            getTrunk(1..10) {true}
+            getSettings(1..16) {[settingsMock, settingsMock]}
+        }
+        branchMock = branchMockContext.proxyInstance(["mockName", "mockSha", testRepository] as Object[])
+
+        testRepository.branches = new ArrayList<Branch>()
+        testRepository.branches.push(branchMock)
+        testRepository.branches.push(branchMock)
+
+        testRepository.generateJobs(settingsMock)
+        assert 4 == testRepository.jobs.size()
     }
 }
