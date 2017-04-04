@@ -6,6 +6,7 @@ class JobTest{
     static Repository repositoryMock
     static Logger loggerMock
 
+    @BeforeClass
     static void initializeMocks() {
         def credentialsMock = [username: " ",
                            password: " ",
@@ -16,16 +17,17 @@ class JobTest{
         loggerMock = loggerMockContext.proxyInstance([null])
 
         def repositoryMockContext = new StubFor(Repository)
-        repositoryMockContext.demand.getName(0..4){"test"}
-        repositoryMockContext.demand.getUrl{" "}
-        repositoryMockContext.demand.getLogger{loggerMock}
-        repositoryMockContext.demand.getSettings(0..4){null}
+        repositoryMockContext.ignore.with{
+            getName() {"test"}
+            getUrl() {" "}
+            getLogger() {loggerMock}
+            getSettings() {null}
+        }
         repositoryMock = repositoryMockContext.proxyInstance([" ", " ", credentialsMock, loggerMock] as Object[])
     }
 
     @Test
-    void testNamingConvensionVer1(){
-        initializeMocks()
+    void testNamingConvensionVer1() {
       def onlyTrunksMultipleSettingsYaml = '''\
         settings:
             ubuntu:
@@ -75,8 +77,7 @@ class JobTest{
     }
 
     @Test
-    void testNamingConvensionVer2(){
-        initializeMocks()
+    void testNamingConvensionVer2() {
         def onlyTrunksMultipleSettingsInheretedYaml = '''\
         settings:
            ubuntu:
@@ -137,8 +138,7 @@ class JobTest{
     }
 
     @Test
-    void testNamingConvensionVer3(){
-        initializeMocks()
+    void testNamingConvensionVer3() {
         def MultipleBranchSettingsYaml = '''\
         settings:
             ubuntu:

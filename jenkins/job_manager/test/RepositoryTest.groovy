@@ -19,29 +19,29 @@ class RepositoryTest {
         loggerMock = loggerMockContext.proxyInstance([null])
 
         def settingsMockContext = new StubFor(Settings)
-        settingsMockContext.demand.with{
-            getStatus(1..34) {Settings.Status.GOOD}
-            getSettings(1..16){[ros:[release:'mock']]}
+        settingsMockContext.ignore.with{
+            getSettings() {[ros:[release:'mock']]}
+            getStatus() {Settings.Status.GOOD}
         }
         settingsMock = settingsMockContext.proxyInstance([[:], loggerMock] as Object[])
     }
 
-    def generateBranchMock(boolean isTrunk = true, int numOfSettings = 2){
+    def generateBranchMock(boolean isTrunk = true, int numOfSettings = 2) {
         def testRepository = new GithubRepository("mockOrganisation", "mockName", credentialsMock, loggerMock)
         def settingsArray = []
-        for (int i = 0; i < numOfSettings; i++){
+        for (int i = 0; i < numOfSettings; i++) {
             settingsArray.push(settingsMock)
         }
 
         def branchMockContext = new StubFor(Branch)
-        branchMockContext.ignore('getLogger')
-        branchMockContext.ignore('getName')
-        branchMockContext.ignore('getRepository')
         branchMockContext.ignore('asBoolean')
-        branchMockContext.demand.with{
-            getTrunk(1..10) {isTrunk}
+        branchMockContext.ignore.with{
+            getLogger()
+            getName()
+            getRepository()
+            getTrunk() {isTrunk}
             getHead() {!isTrunk}
-            getSettings(1..24) {settingsArray}
+            getSettings() {settingsArray}
         }
         def branchMock = branchMockContext.proxyInstance(["mockName", "mockSha", testRepository] as Object[])
 
@@ -49,7 +49,7 @@ class RepositoryTest {
     }
 
     @Test
-    void getSettingsFromFileTestSingleSettings(){
+    void getSettingsFromFileTestSingleSettings() {
         def onlyTrunksSettingsYaml = '''\
         settings:
             ubuntu:
@@ -90,7 +90,7 @@ class RepositoryTest {
     }
 
     @Test
-    void getSettingsFromFileTestMultipleSettings(){
+    void getSettingsFromFileTestMultipleSettings() {
         def onlyTrunksMultipleSettingsYaml = '''\
         settings:
             ubuntu:
@@ -140,7 +140,7 @@ class RepositoryTest {
     }
 
     @Test
-    void generateJobsTestOnlyBranches(){
+    void generateJobsTestOnlyBranches() {
         def testRepository = new GithubRepository("mockOrganisation", "mockName", credentialsMock, loggerMock)
         def branchMockTrunk = generateBranchMock(true, 2)
         def branchMockHead = generateBranchMock(false, 3)
@@ -154,7 +154,7 @@ class RepositoryTest {
     }
 
     @Test
-    void generateJobsTestOnlyPRs(){
+    void generateJobsTestOnlyPRs() {
         def testRepository = new GithubRepository("mockOrganisation", "mockName", credentialsMock, loggerMock)
         def branchMockTrunk = generateBranchMock(true, 2)
         def PRMock = new PullRequest(1, " ")
@@ -169,7 +169,7 @@ class RepositoryTest {
     }
 
     @Test
-    void generateJobsTestBranchesAndPRs(){
+    void generateJobsTestBranchesAndPRs() {
         def testRepository = new GithubRepository("mockOrganisation", "mockName", credentialsMock, loggerMock)
         def branchMockTrunk = generateBranchMock(true, 2)
         def branchMockHead = generateBranchMock(false, 3)
