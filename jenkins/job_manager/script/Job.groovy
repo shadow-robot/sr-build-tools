@@ -43,14 +43,11 @@ class Job {
                 break
         }
 
-
-
-        if (branch.settings.size() > 1){
+        if (branch.settings.size() > 1) {
             makeName(settingsIndex)
         } else {
             makeName()
         }
-
     }
 
     def makeName(settingsIndex = null) {

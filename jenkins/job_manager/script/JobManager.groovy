@@ -188,7 +188,6 @@ class JobManager {
             }
             logger.info("Creating new Jenkins job: ${job.name}...")
             logger.debug("${job.settings}")
-
             newJob = Jenkins.instance.copy(template, job.name)
         }
         else {

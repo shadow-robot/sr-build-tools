@@ -64,16 +64,16 @@ class JobTest{
 
         branchExample.settings = [settingsExample.settingsList.get(0)]
 
-        def JobNoIndexing = new Job(branchExample, settingsExample.settingsList.get(0))
-        assert JobNoIndexing.name == "auto_test_kinetic-devel_kinetic"
+        def jobNoIndexing = new Job(branchExample, settingsExample.settingsList.get(0))
+        assert jobNoIndexing.name == "auto_test_kinetic-devel_kinetic"
 
         branchExample.settings = settingsExample.settingsList
 
-        def JobIndex0 = new Job(branchExample, settingsExample.settingsList.get(0), 0)
-        assert JobIndex0.name == "auto_test_kinetic-devel_0_kinetic"
+        def jobIndex0 = new Job(branchExample, settingsExample.settingsList.get(0), 0)
+        assert jobIndex0.name == "auto_test_kinetic-devel_0_kinetic"
 
-        def JobIndex1 = new Job(branchExample, settingsExample.settingsList.get(0), 1)
-        assert JobIndex1.name == "auto_test_kinetic-devel_1_kinetic"
+        def jobIndex1 = new Job(branchExample, settingsExample.settingsList.get(0), 1)
+        assert jobIndex1.name == "auto_test_kinetic-devel_1_kinetic"
     }
 
     @Test
@@ -122,19 +122,19 @@ class JobTest{
 
         branchExample.settings = [settingsExample.settingsList.get(0)]
 
-        def JobNoIndexing = new Job(branchExample, settingsExample.settingsList.get(0))
-        assert JobNoIndexing.name == "auto_test_my_branch_kinetic"
+        def jobNoIndexing = new Job(branchExample, settingsExample.settingsList.get(0))
+        assert jobNoIndexing.name == "auto_test_my_branch_kinetic"
 
         branchExample.settings = settingsExample.settingsList
 
-        def JobIndex0 = new Job(branchExample, settingsExample.settingsList.get(0), 0)
-        assert JobIndex0.name == "auto_test_my_branch_0_kinetic"
+        def jobIndex0 = new Job(branchExample, settingsExample.settingsList.get(0), 0)
+        assert jobIndex0.name == "auto_test_my_branch_0_kinetic"
 
-        def JobIndex1 = new Job(branchExample, settingsExample.settingsList.get(0), 1)
-        assert JobIndex1.name == "auto_test_my_branch_1_kinetic"
+        def jobIndex1 = new Job(branchExample, settingsExample.settingsList.get(0), 1)
+        assert jobIndex1.name == "auto_test_my_branch_1_kinetic"
 
-        def JobIndex2 = new Job(branchExample, settingsExample.settingsList.get(0), 2)
-        assert JobIndex2.name == "auto_test_my_branch_2_kinetic"
+        def jobIndex2 = new Job(branchExample, settingsExample.settingsList.get(0), 2)
+        assert jobIndex2.name == "auto_test_my_branch_2_kinetic"
     }
 
     @Test
@@ -184,15 +184,15 @@ class JobTest{
 
         branchExample.settings = [settingsExample.settingsList.get(0)]
 
-        def JobNoIndexing = new Job(branchExample, settingsExample.settingsList.get(0))
-        assert JobNoIndexing.name == "auto_test_my_branch_indigo"
+        def jobNoIndexing = new Job(branchExample, settingsExample.settingsList.get(0))
+        assert jobNoIndexing.name == "auto_test_my_branch_indigo"
 
         branchExample.settings = settingsExample.settingsList
 
-        def JobIndex0 = new Job(branchExample, settingsExample.settingsList.get(0), 0)
-        assert JobIndex0.name == "auto_test_my_branch_0_indigo"
+        def jobIndex0 = new Job(branchExample, settingsExample.settingsList.get(0), 0)
+        assert jobIndex0.name == "auto_test_my_branch_0_indigo"
 
-        def JobIndex1 = new Job(branchExample, settingsExample.settingsList.get(0), 1)
-        assert JobIndex1.name == "auto_test_my_branch_1_kinetic"
+        def jobIndex1 = new Job(branchExample, settingsExample.settingsList.get(0), 1)
+        assert jobIndex1.name == "auto_test_my_branch_1_kinetic"
     }
 }

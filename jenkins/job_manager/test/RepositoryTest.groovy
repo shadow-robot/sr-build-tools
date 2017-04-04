@@ -157,12 +157,12 @@ class RepositoryTest {
     void generateJobsTestOnlyPRs() {
         def testRepository = new GithubRepository("mockOrganisation", "mockName", credentialsMock, loggerMock)
         def branchMockTrunk = generateBranchMock(true, 2)
-        def PRMock = new PullRequest(1, " ")
-        PRMock.branch = branchMockTrunk
+        def prMock = new PullRequest(1, " ")
+        prMock.branch = branchMockTrunk
 
         testRepository.pullRequests = new ArrayList<PullRequest>()
-        testRepository.pullRequests.push(PRMock)
-        testRepository.pullRequests.push(PRMock)
+        testRepository.pullRequests.push(prMock)
+        testRepository.pullRequests.push(prMock)
 
         testRepository.generateJobs(settingsMock)
         assert 4 == testRepository.jobs.size()
@@ -173,14 +173,14 @@ class RepositoryTest {
         def testRepository = new GithubRepository("mockOrganisation", "mockName", credentialsMock, loggerMock)
         def branchMockTrunk = generateBranchMock(true, 2)
         def branchMockHead = generateBranchMock(false, 3)
-        def PRMock = new PullRequest(1, " ")
-        PRMock.branch = branchMockTrunk
+        def prMock = new PullRequest(1, " ")
+        prMock.branch = branchMockTrunk
 
         testRepository.branches = new ArrayList<Branch>()
         testRepository.branches.push(branchMockTrunk)
         testRepository.branches.push(branchMockHead)
         testRepository.pullRequests = new ArrayList<PullRequest>()
-        testRepository.pullRequests.push(PRMock)
+        testRepository.pullRequests.push(prMock)
 
         testRepository.generateJobs(settingsMock)
         assert 7 == testRepository.jobs.size()
