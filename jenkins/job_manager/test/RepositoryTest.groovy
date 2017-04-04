@@ -6,7 +6,6 @@ class RepositoryTest {
     static Logger loggerMock
     static Map credentialsMock
     static Settings settingsMock
-    static Branch branchMock
 
     @BeforeClass
     static void initializeMocks() {
@@ -21,14 +20,77 @@ class RepositoryTest {
 
         def settingsMockContext = new StubFor(Settings)
         settingsMockContext.demand.with{
-            getStatus(1..8) {Settings.Status.GOOD}
-            getSettings(1..4){[ros:[release:'mock']]}
+            getStatus(1..34) {Settings.Status.GOOD}
+            getSettings(1..16){[ros:[release:'mock']]}
         }
         settingsMock = settingsMockContext.proxyInstance([[:], loggerMock] as Object[])
     }
 
+    def generateBranchMock(boolean isTrunk = true, int numOfSettings = 2){
+        def testRepository = new GithubRepository("mockOrganisation", "mockName", credentialsMock, loggerMock)
+        def settingsArray = []
+        for (int i = 0; i < numOfSettings; i++){
+            settingsArray.push(settingsMock)
+        }
+
+        def branchMockContext = new StubFor(Branch)
+        branchMockContext.ignore('getLogger')
+        branchMockContext.ignore('getName')
+        branchMockContext.ignore('getRepository')
+        branchMockContext.ignore('asBoolean')
+        branchMockContext.demand.with{
+            getTrunk(1..10) {isTrunk}
+            getHead() {!isTrunk}
+            getSettings(1..24) {settingsArray}
+        }
+        def branchMock = branchMockContext.proxyInstance(["mockName", "mockSha", testRepository] as Object[])
+
+        return branchMock
+    }
+
     @Test
-    void getSettingsFromFileTest(){
+    void getSettingsFromFileTestSingleSettings(){
+        def onlyTrunksSettingsYaml = '''\
+        settings:
+            ubuntu:
+                version: trusty
+            docker:
+                image: shadowrobot/build-tools
+                tag: trusty-indigo
+            ros:
+                release: indigo
+            toolset:
+                template_job_name: my_template
+                modules:
+                    - check_cache
+                    - code_coverage
+        trunks:
+            - name: indigo-devel
+            - name: kinetic-devel
+              settings:
+                  ubuntu:
+                      version: xenial
+                  ros:
+                      release: kinetic
+                  docker:
+                      tag: xenial-kinetic
+
+        branch:
+            parent: kinetic-devel'''
+
+        def testRepository = new GithubRepository("mockOrganisation", "mockName", credentialsMock, loggerMock)
+        testRepository.metaClass.getFileContents = {String filePath, String branchName -> onlyTrunksSettingsYaml}
+
+        def testSettings = testRepository.getSettingsFromFile("mock", "kinetic-devel")
+        assert testSettings.size() == 1
+
+        assert "xenial" == testSettings[0].settings.ubuntu.version
+        assert "kinetic" == testSettings[0].settings.ros.release
+        assert "xenial-kinetic" == testSettings[0].settings.docker.tag
+    }
+
+    @Test
+    void getSettingsFromFileTestMultipleSettings(){
         def onlyTrunksMultipleSettingsYaml = '''\
         settings:
             ubuntu:
@@ -78,24 +140,49 @@ class RepositoryTest {
     }
 
     @Test
-    void generateJobsTest(){
+    void generateJobsTestOnlyBranches(){
         def testRepository = new GithubRepository("mockOrganisation", "mockName", credentialsMock, loggerMock)
-
-        def branchMockContext = new StubFor(Branch)
-        branchMockContext.ignore('getLogger')
-        branchMockContext.ignore('getName')
-        branchMockContext.ignore('getRepository')
-        branchMockContext.demand.with{
-            getTrunk(1..10) {true}
-            getSettings(1..16) {[settingsMock, settingsMock]}
-        }
-        branchMock = branchMockContext.proxyInstance(["mockName", "mockSha", testRepository] as Object[])
+        def branchMockTrunk = generateBranchMock(true, 2)
+        def branchMockHead = generateBranchMock(false, 3)
 
         testRepository.branches = new ArrayList<Branch>()
-        testRepository.branches.push(branchMock)
-        testRepository.branches.push(branchMock)
+        testRepository.branches.push(branchMockTrunk)
+        testRepository.branches.push(branchMockHead)
+
+        testRepository.generateJobs(settingsMock)
+        assert 5 == testRepository.jobs.size()
+    }
+
+    @Test
+    void generateJobsTestOnlyPRs(){
+        def testRepository = new GithubRepository("mockOrganisation", "mockName", credentialsMock, loggerMock)
+        def branchMockTrunk = generateBranchMock(true, 2)
+        def PRMock = new PullRequest(1, " ")
+        PRMock.branch = branchMockTrunk
+
+        testRepository.pullRequests = new ArrayList<PullRequest>()
+        testRepository.pullRequests.push(PRMock)
+        testRepository.pullRequests.push(PRMock)
 
         testRepository.generateJobs(settingsMock)
         assert 4 == testRepository.jobs.size()
+    }
+
+    @Test
+    void generateJobsTestBranchesAndPRs(){
+        def testRepository = new GithubRepository("mockOrganisation", "mockName", credentialsMock, loggerMock)
+        def branchMockTrunk = generateBranchMock(true, 2)
+        def branchMockHead = generateBranchMock(false, 3)
+        def PRMock = new PullRequest(1, " ")
+        PRMock.branch = branchMockTrunk
+
+        testRepository.branches = new ArrayList<Branch>()
+        testRepository.branches.push(branchMockTrunk)
+        testRepository.branches.push(branchMockHead)
+        testRepository.pullRequests = new ArrayList<PullRequest>()
+        testRepository.pullRequests.push(PRMock)
+
+        testRepository.generateJobs(settingsMock)
+        assert 7 == testRepository.jobs.size()
     }
 }

@@ -21,7 +21,6 @@ def result = evaluate(
         "${baseTestUrl}/RepositoryTest.groovy?u=${timestamp}".toURL().getText() + "\n" +
         "return org.junit.runner.JUnitCore.runClasses(SettingsTest.class, JobTest.class, RepositoryTest.class)")
 
-
 println "Executed " + result.getRunCount() + " test(s) for " + (result.getRunTime() / 1000) + " second(s)"
 println "Ignored test(s) count " + result.getIgnoreCount()
 println "Failed test(s) count "  + result.getFailureCount() + "\n"

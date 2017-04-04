@@ -145,6 +145,7 @@ class Repository implements GroovyInterceptable {
                 jobs.push(new Job(branch, defaultSettings))
             }
         }
+
         pullRequests.findAll { it.branch }.each { pullRequest ->
 
             if (pullRequest.branch.settings.size() > 1){
