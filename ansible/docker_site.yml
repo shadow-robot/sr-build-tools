@@ -28,21 +28,23 @@
                                                                  "cpp_code_coverage", "check_deb_make",
                                                                  "complete_deb_check", "check_build",
                                                                  "python_code_style_check", "cpp_code_style_check",
-                                                                 "code_style_check", "create_workspace"]}
+                                                                 "code_style_check", "create_workspace",
+                                                                 "benchmarking"]}
     - {role: ci/update_dependencies, when: run_build, tags: ["build", "unit_tests", "software_tests", "all_tests",
                                                              "code_coverage", "codecov_tool", "python_code_coverage",
                                                              "cpp_code_coverage", "check_deb_make",
-                                                             "complete_deb_check", "check_build"]}
+                                                             "complete_deb_check", "check_build", "benchmarking"]}
     - {role: ci/common/packages, when: run_build, tags: ["unit_tests", "software_tests", "all_tests", "code_coverage",
                                                          "codecov_tool", "python_code_coverage",
                                                          "cpp_code_coverage", "check_deb_make",
                                                          "complete_deb_check", "python_code_style_check",
                                                          "cpp_code_style_check", "code_style_check", "check_build",
-                                                         "upload_debs"]}
+                                                         "upload_debs", "benchmarking"]}
     - {role: ci/build/check, when: run_build, tags: ["check_build"]}
     - {role: ci/build/catkin, when: run_build, tags: ["build", "unit_tests", "software_tests", "all_tests",
                                                       "code_coverage", "codecov_tool",
-                                                      "python_code_coverage", "cpp_code_coverage"]}
+                                                      "python_code_coverage", "cpp_code_coverage", "benchmarking"]}
+    - {role: ci/benchmarking, when: run_build, tags: ["benchmarking"]}
     - {role: ci/code_coverage/python/setup, when: run_build, tags: ["python_code_coverage", "code_coverage",
                                                                     "codecov_tool"]}
     - {role: ci/code_coverage/cpp/setup, when: run_build, tags: ["cpp_code_coverage", "code_coverage", "codecov_tool"]}

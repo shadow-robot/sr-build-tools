@@ -1,0 +1,14 @@
+---
+# Playbook for benchmarking
+
+- name: check if benchmarking_results_dir variable was set by build server
+  fail: msg="Variable benchmarking_results_dir was not set by CI server"
+  when: benchmarking_results_dir is not defined
+
+- name: Set non-repository packages using lists substraction
+  set_fact:
+     non_repo_packages : "{{workspace_packages_names|difference(repo_packages_names)|join(';')}}"
+
+- name: catkin run benchmarking
+  shell: bash -c 'source <(grep "^export\|^source" {{ansible_env.HOME}}/.bashrc) && export BENCHMARKING_OUTPUT_FOLDER={{benchmarking_results_dir}} && catkin_make run_tests -DRUN_BENCHMARKING=True -DCATKIN_BLACKLIST_PACKAGES="{{ non_repo_packages }}" '
+    chdir={{ros_workspace}}

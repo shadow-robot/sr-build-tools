@@ -1,0 +1,4 @@
+---
+# Defaults for benchmarking
+
+benchmarking_results_dir: "/tmp"
