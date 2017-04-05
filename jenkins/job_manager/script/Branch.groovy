@@ -2,7 +2,7 @@ class Branch {
     String name, sha
     Boolean trunk, head
     Repository repository
-    Settings settings
+    List<Settings> settings
     Logger logger
     ArrayList<PullRequest> pullRequests = new ArrayList<PullRequest>()
 

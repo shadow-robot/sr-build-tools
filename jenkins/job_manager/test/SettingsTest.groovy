@@ -497,4 +497,67 @@ class SettingsTest {
         assert "check_cache" in configForKineticTrunk.settings.toolset.modules
         assert "code_coverage" in configForKineticTrunk.settings.toolset.modules
     }
+
+    @Test
+    void checkBranchMultipleToolsets2() {
+        def branchMultipleToolsetsYaml = '''\
+        settings:
+            ubuntu:
+                version: trusty
+            docker:
+                image: shadowrobot/build-tools
+                tag: trusty-indigo
+            ros:
+                release: indigo
+            toolset:
+                template_job_name: my_template
+                modules:
+                    - check_cache
+                    - code_coverage
+        trunks:
+            - name: indigo-devel
+            - name: kinetic-devel
+              settings:
+                  ubuntu:
+                      version: xenial
+                  ros:
+                      release: kinetic
+                  docker:
+                      tag: xenial-kinetic
+        branch:
+            parent: indigo-devel
+            settings:
+                - toolset:
+                      modules:
+                          - check_cache
+                - toolset:
+                      template_job_name: template_unit_tests_and_code_coverage
+                      modules:
+                          - code_coverage'''
+
+        def settingsParserDefault = new SettingsParser(branchMultipleToolsetsYaml, loggerMock)
+        assert 1 == settingsParserDefault.settingsList.size()
+        def configDefault = settingsParserDefault.settingsList.get(0)
+        checkBasicSettings(configDefault)
+
+        def settingsForBranch = new SettingsParser(branchMultipleToolsetsYaml, loggerMock, "my_new_version_branch")
+        assert 2 == settingsForBranch.settingsList.size()
+
+        def configForBranch0 = settingsForBranch.settingsList.get(0)
+
+        assert "trusty" == configForBranch0.settings.ubuntu.version
+        assert "trusty-indigo" == configForBranch0.settings.docker.tag
+        assert "indigo" == configForBranch0.settings.ros.release
+        assert 1 == configForBranch0.settings.toolset.modules.size()
+        assert "check_cache" in configForBranch0.settings.toolset.modules
+
+        def configForBranch1 = settingsForBranch.settingsList.get(1)
+
+        assert "trusty" == configForBranch1.settings.ubuntu.version
+        assert "trusty-indigo" == configForBranch1.settings.docker.tag
+        assert "indigo" == configForBranch1.settings.ros.release
+        assert 1 == configForBranch1.settings.toolset.modules.size()
+        assert "code_coverage" in configForBranch1.settings.toolset.modules
+
+    }
 }

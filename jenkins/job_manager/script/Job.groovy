@@ -5,13 +5,13 @@ class Job {
     Branch branch
     Repository repository
 
-    Job(Branch branch, Settings defaultSettings) {
+    Job(Branch branch, Settings defaultSettings, Integer settingsIndex = 0) {
         this.branch = branch
         this.logger = branch.logger
         this.repository = branch.repository
         this.defaultSettings = defaultSettings
         //logger.debug("Default settings: ${defaultSettings}")
-        this.branchSettings = branch.settings
+        this.branchSettings = branch.settings.get(settingsIndex)
         //logger.debug("Branch settings: ${branchSettings}")
         this.trunkSettings = repository.settings
         //logger.debug("Trunk settings: ${trunkSettings}")
@@ -42,19 +42,28 @@ class Job {
                 settings = branchSettings
                 break
         }
-        makeName()
-    }
 
-    def makeName() {
-        if (settings.status == Settings.Status.ERROR) {
-            this.name = "auto_${repository.name}_${branch.name.replace("#", "_no_")}_"
+        if (branch.settings.size() > 1) {
+            makeName(settingsIndex)
         } else {
-            this.name = "auto_${repository.name}_${branch.name.replace("#", "_no_")}_${settings.settings.ros.release}"
+            makeName()
         }
     }
 
-    Job(PullRequest pullRequest, Settings defaultSettings) {
-        this(pullRequest.branch, defaultSettings)
+    def makeName(settingsIndex = null) {
+        if (settings.status == Settings.Status.ERROR) {
+            this.name = "auto_${repository.name}_${branch.name.replace("#", "_no_")}_"
+        } else {
+            if (settingsIndex != null) {
+                this.name = "auto_${repository.name}_${branch.name.replace("#", "_no_")}_${settingsIndex}_${settings.settings.ros.release}"
+            } else {
+                this.name = "auto_${repository.name}_${branch.name.replace("#", "_no_")}_${settings.settings.ros.release}"
+            }
+        }
+    }
+
+    Job(PullRequest pullRequest, Settings defaultSettings, Integer settingsIndex = 0) {
+        this(pullRequest.branch, defaultSettings, settingsIndex)
     }
 
     String toString() {
