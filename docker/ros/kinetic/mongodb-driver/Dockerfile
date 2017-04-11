@@ -6,7 +6,7 @@ ENV PROJECTS_WS=/home/user/mongo_ws
 RUN echo "Updating sources" && \
     apt-get update && \
     echo "Creating mongo_ws workspace" && \
-    gosu $MY_USERNAME bash -c "mkdir /home/user/mongo_ws && mkdir $PROJECTS_WS/src" && \
+    gosu $MY_USERNAME bash -c "mkdir -p $PROJECTS_WS/src" && \
     cd $PROJECTS_WS/src && \
     
     echo "Downloading warehouse source" && \
@@ -21,8 +21,9 @@ RUN echo "Updating sources" && \
     scons --use-system-boost --prefix=/usr/local/ --full --disable-warnings-as-errors && \
     
     echo "Changing folders owner" && \
-    cd $PROJECTS_WS/src && \
-    chown -R user:user mongo-cxx-driver warehouse_ros* && \
+    cd $PROJECTS_WS && \
+    cd .. && \
+    chown -R user:user mongo_ws && \
     
     echo "Building the workspace" && \
     cd $PROJECTS_WS && \
@@ -38,6 +39,7 @@ RUN echo "Updating sources" && \
     make install && \
     cd port/PyAssimp/ && \
     python setup.py install && \
+
     echo "Removing cache" && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
