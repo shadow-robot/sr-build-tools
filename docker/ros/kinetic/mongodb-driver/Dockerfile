@@ -6,11 +6,11 @@ ENV PROJECTS_WS=/home/user/mongo_ws
 RUN echo "Updating sources" && \
     apt-get update && \
     echo "Creating mongo_ws workspace" && \
-    gosu $MY_USERNAME bash -c "mkdir -p $PROJECTS_WS/src" && \
+    mkdir -p $PROJECTS_WS/src && \
     cd $PROJECTS_WS/src && \
     
     echo "Downloading warehouse source" && \
-    gosu $MY_USERNAME bash -c "wstool init" && \
+    wstool init && \
     wstool set -yu warehouse_ros_mongo --git https://github.com/ros-planning/warehouse_ros_mongo.git -v jade-devel && \
     wstool set -yu warehouse_ros --git https://github.com/ros-planning/warehouse_ros.git -v jade-devel && \
     
