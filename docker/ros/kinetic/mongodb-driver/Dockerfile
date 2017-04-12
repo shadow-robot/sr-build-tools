@@ -21,9 +21,7 @@ RUN echo "Updating sources" && \
     scons --use-system-boost --prefix=/usr/local/ --full --disable-warnings-as-errors && \
     
     echo "Changing folders owner" && \
-    cd $PROJECTS_WS && \
-    cd .. && \
-    chown -R user:user mongo_ws && \
+    chown -R user:user $PROJECTS_WS && \
     
     echo "Building the workspace" && \
     cd $PROJECTS_WS && \
