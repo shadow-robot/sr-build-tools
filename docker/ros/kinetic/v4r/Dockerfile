@@ -18,6 +18,7 @@ RUN echo "Installing ceres with dependencies" && \
     make -j3 && make test && make install && \
 
     echo "Installing v4r library" && \
+    cd /home/$MY_USERNAME && \
     git clone 'https://github.com/ThoMut/v4r.git' && \
     cd v4r && \
     ./setup.sh xenial kinetic && \
@@ -30,7 +31,7 @@ RUN echo "Installing ceres with dependencies" && \
     echo "Removing cache" && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /home/$MY_USERNAME/.ansible /home/$MY_USERNAME/.gitconfig \
-    ceres-solver-1.8.0 ceres-solver-1.8.0.tar.gz ceres-bin/
+    /ceres-solver-1.8.0 /ceres-solver-1.8.0.tar.gz /ceres-bin
 
 
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
