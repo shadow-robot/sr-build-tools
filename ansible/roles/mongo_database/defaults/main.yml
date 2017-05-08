@@ -1,0 +1,2 @@
+
+ workspace_path: '~{{ros_user}}/workspace/${project_name}/base_deps' 

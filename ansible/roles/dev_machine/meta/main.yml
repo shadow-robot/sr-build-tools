@@ -2,3 +2,4 @@
 dependencies:
   - { role: ros_install, sudo: yes }
   - { role: ros_workspace }
+  - { role: mongo_database}
