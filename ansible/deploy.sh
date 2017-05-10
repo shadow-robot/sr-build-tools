@@ -164,7 +164,7 @@ echo " |   Cloning repo  |"
 echo " -------------------"
 echo ""
 
-git clone --depth 1 -b ${SR_BUILD_TOOLS_BRANCH:-"master"}  https://github.com/shadow-robot/sr-build-tools.git ${SR_BUILD_TOOLS_HOME}
+git clone --depth 1 -b ${SR_BUILD_TOOLS_BRANCH:-"F_add_mongodb_role"}  https://github.com/shadow-robot/sr-build-tools.git ${SR_BUILD_TOOLS_HOME}
 
 echo ""
 echo " ------------------------------------"
