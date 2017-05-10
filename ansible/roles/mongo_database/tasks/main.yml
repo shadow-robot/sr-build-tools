@@ -5,7 +5,7 @@
   git:
     repo: 'https://github.com/mongodb/mongo-cxx-driver.git'
     version: 26compat
-    dest: '{{workspace_path}}'/src
+    dest: "'{{workspace_path}}'/src"
     clone: yes
     update: yes
 
