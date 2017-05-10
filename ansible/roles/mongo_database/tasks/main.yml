@@ -5,15 +5,17 @@
   git:
     repo: 'https://github.com/mongodb/mongo-cxx-driver.git'
     version: 26compat
-    dest: "'{{workspace_path}}'/src"
+    dest: "{{workspace_path}}/src"
     clone: yes
     update: yes
 
 - name: Install scons package
+  sudo: yes
   apt:
     name: scons
 
 - name: Install mongodb package
+  sudo: yes
   apt:
     name: mongodb
 
@@ -21,14 +23,14 @@
   sudo: yes
   shell: scons --use-system-boost --prefix=/usr/local/ --full --disable-warnings-as-errors
   args:
-    chdir: "'{{workspace_path}}'/src"
+    chdir: "{{workspace_path}}/src"
 
 - name: Download warehouse_ros_mongo source
   sudo: yes
   shell: wstool set -yu warehouse_ros_mongo --git https://github.com/ros-planning/warehouse_ros_mongo.git -v jade-devel &&
          wstool set -yu warehouse_ros --git https://github.com/ros-planning/warehouse_ros.git -v jade-devel
   args:
-    chdir: "'{{workspace_path}}'/src"
+    chdir: "{{workspace_path}}/src"
 
 - name: Changing folders owner
   sudo: yes
@@ -38,4 +40,4 @@
   sudo: yes
   shell: bash -c "catkin_make"
   args:
-    chdir: "'{{workspace_path}}'"
+    chdir: "{{workspace_path}}"
