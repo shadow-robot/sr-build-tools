@@ -27,8 +27,13 @@
 
 - name: Download warehouse_ros_mongo source
   sudo: yes
-  shell: wstool set -yu warehouse_ros_mongo --git https://github.com/ros-planning/warehouse_ros_mongo.git -v jade-devel &&
-         wstool set -yu warehouse_ros --git https://github.com/ros-planning/warehouse_ros.git -v jade-devel
+  shell: wstool set -yu warehouse_ros_mongo --git https://github.com/ros-planning/warehouse_ros_mongo.git -v jade-devel
+  args:
+    chdir: "{{workspace_path}}/src"
+    
+- name: Download warehouse_ros source
+  sudo: yes
+  shell: wstool set -yu warehouse_ros --git https://github.com/ros-planning/warehouse_ros.git -v jade-devel
   args:
     chdir: "{{workspace_path}}/src"
 
