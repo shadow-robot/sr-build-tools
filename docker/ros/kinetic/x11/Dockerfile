@@ -10,6 +10,8 @@ MAINTAINER "Shadow Robot's Software Team <software@shadowrobot.com>"
 
 LABEL Description="This image is running a virtual X11 server" Vendor="Shadow Robot" Version="1.0"
 
+ENV MY_USERNAME user
+
 COPY entrypoint_x11.sh /usr/local/bin/entrypoint_x11.sh
 
 RUN apt-get update && \
@@ -20,5 +22,3 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /home/$MY_USERNAME/.ansible /home/$MY_USERNAME/.gitconfig
 
 ENTRYPOINT ["/usr/local/bin/entrypoint_x11.sh"]
-
-CMD ["/usr/bin/terminator"]
