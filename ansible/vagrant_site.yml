@@ -180,3 +180,4 @@
     ros_workspace_install: "../data/shadow_robot-{{ros_release}}.rosinstall"
   roles:
   - dev_machine
+  - {roles: mongo_database, tags: ["mongodb"]}
