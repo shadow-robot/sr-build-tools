@@ -23,7 +23,7 @@
   sudo: yes
   shell: scons --use-system-boost --prefix=/usr/local/ --full --disable-warnings-as-errors
   args:
-    chdir: "{{workspace_path}}/src"
+    chdir: "{{workspace_path}}/src/mongo-cxx-driver"
 
 - name: Download warehouse_ros_mongo source
   sudo: yes
