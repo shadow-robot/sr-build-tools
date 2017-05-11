@@ -2,7 +2,6 @@
 
 set -e # fail on errors
 #set -x # echo commands run
-export tags_list=$3
 
 while [[ $# > 1 ]]
 do
@@ -39,6 +38,10 @@ case $key in
     ;;
     -p|--githubpassword)
     GITHUB_PASSWORD="$2"
+    shift
+    ;;
+    -t|--tagslist)
+    TAGS_LIST="$2"
     shift
     ;;
     *)
@@ -99,7 +102,7 @@ echo "workspace    = ${WORKSPACE_PATH}"
 echo "branch       = ${GITHUB_BRANCH:-'default'}"
 echo "install file = ${INSTALL_FILE}"
 echo "project name = ${PROJECT_NAME}"
-echo "tags list = ${tags_list}"
+echo "tags list = ${TAGS_LIST}"
 
 if [ -z "${GITHUB_PASSWORD}" ] && [ -n "${GITHUB_LOGIN}" ]; then
     echo "git user = ${GITHUB_LOGIN}"
