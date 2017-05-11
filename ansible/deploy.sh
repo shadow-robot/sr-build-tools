@@ -3,8 +3,6 @@
 set -e # fail on errors
 #set -x # echo commands run
 
-export tags_list=$3
-
 while [[ $# > 1 ]]
 do
 key="$1"
@@ -131,7 +129,7 @@ else
     GITHUB_CREDENTIALS=" \"github_login\":\"${GITHUB_LOGIN}\", \"github_password\":\"${GITHUB_PASSWORD}\", "
 fi
 
-export MY_ANSIBLE_PARAMETERS="-vvv  --ask-become-pass ${PLAYBOOKS_DIR}/vagrant_site.yml --tags \"$tags_list\""
+export MY_ANSIBLE_PARAMETERS="-vvv  --ask-become-pass ${PLAYBOOKS_DIR}/vagrant_site.yml --tags \"$3\""
 export EXTRA_ANSIBLE_PARAMETER_ROS_USER=" \"ros_user\":\"`whoami`\", \"ros_group\":\"`whoami`\", "
 
 echo ""
