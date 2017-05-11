@@ -134,10 +134,10 @@ else
     GITHUB_CREDENTIALS=" \"github_login\":\"${GITHUB_LOGIN}\", \"github_password\":\"${GITHUB_PASSWORD}\", "
 fi
 
-if [ -z "${TAGS_LIST}"]; then
-    export MY_ANSIBLE_PARAMETERS="-vvv  --ask-become-pass ${PLAYBOOKS_DIR}/vagrant_site.yml --tags \"${TAGS_LIST}\""
-else
+if [ -z "${TAGS_LIST}" ]; then
     export MY_ANSIBLE_PARAMETERS="-vvv  --ask-become-pass ${PLAYBOOKS_DIR}/vagrant_site.yml"
+else
+    export MY_ANSIBLE_PARAMETERS="-vvv  --ask-become-pass ${PLAYBOOKS_DIR}/vagrant_site.yml --tags \"${TAGS_LIST}\""
 fi
 echo "MY_ANSIBLE_PARAMETERS = ${MY_ANSIBLE_PARAMETERS}"
 export EXTRA_ANSIBLE_PARAMETER_ROS_USER=" \"ros_user\":\"`whoami`\", \"ros_group\":\"`whoami`\", "
