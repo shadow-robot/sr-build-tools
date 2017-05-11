@@ -40,6 +40,8 @@
 - name: Changing folders owner
   sudo: yes
   shell: bash -c "chown -R user:user mongo-cxx-driver warehouse_ros"
+  args:
+    chdir: "{{workspace_path}}/src"
 
 - name: Build the workspace
   sudo: yes
