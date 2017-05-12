@@ -219,6 +219,7 @@ if [ -z "${TAGS_LIST}" ]; then
     ansible-playbook ${MY_ANSIBLE_PARAMETERS} --extra-vars "${EXTERNAL_VARIABLES_JSON}"
 else
     ansible-playbook ${MY_ANSIBLE_PARAMETERS} --extra-vars "${EXTERNAL_VARIABLES_JSON}" --tags \"${TAGS_LIST}\"
+    echo "ansible-playbook ${MY_ANSIBLE_PARAMETERS} --extra-vars "${EXTERNAL_VARIABLES_JSON}" --tags \"${TAGS_LIST}\""
 fi
 
 echo ""
