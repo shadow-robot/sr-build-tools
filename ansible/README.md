@@ -34,6 +34,7 @@ The shell script has the following flags:
   * -i or --installfile relative path to rosintall file in repository (default /repository.rosinstall)
   * -l or --githublogin github login for private repositories.
   * -p or --githubpassword github password for private repositories.
+  * -t or --tagslist tags for running a specific part of the configuration of the playbook
 
 ### Simple repository without repository.rosinstall
 
@@ -60,4 +61,10 @@ Tries to read any possible dependencies from repositories.rosinstall and install
 
 ```bash
 bash <(curl -Ls https://raw.githubusercontent.com/shadow-robot/sr-build-tools/master/ansible/deploy.sh) -o "ros-planning" -r moveit -b "kinetic-devel" -i moveit.rosinstall -v kinetic 
+```
+
+To include installation of the mongodb database an extra flag is required
+
+```bash
+bash <(curl -Ls https://raw.githubusercontent.com/shadow-robot/sr-build-tools/master/ansible/deploy.sh) -o "ros-planning" -r moveit -b "kinetic-devel" -i moveit.rosinstall -v kinetic -t mongodb
 ```
