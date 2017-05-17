@@ -13,7 +13,7 @@ RUN echo "Fixing file system" && \
     chmod 755 /tmp/oneliner && \
     gosu $MY_USERNAME /tmp/oneliner -b "$toolset_branch" -w /home/user/projects/shadow_robot/base  && \
 
-    apt-get install bash-completion
+    apt-get install bash-completion && \
 
     echo "Removing cache" && \
     apt-get clean && \
