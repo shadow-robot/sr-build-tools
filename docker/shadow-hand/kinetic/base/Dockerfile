@@ -40,9 +40,14 @@ RUN echo "Running one-liner" && \
     cd port/PyAssimp/ && \
     python setup.py install && \
 
+    apt-get install emacs && \
+    apt-get install bash-completion
+
     echo "Removing cache" && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+
+
 
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
 
