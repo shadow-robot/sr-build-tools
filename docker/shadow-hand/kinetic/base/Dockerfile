@@ -40,7 +40,6 @@ RUN echo "Running one-liner" && \
     cd port/PyAssimp/ && \
     python setup.py install && \
 
-    apt-get install emacs && \
     apt-get install bash-completion && \
 
     echo "Removing cache" && \
