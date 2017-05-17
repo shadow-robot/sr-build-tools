@@ -41,7 +41,7 @@ RUN echo "Running one-liner" && \
     python setup.py install && \
 
     apt-get install emacs && \
-    apt-get install bash-completion
+    apt-get install bash-completion && \
 
     echo "Removing cache" && \
     apt-get clean && \
