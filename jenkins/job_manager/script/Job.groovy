@@ -51,13 +51,14 @@ class Job {
     }
 
     def makeName(settingsIndex = null) {
+        formattedName = branch.name.replace("#", "_no_").replace("/", "_")
         if (settings.status == Settings.Status.ERROR) {
-            this.name = "auto_${repository.name}_${branch.name.replace("#", "_no_")}_"
+            this.name = "auto_${repository.name}_${formattedName}_"
         } else {
             if (settingsIndex != null) {
-                this.name = "auto_${repository.name}_${branch.name.replace("#", "_no_")}_${settingsIndex}_${settings.settings.ros.release}"
+                this.name = "auto_${repository.name}_${formattedName}_${settingsIndex}_${settings.settings.ros.release}"
             } else {
-                this.name = "auto_${repository.name}_${branch.name.replace("#", "_no_")}_${settings.settings.ros.release}"
+                this.name = "auto_${repository.name}_${formattedName}_${settings.settings.ros.release}"
             }
         }
     }
