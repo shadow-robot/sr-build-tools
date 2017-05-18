@@ -110,9 +110,9 @@ class JobManager {
             logger.info("There were no errors fetching branches' jenkins.yml")
         }
 
-        //deleteJobs(jobsToDelete)
-        //makeNewJobs(jobsToMake)
-        //refreshExistingJobs(jobsToKeep)
+        deleteJobs(jobsToDelete)
+        makeNewJobs(jobsToMake)
+        refreshExistingJobs(jobsToKeep)
     }
 
     def makeNewJobs(jobs) {
