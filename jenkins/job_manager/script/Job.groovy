@@ -51,7 +51,7 @@ class Job {
     }
 
     def makeName(settingsIndex = null) {
-        def formattedName = branch.name.replace("#", "_no_").replace("/", "_")
+        def formattedName = branch.name.replace("#", "_no_").replace("/", "_sl_")
         if (settings.status == Settings.Status.ERROR) {
             this.name = "auto_${repository.name}_${formattedName}_"
         } else {
