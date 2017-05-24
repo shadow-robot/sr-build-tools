@@ -32,7 +32,7 @@
     
 - name: Download warehouse_ros source
   sudo: yes
-  shell: bash -c "wstool init && wstool set -yu warehouse_ros --git https://github.com/ros-planning/warehouse_ros.git -v jade-devel"
+  shell: bash -c "wstool set -yu warehouse_ros --git https://github.com/ros-planning/warehouse_ros.git -v jade-devel"
     chdir={{workspace_path}}/src
 
 - name: Changing folders owner
