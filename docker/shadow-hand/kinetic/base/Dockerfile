@@ -9,7 +9,7 @@ RUN echo "Running one-liner" && \
     apt-get update && \
     wget -O /tmp/oneliner "$( echo "$remote_shell_script" | sed 's/#/%23/g' )" && \
     chmod 755 /tmp/oneliner && \
-    gosu $MY_USERNAME /tmp/oneliner -w $PROJECTS_WS/base -r sr-build-tools -b $toolset_branch -i data/shadow_robot-kinetic.rosinstall -v "kinetic"  && \
+    gosu $MY_USERNAME /tmp/oneliner -w $PROJECTS_WS/base -r sr-build-tools -b $toolset_branch -i data/shadow_robot-kinetic.rosinstall -v "kinetic" -t mongodb && \
 
     echo "Fixing pyassimp issue" && \
     cd /tmp/  && \
