@@ -14,7 +14,6 @@ RUN echo "Fixing file system" && \
     gosu $MY_USERNAME /tmp/oneliner -b "$toolset_branch" -w /home/user/projects/shadow_robot/base  && \
 
     apt-get install bash-completion && \
-    apt-get install emacs && \
 
     echo "Removing cache" && \
     apt-get clean && \
