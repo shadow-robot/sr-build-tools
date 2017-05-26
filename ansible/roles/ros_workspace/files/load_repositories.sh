@@ -18,7 +18,9 @@ export previous_repo_count=-1
 export loops_count=$((levels_depth - 1))
 
 while [ $current_repo_count -ne $previous_repo_count ]; do
-  find $current_folder -type f -name $rosinstall_filename -exec sed '$a\#' {} \; | sed -e "s/{{github_login}}/$github_user/g" | sed -e "s/{{github_password}}/$github_password/g" | wstool merge -a -y -
+  find . -type f -name $rosinstall_filename -exec wstool merge -y {}\; 
+  
+  sed -i "s/{{github_login}}/$github_user/g; s/{{github_password}}/$github_password/g" .rosinstall
   wstool update --delete-changed-uris  -j5
 
   export previous_repo_count=$current_repo_count
