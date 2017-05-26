@@ -23,8 +23,8 @@ RUN set -x && \
     wget -O /tmp/additional_bashrc_cmds "$( echo "$remote_additional_bashrc_cmds" | sed 's/#/%23/g' )" && \
     cat /tmp/additional_bashrc_cmds >> /home/user/.bashrc && \
 
-    apt-get install emacs && \
-    apt-get install gnome-icon-theme && \
+    apt-get install -y emacs && \
+    apt-get install -y gnome-icon-theme && \
 
     echo "Removing cache" && \
     apt-get clean && \
