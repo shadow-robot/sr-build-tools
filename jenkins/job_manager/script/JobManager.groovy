@@ -126,11 +126,10 @@ class JobManager {
         logger.info("${jobs*.name}")
         jobs.each { 
             if (!(it instanceof hudson.model.Job)) {
-                try {
+                if (it.getClass() != Job) {
+                    throw new Exception("Job should be either our internal class or already existing Jenkins class, but it's not. Please check why is it so.")
+                } else {
                     makeJob(it, false) 
-                } catch (MissingMethodException ex) {
-                    logger.error("Argument of makeJob is neither of class Job nor class hudson.model.Job")
-                    return false
                 }
             }
         }
