@@ -39,6 +39,7 @@ class JobManager {
         def jobsToKeep = new ArrayList<>()
         def jobsToDelete = new ArrayList<>(currentJenkinsJobs)
 
+        logger.info("All good new auto jobs: ${goodNewAutoJobs*.name}")
         logger.info("All good new auto jobs types: ${goodNewAutoJobs*.getClass()}")
         // If any of the new jobs match names with the current jobs, keep the job, and don't make a new one
         currentJenkinsJobs.each { currentJenkinsJob ->
@@ -52,6 +53,7 @@ class JobManager {
         }
         logger.info("${jobsToKeep.size()} of the existing auto jobs will be preserved because they have the same name as a newly generated job.")
         logger.debug("${jobsToKeep*.name}")
+        logger.info("All jobs to keep types: ${jobsToKeeps*.getClass()}")
 
         // Also keep any jobs that look like they might correspond to a repository for which I failed to get branches
         // or pull requests. Note that an empty list of pull requests is OK, an uninitialised list is not.
