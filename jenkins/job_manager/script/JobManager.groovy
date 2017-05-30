@@ -128,7 +128,7 @@ class JobManager {
             if (!(it instanceof hudson.model.Job)) {
                 try {
                     makeJob(it, false) 
-                } catch (IllegalArgumentException ex) {
+                } catch (MissingMethodException ex) {
                     logger.error("Argument of makeJob is neither of class Job nor class hudson.model.Job")
                     return false
                 }
