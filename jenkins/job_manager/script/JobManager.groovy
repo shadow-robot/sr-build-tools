@@ -22,6 +22,7 @@ class JobManager {
         logger.info("Processing jobs...")
         fetchCurrentJenkinsJobs()
         def newAutoJobs = repositories.jobs.flatten()
+        logger.info("New auto jobs: ${newAutoJobs*.name}")
         def goodNewAutoJobs = newAutoJobs.findAll { it.settings.status != Settings.Status.ERROR }
         def newJobsWithBranchConfigs = goodNewAutoJobs.findAll { it.settings.source == Settings.Source.BRANCH }
         def newJobsWithTrunkConfigs = goodNewAutoJobs.findAll { it.settings.source == Settings.Source.TRUNK }
@@ -38,10 +39,7 @@ class JobManager {
         def jobsToMake = new ArrayList<Job>(goodNewAutoJobs)
         def jobsToKeep = new ArrayList<>()
         def jobsToDelete = new ArrayList<>(currentJenkinsJobs)
-        logger.info("Jobs to delete types: ${jobsToDelete*.getClass()}")
 
-        logger.info("All good new auto jobs: ${goodNewAutoJobs*.name}")
-        logger.info("All good new auto jobs types: ${goodNewAutoJobs*.getClass()}")
         // If any of the new jobs match names with the current jobs, keep the job, and don't make a new one
         currentJenkinsJobs.each { currentJenkinsJob ->
             goodNewAutoJobs.each { goodNewAutoJob ->
@@ -54,7 +52,6 @@ class JobManager {
         }
         logger.info("${jobsToKeep.size()} of the existing auto jobs will be preserved because they have the same name as a newly generated job.")
         logger.debug("${jobsToKeep*.name}")
-        logger.info("All jobs to keep types: ${jobsToKeep*.getClass()}")
 
         // Also keep any jobs that look like they might correspond to a repository for which I failed to get branches
         // or pull requests. Note that an empty list of pull requests is OK, an uninitialised list is not.
@@ -106,7 +103,6 @@ class JobManager {
                 logger.warn("Specifically, these jobs will be preserved:")
                 logger.warn("${jobsToKeepDueToBranchErrors*.name}")
                 jobsToDelete.removeAll(jobsToKeepDueToBranchErrors)
-                logger.info("All jobs to keep due to branch errors types: ${jobsToKeepDueToBranchErrors*.getClass()}")
                 jobsToKeep.addAll(jobsToKeepDueToBranchErrors)
             } else {
                 logger.warn("There are no existing jobs that seem to match branches with jenkins.yml errors.")
@@ -117,7 +113,6 @@ class JobManager {
 
         deleteJobs(jobsToDelete)
         makeNewJobs(jobsToMake)
-        logger.info("Jobs to keep: ${jobsToKeep}")
         refreshExistingJobs(jobsToKeep)
     }
 
