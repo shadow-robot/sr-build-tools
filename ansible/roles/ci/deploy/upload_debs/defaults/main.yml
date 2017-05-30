@@ -2,7 +2,6 @@
 # Defaults aptly url
 
 aptly_url: http://10.1.2.108:8080
-repository_name: shadow-private
+repository_name_prefix: shadow-private
 repository_prefix: general
-repository_distribution: trusty
 gpg_password: shadow
