@@ -125,14 +125,14 @@ class JobManager {
         logger.info("Refreshing ${jobs.size()} existing jobs")
         logger.info("${jobs*.name}")
         jobs.each { 
-            //if (!(it instanceof hudson.model.Job)) {
+            if (!(it instanceof hudson.model.Job)) {
                 try {
                     makeJob(it, false) 
                 } catch (IllegalArgumentException ex) {
                     logger.error("Argument of makeJob is neither of class Job nor class hudson.model.Job")
                     return false
                 }
-            //}
+            }
         }
     }
 
