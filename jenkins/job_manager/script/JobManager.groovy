@@ -112,6 +112,7 @@ class JobManager {
 
         deleteJobs(jobsToDelete)
         makeNewJobs(jobsToMake)
+        logger.info("Jobs to keep: ${jobsToKeep}")
         refreshExistingJobs(jobsToKeep)
     }
 
@@ -124,6 +125,7 @@ class JobManager {
     def refreshExistingJobs(jobs) {
         logger.info("Refreshing ${jobs.size()} existing jobs")
         logger.info("${jobs*.name}")
+        logger.info("${jobs*.getClass()}")
         jobs.each { makeJob(it, false) }
     }
 
