@@ -124,7 +124,6 @@ class JobManager {
     def refreshExistingJobs(jobs) {
         logger.info("Refreshing ${jobs.size()} existing jobs")
         logger.info("${jobs*.name}")
-        logger.info("${jobs*.getClass()}")
         jobs.each { 
             if (it.getClass() != hudson.model.FreeStyleProject) {
                 makeJob(it, false) 
