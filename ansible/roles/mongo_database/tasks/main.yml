@@ -37,5 +37,5 @@
 
 - name: Build the workspace
   sudo: yes
-  shell: bash -c "source /opt/ros/kinetic/setup.bash && catkin_make"
+  shell: bash -c "source /opt/ros/{{ros_release}}/setup.bash && catkin_make"
     chdir={{workspace_path}}
