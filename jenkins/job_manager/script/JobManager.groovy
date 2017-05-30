@@ -39,6 +39,7 @@ class JobManager {
         def jobsToKeep = new ArrayList<>()
         def jobsToDelete = new ArrayList<>(currentJenkinsJobs)
 
+        logger.info("All good new auto jobs types: ${goodNewAutoJobs*.getClass()}")
         // If any of the new jobs match names with the current jobs, keep the job, and don't make a new one
         currentJenkinsJobs.each { currentJenkinsJob ->
             goodNewAutoJobs.each { goodNewAutoJob ->
