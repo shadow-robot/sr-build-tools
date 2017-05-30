@@ -96,6 +96,7 @@ class JobManager {
             }
             logger.warn("Existing jobs with names beginning with any of the following will be preserved:")
             logger.warn("${errorBranchJobNameStarts}")
+            logger.info("Jobs to delete types: ${jobsToDelete*.getClass()}")
             def jobsToKeepDueToBranchErrors = jobsToDelete.findAll { currentJob ->
                 errorBranchJobNameStarts.any { name ->
                     currentJob.name.startsWith(name)
