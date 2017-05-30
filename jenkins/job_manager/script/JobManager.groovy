@@ -125,7 +125,7 @@ class JobManager {
         logger.info("Refreshing ${jobs.size()} existing jobs")
         logger.info("${jobs*.name}")
         jobs.each { 
-            if (!(it.getClass() instanceof hudson.model.Job)) {
+            if (!(it instanceof hudson.model.Job)) {
                 makeJob(it, false) 
             }
         }
