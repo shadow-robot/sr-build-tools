@@ -105,6 +105,7 @@ class JobManager {
                 logger.warn("Specifically, these jobs will be preserved:")
                 logger.warn("${jobsToKeepDueToBranchErrors*.name}")
                 jobsToDelete.removeAll(jobsToKeepDueToBranchErrors)
+                logger.info("All jobs to keep due to branch errors types: ${jobsToKeepDueToBranchErrors*.getClass()}")
                 jobsToKeep.addAll(jobsToKeepDueToBranchErrors)
             } else {
                 logger.warn("There are no existing jobs that seem to match branches with jenkins.yml errors.")
