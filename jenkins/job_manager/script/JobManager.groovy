@@ -22,7 +22,6 @@ class JobManager {
         logger.info("Processing jobs...")
         fetchCurrentJenkinsJobs()
         def newAutoJobs = repositories.jobs.flatten()
-        logger.info("New auto jobs: ${newAutoJobs*.name}")
         def goodNewAutoJobs = newAutoJobs.findAll { it.settings.status != Settings.Status.ERROR }
         def newJobsWithBranchConfigs = goodNewAutoJobs.findAll { it.settings.source == Settings.Source.BRANCH }
         def newJobsWithTrunkConfigs = goodNewAutoJobs.findAll { it.settings.source == Settings.Source.TRUNK }
