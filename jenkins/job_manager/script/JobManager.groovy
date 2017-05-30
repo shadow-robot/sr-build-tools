@@ -38,6 +38,7 @@ class JobManager {
         def jobsToMake = new ArrayList<Job>(goodNewAutoJobs)
         def jobsToKeep = new ArrayList<>()
         def jobsToDelete = new ArrayList<>(currentJenkinsJobs)
+        logger.info("Jobs to delete types: ${jobsToDelete*.getClass()}")
 
         logger.info("All good new auto jobs: ${goodNewAutoJobs*.name}")
         logger.info("All good new auto jobs types: ${goodNewAutoJobs*.getClass()}")
@@ -96,7 +97,6 @@ class JobManager {
             }
             logger.warn("Existing jobs with names beginning with any of the following will be preserved:")
             logger.warn("${errorBranchJobNameStarts}")
-            logger.info("Jobs to delete types: ${jobsToDelete*.getClass()}")
             def jobsToKeepDueToBranchErrors = jobsToDelete.findAll { currentJob ->
                 errorBranchJobNameStarts.any { name ->
                     currentJob.name.startsWith(name)
