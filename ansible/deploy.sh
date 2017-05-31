@@ -40,6 +40,10 @@ case $key in
     GITHUB_PASSWORD="$2"
     shift
     ;;
+    -s|--secure)
+    ENABLE_SSH_URI="$2"
+    shift
+    ;;
     *)
     # ignore unknown option
     ;;
@@ -119,15 +123,22 @@ export ANSIBLE_LOG_PATH=~/build_tools_ansible.log
 
 ROSINTSTALL_FILE_CONTENT="- git: {local-name: \"${PROJECT_NAME}\", uri: "
 
-if [ -z "${GITHUB_LOGIN}" ]; then
-    REPOSITORY_URL="https://github.com/${REPOSITORY_OWNER}/${REPOSITORY_NAME}.git"
-    ROSINTSTALL_FILE_CONTENT="${ROSINTSTALL_FILE_CONTENT}\"${REPOSITORY_URL}\""
-    GITHUB_CREDENTIALS=""
+if [-z "${ENABLE_SSH_URI}" ] || ["${ENABLE_SSH_URI}" = false]; then
+    if [ -z "${GITHUB_LOGIN}" ]; then
+        REPOSITORY_URL="https://github.com/${REPOSITORY_OWNER}/${REPOSITORY_NAME}.git"
+        ROSINTSTALL_FILE_CONTENT="${ROSINTSTALL_FILE_CONTENT}\"${REPOSITORY_URL}\""
+        GITHUB_CREDENTIALS=""
+    else
+        REPOSITORY_URL="https://${GITHUB_LOGIN}:${GITHUB_PASSWORD}@github.com/${REPOSITORY_OWNER}/${REPOSITORY_NAME}.git"
+        ROSINTSTALL_FILE_CONTENT="${ROSINTSTALL_FILE_CONTENT}\"https://{{github_login}}:{{github_password}}@github.com/${REPOSITORY_OWNER}/${REPOSITORY_NAME}.git\""
+        GITHUB_CREDENTIALS=" \"github_login\":\"${GITHUB_LOGIN}\", \"github_password\":\"${GITHUB_PASSWORD}\", "
+    fi
+elif ["${ENABLE_SSH_URI}" = true]
+    echo "Using ssh github uri format"
 else
-    REPOSITORY_URL="https://${GITHUB_LOGIN}:${GITHUB_PASSWORD}@github.com/${REPOSITORY_OWNER}/${REPOSITORY_NAME}.git"
-    ROSINTSTALL_FILE_CONTENT="${ROSINTSTALL_FILE_CONTENT}\"https://{{github_login}}:{{github_password}}@github.com/${REPOSITORY_OWNER}/${REPOSITORY_NAME}.git\""
-    GITHUB_CREDENTIALS=" \"github_login\":\"${GITHUB_LOGIN}\", \"github_password\":\"${GITHUB_PASSWORD}\", "
+    echo "Incorrect ssh hey flag value"
 fi
+
 
 export MY_ANSIBLE_PARAMETERS="-vvv  --ask-become-pass ${PLAYBOOKS_DIR}/vagrant_site.yml "
 export EXTRA_ANSIBLE_PARAMETER_ROS_USER=" \"ros_user\":\"`whoami`\", \"ros_group\":\"`whoami`\", "
