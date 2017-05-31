@@ -124,15 +124,7 @@ class JobManager {
     def refreshExistingJobs(jobs) {
         logger.info("Refreshing ${jobs.size()} existing jobs")
         logger.info("${jobs*.name}")
-        jobs.each { 
-            if (!(it instanceof hudson.model.Job)) {
-                if (it.getClass() != Job) {
-                    throw new Exception("Job should be either our internal class or already existing Jenkins class, but it's not. Please check why is it so.")
-                } else {
-                    makeJob(it, false) 
-                }
-            }
-        }
+        jobs.each { makeJob(it, false) }
     }
 
     def deleteJobs(jobs) {
@@ -179,82 +171,88 @@ class JobManager {
         job.delete()
     }
 
-    def makeJob(Job job, boolean generateNew=true) {
+    def makeJob(job, boolean generateNew=true) {
+        if (!(it instanceof hudson.model.Job)) {
+            if (it.getClass() != Job) {
+                throw new Exception("Job should be either our internal class or already existing Jenkins class, but it's not. Please check why is it so.")
+            } else {
 
-        def template = Jenkins.instance.getItem(job.settings.settings.toolset.template_job_name)
-        if (!(template instanceof hudson.model.Job)) {
-            logger.error("Could not find template job \'${job.settings.settings.toolset.template_job_name}\'")
-            return false
-        }
-
-        def existingJob = Jenkins.instance.projects.find { it.name == job.name }
-        def newJob = null
-        if (generateNew) {
-            if (existingJob instanceof hudson.model.Job) {
-                logger.error("${job.name} already exists.")
-                return false
-            }
-            logger.info("Creating new Jenkins job: ${job.name}...")
-            logger.debug("${job.settings}")
-            newJob = Jenkins.instance.copy(template, job.name)
-        }
-        else {
-            if (null == existingJob) {
-                logger.error("${job.name} doesn't exist but want to be refreshed.")
-                return false
-            }
-            newJob = existingJob
-            def jobXmlFile = template.getConfigFile()
-            def file = jobXmlFile.getFile()
-            newJob.updateByXml(new StreamSource(new FileInputStream(file)))
-        }
-
-        newJob.description = "Job for ${job.branch.name} branch of ${job.repository.url}, based on template " +
-                "${template.name} using ros release ${job.settings.settings.ros.release}"
-        newJob.disabled = false
-        def property = newJob.properties.find {
-            it.key.getClass().getName().startsWith("com.coravy.hudson.plugins.github.GithubProjectProperty")
-        }
-        property.value.projectUrl = job.repository.url
-        newJob.scm.browser = new GithubWeb(job.repository.url)
-        newJob.scm.userRemoteConfigs[0].url = "${job.repository.url}.git"
-        if (job.branch.head || job.branch.trunk) {
-            newJob.scm.userRemoteConfigs[0].refspec = ""
-            newJob.scm.branches[0].name = "**/" + job.branch.name
-        } else {
-            newJob.scm.branches[0].name = "**/pr/${job.branch.pullRequests[0].index}/head"
-            newJob.scm.userRemoteConfigs[0].refspec = "+refs/pull/*:refs/remotes/origin/pr/*"
-        }
-        def dockerTask = newJob.builders.find {
-            it.hasProperty("command") && it.command != null && it.command.contains("{{docker_image_name}}")
-        }
-        if (null != dockerTask) {
-            def realCommand = dockerTask.command.replaceAll(Pattern.quote("{{docker_image_name}}"), "${job.settings.settings.docker.image}:${job.settings.settings.docker.tag}")
-            realCommand = realCommand.replaceAll(Pattern.quote("{{modules_list}}"), job.settings.settings.toolset.modules.join(','))
-            realCommand = realCommand.replaceAll(Pattern.quote("{{ros_release}}"), job.settings.settings.ros.release)
-            realCommand = realCommand.replaceAll(Pattern.quote("{{ubuntu_version}}"), job.settings.settings.ubuntu.version)
-            def builders = newJob.buildersList
-            def oldBuilders = builders.toList()
-            builders.clear()
-            for (item in oldBuilders) {
-                if (item == dockerTask) {
-                    builders.add(new hudson.tasks.Shell(realCommand))
-                } else {
-                    builders.add(item)
+                def template = Jenkins.instance.getItem(job.settings.settings.toolset.template_job_name)
+                if (!(template instanceof hudson.model.Job)) {
+                    logger.error("Could not find template job \'${job.settings.settings.toolset.template_job_name}\'")
+                    return false
                 }
+
+                def existingJob = Jenkins.instance.projects.find { it.name == job.name }
+                def newJob = null
+                if (generateNew) {
+                    if (existingJob instanceof hudson.model.Job) {
+                        logger.error("${job.name} already exists.")
+                        return false
+                    }
+                    logger.info("Creating new Jenkins job: ${job.name}...")
+                    logger.debug("${job.settings}")
+                    newJob = Jenkins.instance.copy(template, job.name)
+                }
+                else {
+                    if (null == existingJob) {
+                        logger.error("${job.name} doesn't exist but want to be refreshed.")
+                        return false
+                    }
+                    newJob = existingJob
+                    def jobXmlFile = template.getConfigFile()
+                    def file = jobXmlFile.getFile()
+                    newJob.updateByXml(new StreamSource(new FileInputStream(file)))
+                }
+
+                newJob.description = "Job for ${job.branch.name} branch of ${job.repository.url}, based on template " +
+                        "${template.name} using ros release ${job.settings.settings.ros.release}"
+                newJob.disabled = false
+                def property = newJob.properties.find {
+                    it.key.getClass().getName().startsWith("com.coravy.hudson.plugins.github.GithubProjectProperty")
+                }
+                property.value.projectUrl = job.repository.url
+                newJob.scm.browser = new GithubWeb(job.repository.url)
+                newJob.scm.userRemoteConfigs[0].url = "${job.repository.url}.git"
+                if (job.branch.head || job.branch.trunk) {
+                    newJob.scm.userRemoteConfigs[0].refspec = ""
+                    newJob.scm.branches[0].name = "**/" + job.branch.name
+                } else {
+                    newJob.scm.branches[0].name = "**/pr/${job.branch.pullRequests[0].index}/head"
+                    newJob.scm.userRemoteConfigs[0].refspec = "+refs/pull/*:refs/remotes/origin/pr/*"
+                }
+                def dockerTask = newJob.builders.find {
+                    it.hasProperty("command") && it.command != null && it.command.contains("{{docker_image_name}}")
+                }
+                if (null != dockerTask) {
+                    def realCommand = dockerTask.command.replaceAll(Pattern.quote("{{docker_image_name}}"), "${job.settings.settings.docker.image}:${job.settings.settings.docker.tag}")
+                    realCommand = realCommand.replaceAll(Pattern.quote("{{modules_list}}"), job.settings.settings.toolset.modules.join(','))
+                    realCommand = realCommand.replaceAll(Pattern.quote("{{ros_release}}"), job.settings.settings.ros.release)
+                    realCommand = realCommand.replaceAll(Pattern.quote("{{ubuntu_version}}"), job.settings.settings.ubuntu.version)
+                    def builders = newJob.buildersList
+                    def oldBuilders = builders.toList()
+                    builders.clear()
+                    for (item in oldBuilders) {
+                        if (item == dockerTask) {
+                            builders.add(new hudson.tasks.Shell(realCommand))
+                        } else {
+                            builders.add(item)
+                        }
+                    }
+                }
+                newJob.save()
+                def jobXmlFile = newJob.getConfigFile()
+                def file = jobXmlFile.getFile()
+                newJob.updateByXml(new StreamSource(new FileInputStream(file)))
+                newJob.save()
+                if (generateNew) {
+                    logger.info("Created new Jenkins job: ${job.name}")
+                }
+                else {
+                    logger.info("Refreshed existing Jenkins job: ${job.name}")
+                }
+                return newJob.name
             }
         }
-        newJob.save()
-        def jobXmlFile = newJob.getConfigFile()
-        def file = jobXmlFile.getFile()
-        newJob.updateByXml(new StreamSource(new FileInputStream(file)))
-        newJob.save()
-        if (generateNew) {
-            logger.info("Created new Jenkins job: ${job.name}")
-        }
-        else {
-            logger.info("Refreshed existing Jenkins job: ${job.name}")
-        }
-        return newJob.name
     }
 }
