@@ -144,7 +144,7 @@ elif [ "${ENABLE_SSH_URI}" = true ]; then
     ROSINTSTALL_FILE_CONTENT="${ROSINTSTALL_FILE_CONTENT}\"${REPOSITORY_URL}\""
     GITHUB_CREDENTIALS=""
 else
-    echo "Incorrect ssh hey flag value"
+    echo "Incorrect ssh key flag value"
 fi
 
 if [ -z "${TAGS_LIST}" ]; then
