@@ -1,0 +1,38 @@
+# Set up the mongodb database
+
+- name: Clone mongo-cxx-driver in {{workspace_path}}
+  git:
+    repo: 'https://github.com/mongodb/mongo-cxx-driver.git'
+    version: 26compat
+    dest: "{{workspace_path}}/src/mongo-cxx-driver"
+    clone: yes
+    depth: 1
+    update: yes
+
+- name: Install scons package
+  sudo: yes
+  apt:
+    name: scons
+
+- name: Install mongodb package
+  sudo: yes
+  apt:
+    name: mongodb
+
+- name: Build mongodb from source
+  sudo: yes
+  shell: scons --use-system-boost --prefix=/usr/local/ --full --disable-warnings-as-errors
+  args:
+    chdir: "{{workspace_path}}/src/mongo-cxx-driver"
+
+- name: Download warehouse_ros_mongo source
+  shell: bash -c "wstool set -yu warehouse_ros_mongo --git https://github.com/ros-planning/warehouse_ros_mongo.git -v jade-devel"
+    chdir={{workspace_path}}/src
+    
+- name: Download warehouse_ros source
+  shell: bash -c "wstool set -yu warehouse_ros --git https://github.com/ros-planning/warehouse_ros.git -v jade-devel"
+    chdir={{workspace_path}}/src
+
+- name: Build the workspace
+  shell: bash -c "source /opt/ros/{{ros_release}}/setup.bash && catkin_make"
+    chdir={{workspace_path}}

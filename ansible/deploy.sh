@@ -40,6 +40,10 @@ case $key in
     GITHUB_PASSWORD="$2"
     shift
     ;;
+    -t|--tagslist)
+    TAGS_LIST="$2"
+    shift
+    ;;
     *)
     # ignore unknown option
     ;;
@@ -98,6 +102,7 @@ echo "workspace    = ${WORKSPACE_PATH}"
 echo "branch       = ${GITHUB_BRANCH:-'default'}"
 echo "install file = ${INSTALL_FILE}"
 echo "project name = ${PROJECT_NAME}"
+echo "tags list = ${TAGS_LIST}"
 
 if [ -z "${GITHUB_PASSWORD}" ] && [ -n "${GITHUB_LOGIN}" ]; then
     echo "git user = ${GITHUB_LOGIN}"
@@ -129,7 +134,12 @@ else
     GITHUB_CREDENTIALS=" \"github_login\":\"${GITHUB_LOGIN}\", \"github_password\":\"${GITHUB_PASSWORD}\", "
 fi
 
-export MY_ANSIBLE_PARAMETERS="-vvv  --ask-become-pass ${PLAYBOOKS_DIR}/vagrant_site.yml "
+if [ -z "${TAGS_LIST}" ]; then
+    export MY_ANSIBLE_PARAMETERS="-vvv  --ask-become-pass ${PLAYBOOKS_DIR}/vagrant_site.yml --tags default"
+else
+    export MY_ANSIBLE_PARAMETERS="-vvv  --ask-become-pass ${PLAYBOOKS_DIR}/vagrant_site.yml --tags default,${TAGS_LIST}"
+fi
+
 export EXTRA_ANSIBLE_PARAMETER_ROS_USER=" \"ros_user\":\"`whoami`\", \"ros_group\":\"`whoami`\", "
 
 echo ""
