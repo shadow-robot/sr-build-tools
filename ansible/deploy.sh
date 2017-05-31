@@ -123,7 +123,7 @@ export ANSIBLE_LOG_PATH=~/build_tools_ansible.log
 
 ROSINTSTALL_FILE_CONTENT="- git: {local-name: \"${PROJECT_NAME}\", uri: "
 
-if [-z "${ENABLE_SSH_URI}" ] || [ "${ENABLE_SSH_URI}" = false ]; then
+if [ -z "${ENABLE_SSH_URI}" ] || [ "${ENABLE_SSH_URI}" = false ]; then
     if [ -z "${GITHUB_LOGIN}" ]; then
         REPOSITORY_URL="https://github.com/${REPOSITORY_OWNER}/${REPOSITORY_NAME}.git"
         ROSINTSTALL_FILE_CONTENT="${ROSINTSTALL_FILE_CONTENT}\"${REPOSITORY_URL}\""
