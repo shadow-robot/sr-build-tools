@@ -135,10 +135,12 @@ if [ -z "${ENABLE_SSH_URI}" ] || [ "${ENABLE_SSH_URI}" = false ]; then
     fi
 elif [ "${ENABLE_SSH_URI}" = true ]; then
     echo "Using ssh github uri format"
+    REPOSITORY_URL="git@github.com:${REPOSITORY_OWNER}/${REPOSITORY_NAME}.git"
+    ROSINTSTALL_FILE_CONTENT="${ROSINTSTALL_FILE_CONTENT}\"${REPOSITORY_URL}\""
+    GITHUB_CREDENTIALS=""
 else
     echo "Incorrect ssh hey flag value"
 fi
-
 
 export MY_ANSIBLE_PARAMETERS="-vvv  --ask-become-pass ${PLAYBOOKS_DIR}/vagrant_site.yml "
 export EXTRA_ANSIBLE_PARAMETER_ROS_USER=" \"ros_user\":\"`whoami`\", \"ros_group\":\"`whoami`\", "
