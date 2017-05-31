@@ -133,7 +133,7 @@ if [-z "${ENABLE_SSH_URI}" ] || ["${ENABLE_SSH_URI}" = false]; then
         ROSINTSTALL_FILE_CONTENT="${ROSINTSTALL_FILE_CONTENT}\"https://{{github_login}}:{{github_password}}@github.com/${REPOSITORY_OWNER}/${REPOSITORY_NAME}.git\""
         GITHUB_CREDENTIALS=" \"github_login\":\"${GITHUB_LOGIN}\", \"github_password\":\"${GITHUB_PASSWORD}\", "
     fi
-elif ["${ENABLE_SSH_URI}" = true]
+elif ["${ENABLE_SSH_URI}" = true]; then
     echo "Using ssh github uri format"
 else
     echo "Incorrect ssh hey flag value"
