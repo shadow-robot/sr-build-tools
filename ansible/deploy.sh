@@ -123,7 +123,7 @@ export ANSIBLE_LOG_PATH=~/build_tools_ansible.log
 
 ROSINTSTALL_FILE_CONTENT="- git: {local-name: \"${PROJECT_NAME}\", uri: "
 
-if [-z "${ENABLE_SSH_URI}" ] || ["${ENABLE_SSH_URI}" = false]; then
+if [-z "${ENABLE_SSH_URI}" ] || [ "${ENABLE_SSH_URI}" = false ]; then
     if [ -z "${GITHUB_LOGIN}" ]; then
         REPOSITORY_URL="https://github.com/${REPOSITORY_OWNER}/${REPOSITORY_NAME}.git"
         ROSINTSTALL_FILE_CONTENT="${ROSINTSTALL_FILE_CONTENT}\"${REPOSITORY_URL}\""
@@ -133,7 +133,7 @@ if [-z "${ENABLE_SSH_URI}" ] || ["${ENABLE_SSH_URI}" = false]; then
         ROSINTSTALL_FILE_CONTENT="${ROSINTSTALL_FILE_CONTENT}\"https://{{github_login}}:{{github_password}}@github.com/${REPOSITORY_OWNER}/${REPOSITORY_NAME}.git\""
         GITHUB_CREDENTIALS=" \"github_login\":\"${GITHUB_LOGIN}\", \"github_password\":\"${GITHUB_PASSWORD}\", "
     fi
-elif ["${ENABLE_SSH_URI}" = true]; then
+elif [ "${ENABLE_SSH_URI}" = true ]; then
     echo "Using ssh github uri format"
 else
     echo "Incorrect ssh hey flag value"
