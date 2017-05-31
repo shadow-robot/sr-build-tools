@@ -171,8 +171,13 @@ class JobManager {
         job.delete()
     }
 
-    def makeJob(Job job, boolean generateNew=true) {
-
+    def makeJob(job, boolean generateNew=true) {
+        if (job instanceof hudson.model.Job) {
+            return
+        }  
+        if (job.getClass() != Job) {
+            throw new Exception("Job should be either our internal class or already existing Jenkins class, but it's not. Please check why is it so.")
+        }
         def template = Jenkins.instance.getItem(job.settings.settings.toolset.template_job_name)
         if (!(template instanceof hudson.model.Job)) {
             logger.error("Could not find template job \'${job.settings.settings.toolset.template_job_name}\'")
