@@ -187,7 +187,6 @@ echo ""
 
 ROS_WORKSPACE_INSTALL_FILE="${SR_BUILD_TOOLS_HOME}/repository.rosinstall"
 
-echo "Current dir: $(pwd)"
 if [ -z "${INSTALL_FILE}" ];
 then
     if [ -z "${GITHUB_BRANCH}" ]; then
