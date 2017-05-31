@@ -1,0 +1,2 @@
+
+ workspace_path: '{{ros_workspace}}_deps' 
