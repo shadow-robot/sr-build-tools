@@ -172,8 +172,8 @@ class JobManager {
     }
 
     def makeJob(job, boolean generateNew=true) {
-        if (!(it instanceof hudson.model.Job)) {
-            if (it.getClass() != Job) {
+        if (!(job instanceof hudson.model.Job)) {
+            if (job.getClass() != Job) {
                 throw new Exception("Job should be either our internal class or already existing Jenkins class, but it's not. Please check why is it so.")
             } else {
 
