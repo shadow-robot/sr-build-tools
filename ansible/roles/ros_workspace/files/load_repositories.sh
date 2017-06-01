@@ -25,7 +25,7 @@ else
 fi
 
 recursive_rosinstall () {
-    echo "$current_repo_count"
+    echo "current repo count: $current_repo_count"
     while [ $current_repo_count -ne $previous_repo_count ]; do
         find $current_folder -type f -name $rosinstall_filename -exec wstool merge -y {} \; 
         sed -i $1 .rosinstall
