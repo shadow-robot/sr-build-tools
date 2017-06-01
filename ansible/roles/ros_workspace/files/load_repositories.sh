@@ -14,7 +14,7 @@ recursive_rosinstall () {
         else
             break
         fi
-            export current_folder=$destination_folder
+        export current_folder=$destination_folder
     done
 }
 
