@@ -1,12 +1,10 @@
 FROM shadowrobot/build-tools:xenial-kinetic-ide
 
 LABEL Description="This ROS Kinetic image contains Shadow's dexterous hand software with build tools. It includes IDE environments." Vendor="Shadow Robot" Version="1.0"
-ENV toolset_branch="F_add_mongodb_role"
 ENV remote_shell_script="https://raw.githubusercontent.com/shadow-robot/sr-build-tools/$toolset_branch/ansible/deploy.sh"
 
 ENV PROJECTS_WS=/home/user/projects/shadow_robot
 RUN echo "Running one-liner" && \
-    export SR_BUILD_TOOLS_BRANCH="F_add_mongodb_role" && \
     apt-get update && \
     wget -O /tmp/oneliner "$( echo "$remote_shell_script" | sed 's/#/%23/g' )" && \
     chmod 755 /tmp/oneliner && \
