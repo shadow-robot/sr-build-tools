@@ -10,6 +10,8 @@ export secure=$6
 export current_folder=$initial_folder
 cd $destination_folder
 
+echo "Secure flag set to: ${secure}"
+
 wstool init .
 
 export rosinstall_filename="repository.rosinstall"
