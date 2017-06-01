@@ -18,9 +18,6 @@ export current_repo_count=$(find $destination_folder -type f -name $rosinstall_f
 export previous_repo_count=-1
 export loops_count=$((levels_depth - 1))
 
-echo "Secure flag set to: ${secure}"
-echo "Initial workspace set to: ${initial_folder}"
-
 while [ $current_repo_count -ne $previous_repo_count ]; do
   if [ "${secure}" = true ]; then
       find $current_folder -type f -name $rosinstall_filename -exec wstool merge -y {} \; 

@@ -87,10 +87,6 @@
 - name: Remove initial repository.rosinstall file from src directory
   file: path={{ros_workspace}}/src/repository.rosinstall state=absent
 
-- name: Print secure value
-  debug:
-    msg: "secure: {{secure}} ros_workspace: {{ros_workspace}}"
-
 - name: Load {{ros_workspace}}_deps dependencies for maximum 10 levels
   script: ../files/load_repositories.sh {{ros_workspace}}/src {{ros_workspace}}_deps/src 10 {{github_login | default('github_user_not_provided') }} {{github_password | default('github_password_not_provided') }} {{secure}}
 
