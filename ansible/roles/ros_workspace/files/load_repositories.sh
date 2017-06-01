@@ -18,25 +18,36 @@ export current_repo_count=$(find $destination_folder -type f -name $rosinstall_f
 export previous_repo_count=-1
 export loops_count=$((levels_depth - 1))
 
-while [ $current_repo_count -ne $previous_repo_count ]; do
-  if [ "${use_ssh_uri}" = true ]; then
-      find $current_folder -type f -name $rosinstall_filename -exec wstool merge -y {} \; 
-      sed -i "/https/s/\//:/3; s/https:\/\/{{github_login}}:{{github_password}}/git/g; s/https:\/\//git@/g" .rosinstall
-  else
-      find $current_folder -type f -name $rosinstall_filename -exec wstool merge -y {} \; 
-      sed -i "s/{{github_login}}/$github_user/g; s/{{github_password}}/$github_password/g" .rosinstall
-  fi
-  wstool update --delete-changed-uris  -j5
+if [ "${use_ssh_uri}" = true ]; then
+    while [ $current_repo_count -ne $previous_repo_count ]; do
+        find $current_folder -type f -name $rosinstall_filename -exec wstool merge -y {} \; 
+        sed -i "/https/s/\//:/3; s/https:\/\/{{github_login}}:{{github_password}}/git/g; s/https:\/\//git@/g" .rosinstall
+        wstool update --delete-changed-uris  -j5
 
-  export previous_repo_count=$current_repo_count
-  export current_repo_count=$(find $destination_folder -type f -name $rosinstall_filename | wc -l)
+        export previous_repo_count=$current_repo_count
+        export current_repo_count=$(find $destination_folder -type f -name $rosinstall_filename | wc -l)
 
-  if [ $loops_count -ge 1 ]; then
-    export loops_count=$((loops_count - 1))
-  else
-    break
-  fi
-  export current_folder=$destination_folder
+        if [ $loops_count -ge 1 ]; then
+            export loops_count=$((loops_count - 1))
+        else
+            break
+        fi
+            export current_folder=$destination_folder
+    done
+else
+    while [ $current_repo_count -ne $previous_repo_count ]; do
+        find $current_folder -type f -name $rosinstall_filename -exec wstool merge -y {} \; 
+        sed -i "s/{{github_login}}/$github_user/g; s/{{github_password}}/$github_password/g" .rosinstall
+        wstool update --delete-changed-uris  -j5
 
-done
+        export previous_repo_count=$current_repo_count
+        export current_repo_count=$(find $destination_folder -type f -name $rosinstall_filename | wc -l)
 
+        if [ $loops_count -ge 1 ]; then
+            export loops_count=$((loops_count - 1))
+        else
+            break
+        fi
+            export current_folder=$destination_folder
+    done
+fi
