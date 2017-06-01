@@ -21,7 +21,7 @@ export loops_count=$((levels_depth - 1))
 while [ $current_repo_count -ne $previous_repo_count ]; do
   if [ "${secure}" = true ]; then
       find $current_folder -type f -name $rosinstall_filename -exec wstool merge -y {} \; 
-      sed -i "s/{{secure}}/$github_user/g; s/{{secure}}/$github_password/g" .rosinstall
+      sed -i "s/{{github_login}}/$secure/g; s/{{github_password}}/$secure/g" .rosinstall
   else
       find $current_folder -type f -name $rosinstall_filename -exec wstool merge -y {} \; 
       sed -i "s/{{github_login}}/$github_user/g; s/{{github_password}}/$github_password/g" .rosinstall
