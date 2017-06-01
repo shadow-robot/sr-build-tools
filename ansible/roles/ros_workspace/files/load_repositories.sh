@@ -19,11 +19,12 @@ export previous_repo_count=-1
 export loops_count=$((levels_depth - 1))
 
 echo "Secure flag set to: ${secure}"
+echo "Initial workspace set to: ${initial_folder}"
 
 while [ $current_repo_count -ne $previous_repo_count ]; do
   if [ "${secure}" = true ]; then
       find $current_folder -type f -name $rosinstall_filename -exec wstool merge -y {} \; 
-      sed -i "s/{{github_login}}/$secure/g; s/{{github_password}}/$secure/g" .rosinstall
+      sed -i "s/https:\/\/{{github_login}}:{{github_password}}/git/g; s/https:\/\//git/g; s/\//:/" .rosinstall
   else
       find $current_folder -type f -name $rosinstall_filename -exec wstool merge -y {} \; 
       sed -i "s/{{github_login}}/$github_user/g; s/{{github_password}}/$github_password/g" .rosinstall
