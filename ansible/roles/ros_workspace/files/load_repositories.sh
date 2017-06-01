@@ -3,8 +3,8 @@
 export initial_folder=$1
 export destination_folder=$2
 export levels_depth=$3
-export github_user=$4
-export github_password=$5
+export github_user=${4:-github_user_not_provided}
+export github_password=${5:-github_password_not_provided}
 export secure=$6
 
 export current_folder=$initial_folder
