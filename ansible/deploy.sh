@@ -141,7 +141,7 @@ if [ -z "${ENABLE_SSH_URI}" ] || [ "${ENABLE_SSH_URI}" = false ]; then
     fi
 elif [ "${ENABLE_SSH_URI}" = true ]; then
     echo "Using ssh github uri format"
-    REPOSITORY_URL="git@github.com:${REPOSITORY_OWNER}/${REPOSITORY_NAME}.git"
+    REPOSITORY_URL="git@github.com:${REPOSITORY_OWNER}/${REPOSITORY_NAME}.git"elif [ "${ENABLE_SSH_URI}" = true ]; then
     ROSINTSTALL_FILE_CONTENT="${ROSINTSTALL_FILE_CONTENT}\"${REPOSITORY_URL}\""
     GITHUB_CREDENTIALS=" \"secure\":\"${ENABLE_SSH_URI}\", "
 else
@@ -189,7 +189,7 @@ echo " |   Cloning repo  |"
 echo " -------------------"
 echo ""
 
-git clone --depth 1 -b ${SR_BUILD_TOOLS_BRANCH:-"master"}  https://github.com/shadow-robot/sr-build-tools.git ${SR_BUILD_TOOLS_HOME}
+git clone --depth 1 -b ${SR_BUILD_TOOLS_BRANCH:-"F_deploy_secure"}  https://github.com/shadow-robot/sr-build-tools.git ${SR_BUILD_TOOLS_HOME}
 
 echo ""
 echo " ------------------------------------"
