@@ -3,9 +3,9 @@
 export initial_folder=$1
 export destination_folder=$2
 export levels_depth=$3
-export github_user=${4:-github_user_not_provided}
-export github_password=${5:-github_password_not_provided}
-export secure=${6:-false}
+export use_ssh_uri=${4:-false}
+export github_user=${5:-github_user_not_provided}
+export github_password=${6:-github_password_not_provided}
 
 export current_folder=$initial_folder
 cd $destination_folder
@@ -19,7 +19,7 @@ export previous_repo_count=-1
 export loops_count=$((levels_depth - 1))
 
 while [ $current_repo_count -ne $previous_repo_count ]; do
-  if [ "${secure}" = true ]; then
+  if [ "${use_ssh_uri}" = true ]; then
       find $current_folder -type f -name $rosinstall_filename -exec wstool merge -y {} \; 
       sed -i "/https/s/\//:/3; s/https:\/\/{{github_login}}:{{github_password}}/git/g; s/https:\/\//git@/g" .rosinstall
   else

@@ -40,8 +40,8 @@ case $key in
     GITHUB_PASSWORD="$2"
     shift
     ;;
-    -s|--secure)
-    ENABLE_SSH_URI="$2"
+    -s|--usesshuri)
+    USE_SSH_URI="$2"
     shift
     ;;
     -t|--tagslist)
@@ -96,7 +96,7 @@ echo "  * -b or --branch repository branch"
 echo "  * -i or --installfile relative path to rosintall file. When specified then sources from this rosintall file are installed not repository itself"
 echo "  * -l or --githublogin github login for private repositories."
 echo "  * -p or --githubpassword github password for private repositories."
-echo "  * -s or --secure flag informing that ssh format github uris will be used. Set true to enable, set false or do not set to disable"
+echo "  * -s or --usesshuri flag informing that ssh format github uris will be used. Set true to enable, set false or do not set to disable"
 echo ""
 echo "example: ./deploy.sh -o shadow-robot -r sr_interface -w ~{{ros_user}}/workspace/shadow/base  -l mygithublogin -p mysupersecretpassword"
 echo ""
@@ -129,7 +129,7 @@ export ANSIBLE_LOG_PATH=~/build_tools_ansible.log
 
 ROSINTSTALL_FILE_CONTENT="- git: {local-name: \"${PROJECT_NAME}\", uri: "
 
-if [ -z "${ENABLE_SSH_URI}" ] || [ "${ENABLE_SSH_URI}" = false ]; then
+if [ -z "${USE_SSH_URI}" ] || [ "${USE_SSH_URI}" = false ]; then
     if [ -z "${GITHUB_LOGIN}" ]; then
         REPOSITORY_URL="https://github.com/${REPOSITORY_OWNER}/${REPOSITORY_NAME}.git"
         ROSINTSTALL_FILE_CONTENT="${ROSINTSTALL_FILE_CONTENT}\"${REPOSITORY_URL}\""
@@ -139,11 +139,11 @@ if [ -z "${ENABLE_SSH_URI}" ] || [ "${ENABLE_SSH_URI}" = false ]; then
         ROSINTSTALL_FILE_CONTENT="${ROSINTSTALL_FILE_CONTENT}\"https://{{github_login}}:{{github_password}}@github.com/${REPOSITORY_OWNER}/${REPOSITORY_NAME}.git\""
         GITHUB_CREDENTIALS=" \"github_login\":\"${GITHUB_LOGIN}\", \"github_password\":\"${GITHUB_PASSWORD}\", "
     fi
-elif [ "${ENABLE_SSH_URI}" = true ]; then
+elif [ "${USE_SSH_URI}" = true ]; then
     echo "Using ssh github uri format"
     REPOSITORY_URL="git@github.com:${REPOSITORY_OWNER}/${REPOSITORY_NAME}.git"
     ROSINTSTALL_FILE_CONTENT="${ROSINTSTALL_FILE_CONTENT}\"${REPOSITORY_URL}\""
-    GITHUB_CREDENTIALS=" \"secure\":\"${ENABLE_SSH_URI}\", "
+    GITHUB_CREDENTIALS=" \"use_ssh_uri\":\"true\", "
 else
     echo "Incorrect ssh key flag value"
     exit 1
