@@ -96,6 +96,7 @@ echo "  * -b or --branch repository branch"
 echo "  * -i or --installfile relative path to rosintall file. When specified then sources from this rosintall file are installed not repository itself"
 echo "  * -l or --githublogin github login for private repositories."
 echo "  * -p or --githubpassword github password for private repositories."
+echo "  * -s or --secure flag informing that ssh format github uris will be used. Set true to enable, set false or do not set to disable"
 echo ""
 echo "example: ./deploy.sh -o shadow-robot -r sr_interface -w ~{{ros_user}}/workspace/shadow/base  -l mygithublogin -p mysupersecretpassword"
 echo ""
@@ -145,6 +146,7 @@ elif [ "${ENABLE_SSH_URI}" = true ]; then
     GITHUB_CREDENTIALS=""
 else
     echo "Incorrect ssh key flag value"
+    exit 1
 fi
 
 if [ -z "${TAGS_LIST}" ]; then
