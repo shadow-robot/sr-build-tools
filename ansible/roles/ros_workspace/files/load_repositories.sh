@@ -3,8 +3,8 @@
 export initial_folder=$1
 export destination_folder=$2
 export levels_depth=$3
-export github_user=${4:-github_user_not_provided}
-export github_password=${5:-github_password_not_provided}
+export github_user=$4
+export github_password=$5
 export secure=$6
 
 export current_folder=$initial_folder
@@ -24,7 +24,7 @@ echo "Initial workspace set to: ${initial_folder}"
 while [ $current_repo_count -ne $previous_repo_count ]; do
   if [ "${secure}" = true ]; then
       find $current_folder -type f -name $rosinstall_filename -exec wstool merge -y {} \; 
-      sed -i "s/https:\/\/{{github_login}}:{{github_password}}/git/g; s/https:\/\//git/g; s/\//:/" .rosinstall
+      sed -i "/https/s/\//:/3; s/https:\/\/{{github_login}}:{{github_password}}/git/g; s/https:\/\//git@/g" .rosinstall
   else
       find $current_folder -type f -name $rosinstall_filename -exec wstool merge -y {} \; 
       sed -i "s/{{github_login}}/$github_user/g; s/{{github_password}}/$github_password/g" .rosinstall
