@@ -88,7 +88,7 @@
   file: path={{ros_workspace}}/src/repository.rosinstall state=absent
 
 - name: Load {{ros_workspace}}_deps dependencies for maximum 10 levels
-  script: ../files/load_repositories.sh {{ros_workspace}}/src {{ros_workspace}}_deps/src 10 {{github_login | default('') }} {{github_password | default('') }}
+  script: ../files/load_repositories.sh {{ros_workspace}}/src {{ros_workspace}}_deps/src 10 {{github_login | default('') }} {{github_password | default('') }} {{secure | default(false) }}
 
 - name: Delete duplicated deps
   shell: for BASE_SRC in `ls {{ros_workspace}}/src` ; do if [ -d {{ros_workspace}}_deps/src/${BASE_SRC} ]; then rm -rf {{ros_workspace}}_deps/src/${BASE_SRC}; fi ; done
