@@ -88,7 +88,8 @@
   file: path={{ros_workspace}}/src/repository.rosinstall state=absent
 
 - name: Print secure value
-  shell: bash -c "echo "secure: {{secure}} ros_workspace: {{ros_workspace}}""
+  debug:
+    msg: "secure: {{secure}} ros_workspace: {{ros_workspace}}"
 
 - name: Load {{ros_workspace}}_deps dependencies for maximum 10 levels
   script: ../files/load_repositories.sh {{ros_workspace}}/src {{ros_workspace}}_deps/src 10 {{github_login | default('') }} {{github_password | default('') }} {{secure}}
