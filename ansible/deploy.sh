@@ -143,7 +143,7 @@ elif [ "${ENABLE_SSH_URI}" = true ]; then
     echo "Using ssh github uri format"
     REPOSITORY_URL="git@github.com:${REPOSITORY_OWNER}/${REPOSITORY_NAME}.git"
     ROSINTSTALL_FILE_CONTENT="${ROSINTSTALL_FILE_CONTENT}\"${REPOSITORY_URL}\""
-    GITHUB_CREDENTIALS=""
+    GITHUB_CREDENTIALS=" \"secure\":\"${ENABLE_SSH_URI}\", "
 else
     echo "Incorrect ssh key flag value"
     exit 1
