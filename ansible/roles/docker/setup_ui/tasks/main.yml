@@ -4,11 +4,14 @@
 - name: Setting up bash as default shell
   shell: rm /bin/sh && ln -s /bin/bash /bin/sh
 
-- name: Setting locale
-  command: locale-gen en_US.UTF-8
-
 - name: Update package lists
   apt: update_cache=yes
+
+- name: Installing locales package
+  apt: name=locales
+
+- name: Setting locale
+  command: locale-gen en_US.UTF-8
 
 - name: Update all packages to the latest version
   apt: upgrade=dist
