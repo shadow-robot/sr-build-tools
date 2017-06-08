@@ -40,6 +40,10 @@ case $key in
     GITHUB_PASSWORD="$2"
     shift
     ;;
+    -x|--x509)
+    X509_CLIENT_CERTIFICATE_PATH="$2"
+    shift
+    ;;
     *)
     # ignore unknown option
     ;;
@@ -88,6 +92,7 @@ echo "  * -b or --branch repository branch"
 echo "  * -i or --installfile relative path to rosintall file. When specified then sources from this rosintall file are installed not repository itself"
 echo "  * -l or --githublogin github login for private repositories."
 echo "  * -p or --githubpassword github password for private repositories."
+echo "  * -x or --x509 relative path to Shadow's X.509 client SSL certificate, CA and client key in repository."
 echo ""
 echo "example: ./deploy.sh -o shadow-robot -r sr_interface -w ~{{ros_user}}/workspace/shadow/base  -l mygithublogin -p mysupersecretpassword"
 echo ""
@@ -167,12 +172,23 @@ echo ""
 git clone --depth 1 -b ${SR_BUILD_TOOLS_BRANCH:-"master"}  https://github.com/shadow-robot/sr-build-tools.git ${SR_BUILD_TOOLS_HOME}
 
 echo ""
-echo " ------------------------------------"
-echo " |   Creating repository.rosinstall  |"
-echo " ------------------------------------"
+echo " ----------------------------------------------------------"
+echo " |   Creating repository.rosinstall and X.509 certificate |"
+echo " ----------------------------------------------------------"
 echo ""
 
 ROS_WORKSPACE_INSTALL_FILE="${SR_BUILD_TOOLS_HOME}/repository.rosinstall"
+X509_CLIENT_CERTIFICATE_CA_FILE="${SR_BUILD_TOOLS_HOME}/shadow_ca.crt"
+X509_CLIENT_CERTIFICATE_FILE="${SR_BUILD_TOOLS_HOME}/shadow_cert.crt"
+X509_CLIENT_CERTIFICATE_CLIENT_KEY_FILE="${SR_BUILD_TOOLS_HOME}/shadow_client.key"
+
+if [ -n "${INSTALL_FILE}" ] || [ -n "${X509_CLIENT_CERTIFICATE_PATH}" ] ; then
+    if [ -z "${GITHUB_BRANCH}" ]; then
+        git clone --depth 1 ${REPOSITORY_URL} ${PROJECT_HOME_DIR}
+    else
+        git clone --depth 1 -b ${GITHUB_BRANCH} ${REPOSITORY_URL} ${PROJECT_HOME_DIR}
+    fi
+fi
 
 if [ -z "${INSTALL_FILE}" ];
 then
@@ -183,12 +199,15 @@ then
     fi
     echo ${ROSINTSTALL_FILE_CONTENT} > ${ROS_WORKSPACE_INSTALL_FILE}
 else
-    if [ -z "${GITHUB_BRANCH}" ]; then
-        git clone --depth 1 ${REPOSITORY_URL} ${PROJECT_HOME_DIR}
-    else
-        git clone --depth 1 -b ${GITHUB_BRANCH} ${REPOSITORY_URL} ${PROJECT_HOME_DIR}
-    fi
     cp "${PROJECT_HOME_DIR}/${INSTALL_FILE}" ${ROS_WORKSPACE_INSTALL_FILE}
+fi
+
+export X509_CLIENT_SETTINGS=""
+if [ -n "${X509_CLIENT_CERTIFICATE_PATH}" ] ; then
+    cp "${PROJECT_HOME_DIR}/${X509_CLIENT_CERTIFICATE_FILE}/shadow_ca.crt" "${SR_BUILD_TOOLS_HOME}/shadow_ca.crt"
+    cp "${PROJECT_HOME_DIR}/${X509_CLIENT_CERTIFICATE_FILE}/shadow_cert.crt" "${SR_BUILD_TOOLS_HOME}/shadow_cert.crt"
+    cp "${PROJECT_HOME_DIR}/${X509_CLIENT_CERTIFICATE_FILE}/shadow_client.key" "${SR_BUILD_TOOLS_HOME}/shadow_client.key"
+    X509_CLIENT_SETTINGS="\"x509_path\":\"${SR_BUILD_TOOLS_HOME}\","
 fi
 
 echo ""
@@ -206,7 +225,7 @@ if [ "${ROS_VERSION}" != "indigo" ]; then
 fi
 
 export WORKSPACE_SETTINGS="\"ros_workspace\":\"${WORKSPACE_PATH}\", \"ros_workspace_install\":\"${ROS_WORKSPACE_INSTALL_FILE}\" "
-export EXTERNAL_VARIABLES_JSON="{ ${GITHUB_CREDENTIALS} ${EXTRA_ANSIBLE_PARAMETER_ROS_USER} ${ROS_RELEASE_SETTINGS} ${WORKSPACE_SETTINGS} }"
+export EXTERNAL_VARIABLES_JSON="{ ${GITHUB_CREDENTIALS} ${EXTRA_ANSIBLE_PARAMETER_ROS_USER} ${ROS_RELEASE_SETTINGS} ${X509_CLIENT_SETTINGS} ${WORKSPACE_SETTINGS} }"
 ansible-playbook ${MY_ANSIBLE_PARAMETERS} --extra-vars "${EXTERNAL_VARIABLES_JSON}"
 
 echo ""
