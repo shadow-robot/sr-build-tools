@@ -23,6 +23,14 @@
   set_fact:
     installed_packages_names_stdout_lines: "{{installed_packages_names.stdout_lines}}"
 
+- name: Define Ubuntu release name
+  set_fact:
+    repository_distribution: "{{ ubuntu_version_name | default('trusty') }}"
+
+- name: Define repository name
+  set_fact:
+    repository_name: "{{repository_name_prefix}}-{{repository_distribution}}"
+
 - name: Upload files to aptly repository
   shell: curl -X POST -F file=@{{ item.0 }} {{aptly_url}}/api/files/{{ item.1 }}
     chdir={{repo_sources_path}}
