@@ -68,7 +68,7 @@ echo " | Running Ansible |"
 echo " -------------------"
 echo ""
 
-ansible-playbook -v -K sr-build-tools/ansible/vagrant_site.yml --tags default --extra-vars "config_branch=$1"
+ansible-playbook -v -K sr-build-tools/ansible/vagrant_site.yml --extra-vars "config_branch=$1"
 
 
 
