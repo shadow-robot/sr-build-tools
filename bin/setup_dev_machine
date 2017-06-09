@@ -159,7 +159,7 @@ echo " | Running Ansible |"
 echo " -------------------"
 echo ""
 
-ansible-playbook -vvv -K sr-build-tools/ansible/vagrant_site.yml --extra-vars "config_branch=${SR_CONFIG_BRANCH} ros_user=`whoami` ros_workspace=${WORKSPACE_PATH} ros_group=`whoami` ros_workspace_install=${ROSINSTALL_PATH} github_login=${GITHUB_LOGIN} github_password=${GITHUB_PASSWORD}"
+ansible-playbook -vvv -K sr-build-tools/ansible/vagrant_site.yml --tags default --extra-vars "config_branch=${SR_CONFIG_BRANCH} ros_user=`whoami` ros_workspace=${WORKSPACE_PATH} ros_group=`whoami` ros_workspace_install=${ROSINSTALL_PATH} github_login=${GITHUB_LOGIN} github_password=${GITHUB_PASSWORD}"
 
 echo ""
 echo " ------------------------------------------------"
