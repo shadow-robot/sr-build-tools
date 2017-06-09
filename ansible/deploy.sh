@@ -85,6 +85,12 @@ then
     ROS_VERSION="indigo"
 fi
 
+if [ -z "${TAGS_LIST}" ]; then
+    TAGS_LIST="default"
+else
+    TAGS_LIST="default,${TAGS_LIST}"
+fi
+
 echo "================================================================="
 echo "|                                                               |"
 echo "|             Shadow default installation tool                  |"
@@ -153,12 +159,6 @@ elif [ "${USE_SSH_URI}" = true ]; then
 else
     echo "Incorrect ssh key flag value"
     exit 1
-fi
-
-if [ -z "${TAGS_LIST}" ]; then
-    export MY_ANSIBLE_PARAMETERS="-vvv  --ask-become-pass ${PLAYBOOKS_DIR}/vagrant_site.yml --tags default"
-else
-    export MY_ANSIBLE_PARAMETERS="-vvv  --ask-become-pass ${PLAYBOOKS_DIR}/vagrant_site.yml --tags default,${TAGS_LIST}"
 fi
 
 export EXTRA_ANSIBLE_PARAMETER_ROS_USER=" \"ros_user\":\"`whoami`\", \"ros_group\":\"`whoami`\", "
@@ -233,7 +233,8 @@ if [ -n "${X509_CLIENT_CERTIFICATE_PATH}" ] ; then
     cp "${PROJECT_HOME_DIR}/${X509_CLIENT_CERTIFICATE_FILE}/shadow_ca.crt" "${SR_BUILD_TOOLS_HOME}/shadow_ca.crt"
     cp "${PROJECT_HOME_DIR}/${X509_CLIENT_CERTIFICATE_FILE}/shadow_cert.crt" "${SR_BUILD_TOOLS_HOME}/shadow_cert.crt"
     cp "${PROJECT_HOME_DIR}/${X509_CLIENT_CERTIFICATE_FILE}/shadow_client.key" "${SR_BUILD_TOOLS_HOME}/shadow_client.key"
-    X509_CLIENT_SETTINGS="\"x509_path\":\"${SR_BUILD_TOOLS_HOME}\","
+    X509_CLIENT_SETTINGS="\"x509_path\":\"${SR_BUILD_TOOLS_HOME}\", "
+    TAGS_LIST = "${TAGS_LIST},shadow_debian_repo"
 fi
 
 echo ""
@@ -241,6 +242,8 @@ echo " -------------------"
 echo " | Running Ansible |"
 echo " -------------------"
 echo ""
+
+export MY_ANSIBLE_PARAMETERS="-vvv  --ask-become-pass ${PLAYBOOKS_DIR}/vagrant_site.yml --tags ${TAGS_LIST}"
 
 sudo sh -c "echo \"[dev-machine]
 localhost ansible_connection=local\" > ${ANSIBLE_INVENTORY}"

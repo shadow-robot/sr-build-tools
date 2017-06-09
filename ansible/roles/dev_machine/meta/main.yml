@@ -1,4 +1,5 @@
 ---
 dependencies:
   - { role: ros_install, sudo: yes }
+  - { role: shadow_debian_repo, sudo: yes, tags: ["shadow_debian_repo"] } # DEBUG, check flags option
   - { role: ros_workspace }
