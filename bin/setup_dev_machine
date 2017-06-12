@@ -8,7 +8,7 @@
 # note: if this is set to > 0 the /etc/hosts part is not recognized ( may be a bug )
 
 set -e # fail on errors
-set -x # echo commands run
+# set -x # echo commands run
 
 while [[ $# > 1 ]]
 do
