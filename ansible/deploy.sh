@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 set -e # fail on errors
-#set -x # echo commands run
+set -x # echo commands run
 
 while [[ $# > 1 ]]
 do
@@ -220,9 +220,6 @@ echo " ----------------------------------------------------------"
 echo ""
 
 ROS_WORKSPACE_INSTALL_FILE="${SR_BUILD_TOOLS_HOME}/repository.rosinstall"
-X509_CLIENT_CERTIFICATE_CA_FILE="${SR_BUILD_TOOLS_HOME}/shadow_ca.crt"
-X509_CLIENT_CERTIFICATE_FILE="${SR_BUILD_TOOLS_HOME}/shadow_cert.crt"
-X509_CLIENT_CERTIFICATE_CLIENT_KEY_FILE="${SR_BUILD_TOOLS_HOME}/shadow_client.key"
 
 if [ -n "${INSTALL_FILE}" ] || [ -n "${X509_CLIENT_CERTIFICATE_PATH}" ] ; then
     if [ -z "${GITHUB_BRANCH}" ]; then
@@ -246,9 +243,9 @@ fi
 
 export X509_CLIENT_SETTINGS=""
 if [ -n "${X509_CLIENT_CERTIFICATE_PATH}" ] ; then
-    cp "${PROJECT_HOME_DIR}/${X509_CLIENT_CERTIFICATE_FILE}/shadow_ca.crt" "${SR_BUILD_TOOLS_HOME}/shadow_ca.crt"
-    cp "${PROJECT_HOME_DIR}/${X509_CLIENT_CERTIFICATE_FILE}/shadow_cert.crt" "${SR_BUILD_TOOLS_HOME}/shadow_cert.crt"
-    cp "${PROJECT_HOME_DIR}/${X509_CLIENT_CERTIFICATE_FILE}/shadow_client.key" "${SR_BUILD_TOOLS_HOME}/shadow_client.key"
+    cp "${PROJECT_HOME_DIR}/${X509_CLIENT_CERTIFICATE_PATH}/shadow_ca.crt" "${SR_BUILD_TOOLS_HOME}/shadow_ca.crt"
+    cp "${PROJECT_HOME_DIR}/${X509_CLIENT_CERTIFICATE_PATH}/shadow_cert.crt" "${SR_BUILD_TOOLS_HOME}/shadow_cert.crt"
+    cp "${PROJECT_HOME_DIR}/${X509_CLIENT_CERTIFICATE_PATH}/shadow_client.key" "${SR_BUILD_TOOLS_HOME}/shadow_client.key"
     X509_CLIENT_SETTINGS="\"x509_path\":\"${SR_BUILD_TOOLS_HOME}\", "
     TAGS_LIST = "${TAGS_LIST},shadow_debian_repo"
 fi
