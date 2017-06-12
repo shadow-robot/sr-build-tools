@@ -122,7 +122,7 @@ echo "project name = ${PROJECT_NAME}"
 echo "tags list    = ${TAGS_LIST}"
 
 if [ -z "${GITHUB_PASSWORD}" ] && [ -n "${GITHUB_LOGIN}" ]; then
-    echo "git user = ${GITHUB_LOGIN}"
+    echo "git user     = ${GITHUB_LOGIN}"
     echo -n "${GITHUB_LOGIN}'s GitHub password:"
     read -s GITHUB_PASSWORD
     echo
