@@ -95,7 +95,6 @@
     ros_user_background: "files/images/ShadowRobot-smaller.jpg_1280x1280.jpg"
     monospace_font: "Ubuntu Mono 11"
   sudo: yes
-  any_errors_fatal: true
   roles:
   - ros_install
   - ros_user
@@ -114,7 +113,6 @@
     ros_user_background: "files/images/ShadowRobot-smaller.jpg_1280x1280.jpg"
     monospace_font: "Ubuntu Mono 11"
   sudo: yes
-  any_errors_fatal: true
   roles:
     - ros_install
     - ros_user
