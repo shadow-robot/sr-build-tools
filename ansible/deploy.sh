@@ -247,7 +247,7 @@ if [ -n "${X509_CLIENT_CERTIFICATE_PATH}" ] ; then
     cp "${PROJECT_HOME_DIR}/${X509_CLIENT_CERTIFICATE_PATH}/shadow_cert.crt" "${SR_BUILD_TOOLS_HOME}/shadow_cert.crt"
     cp "${PROJECT_HOME_DIR}/${X509_CLIENT_CERTIFICATE_PATH}/shadow_client.key" "${SR_BUILD_TOOLS_HOME}/shadow_client.key"
     X509_CLIENT_SETTINGS="\"x509_path\":\"${SR_BUILD_TOOLS_HOME}\", "
-    TAGS_LIST = "${TAGS_LIST},shadow_debian_repo"
+    TAGS_LIST="${TAGS_LIST},shadow_debian_repo"
 fi
 
 echo ""
