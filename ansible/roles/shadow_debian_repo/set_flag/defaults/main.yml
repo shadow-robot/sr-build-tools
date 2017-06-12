@@ -1,0 +1,4 @@
+---
+# Defaults
+
+install_shadow_debian_repo: yes

@@ -1,0 +1,7 @@
+Acquire::https::packages.shadowrobot.com {
+  Verify-Peer "false";
+  Verify-Host "false";
+  CaInfo "/etc/apt/ssl/shadow_ca.crt";
+  SslCert "/etc/apt/ssl/shadow_cert.crt";
+  SslKey  "/etc/apt/ssl/shadow_client.key";
+};

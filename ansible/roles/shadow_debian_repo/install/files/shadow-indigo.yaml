@@ -1,0 +1,22 @@
+fh_controllers:
+    ubuntu: [ros-indigo-fh-controllers]
+fh_description:
+    ubuntu: [ros-indigo-fh-description]
+fh_drivers:
+    ubuntu: [ros-indigo-fh-drivers]
+fh_hardware_tests:
+    ubuntu: [ros-indigo-fh-hardware-tests]
+fh_calibration:
+    ubuntu: [ros-indigo-fh-calibration]
+fh_hardware_interface:
+    ubuntu: [ros-indigo-fh-hardware-interface]
+fh_msgs:
+    ubuntu: [ros-indigo-fh-msgs]
+fh_robot:
+    ubuntu: [ros-indigo-fh-robot]
+urdf_merger:
+    ubuntu: [ros-indigo-urdf-merger]
+fh_external_protocol:
+    ubuntu: [ros-indigo-fh-external-protocol]
+fh_config:
+    ubuntu: [ros-indigo-fh-config]

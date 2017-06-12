@@ -179,5 +179,6 @@
       - ethercat-grant
     ros_workspace_install: "../data/shadow_robot-{{ros_release}}.rosinstall"
   roles:
-    - {role: dev_machine, tags: ["default","mongodb"]}
+    - {role: shadow_debian_repo/set_flag, tags: ["shadow_debian_repo"]}
+    - {role: dev_machine, tags: ["default"]}
     - {role: mongo_database, tags: ["mongodb"]}

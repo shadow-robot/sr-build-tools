@@ -1,0 +1,3 @@
+yaml https://raw.githubusercontent.com/shadow-robot/sr-build-tools/SRC-123-implement-ssl-certificate-default-script/ansible/roles/shadow_debian_repo/install/files/shadow-{{ros_release}}.yaml
+
+# TODO Fix path to master branch

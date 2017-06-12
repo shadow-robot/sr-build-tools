@@ -1,0 +1,5 @@
+---
+# Defaults
+
+ubuntu_version_name: "trusty"
+ros_release: "indigo"

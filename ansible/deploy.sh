@@ -165,6 +165,22 @@ export EXTRA_ANSIBLE_PARAMETER_ROS_USER=" \"ros_user\":\"`whoami`\", \"ros_group
 
 echo ""
 echo " ---------------------------------"
+echo " |   Checking Python version     |"
+echo " ---------------------------------"
+echo ""
+
+case "$(python --version 2>&1)" in
+    *" 2."*)
+        echo "Python 2 default, proceeding to install"
+        ;;
+    *)
+        echo "Wrong Python version, this installation script requires Python 2 to be default"
+        exit 1
+        ;;
+esac
+
+echo ""
+echo " ---------------------------------"
 echo " |   Installing needed packages  |"
 echo " ---------------------------------"
 echo ""
