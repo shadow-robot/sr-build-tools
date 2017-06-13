@@ -1,9 +1,6 @@
 ---
 # Playbook for Shadow Debian repository
 
-- debug:
-    msg: "install_shadow_debian_repo value is  {{ install_shadow_debian_repo }}"
-
 - name: check if x509_path variable was set
   fail: msg="Variable x509_path was not set"
   when: x509_path is not defined
