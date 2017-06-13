@@ -48,6 +48,10 @@ case $key in
     TAGS_LIST="$2"
     shift
     ;;
+    -u|--ubuntu)
+    UBUNTU_VERSION="$2"
+    shift
+    ;;
     -x|--x509)
     X509_CLIENT_CERTIFICATE_PATH="$2"
     shift
@@ -85,6 +89,16 @@ then
     ROS_VERSION="indigo"
 fi
 
+if [ -z "${UBUNTU_VERSION}" ];
+then
+    if [ "${ROS_VERSION}"="kinetic" ];
+    then
+        UBUNTU_VERSION="xenial"
+    else
+        UBUNTU_VERSION="trusty"
+    fi
+fi
+
 if [ -z "${TAGS_LIST}" ]; then
     TAGS_LIST="default"
 else
@@ -109,12 +123,14 @@ echo "  * -p or --githubpassword github password for private repositories."
 echo "  * -t or --tagslist list of extra roles to be executed in the script."
 echo "  * -s or --usesshuri flag informing that ssh format github uris will be used. Set true to enable, set false or do not set to disable"
 echo "  * -x or --x509 relative path to Shadow's X.509 client SSL certificate, CA and client key in repository."
+echo "  * -u or --ubuntu version name of the Ubuntu (Trusty by default, for ROS Kinetic is Xenial)."
 echo ""
 echo "example: ./deploy.sh -o shadow-robot -r sr_interface -w ~{{ros_user}}/workspace/shadow/base  -l mygithublogin -p mysupersecretpassword"
 echo ""
 echo "owner        = ${REPOSITORY_OWNER}"
 echo "repo         = ${REPOSITORY_NAME}"
 echo "ROS          = ${ROS_VERSION}"
+echo "Ubuntu       = ${UBUNTU_VERSION}"
 echo "workspace    = ${WORKSPACE_PATH}"
 echo "branch       = ${GITHUB_BRANCH:-'default'}"
 echo "install file = ${INSTALL_FILE}"
@@ -261,7 +277,7 @@ export MY_ANSIBLE_PARAMETERS="-vvv  --ask-become-pass ${PLAYBOOKS_DIR}/vagrant_s
 sudo sh -c "echo \"[dev-machine]
 localhost ansible_connection=local\" > ${ANSIBLE_INVENTORY}"
 
-export ROS_RELEASE_SETTINGS=" \"ros_release\":\"${ROS_VERSION}\", "
+export ROS_RELEASE_SETTINGS=" \"ros_release\":\"${ROS_VERSION}\", \"ubuntu_version_name\":\"${UBUNTU_VERSION}\" "
 if [ "${ROS_VERSION}" != "indigo" ]; then
   ROS_RELEASE_SETTINGS="${ROS_RELEASE_SETTINGS} \"ros_packages\":[], "
 fi
