@@ -1,6 +1,9 @@
 ---
 # Playbook for Shadow Debian repository
 
+- debug:
+    msg: "install_shadow_debian_repo value is  {{ install_shadow_debian_repo }}"
+
 - name: Run Shadow Debian installation if needed
   include: install.yml
   when: install_shadow_debian_repo is defined and install_shadow_debian_repo
