@@ -277,7 +277,7 @@ export MY_ANSIBLE_PARAMETERS="-vvv  --ask-become-pass ${PLAYBOOKS_DIR}/vagrant_s
 sudo sh -c "echo \"[dev-machine]
 localhost ansible_connection=local\" > ${ANSIBLE_INVENTORY}"
 
-export ROS_RELEASE_SETTINGS=" \"ros_release\":\"${ROS_VERSION}\", \"ubuntu_version_name\":\"${UBUNTU_VERSION}\" "
+export ROS_RELEASE_SETTINGS=" \"ros_release\":\"${ROS_VERSION}\", \"ubuntu_version_name\":\"${UBUNTU_VERSION}\", "
 if [ "${ROS_VERSION}" != "indigo" ]; then
   ROS_RELEASE_SETTINGS="${ROS_RELEASE_SETTINGS} \"ros_packages\":[], "
 fi
