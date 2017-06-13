@@ -1,0 +1,6 @@
+---
+# Playbook for Shadow Debian repository flag setup
+
+- name: Set flag for installation
+  set_fact:
+    install_shadow_debian_repo: yes
