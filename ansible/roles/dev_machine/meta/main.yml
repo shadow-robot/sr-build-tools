@@ -1,5 +1,5 @@
 ---
 dependencies:
   - { role: ros_install, sudo: yes }
-  - { role: shadow_debian_repo/install, sudo: yes }
+  - { role: shadow_debian_repo/install, sudo: yes, when: "install_shadow_debian_repo is defined and install_shadow_debian_repo" }
   - { role: ros_workspace }
