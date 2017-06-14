@@ -34,7 +34,21 @@ The shell script has the following flags:
   * -i or --installfile relative path to rosintall file in repository (default /repository.rosinstall)
   * -l or --githublogin github login for private repositories.
   * -p or --githubpassword github password for private repositories.
-  * -t or --tagslist tags for running a specific part of the configuration of the playbook
+  * -t or --tagslist list of extra roles to be executed in the script.
+  * -s or --usesshuri flag informing that ssh format github uris will be used. Set true to enable, set false or do not set to disable
+  * -x or --x509 relative path to Shadow's X.509 client SSL certificate, CA and client key in repository.
+  * -u or --ubuntu version name of the Ubuntu (Trusty by default, for ROS Kinetic is Xenial).
+  
+#### x.509 SSL certificate
+In order to access Shadow's Debian repository SSL client certificate is needed.
+Please create the following files targe repository
+
+ * shadow_ca.crt
+ * shadow_cert.crt
+ * shadow_client.key
+
+These files should be generated and registered on Debian repository server.
+After **-x or --x509** flag you should provide relative path in repository to these files.
 
 ### Simple repository without repository.rosinstall
 
