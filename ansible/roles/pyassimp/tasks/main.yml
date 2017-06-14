@@ -1,0 +1,20 @@
+# Fix pyassimp issue
+
+- name: Clone pyassimp source code
+  git:
+    repo: 'git clone https://github.com/assimp/assimp.git'
+    version: master
+    dest: "/tmp/"
+    clone: yes
+    depth: 1 
+    update: yes
+
+- name: Build and install
+  shell: bash -c "cmake CMakeLists.txt -G 'Unix Makefiles' && make && make install"
+         chdir = /tmp/assimp
+  sudo: yes
+
+- name: Install
+  shell: bash -c "python setup.py install"
+         chdir = cd /tmp/assimp/port/PyAssimp
+  sudo: yes
