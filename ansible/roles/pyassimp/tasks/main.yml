@@ -2,7 +2,7 @@
 
 - name: Clone pyassimp source code
   git:
-    repo: 'git clone https://github.com/assimp/assimp.git'
+    repo: 'https://github.com/assimp/assimp.git'
     version: master
     dest: "/tmp/"
     clone: yes
