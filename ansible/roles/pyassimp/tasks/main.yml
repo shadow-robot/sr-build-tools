@@ -4,7 +4,7 @@
   git:
     repo: 'https://github.com/assimp/assimp.git'
     version: master
-    dest: "/tmp/"
+    dest: "/tmp/assimp"
     clone: yes
     depth: 1 
     update: yes
