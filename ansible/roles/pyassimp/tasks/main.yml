@@ -11,10 +11,10 @@
 
 - name: Build and install
   shell: bash -c "cmake CMakeLists.txt -G 'Unix Makefiles' && make && make install"
-         chdir = /tmp/assimp
+    chdir=/tmp/assimp
   sudo: yes
 
 - name: Install
   shell: bash -c "python setup.py install"
-         chdir = cd /tmp/assimp/port/PyAssimp
+    chdir=/tmp/assimp/port/PyAssimp
   sudo: yes
