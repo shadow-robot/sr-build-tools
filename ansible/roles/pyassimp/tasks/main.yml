@@ -1,9 +1,15 @@
 # Fix pyassimp issue
 
+- name: Create pyassimp directory if it does not exist
+  file:
+     path: /tmp/assimp
+     state: directory
+     mode: 0755
+
 - name: Clone pyassimp source code
   git:
     repo: 'https://github.com/assimp/assimp.git'
-    version: master
+    version: 51520cb5f1adcb588a2533d450aace480c7cc3d4
     dest: "/tmp/assimp"
     clone: yes
     depth: 1 
