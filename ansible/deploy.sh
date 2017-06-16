@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 set -e # fail on errors
-set -x # echo commands run
+#set -x # echo commands run
 
 while [[ $# > 1 ]]
 do
@@ -153,7 +153,6 @@ if [ -z "${TAGS_LIST}" ]; then
     export MY_ANSIBLE_PARAMETERS="-vvv  --ask-become-pass ${PLAYBOOKS_DIR}/vagrant_site.yml --tags default"
 else
     export MY_ANSIBLE_PARAMETERS="-vvv  --ask-become-pass ${PLAYBOOKS_DIR}/vagrant_site.yml --tags default,${TAGS_LIST}"
-    echo "playbook = ${MY_ANSIBLE_PARAMETERS}"
 fi
 
 export EXTRA_ANSIBLE_PARAMETER_ROS_USER=" \"ros_user\":\"`whoami`\", \"ros_group\":\"`whoami`\", "
