@@ -3,8 +3,7 @@
 - name: Create pyassimp directory if it does not exist
   file:
      path: /tmp/assimp
-     state: directory
-     mode: 0755
+     state: absent
 
 - name: Clone pyassimp source code
   git:
@@ -24,3 +23,8 @@
   shell: bash -c "python setup.py install"
     chdir=/tmp/assimp/port/PyAssimp
   sudo: yes
+
+- name: Remove pyassimp directory after installation
+  file:
+     path: /tmp/assimp
+     state: absent
