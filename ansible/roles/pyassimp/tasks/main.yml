@@ -1,6 +1,6 @@
 # Fix pyassimp issue
 
-- name: Create pyassimp directory if it does not exist
+- name: Remove pyassimp directory if it exist
   file:
      path: /tmp/assimp
      state: absent
