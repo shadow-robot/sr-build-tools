@@ -1,12 +1,12 @@
 ---
 
 - name: Check if sr-config is installed
-  stat: path={{ros_workspace}}/src/sr_config
+  stat: path={{ros_workspace}}_deps/src/sr_config
   register: sr_config_path
 
 - name: Checkout or create the config branch
   shell: git checkout '{{ config_branch }}'
-         chdir={{ros_workspace}}/src/sr_config
+         chdir={{ros_workspace}}_deps/src/sr_config
   sudo: yes
   sudo_user: "{{ros_user}}"
   when: sr_config_path.stat.exists
