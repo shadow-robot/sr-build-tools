@@ -87,7 +87,7 @@ fi
 
 if [ -z "${SR_CONFIG_BRANCH}" ];
 then
-    SR_CONFIG_BRANCH=" \"config_branch\":\"${ROS_VERSION}-devel\", "
+    SR_CONFIG_BRANCH="${ROS_VERSION}-devel"
 fi
 
 echo "================================================================="
