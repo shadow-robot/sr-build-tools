@@ -181,3 +181,4 @@
   roles:
     - {role: dev_machine, tags: ["default","mongodb"]}
     - {role: mongo_database, tags: ["mongodb"]}
+    - {role: pyassimp, tags: ["pyassimp"]}
