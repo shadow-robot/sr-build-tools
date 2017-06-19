@@ -28,3 +28,4 @@
   file:
      path: /tmp/assimp
      state: absent
+  sudo: yes
