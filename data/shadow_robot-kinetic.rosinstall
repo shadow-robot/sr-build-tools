@@ -57,3 +57,8 @@
     local-name: robot_blockly
     uri: https://github.com/shadow-robot/robot_blockly.git
     version: master
+    
+- git:
+    local-name: sr_config
+    uri: https://github.com/shadow-robot/sr-config
+    version: kinetic-devel
