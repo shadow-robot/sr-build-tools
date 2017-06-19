@@ -235,6 +235,11 @@ if [ "${ROS_VERSION}" != "indigo" ]; then
 fi
 
 export SR_CONFIG_BRANCH=" \"config_branch\":\"${SR_CONFIG_BRANCH}\", "
+if [ -z "${SR_CONFIG_BRANCH}" ];
+then
+    SR_CONFIG_BRANCH="${ROS_VERSION}-devel"
+fi
+
 
 export WORKSPACE_SETTINGS="\"ros_workspace\":\"${WORKSPACE_PATH}\", \"ros_workspace_install\":\"${ROS_WORKSPACE_INSTALL_FILE}\" "
 export EXTERNAL_VARIABLES_JSON="{ ${GITHUB_CREDENTIALS} ${EXTRA_ANSIBLE_PARAMETER_ROS_USER} ${ROS_RELEASE_SETTINGS} ${SR_CONFIG_BRANCH} ${WORKSPACE_SETTINGS}}"
