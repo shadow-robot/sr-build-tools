@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 set -e # fail on errors
-#set -x # echo commands run
+set -x # echo commands run
 
 while [[ $# > 1 ]]
 do
@@ -42,6 +42,10 @@ case $key in
     ;;
     -s|--usesshuri)
     USE_SSH_URI="$2"
+    shift
+    ;;
+    -c|--configbranch)
+    SR_CONFIG_BRANCH="$2"
     shift
     ;;
     -t|--tagslist)
@@ -228,6 +232,7 @@ localhost ansible_connection=local\" > ${ANSIBLE_INVENTORY}"
 export ROS_RELEASE_SETTINGS=" \"ros_release\":\"${ROS_VERSION}\", "
 if [ "${ROS_VERSION}" != "indigo" ]; then
   ROS_RELEASE_SETTINGS="${ROS_RELEASE_SETTINGS} \"ros_packages\":[], "
+  echo "ros settings = ${ROS_RELEASE_SETTINGS}"
 fi
 
 export WORKSPACE_SETTINGS="\"ros_workspace\":\"${WORKSPACE_PATH}\", \"ros_workspace_install\":\"${ROS_WORKSPACE_INSTALL_FILE}\" "
