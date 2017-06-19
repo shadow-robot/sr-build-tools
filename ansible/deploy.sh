@@ -232,11 +232,12 @@ localhost ansible_connection=local\" > ${ANSIBLE_INVENTORY}"
 export ROS_RELEASE_SETTINGS=" \"ros_release\":\"${ROS_VERSION}\", "
 if [ "${ROS_VERSION}" != "indigo" ]; then
   ROS_RELEASE_SETTINGS="${ROS_RELEASE_SETTINGS} \"ros_packages\":[], "
-  echo "ros settings = ${ROS_RELEASE_SETTINGS}"
 fi
 
+export SR_CONFIG_BRANCH=" \"config_branch\":\"${SR_CONFIG_BRANCH}\" "
+
 export WORKSPACE_SETTINGS="\"ros_workspace\":\"${WORKSPACE_PATH}\", \"ros_workspace_install\":\"${ROS_WORKSPACE_INSTALL_FILE}\" "
-export EXTERNAL_VARIABLES_JSON="{ ${GITHUB_CREDENTIALS} ${EXTRA_ANSIBLE_PARAMETER_ROS_USER} ${ROS_RELEASE_SETTINGS} ${WORKSPACE_SETTINGS} }"
+export EXTERNAL_VARIABLES_JSON="{ ${GITHUB_CREDENTIALS} ${EXTRA_ANSIBLE_PARAMETER_ROS_USER} ${ROS_RELEASE_SETTINGS} ${WORKSPACE_SETTINGS} ${SR_CONFIG_BRANCH}}"
 ansible-playbook ${MY_ANSIBLE_PARAMETERS} --extra-vars "${EXTERNAL_VARIABLES_JSON}"
 
 echo ""
