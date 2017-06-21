@@ -44,6 +44,10 @@ case $key in
     USE_SSH_URI="$2"
     shift
     ;;
+    -c|--configbranch)
+    SR_CONFIG_BRANCH="$2"
+    shift
+    ;;
     -t|--tagslist)
     TAGS_LIST="$2"
     shift
@@ -79,6 +83,11 @@ fi
 if [ -z "${ROS_VERSION}" ];
 then
     ROS_VERSION="indigo"
+fi
+
+if [ -z "${SR_CONFIG_BRANCH}" ];
+then
+    SR_CONFIG_BRANCH="${ROS_VERSION}-devel"
 fi
 
 echo "================================================================="
@@ -230,8 +239,10 @@ if [ "${ROS_VERSION}" != "indigo" ]; then
   ROS_RELEASE_SETTINGS="${ROS_RELEASE_SETTINGS} \"ros_packages\":[], "
 fi
 
+export SR_CONFIG_BRANCH=" \"config_branch\":\"${SR_CONFIG_BRANCH}\", "
+
 export WORKSPACE_SETTINGS="\"ros_workspace\":\"${WORKSPACE_PATH}\", \"ros_workspace_install\":\"${ROS_WORKSPACE_INSTALL_FILE}\" "
-export EXTERNAL_VARIABLES_JSON="{ ${GITHUB_CREDENTIALS} ${EXTRA_ANSIBLE_PARAMETER_ROS_USER} ${ROS_RELEASE_SETTINGS} ${WORKSPACE_SETTINGS} }"
+export EXTERNAL_VARIABLES_JSON="{ ${GITHUB_CREDENTIALS} ${EXTRA_ANSIBLE_PARAMETER_ROS_USER} ${ROS_RELEASE_SETTINGS} ${SR_CONFIG_BRANCH} ${WORKSPACE_SETTINGS}}"
 ansible-playbook ${MY_ANSIBLE_PARAMETERS} --extra-vars "${EXTERNAL_VARIABLES_JSON}"
 
 echo ""
