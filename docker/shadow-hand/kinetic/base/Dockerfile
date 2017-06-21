@@ -9,17 +9,7 @@ RUN echo "Running one-liner" && \
     apt-get update && \
     wget -O /tmp/oneliner "$( echo "$remote_shell_script" | sed 's/#/%23/g' )" && \
     chmod 755 /tmp/oneliner && \
-    gosu $MY_USERNAME /tmp/oneliner -w $PROJECTS_WS/base -r sr-build-tools -b $toolset_branch -i data/shadow_robot-kinetic.rosinstall -v "kinetic" -t mongodb && \
-
-    echo "Fixing pyassimp issue" && \
-    cd /tmp/  && \
-    git clone https://github.com/assimp/assimp.git && \
-    cd assimp && \
-    cmake CMakeLists.txt -G 'Unix Makefiles' && \
-    make && \
-    make install && \
-    cd port/PyAssimp/ && \
-    python setup.py install && \
+    gosu $MY_USERNAME /tmp/oneliner -w $PROJECTS_WS/base -r sr-build-tools -b $toolset_branch -i data/shadow_robot-kinetic.rosinstall -v "kinetic" -t mongodb,pyassimp && \
 
     apt-get install bash-completion && \
 
