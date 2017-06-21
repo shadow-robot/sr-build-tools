@@ -44,6 +44,10 @@ case $key in
     USE_SSH_URI="$2"
     shift
     ;;
+    -c|--configbranch)
+    SR_CONFIG_BRANCH="$2"
+    shift
+    ;;
     -t|--tagslist)
     TAGS_LIST="$2"
     shift
@@ -89,6 +93,11 @@ then
     ROS_VERSION="indigo"
 fi
 
+if [ -z "${SR_CONFIG_BRANCH}" ];
+then
+    SR_CONFIG_BRANCH="${ROS_VERSION}-devel"
+fi
+
 if [ -z "${UBUNTU_VERSION}" ];
 then
     if [ "${ROS_VERSION}"="kinetic" ];
@@ -124,6 +133,7 @@ echo "  * -t or --tagslist list of extra roles to be executed in the script."
 echo "  * -s or --usesshuri flag informing that ssh format github uris will be used. Set true to enable, set false or do not set to disable"
 echo "  * -x or --x509 relative path to Shadow's X.509 client SSL certificate, CA and client key in repository."
 echo "  * -u or --ubuntu version name of the Ubuntu (Trusty by default, for ROS Kinetic is Xenial)."
+echo "  * -c or --configbranch configuration branch for sr_config repository ({ros_release}-devel by default)."
 echo ""
 echo "example: ./deploy.sh -o shadow-robot -r sr_interface -w ~{{ros_user}}/workspace/shadow/base  -l mygithublogin -p mysupersecretpassword"
 echo ""
@@ -282,8 +292,10 @@ if [ "${ROS_VERSION}" != "indigo" ]; then
   ROS_RELEASE_SETTINGS="${ROS_RELEASE_SETTINGS} \"ros_packages\":[], "
 fi
 
+export SR_CONFIG_BRANCH=" \"config_branch\":\"${SR_CONFIG_BRANCH}\", "
+
 export WORKSPACE_SETTINGS="\"ros_workspace\":\"${WORKSPACE_PATH}\", \"ros_workspace_install\":\"${ROS_WORKSPACE_INSTALL_FILE}\" "
-export EXTERNAL_VARIABLES_JSON="{ ${GITHUB_CREDENTIALS} ${EXTRA_ANSIBLE_PARAMETER_ROS_USER} ${ROS_RELEASE_SETTINGS} ${X509_CLIENT_SETTINGS} ${WORKSPACE_SETTINGS} }"
+export EXTERNAL_VARIABLES_JSON="{ ${GITHUB_CREDENTIALS} ${EXTRA_ANSIBLE_PARAMETER_ROS_USER} ${ROS_RELEASE_SETTINGS} ${X509_CLIENT_SETTINGS} ${SR_CONFIG_BRANCH} ${WORKSPACE_SETTINGS} }"
 ansible-playbook ${MY_ANSIBLE_PARAMETERS} --extra-vars "${EXTERNAL_VARIABLES_JSON}"
 
 echo ""

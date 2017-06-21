@@ -182,3 +182,4 @@
     - {role: shadow_debian_repo/set_flag, tags: ["shadow_debian_repo"]}
     - {role: dev_machine, tags: ["default"]}
     - {role: mongo_database, tags: ["mongodb"]}
+    - {role: pyassimp, tags: ["pyassimp"]}

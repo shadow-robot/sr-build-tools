@@ -1,0 +1,31 @@
+# Fix pyassimp issue
+
+- name: Remove pyassimp directory if it exist
+  file:
+     path: /tmp/assimp
+     state: absent
+
+- name: Clone pyassimp source code
+  git:
+    repo: 'https://github.com/assimp/assimp.git'
+    version: 51520cb5f1adcb588a2533d450aace480c7cc3d4
+    dest: "/tmp/assimp"
+    clone: yes
+    depth: 1 
+    update: yes
+
+- name: Build and install
+  shell: bash -c "cmake CMakeLists.txt -G 'Unix Makefiles' && make && make install"
+    chdir=/tmp/assimp
+  sudo: yes
+
+- name: Install
+  shell: bash -c "python setup.py install"
+    chdir=/tmp/assimp/port/PyAssimp
+  sudo: yes
+
+- name: Remove pyassimp directory after installation
+  file:
+     path: /tmp/assimp
+     state: absent
+  sudo: yes

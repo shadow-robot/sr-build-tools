@@ -9,26 +9,7 @@ RUN echo "Running one-liner" && \
     apt-get update && \
     wget -O /tmp/oneliner "$( echo "$remote_shell_script" | sed 's/#/%23/g' )" && \
     chmod 755 /tmp/oneliner && \
-    gosu $MY_USERNAME /tmp/oneliner -w $PROJECTS_WS/base -r sr-build-tools -b $toolset_branch -i data/shadow_robot-kinetic.rosinstall -v "kinetic"  && \
-
-    echo "Installing mongocxx driver for the warehouse" && \
-    cd $PROJECTS_WS/base_deps/src && \
-    git clone -b 26compat https://github.com/mongodb/mongo-cxx-driver.git && \
-    apt-get -qq install -y scons mongodb && \
-    cd mongo-cxx-driver && \
-    scons --use-system-boost --prefix=/usr/local/ --full --disable-warnings-as-errors && \
-
-    echo "Downloading warehouse source" && \
-    cd $PROJECTS_WS/base_deps/src && \
-    wstool set -yu warehouse_ros_mongo --git https://github.com/ros-planning/warehouse_ros_mongo.git -v jade-devel && \
-    wstool set -yu warehouse_ros --git https://github.com/ros-planning/warehouse_ros.git -v jade-devel && \
-
-    echo "Changing folders owner" && \
-    chown -R user:user mongo-cxx-driver warehouse_ros* && \
-
-    echo "Building the workspace" && \
-    cd $PROJECTS_WS/base_deps && \
-    gosu $MY_USERNAME bash -c "source /opt/ros/kinetic/setup.bash && catkin_make" && \
+    gosu $MY_USERNAME /tmp/oneliner -w $PROJECTS_WS/base -r sr-build-tools -b $toolset_branch -i data/shadow_robot-kinetic.rosinstall -v "kinetic" -t mongodb && \
 
     echo "Fixing pyassimp issue" && \
     cd /tmp/  && \

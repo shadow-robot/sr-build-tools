@@ -6,6 +6,10 @@
 # some arguments don't have a corresponding value to go with it such
 # as in the --default example).
 # note: if this is set to > 0 the /etc/hosts part is not recognized ( may be a bug )
+
+set -e # fail on errors
+# set -x # echo commands run
+
 while [[ $# > 1 ]]
 do
 key="$1"
@@ -159,7 +163,7 @@ echo " | Running Ansible |"
 echo " -------------------"
 echo ""
 
-ansible-playbook -vvv -K sr-build-tools/ansible/vagrant_site.yml --extra-vars "config_branch=${SR_CONFIG_BRANCH} ros_user=`whoami` ros_workspace=${WORKSPACE_PATH} ros_group=`whoami` ros_workspace_install=${ROSINSTALL_PATH} github_login=${GITHUB_LOGIN} github_password=${GITHUB_PASSWORD}"
+ansible-playbook -vvv -K sr-build-tools/ansible/vagrant_site.yml --tags default --extra-vars "config_branch=${SR_CONFIG_BRANCH} ros_user=`whoami` ros_workspace=${WORKSPACE_PATH} ros_group=`whoami` ros_workspace_install=${ROSINSTALL_PATH} github_login=${GITHUB_LOGIN} github_password=${GITHUB_PASSWORD}"
 
 echo ""
 echo " ------------------------------------------------"
