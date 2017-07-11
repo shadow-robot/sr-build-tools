@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 echo "Installing ceres with dependencies"
 apt-get update
 apt-get -y install \

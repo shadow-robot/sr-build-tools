@@ -6,7 +6,9 @@ LABEL Description="Image for using sr_recognizer package" Version="1.0"
 
 ENV v4r_and_openni_kinetic="https://raw.githubusercontent.com/shadow-robot/sr-build-tools/$toolset_branch/docker/utils/v4r_and_openni_kinetic.sh"
 
-RUN curl -s "$v4r_and_openni_kinetic" | bash && \
+RUN set -e && \
+
+    curl -s "$v4r_and_openni_kinetic" | bash && \
    
     echo "Removing cache" && \
     apt-get clean && \
