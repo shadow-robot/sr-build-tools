@@ -22,7 +22,6 @@ mkdir build && cd build
 cmake ..
 cmake --build . --target ObjectRecognizer
 cmake --build . --target RTMT
-make install
 
 echo "Installing OpenNI with dependencies"
 apt-get -y install \
