@@ -5,6 +5,7 @@ MAINTAINER "Shadow Robot's Software Team <software@shadowrobot.com>"
 LABEL Description="Image for using sr_recognizer package" Version="1.0"
 
 ENV v4r_and_openni_kinetic="https://raw.githubusercontent.com/shadow-robot/sr-build-tools/$toolset_branch/docker/utils/v4r_and_openni_kinetic.sh"
+ENV V4R_DIR="/home/user/v4r/build"
 
 RUN set -e && \
 
