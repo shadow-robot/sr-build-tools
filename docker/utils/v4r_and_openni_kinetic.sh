@@ -22,7 +22,9 @@ mkdir build && cd build
 cmake ..
 cmake --build . --target ObjectRecognizer
 cmake --build . --target RTMT
-make install
+# make install (In the current version of v4r this step is failing. 
+#               Please uncomment after proper fixes in v4r are implemented,
+#               alongside with removing V4R_PATH variable from v4r dedicated Dockerfiles)
 
 echo "Installing OpenNI with dependencies"
 apt-get -y install \
