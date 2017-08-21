@@ -2,6 +2,7 @@
 """
 See README.md
 """
+from __future__ import absolute_import
 import json
 from threading import Timer
 from ansible.plugins.callback import CallbackBase
@@ -21,8 +22,8 @@ def fixed_dump_results(self, result, indent=None, sort_keys=True, keep_invocatio
 
 
 # Monkey patch to turn off default callback logging
-# CallbackBase._original_dump_results = CallbackBase._dump_results
-# CallbackBase._dump_results = fixed_dump_results
+CallbackBase._original_dump_results = CallbackBase._dump_results
+CallbackBase._dump_results = fixed_dump_results
 
 
 class CallbackModule(CallbackBase):
