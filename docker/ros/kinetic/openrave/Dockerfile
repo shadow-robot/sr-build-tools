@@ -31,7 +31,7 @@ RUN echo "Updating package list..." && \
     cd ${openrave_ws}  && \
     git clone https://github.com/rdiankov/collada-dom.git && \
     mkdir collada-dom/build && cd collada-dom/build && \
-    cmake ..&& \ make -j8 && \ make install && \
+    cmake .. && make -j8 && make install && \
 
     echo "Installing openrave" && \
     cd ${openrave_ws}  && \
