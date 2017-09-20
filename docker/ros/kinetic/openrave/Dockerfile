@@ -4,9 +4,9 @@
 # https://github.com/shadow-robot/sr-build-tools/
 #
 
-FROM shadowrobot/build-tools:xenial-kinetic
+FROM shadowrobot/build-tools:xenial-kinetic-mongodb-fix
 
-LABEL Description="This image contains ROS kinetic, Shadow Robot's build tools, and Openrave." \
+LABEL Description="This image contains ROS kinetic, Shadow Robot's build tools, Mongo, and Openrave." \
       Author="Ethan Fowler <ethan@shadowrobot.com>" \
       Maintainer="The Shadow Robot Company Software Team <software@shadowrobot.com>"
 
