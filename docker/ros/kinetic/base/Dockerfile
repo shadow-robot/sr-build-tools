@@ -30,6 +30,7 @@ RUN set -x && \
     apt-get update && \
     apt-get upgrade -y && \
     apt-get install -y --no-install-recommends ca-certificates wget sudo && \
+    apt-get install -y bash-completion && \
 
     echo "Running one-liner" && \
     wget -O /tmp/oneliner "$( echo "$remote_shell_script" | sed 's/#/%23/g' )" && \

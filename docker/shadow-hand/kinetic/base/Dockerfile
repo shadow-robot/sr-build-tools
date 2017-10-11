@@ -11,8 +11,6 @@ RUN echo "Running one-liner" && \
     chmod 755 /tmp/oneliner && \
     gosu $MY_USERNAME /tmp/oneliner -w $PROJECTS_WS/base -r sr-build-tools -b $toolset_branch -i data/shadow_robot-kinetic.rosinstall -v "kinetic" -t mongodb,pyassimp && \
 
-    apt-get install bash-completion && \
-
     echo "Removing cache" && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /home/$MY_USERNAME/.ansible /home/$MY_USERNAME/.gitconfig
