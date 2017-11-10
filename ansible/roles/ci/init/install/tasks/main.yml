@@ -1,11 +1,9 @@
 ---
 # Playbook for additional component installations
 
-
 - name: Install more packages
   apt: name={{item}}
-  sudo: True
-  sudo_user: "{{ros_user}}"
+  sudo: yes
   with_items:
      - ros-{{ros_release}}-cmake-modules
      - python-rosdep
