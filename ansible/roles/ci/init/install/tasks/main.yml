@@ -4,7 +4,7 @@
 
 - name: Install more packages
   apt: name={{item}}
-  sudo: yes
+  sudo: True
   sudo_user: "{{ros_user}}"
   with_items:
      - ros-{{ros_release}}-cmake-modules
