@@ -1,14 +1,10 @@
 ---
 # Playbook for additional component installations
 
-- name: Removing lock
-  rm: name="/var/lib/dpkg/lock"
-  sudo: yes
-
 - name: Install more packages
   apt: name={{item}}
-  sudo: True
-  sudo_user: root
+  sudo: yes
+  sudo_user: "{{ros_user}}"
   with_items:
      - ros-{{ros_release}}-cmake-modules
      - python-rosdep
