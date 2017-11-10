@@ -1,6 +1,10 @@
 ---
 # Playbook for additional component installations
 
+- name: Removing lock
+  rm: name="/var/lib/dpkg/lock"
+  sudo: yes
+
 - name: Install more packages
   apt: name={{item}}
   sudo: True
