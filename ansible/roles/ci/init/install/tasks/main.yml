@@ -4,6 +4,9 @@
 - name: Install more packages
   apt: name={{item}}
   sudo: yes
+  become: yes
+  become_method: sudo
+  become_user: root
   with_items:
      - ros-{{ros_release}}-cmake-modules
      - python-rosdep
