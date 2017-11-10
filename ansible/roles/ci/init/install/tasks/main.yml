@@ -3,7 +3,8 @@
 
 - name: Install more packages
   apt: name={{item}}
-  sudo: yes
+  sudo: true
+  sudo_user: user
   with_items:
      - ros-{{ros_release}}-cmake-modules
      - python-rosdep
