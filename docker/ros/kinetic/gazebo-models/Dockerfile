@@ -6,8 +6,8 @@ LABEL Description="This ROS Kinetic image contains folder with loaded Gazebo mod
 
 RUN echo "Loading gazebo models" && \
     /home/user/sr-build-tools/docker/utils/load_gazebo_models.sh && \
-    mv /root/.gazebo /home/user && \
-    chown -R user:user /home/user/.gazebo && \
+    mv /root/.gazebo /home/$MY_USERNAME && \
+    chown -R $MY_USERNAME:$MY_USERNAME /home/$MY_USERNAME/.gazebo && \
     
     echo "Removing cache" && \
     apt-get clean && \
