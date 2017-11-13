@@ -7,12 +7,16 @@
 
 - name: Update package lists
   apt: update_cache=yes
-  sudo: yes
+  become: yes
+  become_method: sudo
+  become_user: root
   when: upgrade_all_packages
 
 - name: Update all packages to the latest version
   apt: upgrade=dist
-  sudo: yes
+  become: yes
+  become_method: sudo
+  become_user: root
   when: upgrade_all_packages
 
 - name: Read information from wstool
