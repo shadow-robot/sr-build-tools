@@ -23,9 +23,11 @@ if  [ "circle" != $server_type ] && [ "semaphore_docker" != $server_type ] && [ 
   echo "trying to fix egg_info issue"
   sudo apt-get update
   sudo apt-get install -y python-dev libxml2-dev libxslt-dev lcov wget git libssl-dev libffi-dev libyaml-dev
-  sudo -s apt-get install -y python-pip
+  sudo -u root apt-get install -y python-pip
+  sudo -u root pip install --upgrade pip
+  sudo -u root pip install --upgrade setuptools
   sudo pip install paramiko markupsafe PyYAML Jinja2 httplib2 six ansible
-  sudo -s pip install --upgrade setuptools gcovr pip
+  sudo pip install --upgrade gcovr
 
   git config --global user.email "build.tools@example.com"
   git config --global user.name "Build Tools"
