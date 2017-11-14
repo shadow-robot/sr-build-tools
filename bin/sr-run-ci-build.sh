@@ -20,9 +20,9 @@ if  [ "circle" != $server_type ] && [ "semaphore_docker" != $server_type ] && [ 
 
   export build_tools_folder="$HOME/sr-build-tools"
 
+  echo "cleaning up 1"
   sudo apt-get update
-  sudo apt-get install -y python-dev libxml2-dev libxslt-dev lcov wget git libssl-dev libffi-dev libyaml-dev
-  sudo -u root apt-get install -y python-pip
+  sudo apt-get install -y python-dev libxml2-dev libxslt-dev python-pip lcov wget git libssl-dev libffi-dev libyaml-dev
   sudo -u root pip install --upgrade pip setuptools
   sudo pip install paramiko markupsafe PyYAML Jinja2 httplib2 six ansible
   sudo pip install --upgrade gcovr
