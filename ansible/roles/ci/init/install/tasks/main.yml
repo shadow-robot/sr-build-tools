@@ -16,7 +16,9 @@
 
 - name: Install PIP modules
   pip: name={{item}} extra_args='--upgrade'
-  sudo: yes
+  become: yes
+  become_method: sudo
+  become_user: root
   with_items:
      - catkin_pkg
      - empy
