@@ -25,7 +25,7 @@ if  [ "circle" != $server_type ] && [ "semaphore_docker" != $server_type ] && [ 
   sudo apt-get install -y python-dev libxml2-dev libxslt-dev lcov wget git libssl-dev libffi-dev libyaml-dev
   sudo -i apt-get install -y python-pip
   sudo pip install paramiko markupsafe PyYAML Jinja2 httplib2 six ansible
-  pip install --upgrade setuptools gcovr pip
+  sudo -i pip install --upgrade setuptools gcovr pip
 
   git config --global user.email "build.tools@example.com"
   git config --global user.name "Build Tools"
