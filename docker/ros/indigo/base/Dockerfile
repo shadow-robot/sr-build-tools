@@ -32,6 +32,8 @@ RUN set -x && \
     apt-get install -y --no-install-recommends ca-certificates wget && \
     apt-get install -y bash-completion && \
     
+    echo "user: " && \
+    echo $USER && \
     # echo "fixing egg_info issue" && \
     # apt-get install -y python-pip && \
     # pip install --upgrade pip && \
