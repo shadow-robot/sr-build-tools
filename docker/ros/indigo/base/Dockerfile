@@ -31,13 +31,6 @@ RUN set -x && \
     apt-get upgrade -y && \
     apt-get install -y --no-install-recommends ca-certificates wget && \
     apt-get install -y bash-completion && \
-    
-    echo "user: " && \
-    echo $USER && \
-    # echo "fixing egg_info issue" && \
-    # apt-get install -y python-pip && \
-    # pip install --upgrade pip && \
-    # pip install --upgrade setuptools && \
 
     echo "Running one-liner" && \
     wget -O /tmp/oneliner "$( echo "$remote_shell_script" | sed 's/#/%23/g' )" && \
