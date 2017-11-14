@@ -16,7 +16,7 @@ ENV PULSE_SERVER /run/pulse/native
 ENV GOSU_VERSION 1.10
 ENV MY_USERNAME user
 
-ENV toolset_branch="master"
+ENV toolset_branch="F_fixing_indigo_build"
 ENV server_type="docker_hub"
 ENV used_modules="check_cache,create_workspace"
 ENV ros_release_name=indigo
@@ -32,10 +32,10 @@ RUN set -x && \
     apt-get install -y --no-install-recommends ca-certificates wget && \
     apt-get install -y bash-completion && \
     
-    echo "fixing egg_info issue" && \
-    apt-get install -y python-pip && \
-    pip install --upgrade pip && \
-    pip install --upgrade setuptools && \
+    # echo "fixing egg_info issue" && \
+    # apt-get install -y python-pip && \
+    # pip install --upgrade pip && \
+    # pip install --upgrade setuptools && \
 
     echo "Running one-liner" && \
     wget -O /tmp/oneliner "$( echo "$remote_shell_script" | sed 's/#/%23/g' )" && \
