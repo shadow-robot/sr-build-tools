@@ -4,9 +4,6 @@
 - name: catkin clean workspace directories
   file: path={{item}} state=absent
   with_items:
-    - "{{ros_workspace}}/build"
-    - "{{ros_workspace}}/devel"
-    - "{{ros_workspace}}/install"
     - "{{ros_workspace}}/build_isolated"
     - "{{ros_workspace}}/devel_isolated"
     - "{{ros_workspace}}/install_isolated"
