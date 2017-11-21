@@ -114,7 +114,7 @@ case $server_type in
     export images_used_by_containers="$(sudo docker ps -a | tail -n +2 | tr -s ' ' | cut -d' ' -f2 | paste -d' ' -s)"
     if [[ $images_used_by_containers != *"$untagged_image_name"* ]]; then
       echo "Removing unused and untagged Docker image $untagged_image_name"
-      sudo docker rmi $untagged_image_name
+      sudo docker rmi -f $untagged_image_name
     fi
   done
 
