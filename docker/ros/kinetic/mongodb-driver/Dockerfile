@@ -1,4 +1,4 @@
-FROM shadowrobot/build-tools:xenial-kinetic
+FROM shadowrobot/build-tools:xenial-kinetic-ide
 
 LABEL Description="This ROS Kinetic image contains build tools and the required mongoncxx and pyassimp libraries." Vendor="Shadow Robot" Version="1.0"
 
