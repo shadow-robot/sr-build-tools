@@ -38,11 +38,11 @@ RUN set -x && \
     chmod 755 /tmp/oneliner && \
     /tmp/oneliner "$toolset_branch" $server_type 'setup_docker_user' && \
     gosu $MY_USERNAME /tmp/oneliner "$toolset_branch" $server_type $used_modules && \
-    
+
     echo "Setting default terminator config" && \
     mkdir -p /home/$MY_USERNAME/.config/terminator/ && \
     mv /tmp/terminator_config /home/$MY_USERNAME/.config/terminator/config && \
-    
+
     echo "Removing cache" && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /home/$MY_USERNAME/.ansible /home/$MY_USERNAME/.gitconfig
