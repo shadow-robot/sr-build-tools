@@ -23,6 +23,7 @@ ENV ros_release_name=kinetic
 ENV remote_shell_script="https://raw.githubusercontent.com/shadow-robot/sr-build-tools/$toolset_branch/bin/sr-run-ci-build.sh"
 
 COPY entrypoint.sh /usr/local/bin/entrypoint.sh
+COPY terminator_config /tmp/terminator_config
 
 RUN set -x && \
 
@@ -37,6 +38,10 @@ RUN set -x && \
     chmod 755 /tmp/oneliner && \
     /tmp/oneliner "$toolset_branch" $server_type 'setup_docker_user' && \
     gosu $MY_USERNAME /tmp/oneliner "$toolset_branch" $server_type $used_modules && \
+
+    echo "Setting default terminator config" && \
+    mkdir -p /home/$MY_USERNAME/.config/terminator/ && \
+    mv /tmp/terminator_config /home/$MY_USERNAME/.config/terminator/config && \
 
     echo "Removing cache" && \
     apt-get clean && \
