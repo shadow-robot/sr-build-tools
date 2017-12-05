@@ -1,0 +1,5 @@
+---
+# Playbook for checkig software license
+
+- name: Check for license in the repo files
+  shell: echo "checking license"
