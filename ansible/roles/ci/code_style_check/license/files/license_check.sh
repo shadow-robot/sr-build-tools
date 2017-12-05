@@ -1,5 +1,8 @@
 #!/bin/bash
 
+export directory=$1
+cd $directory
+
 copyright_str="# Copyright"
 num_files_no_copyright=0
 
