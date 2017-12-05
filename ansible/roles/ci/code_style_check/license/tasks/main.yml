@@ -2,4 +2,4 @@
 # Playbook for checkig software license
 
 - name: Check for license in the repo files
-  script: ./files/license_check.sh {{ros_workspace}}
+  script: ../files/license_check.sh {{ros_workspace}}
