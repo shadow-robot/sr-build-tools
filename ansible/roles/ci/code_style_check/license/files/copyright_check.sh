@@ -10,7 +10,6 @@ for file_name in `find . -name "*.py" -type f`; do
     # Ignoring __init__ and setup files
     if [[ $file_name != *"__init__"* ]] && [[ $file_name != *"setup.py"* ]]; then
         copyright_line=$(grep "$copyright_str" $file_name)
-        # echo $copyright_line
         if [ "$copyright_line" == "" ]; then
             if [ $num_files_no_copyright == 0 ]; then
                 echo "The following python files do not have copyright:"
