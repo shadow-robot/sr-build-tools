@@ -11,6 +11,7 @@
   * **benchmarking** - run benchmarking of the functionality based on rostest
   * **check_build** - long running module. Compile independently each package in the project cleaning devel and build folder beforehand and check if all dependencies are declared in CMakeList.txt correctly.
   * **code_style_check** - run [roslint](http://wiki.ros.org/roslint) to check C++ and Python code in all packages of the project.
+  * **check_license** - check if copyright notice is present in all the files and the LICENSE file exsists in the repository. 
   * **check_install** - quick check of the catkin_make_isolated install comparably to full Debian files build
   * **build_debs** - generate Debian package files using bloom
   * **check_deb_make** - try to install the deb packages generated with **build_debs**. Check if installation is working correctly. It assumes that packages installed from source code would be available to rosdep during package deployment.
