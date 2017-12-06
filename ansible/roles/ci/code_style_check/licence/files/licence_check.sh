@@ -1,5 +1,8 @@
 #!/bin/bash
 
+export directory=$1
+cd $directory
+
 if [ $(find . -name "LICENSE" | wc -l) == 0 ]; then
     echo "No license file present"
     exit 1
