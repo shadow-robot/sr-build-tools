@@ -20,10 +20,10 @@ for file_name in `find . -name "*.py" -type f`; do
         fi
     fi
 done
-if [ $num_files_no_copyright == 0 ]; then
-    echo "All files have copyright"
-    exit 0
-else
+
+if [ $num_files_no_copyright != 0 ]; then
     echo "There is a total of $num_files_no_copyright files without copyright"
     exit 1
 fi
+echo "All files have copyright"
+exit 0
