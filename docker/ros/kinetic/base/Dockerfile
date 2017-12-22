@@ -22,6 +22,8 @@ ENV used_modules="check_cache,create_workspace"
 ENV ros_release_name=kinetic
 ENV remote_shell_script="https://raw.githubusercontent.com/shadow-robot/sr-build-tools/$toolset_branch/bin/sr-run-ci-build.sh"
 
+ENV remote_additional_bashrc_cmds="https://raw.githubusercontent.com/shadow-robot/sr-build-tools/$toolset_branch/docker/utils/additional_bashrc_cmds_kinetic"
+
 COPY entrypoint.sh /usr/local/bin/entrypoint.sh
 COPY terminator_config /tmp/terminator_config
 
@@ -38,6 +40,10 @@ RUN set -x && \
     chmod 755 /tmp/oneliner && \
     /tmp/oneliner "$toolset_branch" $server_type 'setup_docker_user' && \
     gosu $MY_USERNAME /tmp/oneliner "$toolset_branch" $server_type $used_modules && \
+
+    echo "Updating bash commands" && \
+    wget -O /tmp/additional_bashrc_cmds "$( echo "$remote_additional_bashrc_cmds" | sed 's/#/%23/g' )" && \
+    cat /tmp/additional_bashrc_cmds >> /home/user/.bashrc && \
 
     echo "Setting default terminator config" && \
     mkdir -p /home/$MY_USERNAME/.config/terminator/ && \
