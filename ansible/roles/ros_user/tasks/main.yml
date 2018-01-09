@@ -35,29 +35,23 @@
 - name: Delete existing icons from ~{{ros_user}}
   shell: "rm -f ~{{ros_user}}/Desktop/*"
   become: yes
-  become_method: sudo
-  become_user: root
 
 - name: Install home directory files from {{ros_user_home_files}}
   copy: src="{{ros_user_home_files}}/" dest="~{{ros_user}}/" owner={{ros_user}} group={{ros_group}}
   when: ros_user_home_files|default("") != ""
   become: yes
   become_method: sudo
-  become_user: root
-  sudo_user: "{{ros_user}}"
+  become_user: "{{ros_user}}"
 
 - name: Copy icons to /usr/local/share/icons
   copy: src="files/icons" dest="/usr/local/share"
   become: yes
-  become_method: sudo
-  become_user: root
 
 - name: Set executable bit for icons
   shell: "find ~{{ros_user}}/Desktop/*.desktop -exec chmod +x {} +"
   become: yes
   become_method: sudo
-  become_user: root
-  sudo_user: "{{ros_user}}"
+  become_user: "{{ros_user}}"
 
 - name: Test for existing bashrc setup
   shell: grep '^source.*/setup\.bash' ~{{ros_user}}/.bashrc
@@ -88,8 +82,7 @@
   failed_when: '"exited with non-zero exit status" in command_result.stderr'
   become: yes
   become_method: sudo
-  become_user: root
-  sudo_user: "{{ros_user}}"
+  become_user: "{{ros_user}}"
 
 # Default font a bit large for a VM
 # There are others we could tweak if we wanted to:
@@ -101,8 +94,7 @@
   failed_when: '"exited with non-zero exit status" in command_result.stderr'
   become: yes
   become_method: sudo
-  become_user: root
-  sudo_user: "{{ros_user}}"
+  become_user: "{{ros_user}}"
 
 - name: Disable screen save and lock
   when: ros_user_disable_lock
@@ -115,16 +107,14 @@
     - "set org.gnome.desktop.screensaver ubuntu-lock-on-suspend false"
   become: yes
   become_method: sudo
-  become_user: root
-  sudo_user: "{{ros_user}}"
+  become_user: "{{ros_user}}"
 
 
 - name: Update rosdep
   shell: bash -c "source /opt/ros/{{ros_release}}/setup.bash && rosdep update"
   become: yes
   become_method: sudo
-  become_user: root
-  sudo_user: "{{ros_user}}"
+  become_user: "{{ros_user}}"
 
 - name: Setup git name
   command: git config --global user.name "{{ros_user}}"

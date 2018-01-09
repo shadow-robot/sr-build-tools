@@ -24,8 +24,6 @@
   git: repo={{ronexserial.repo}} dest="{{ronexserial.installdir}}" accept_hostkey=True update=no
   register: repo
   become: yes
-  become_method: sudo
-  become_user: root
   # changed: [ronexserial] => {"after": "cfa60a0f538acfb9bd683ab1904a71baff0ed833", "before": null, "changed": true}
 
 # Only do this if no repo there, we don't want to destroy work
@@ -33,8 +31,6 @@
 - name: Checkout the ronex serial db repository
   git: repo={{ronexserial.repo}} dest="{{ronexserial.installdir}}" accept_hostkey=True
   become: yes
-  become_method: sudo
-  become_user: root
   when: not repo.before
 
 - name: Fix perms
@@ -46,8 +42,7 @@
     chdir="{{ronexserial.installdir}}/SOEM1.3.0"
   become: yes
   become_method: sudo
-  become_user: root
-  sudo_user: "{{ros_user}}"
+  become_user: "{{ros_user}}"
 
 - name: Create ~{{ros_user}}/logs dir
   file: state=directory path=~{{ros_user}}/logs owner={{ros_user}} group={{ros_group}}
@@ -59,23 +54,19 @@
 # creates the cluster if it's not yet initialised - ignores the errors if it exists
 - name: Create postgres cluster
   become: yes
-  become_method: sudo
-  become_user: root
   shell: pg_createcluster 9.3 main --start
   ignore_errors: yes
 
 - name: Create postgresql database
   become: yes
   become_method: sudo
-  become_user: root
-  sudo_user: postgres
+  become_user: postgres
   postgresql_db: name={{ronexserial.dbname}}
 
 - name: Ensure user has access to database
   become: yes
   become_method: sudo
-  become_user: root
-  sudo_user: postgres
+  become_user: postgres
   postgresql_user:
     db={{ronexserial.dbname}}
     name={{ronexserial.dbuser}}
@@ -85,8 +76,7 @@
 - name: Ensure user does not have unnecessary privilege
   become: yes
   become_method: sudo
-  become_user: root
-  sudo_user: postgres
+  become_user: postgres
   postgresql_user: name={{ronexserial.dbuser}}
     role_attr_flags=NOSUPERUSER,NOCREATEDB
 
@@ -116,8 +106,7 @@
 - name: Boot strap auth admin user
   become: yes
   become_method: sudo
-  become_user: root
-  sudo_user: "{{ ros_user }}"
+  become_user: "{{ ros_user }}"
   shell: "cat {{ronexserial.installdir}}/ronexserial/serials/sql/auth.sql | python manage.py dbshell chdir={{ronexserial.installdir}}/ronexserial"
 
 - name: Create autostart directory

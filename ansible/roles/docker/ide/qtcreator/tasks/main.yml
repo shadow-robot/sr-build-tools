@@ -4,13 +4,9 @@
 - name: Update package lists
   apt: update_cache=yes
   become: yes
-  become_method: sudo
-  become_user: root
 
 - name: Intall QtCreator
   apt: name={{item}}
   become: yes
-  become_method: sudo
-  become_user: root
   with_items:
     - qtcreator

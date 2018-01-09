@@ -11,22 +11,16 @@
 
 - name: Install scons package
   become: yes
-  become_method: sudo
-  become_user: root
   apt:
     name: scons
 
 - name: Install mongodb package
   become: yes
-  become_method: sudo
-  become_user: root
   apt:
     name: mongodb
 
 - name: Build mongodb from source
   become: yes
-  become_method: sudo
-  become_user: root
   shell: scons --use-system-boost --prefix=/usr/local/ --full --disable-warnings-as-errors
   args:
     chdir: "{{workspace_path}}/src/mongo-cxx-driver"

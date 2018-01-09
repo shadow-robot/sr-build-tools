@@ -5,11 +5,8 @@
          chdir={{ros_workspace}}/src/sr_config
   become: yes
   become_method: sudo
-  become_user: root
-  sudo_user: "{{ros_user}}"
+  become_user: "{{ros_user}}"
 
 - name: Adds the user to dialout
   shell: usermod -a -G dialout '{{ros_user}}'
   become: yes
-  become_method: sudo
-  become_user: root

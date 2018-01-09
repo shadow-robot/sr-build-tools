@@ -8,8 +8,7 @@
   file: state=absent path={{ros_build_workspace}}
   become: yes
   become_method: sudo
-  become_user: root
-  sudo_user: "{{ros_user}}"
+  become_user: "{{ros_user}}"
 
 # Link the index page to rosbridge
 - name: Remove index.html

@@ -1,4 +1,4 @@
 ---
 dependencies:
-  - { role: ros_install, become: yes, become_method: sudo, become_user: root }
+  - { role: ros_install, become: yes }
   - { role: ros_workspace }

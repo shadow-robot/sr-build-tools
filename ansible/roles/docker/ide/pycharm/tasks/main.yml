@@ -4,8 +4,6 @@
 - name: Update package lists
   apt: update_cache=yes
   become: yes
-  become_method: sudo
-  become_user: root
 
 - name: Intall needed libs
   apt: name={{item}} install_recommends=no
@@ -23,5 +21,3 @@
 - name: Install PyCharm
   script: ../files/install_pycharm.sh {{pycharm_home}}
   become: yes
-  become_method: sudo
-  become_user: root

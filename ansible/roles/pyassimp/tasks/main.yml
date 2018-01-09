@@ -18,20 +18,14 @@
   shell: bash -c "cmake CMakeLists.txt -G 'Unix Makefiles' && make && make install"
     chdir=/tmp/assimp
   become: yes
-  become_method: sudo
-  become_user: root
 
 - name: Install
   shell: bash -c "python setup.py install"
     chdir=/tmp/assimp/port/PyAssimp
   become: yes
-  become_method: sudo
-  become_user: root
 
 - name: Remove pyassimp directory after installation
   file:
      path: /tmp/assimp
      state: absent
   become: yes
-  become_method: sudo
-  become_user: root
