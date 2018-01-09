@@ -4,7 +4,9 @@
   apt: name=python-pycurl state=present
 
 - name: Add PyCharm ppa
-  sudo: yes
+  become: yes
+  become_method: sudo
+  become_user: root
   apt_repository:
     repo: 'ppa:ubuntu-desktop/ubuntu-make'
     filename: 'ppa_ubuntu_desktop_ubuntu_make_trusty'
@@ -14,20 +16,28 @@
   apt: update_cache=yes
 
 - name: Install ubuntu make
-  sudo: yes
+  become: yes
+  become_method: sudo
+  become_user: root
   apt: name=ubuntu-make state=present
 
 - name: Change umake directory owner and group
-  sudo: yes
+  become: yes
+  become_method: sudo
+  become_user: root
   file: path=/usr/share/umake/ state=directory mode=0777 owner="{{ros_user}}" group="{{ros_group}}" recurse=true
 
 - name: Install programming tools
-  sudo: yes
+  become: yes
+  become_method: sudo
+  become_user: root
   sudo_user: "{{ros_user}}"
   shell: bash -c "yes | umake ide pycharm /usr/share/umake/ide/pycharm"
   
 - name: Change pycharm app location
-  sudo: yes
+  become: yes
+  become_method: sudo
+  become_user: root
   command: cp ~{{ros_user}}/.local/share/applications/jetbrains-pycharm-ce.desktop /usr/share/applications
 
 - name: Set workspace for pycharm icon

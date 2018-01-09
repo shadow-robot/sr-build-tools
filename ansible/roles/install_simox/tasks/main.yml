@@ -24,7 +24,9 @@
 - name: Checkout Simox
   subversion: repo=https://svn.code.sf.net/p/simox/code/tags/release-2.3.1
               dest={{ simox_build_dir }}
-  sudo: yes
+  become: yes
+  become_method: sudo
+  become_user: root
   when: not simox_exists.stat.exists
 
 - name: Install dependencies
@@ -44,16 +46,22 @@
 
 - name: Create simox build directory {{ simox_build_dir }}/build
   file: state=directory path={{ simox_build_dir }}/build
-  sudo: yes
+  become: yes
+  become_method: sudo
+  become_user: root
   when: not simox_exists.stat.exists
 
 - name: Build and Install
   shell: bash -c "cmake .. && make && sudo make install"
          chdir={{ simox_build_dir }}/build
-  sudo: yes
+  become: yes
+  become_method: sudo
+  become_user: root
   when: not simox_exists.stat.exists
 
 - name: Clean up Simox
   file: state=absent path={{ simox_build_dir }}
-  sudo: yes
+  become: yes
+  become_method: sudo
+  become_user: root
   when: not simox_exists.stat.exists

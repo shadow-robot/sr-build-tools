@@ -13,7 +13,9 @@
 
 - name: Delete any files in {{ros_workspace}}_deps to have a fresh workspace for dependecies
   file: path={{ros_workspace}}_deps state=absent
-  sudo: yes
+  become: yes
+  become_method: sudo
+  become_user: root
 
 - name: Create workspace for dependencies {{ros_workspace}}_deps
   file: state=directory path={{ros_workspace}}_deps/src owner={{ros_user}} group={{ros_group}}
@@ -41,11 +43,15 @@
 
 - name: Delete duplicated deps
   shell: for BASE_SRC in `ls {{ros_workspace}}/src` ; do if [ -d {{ros_workspace}}_deps/src/${BASE_SRC} ]; then rm -rf {{ros_workspace}}_deps/src/${BASE_SRC}; fi ; done
-  sudo: yes
+  become: yes
+  become_method: sudo
+  become_user: root
 
 - name: Install dependencies of the source deps
   script: ../../ros_workspace/files/rosdep_install.sh {{ros_workspace}}_deps
-  sudo: yes
+  become: yes
+  become_method: sudo
+  become_user: root
 
 - name: catkin_make for deps
   shell: bash -c "source <(grep '^export\|^source' ~{{ros_user}}/.bashrc) && catkin_make"
@@ -53,11 +59,15 @@
 
 - name: Install dependencies
   script: ../../ros_workspace/files/rosdep_install.sh {{ros_workspace}}
-  sudo: yes
+  become: yes
+  become_method: sudo
+  become_user: root
 
 - name: Fix permission for rosdep
   file: path=~{{ros_user}}/.ros recurse=yes owner={{ros_user}} group={{ros_group}} state=directory
-  sudo: yes
+  become: yes
+  become_method: sudo
+  become_user: root
 
 - name: catkin_make
   shell: bash -c "source <(grep '^export\|^source' ~{{ros_user}}/.bashrc) && catkin_make -DCATKIN_WHITELIST_PACKAGES='' "

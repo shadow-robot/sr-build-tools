@@ -3,18 +3,24 @@
 
 - name: Delete any files in {{ros_workspace}}_warehouse to have a fresh workspace
   shell: "rm -rf {{ros_workspace}}_warehouse"
-  sudo: yes
+  become: yes
+  become_method: sudo
+  become_user: root
 
 - name: Create overlay for the warehouse {{ros_workspace}}_warehouse
   file: state=directory path={{ros_workspace}}_warehouse/src owner={{ros_user}} group={{ros_group}}
-  sudo: yes
+  become: yes
+  become_method: sudo
+  become_user: root
   sudo_user: "{{ros_user}}"
 
 - name: catkin_init {{ros_workspace}}_warehouse
   shell: bash -c "source {{ros_workspace}}/devel/setup.bash && catkin_init_workspace"
     chdir={{ros_workspace}}_warehouse/src
     creates={{ros_workspace}}_warehouse/src/CMakeLists.txt
-  sudo: yes
+  become: yes
+  become_method: sudo
+  become_user: root
   sudo_user: "{{ros_user}}"
 
 # Do an initial make of the empty workspace to get a setup.bash.
@@ -23,33 +29,45 @@
   shell: bash -c "source {{ros_workspace}}/devel/setup.bash && catkin_make"
     chdir={{ros_workspace}}_warehouse
     creates={{ros_workspace}}_warehouse/devel/setup.bash
-  sudo: yes
+  become: yes
+  become_method: sudo
+  become_user: root
   sudo_user: "{{ros_user}}"
 
 - name: Move warehouse_ros over to the overlay
   shell: bash -c "mv {{ros_workspace}}_deps/src/warehouse_ros {{ros_workspace}}_warehouse/src/"
-  sudo: yes
+  become: yes
+  become_method: sudo
+  become_user: root
   sudo_user: "{{ros_user}}"
 
 - name: catkin_make the overlay
   shell:  bash -c "source {{ros_workspace}}_warehouse/devel/setup.bash && catkin_make"
     chdir={{ros_workspace}}_warehouse
-  sudo: yes
+  become: yes
+  become_method: sudo
+  become_user: root
   sudo_user: "{{ros_user}}"
 
 - name: delete the {{ros_workspace}}_deps build
   shell: rm -rf {{ros_workspace}}_deps/build {{ros_workspace}}_deps/devel
-  sudo: yes
+  become: yes
+  become_method: sudo
+  become_user: root
   sudo_user: "{{ros_user}}"
 
 - name: catkin make {{ros_workspace}}_deps
   shell: bash -c "source {{ros_workspace}}_warehouse/devel/setup.bash && rospack profile && catkin_make"
     chdir={{ros_workspace}}_deps
-  sudo: yes
+  become: yes
+  become_method: sudo
+  become_user: root
   sudo_user: "{{ros_user}}"
 
 - name: catkin make {{ros_workspace}}
   shell: bash -c "source {{ros_workspace}}_warehouse/devel/setup.bash && rospack profile && catkin_make"
     chdir={{ros_workspace}}
-  sudo: yes
+  become: yes
+  become_method: sudo
+  become_user: root
   sudo_user: "{{ros_user}}"
