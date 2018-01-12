@@ -14,10 +14,10 @@
   set_fact:
     deb_paths_stdout_lines: "{{deb_paths.stdout_lines}}"
 
-#- name: Cleanup names
-#  shell: bash -c "find . -name '*.deb' -print0  | xargs -0 -I {} dpkg --info  {} | sed -n -e 's/^\s*Package:\s*//p'"
-#    chdir={{repo_sources_path}}
-#  register: installed_packages_names
+- name: Cleanup names
+  shell: bash -c "find . -name '*.deb' -print0  | xargs -0 -I {} dpkg --info  {} | sed -n -e 's/^\s*Package:\s*//p'"
+    chdir={{repo_sources_path}}
+  register: installed_packages_names
 
 - name: Set variable to workaround ansible type evaluation issue
   set_fact:
@@ -31,30 +31,30 @@
   set_fact:
     repository_name: "{{repository_name_prefix}}-{{repository_distribution}}"
 
-#- name: Upload files to aptly repository
-#  shell: curl -X POST -F file=@{{ item.0 }} {{aptly_url}}/api/files/{{ item.1 }}
-#    chdir={{repo_sources_path}}
-#  with_together:
-#    - "{{ deb_paths_stdout_lines|default([]) }}"
-#    - "{{ installed_packages_names_stdout_lines|default([]) }}"
-#
-#- name: Update repository
-#  shell: curl -X POST {{aptly_url}}/api/repos/{{repository_name}}/file/{{ item }}?forceReplace=1
-#    chdir={{repo_sources_path}}
-#  with_items:
-#    - "{{ installed_packages_names_stdout_lines|default([]) }}"
-#
-#- name: Create snapshot name
-#  set_fact:
-#    snapshot_name: "{{ansible_date_time.iso8601_micro}}"
-#
-#- name: Test name
-#  shell: echo "{{ snapshot_name }}"
-#
-#- name: Snapshot
-#  shell: >
-#   curl -X POST -H 'Content-Type: application/json' --data '{"Name":"{{ snapshot_name }}"}' {{ aptly_url }}/api/repos/{{ repository_name }}/snapshots
-#
-#- name: Publish
-#  shell: >
-#   curl -X PUT -H 'Content-Type: application/json' --data '{"Snapshots": [{"Component": "main", "Name": "{{ snapshot_name }}"}], "Signing": {"Batch": true, "Passphrase": "{{ gpg_password }}"}, "ForceOverwrite": true}' {{ aptly_url }}/api/publish/{{ repository_prefix }}/{{ repository_distribution }}
+- name: Upload files to aptly repository
+  shell: curl -X POST -F file=@{{ item.0 }} {{aptly_url}}/api/files/{{ item.1 }}
+    chdir={{repo_sources_path}}
+  with_together:
+    - "{{ deb_paths_stdout_lines|default([]) }}"
+    - "{{ installed_packages_names_stdout_lines|default([]) }}"
+
+- name: Update repository
+  shell: curl -X POST {{aptly_url}}/api/repos/{{repository_name}}/file/{{ item }}?forceReplace=1
+    chdir={{repo_sources_path}}
+  with_items:
+    - "{{ installed_packages_names_stdout_lines|default([]) }}"
+
+- name: Create snapshot name
+  set_fact:
+    snapshot_name: "{{ansible_date_time.iso8601_micro}}"
+
+- name: Test name
+  shell: echo "{{ snapshot_name }}"
+
+- name: Snapshot
+  shell: >
+   curl -X POST -H 'Content-Type: application/json' --data '{"Name":"{{ snapshot_name }}"}' {{ aptly_url }}/api/repos/{{ repository_name }}/snapshots
+
+- name: Publish
+  shell: >
+   curl -X PUT -H 'Content-Type: application/json' --data '{"Snapshots": [{"Component": "main", "Name": "{{ snapshot_name }}"}], "Signing": {"Batch": true, "Passphrase": "{{ gpg_password }}"}, "ForceOverwrite": true}' {{ aptly_url }}/api/publish/{{ repository_prefix }}/{{ repository_distribution }}
