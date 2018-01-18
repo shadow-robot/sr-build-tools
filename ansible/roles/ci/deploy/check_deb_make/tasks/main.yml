@@ -9,7 +9,7 @@
   ignore_errors: True
   with_nested:
     - "{{workspace_packages_list|default([])}}"
-    - "{{workspace_packages_list|default([])}}"
+#    - "{{workspace_packages_list|default([])}}"
 
 ## In case if there is not errors fakeroot will not create new deb file just exit with 0 else it will print error
 #- name: Check if debian build doesn't have any errors
@@ -18,12 +18,12 @@
 #  with_items:
 #    - "{{repo_packages_list|default([])}}"
 #
-#- name: Check if debian install doesn't have any errors
-#  shell: bash -c "source <(grep '^export\|^source' {{ansible_env.HOME}}/.bashrc) && sudo dpkg --install *.deb"
-#    chdir={{repo_sources_path}}/{{item.path}}
-#  with_items:
-#    - "{{repo_packages_list|default([])}}"
-#
+- name: Check if debian install doesn't have any errors
+  shell: bash -c "source <(grep '^export\|^source' {{ansible_env.HOME}}/.bashrc) && sudo dpkg --install *.deb"
+    chdir={{repo_sources_path}}/{{item.path}}
+  with_items:
+    - "{{repo_packages_list|default([])}}"
+
 #- name: Read all installed packages from repository
 #  shell: bash -c "find . -name '*.deb' -print0  | xargs -0 -I {} dpkg --info  {} | sed -n -e 's/^\s*Package:\s*//p'"
 #    chdir={{repo_sources_path}}
