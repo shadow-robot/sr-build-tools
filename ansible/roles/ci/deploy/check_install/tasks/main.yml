@@ -17,5 +17,5 @@
     chdir={{ros_workspace}}
 
 - name: catkin install workspace in isolated fashion
-  shell: bash -c "source <(grep '^export\|^source' {{ansible_env.HOME}}/.bashrc) && catkin_make_isolated --install  -DCATKIN_BLACKLIST_PACKAGES='{{ non_repo_packages }}'"
+  shell: bash -c "source <(grep '^export\|^source' {{ansible_env.HOME}}/.bashrc) && catkin_make_isolated -DCATKIN_BLACKLIST_PACKAGES='{{ non_repo_packages }}'"
     chdir={{ros_workspace}}
