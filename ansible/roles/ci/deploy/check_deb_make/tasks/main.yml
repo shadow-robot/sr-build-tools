@@ -11,7 +11,7 @@
     - "{{workspace_packages_list|default([])}}"
     - "{{workspace_packages_list|default([])}}"
 
-## In case if there is not errors fakeroot will not create new deb file just exit with 0 else it will print error
+# In case if there is not errors fakeroot will not create new deb file just exit with 0 else it will print error
 - name: Check if debian build doesn't have any errors
   shell: bash -c "source <(grep '^export\|^source' {{ansible_env.HOME}}/.bashrc) && source {{ros_workspace}}/devel/setup.bash && fakeroot ./debian/rules binary"
     chdir={{repo_sources_path}}/{{item.path}}
