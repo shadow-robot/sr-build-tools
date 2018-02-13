@@ -48,7 +48,7 @@ RUN set -x && \
     echo "Setting default terminator config" && \
     mkdir -p /home/$MY_USERNAME/.config/terminator/ && \
     mv /tmp/terminator_config /home/$MY_USERNAME/.config/terminator/config && \
-    chown -R $MY_USERNAME:$MY_USERNAME /home/$MY_USERNAME/.config
+    chown -R $MY_USERNAME:$MY_USERNAME /home/$MY_USERNAME/.config &&\
 
     echo "Removing cache" && \
     apt-get clean && \
