@@ -8,3 +8,7 @@
 - name: Install VSCode from Internet
   apt: deb=https://go.microsoft.com/fwlink/?LinkID=760868 force=yes
   become: yes
+
+- name: Create easy access symlink
+  file: src=/usr/share/code/code dest=/usr/bin/vscode state=link
+  become: yes

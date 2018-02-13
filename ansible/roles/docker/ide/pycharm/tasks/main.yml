@@ -20,3 +20,7 @@
 - name: Install PyCharm
   script: ../files/install_pycharm.sh {{pycharm_home}}
   become: yes
+
+- name: Create easy access symlink
+  file: src={{pycharm_home}}/bin/pycharm.sh dest=/usr/bin/pycharm state=link
+  become: yes
