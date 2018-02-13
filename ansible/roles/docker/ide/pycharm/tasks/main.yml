@@ -15,6 +15,7 @@
     - libxrender1
     - libxtst6
     - python
+    - apt-utils
 
 - name: Install PyCharm
   script: ../files/install_pycharm.sh {{pycharm_home}}
