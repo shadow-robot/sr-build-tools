@@ -1,0 +1,10 @@
+---
+# VSCode IDE installation
+
+- name: Update package lists
+  apt: update_cache=yes
+  become: yes
+
+- name: Install VSCode from Internet
+  apt: deb=https://go.microsoft.com/fwlink/?LinkID=760868 force=yes
+  become: yes

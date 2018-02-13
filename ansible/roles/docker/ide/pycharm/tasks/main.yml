@@ -3,11 +3,11 @@
 
 - name: Update package lists
   apt: update_cache=yes
-  sudo: yes
+  become: yes
 
 - name: Intall needed libs
   apt: name={{item}} install_recommends=no
-  sudo: yes
+  become: yes
   with_items:
     - wget
     - git
@@ -18,4 +18,4 @@
 
 - name: Install PyCharm
   script: ../files/install_pycharm.sh {{pycharm_home}}
-  sudo: yes
+  become: yes

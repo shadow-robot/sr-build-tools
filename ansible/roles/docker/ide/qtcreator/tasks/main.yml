@@ -3,10 +3,10 @@
 
 - name: Update package lists
   apt: update_cache=yes
-  sudo: yes
+  become: yes
 
 - name: Intall QtCreator
   apt: name={{item}}
-  sudo: yes
+  become: yes
   with_items:
     - qtcreator
