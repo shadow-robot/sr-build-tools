@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 set -e # fail on errors
-set -x # echo commands run
+# set -x # echo commands run
 
 export PYCHARM_HOME=${1:-/etc/pycharm}
 
