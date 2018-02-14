@@ -3,11 +3,11 @@
 
 - name: Update package lists
   apt: update_cache=yes
-  sudo: yes
+  become: yes
 
 - name: Intall needed libs
   apt: name={{item}} install_recommends=no
-  sudo: yes
+  become: yes
   with_items:
     - wget
     - git
@@ -15,7 +15,12 @@
     - libxrender1
     - libxtst6
     - python
+    - apt-utils
 
 - name: Install PyCharm
   script: ../files/install_pycharm.sh {{pycharm_home}}
-  sudo: yes
+  become: yes
+
+- name: Create easy access symlink
+  file: src={{pycharm_home}}/bin/pycharm.sh dest=/usr/bin/pycharm state=link
+  become: yes
