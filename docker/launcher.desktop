@@ -1,0 +1,9 @@
+[Desktop Entry]
+Version=1.0
+Name=Hand_Launcher
+Comment=This is application launches the hand
+Exec=/home/&USER/launcher_app/launcher.sh
+Icon=/home/&USER/launcher_app/hand_h.png
+Terminal=false
+Type=Application
+Categories=Utility;Application;
