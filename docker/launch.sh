@@ -52,3 +52,22 @@ if [ ! "$(docker ps -q -f name=<name>)" ]; then
     # run your container
     docker run -d --name <name> my-docker-image
 fi
+
+echo ""
+echo " -------------------------------"
+echo " |   Making desktop shortcut   |"
+echo " -------------------------------"
+echo ""
+
+mkdir /home/$USER/launcher_app
+
+cp launcher.desktop /home/$USER/Desktop
+
+cp launcher_exec.sh /home/$USER/launcher_app
+cp hand_h.png /home/$USER/launcher_app
+
+cd /home/$USER/Desktop
+chmod +x launcher.desktop
+
+cd /home/$USER/launcher_app
+chmod +x launcher.sh
