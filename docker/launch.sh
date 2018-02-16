@@ -1,5 +1,38 @@
 #!/usr/bin/env bash
 
+echo ""
+echo " -------------------------------"
+echo " |   Making desktop shortcut   |"
+echo " -------------------------------"
+echo ""
+
+APP_FOLDER=/home/$USER/launcher_app
+if [ ! -d "${APP_FOLDER}" ]; then
+  mkdir ${APP_FOLDER}
+fi
+
+# Creating desktop file
+printf "[Desktop Entry]
+Version=1.0
+Name=Hand_Launcher
+Comment=This is application launches the hand
+Exec=/home/${USER}/launcher_app/launcher_exec.sh
+Icon=/home/${USER}/launcher_app/hand_h.png
+Terminal=false
+Type=Application
+Categories=Utility;Application;" > ${APP_FOLDER}/launcher.desktop
+
+# Creating executable file
+printf "#! /bin/bash
+
+docker start ${DOCKER_CONTAINER_NAME}" > ${APP_FOLDER}/launcher_exec.sh
+cp hand_h.png ${APP_FOLDER}
+
+cd /home/$USER/Desktop
+chmod +x launcher.desktop
+exit 1
+
+
 set -e # fail on errors
 
 while [[ $# > 1 ]]
@@ -36,32 +69,8 @@ done
 
 if [ -z "${REINSTALL_DOCKER_CONTAINER}" ];
 then
-    REINSTALL_DOCKER_CONTAINER="False"
+    REINSTALL_DOCKER_CONTAINER=false
 fi
-
-# If re-installation flag is Off that the following procedure will occur
-#Check if Docker was installed
-#Check if Docker container with provided name exists.
-#If yes then check if Docker container is not running and start it
-
-#If Docker container is running just exit
-#Check if Docker image was pulled
-#Check if login is required to get image and login (ask for password if it is not provided)
-#Pull Docker image
-#Start docker container with provided name and exit
-
-#If re-installation flag is On that the following procedure will occur
-#Check if Docker was installed
-#Check if Docker container with provided name exists.
-#If yes then stop container and delete container
-#Check if login is required to get image and login (ask for password if it is not provided)
-#Pull latest version of the Docker image
-#Start docker container with provided name and exit
-
-
-#Executed using the following format bash <(curl -Ls $remote_shell_script) -i <image_name> -u <docker_hub_user> -p <docker_hub_password> -r <Reinstall docker container fully (True, False), default False> -n <Docker container name>
-#Flags -i <image_name>, -n <Docker container name> are required
-
 
 echo "================================================================="
 echo "|                                                               |"
@@ -76,13 +85,37 @@ echo "  * -p or --password Docker hub password"
 echo "  * -r or --reinstall flag to know if the docker container should be fully reinstalled (false by default)"
 echo "  * -n or --name name of the docker container"
 echo ""
-echo "example: ./launch.sh -i   -u mydockerhublogin -p mysupersecretpassword"
+echo "example: ./launch.sh -i shadowrobot/dexterous-hand:indigo -n hand_e_indigo_real_hw -u mydockerhublogin -p mysupersecretpassword"
 echo ""
 echo "image name        = ${DOCKER_IMAGE_NAME}"
 echo "container name    = ${DOCKER_CONTAINER_NAME}"
-echo "docker hub user   = ${DOCKER_HUB_USER}"
 echo "reinstall flag    = ${REINSTALL_DOCKER_CONTAINER}"
 
+if [ -z ${DOCKER_IMAGE_NAME} ] || [ -z ${DOCKER_CONTAINER_NAME} ]; then
+    echo "Docker image name and name of container are required"
+    exit 1
+fi
+
+# If re-installation flag is Off that the following procedure will occur
+#Check if Docker was installed
+#Check if Docker container with provided name exists.
+#If yes then check if Docker container is not running and start it
+
+#If Docker container is running just exit
+#Check if Docker image was pulled
+#Check if login is required to get image and login (ask for password if it is not provided)
+#Pull Docker image
+#Start docker container with provided name and exit
+
+
+
+#If re-installation flag is On that the following procedure will occur
+#Check if Docker was installed
+#Check if Docker container with provided name exists.
+#If yes then stop container and delete container
+#Check if login is required to get image and login (ask for password if it is not provided)
+#Pull latest version of the Docker image
+#Start docker container with provided name and exit
 
 echo ""
 echo " -----------------------------------"
@@ -90,45 +123,49 @@ echo " |   Checking docker installation  |"
 echo " -----------------------------------"
 echo ""
 
-
-export SR_BUILD_TOOLS_HOME=/tmp/sr-build-tools/
-
 if [ -x "$(command -v docker)" ]; then
     echo "Docker installed"
 else
     echo "Install docker"
-    # command
+    # TODO
 fi
 
-if [ ! "$(docker ps -q -f name=${DOCKER_CONTAINER_NAME})" ]; then
-    if [ "$(docker ps -aq -f status=exited -f name=${DOCKER_CONTAINER_NAME})" ]; then
-        # cleanup
-        echo "Container already exist"
-        #docker rm <name>
+if [ ${REINSTALL_DOCKER_CONTAINER} = false ] ; then
+   echo "Not reinstalling docker image"
+   if [ ! "$(docker ps -q -f name=${DOCKER_CONTAINER_NAME})" ]; then
+        if [ "$(docker ps -aq -f status=exited -f name=${DOCKER_CONTAINER_NAME})" ]; then
+            echo "Container with specified name already exist. Starting container"
+            docker start ${DOCKER_CONTAINER_NAME}
+        else
+            if [[ "$(docker images -q ${DOCKER_IMAGE_NAME} 2> /dev/null)" == "" ]]; then
+                # TODO check login details
+                # Image doesn't exist, pull it
+                docker pull ${DOCKER_IMAGE_NAME}
+            fi
+            echo "Running container"
+            docker run -it --privileged --name ${DOCKER_CONTAINER_NAME} --network=host -e DISPLAY -e QT_X11_NO_MITSHM=1 -e LOCAL_USER_ID=$(id -u) -v /tmp/.X11-unix:/tmp/.X11-unix:rw ${DOCKER_IMAGE_NAME}
+        fi
+   else
+        echo "Container already running"
+   fi
+else
+    echo "Reinstalling docker container"
+    if [ ! "$(docker ps -q -f name=${DOCKER_CONTAINER_NAME})" ]; then
+        echo "Container running. Stopping it"
+        docker stop ${DOCKER_CONTAINER_NAME}
     fi
-    # run your container
+    if [ "$(docker ps -aq -f status=exited -f name=${DOCKER_CONTAINER_NAME})" ]; then
+        echo "Container with specified name already exist. Removing container"
+        docker rm ${DOCKER_CONTAINER_NAME}
+    fi
+    echo "Pulling latest version of docker image"
+    # TODO check login details
     docker pull ${DOCKER_IMAGE_NAME}
-    docker run -d --name ${DOCKER_CONTAINER_NAME} ${DOCKER_IMAGE_NAME}
+
+    echo "Running container"
+    docker run -it --privileged --name ${DOCKER_CONTAINER_NAME} --network=host -e DISPLAY -e QT_X11_NO_MITSHM=1 -e LOCAL_USER_ID=$(id -u) -v /tmp/.X11-unix:/tmp/.X11-unix:rw ${DOCKER_IMAGE_NAME}
 fi
 
-echo ""
-echo " -------------------------------"
-echo " |   Making desktop shortcut   |"
-echo " -------------------------------"
-echo ""
-
-mkdir /home/$USER/launcher_app
-
-cp launcher.desktop /home/$USER/Desktop
-
-cp launcher_exec.sh /home/$USER/launcher_app
-cp hand_h.png /home/$USER/launcher_app
-
-cd /home/$USER/Desktop
-chmod +x launcher.desktop
-
-cd /home/$USER/launcher_app
-chmod +x launcher.sh
 
 
 echo ""
