@@ -1,38 +1,5 @@
 #!/usr/bin/env bash
 
-echo ""
-echo " -------------------------------"
-echo " |   Making desktop shortcut   |"
-echo " -------------------------------"
-echo ""
-
-APP_FOLDER=/home/$USER/launcher_app
-if [ ! -d "${APP_FOLDER}" ]; then
-  mkdir ${APP_FOLDER}
-fi
-
-# Creating desktop file
-printf "[Desktop Entry]
-Version=1.0
-Name=Hand_Launcher
-Comment=This is application launches the hand
-Exec=/home/${USER}/launcher_app/launcher_exec.sh
-Icon=/home/${USER}/launcher_app/hand_h.png
-Terminal=false
-Type=Application
-Categories=Utility;Application;" > ${APP_FOLDER}/launcher.desktop
-
-# Creating executable file
-printf "#! /bin/bash
-
-docker start ${DOCKER_CONTAINER_NAME}" > ${APP_FOLDER}/launcher_exec.sh
-cp hand_h.png ${APP_FOLDER}
-
-cd /home/$USER/Desktop
-chmod +x launcher.desktop
-exit 1
-
-
 set -e # fail on errors
 
 while [[ $# > 1 ]]
@@ -107,8 +74,6 @@ fi
 #Pull Docker image
 #Start docker container with provided name and exit
 
-
-
 #If re-installation flag is On that the following procedure will occur
 #Check if Docker was installed
 #Check if Docker container with provided name exists.
@@ -116,6 +81,41 @@ fi
 #Check if login is required to get image and login (ask for password if it is not provided)
 #Pull latest version of the Docker image
 #Start docker container with provided name and exit
+
+echo ""
+echo " -------------------------------"
+echo " |   Making desktop shortcut   |"
+echo " -------------------------------"
+echo ""
+
+echo "Creating launcher folder"
+APP_FOLDER=/home/$USER/launcher_app
+if [ ! -d "${APP_FOLDER}" ]; then
+  mkdir ${APP_FOLDER}
+fi
+
+echo "Creating executable file"
+printf "#! /bin/bash
+terminator -x bash -c 'cd ; docker start  ${DOCKER_CONTAINER_NAME}; exec bash'
+" > ${APP_FOLDER}/launcher_exec.sh
+
+echo "Copying icon"
+cp hand_h.png ${APP_FOLDER}
+
+echo "Creating desktop file"
+printf "[Desktop Entry]
+Version=1.0
+Name=Hand_Launcher
+Comment=This is application launches the hand
+Exec=/home/${USER}/launcher_app/launcher_exec.sh
+Icon=/home/${USER}/launcher_app/hand_h.png
+Terminal=false
+Type=Application
+Categories=Utility;Application;" > /home/$USER/Desktop/launcher.desktop
+
+echo "Allowing files to be executable"
+chmod +x ${APP_FOLDER}/launcher_exec.sh
+chmod +x /home/$USER/Desktop/launcher.desktop
 
 echo ""
 echo " -----------------------------------"
@@ -165,8 +165,6 @@ else
     echo "Running container"
     docker run -it --privileged --name ${DOCKER_CONTAINER_NAME} --network=host -e DISPLAY -e QT_X11_NO_MITSHM=1 -e LOCAL_USER_ID=$(id -u) -v /tmp/.X11-unix:/tmp/.X11-unix:rw ${DOCKER_IMAGE_NAME}
 fi
-
-
 
 echo ""
 echo " ------------------------------------------------"
