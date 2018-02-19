@@ -112,17 +112,21 @@ else
 fi
 
 echo "Longin to docker"
-
-if [ -n ${DOCKER_HUB_USER} ]; then
-    if [ -n ${DOCKER_HUB_PASSWORD} ]; then
-        docker login --username ${DOCKER_HUB_USER} --password ${DOCKER_HUB_PASSWORD}
+for i in 'seq 1 3';
+do
+    if [ -n ${DOCKER_HUB_USER} ]; then
+        if [ -n ${DOCKER_HUB_PASSWORD} ]; then
+            docker login --username ${DOCKER_HUB_USER} --password ${DOCKER_HUB_PASSWORD}
+        else
+            docker login --username ${DOCKER_HUB_USER} --password-stdin
+        fi
     else
-        docker login --username ${DOCKER_HUB_USER} --password-stdin
+        docker login
     fi
-else
-    docker login
-fi
-login_result=$?
+    if [ $? ]; then
+        break
+    fi
+done
 
 if [ ${REINSTALL_DOCKER_CONTAINER} = false ] ; then
    echo "Not reinstalling docker image"
