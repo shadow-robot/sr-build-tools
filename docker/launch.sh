@@ -27,6 +27,14 @@ case $key in
     DOCKER_CONTAINER_NAME="$2"
     shift
     ;;
+    -d|--desktopicon)
+    DESKTOP_ICON="$2"
+    shift
+    ;;
+    -l|--launchhand)
+    LAUNCH_HAND="$2"
+    shift
+    ;;
     *)
     # ignore unknown option
     ;;
@@ -37,6 +45,16 @@ done
 if [ -z "${REINSTALL_DOCKER_CONTAINER}" ];
 then
     REINSTALL_DOCKER_CONTAINER=false
+fi
+
+if [ -z "${DESKTOP_ICON}" ];
+then
+    DESKTOP_ICON=true
+fi
+
+if [ -z "${LAUNCH_HAND}" ];
+then
+    LAUNCH_HAND=false
 fi
 
 echo "================================================================="
@@ -82,6 +100,12 @@ fi
 #Pull latest version of the Docker image
 #Start docker container with provided name and exit
 
+# From ANSI escape codes we have the following colours
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+NC='\033[0m' # No Color
+
 echo ""
 echo " -----------------------------------"
 echo " |   Checking docker installation  |"
@@ -111,7 +135,7 @@ else
     sudo usermod -aG docker $USER
 fi
 
-echo "Longin to docker"
+echo "Docker log in "
 for i in 'seq 1 3';
 do
     if [ -n ${DOCKER_HUB_USER} ]; then
@@ -123,8 +147,12 @@ do
     else
         docker login
     fi
-    if [ $? ]; then
+    if [ $? == 0 ]; then
         break
+    fi
+    if [ ${i} == 3 and $? !=0 ]; then
+        echo -e "${RED}Docker login failed. You will not be able to pull private docker images.${NC}"
+        exit 1
     fi
 done
 
@@ -162,49 +190,50 @@ else
     docker run -it --privileged --name ${DOCKER_CONTAINER_NAME} --network=host -e DISPLAY -e QT_X11_NO_MITSHM=1 -e LOCAL_USER_ID=$(id -u) -v /tmp/.X11-unix:/tmp/.X11-unix:rw ${DOCKER_IMAGE_NAME}
 fi
 
-echo ""
-echo " -------------------------------"
-echo " |   Making desktop shortcut   |"
-echo " -------------------------------"
-echo ""
+if [ ${DESKTOP_ICON} = true ] ; then
+    echo ""
+    echo " -------------------------------"
+    echo " |   Making desktop shortcut   |"
+    echo " -------------------------------"
+    echo ""
 
-echo "Creating launcher folder"
-APP_FOLDER=/home/$USER/launcher_app
-if [ ! -d "${APP_FOLDER}" ]; then
-  mkdir ${APP_FOLDER}
+    echo "Creating launcher folder"
+    APP_FOLDER=/home/$USER/launcher_app
+    if [ ! -d "${APP_FOLDER}" ]; then
+      mkdir ${APP_FOLDER}
+    fi
+
+    echo "Downloading the script"
+    # TODO: change this for master before merging
+    curl "https://raw.githubusercontent.com/shadow-robot/sr-build-tools/F%23SRC-1277_one_liner_docker_deployment/docker/launch.sh" >> ${APP_FOLDER}/launch.sh
+
+    echo "Creating executable file"
+    printf "#! /bin/bash
+    terminator -x bash -c 'cd ${APP_FOLDER}; ./launch.sh -i ${DOCKER_IMAGE_NAME} -n ${DOCKER_CONTAINER_NAME} ; exec bash'
+    " > ${APP_FOLDER}/launcher_exec.sh
+
+    echo "Copying icon"
+    cp hand_h.png ${APP_FOLDER}
+
+    echo "Creating desktop file"
+    printf "[Desktop Entry]
+    Version=1.0
+    Name=Hand_Launcher
+    Comment=This is application launches the hand
+    Exec=/home/${USER}/launcher_app/launcher_exec.sh
+    Icon=/home/${USER}/launcher_app/hand_h.png
+    Terminal=false
+    Type=Application
+    Categories=Utility;Application;" > /home/$USER/Desktop/launcher.desktop
+
+    echo "Allowing files to be executable"
+    chmod +x ${APP_FOLDER}/launcher_exec.sh
+    chmod +x /home/$USER/Desktop/launcher.desktop
 fi
 
-echo "Creating executable file"
-printf "#! /bin/bash
-terminator -x bash -c 'cd ; docker start  ${DOCKER_CONTAINER_NAME}; exec bash'
-" > ${APP_FOLDER}/launcher_exec.sh
-
-echo "Copying icon"
-cp hand_h.png ${APP_FOLDER}
-
-echo "Creating desktop file"
-printf "[Desktop Entry]
-Version=1.0
-Name=Hand_Launcher
-Comment=This is application launches the hand
-Exec=/home/${USER}/launcher_app/launcher_exec.sh
-Icon=/home/${USER}/launcher_app/hand_h.png
-Terminal=false
-Type=Application
-Categories=Utility;Application;" > /home/$USER/Desktop/launcher.desktop
-
-echo "Allowing files to be executable"
-chmod +x ${APP_FOLDER}/launcher_exec.sh
-chmod +x /home/$USER/Desktop/launcher.desktop
 
 echo "Login out from docker"
 docker logout
-
-# From ANSI escape codes we have the following colours
-RED='\033[0;31m'
-GREEN='\033[0;32m'
-YELLOW='\033[1;33m'
-NC='\033[0m' # No Color
 
 echo -e "${YELLOW}Please logout and login again.${NC}"
 
