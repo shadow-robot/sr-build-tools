@@ -81,25 +81,6 @@ if [ -z ${DOCKER_IMAGE_NAME} ] || [ -z ${DOCKER_CONTAINER_NAME} ]; then
     exit 1
 fi
 
-# If re-installation flag is Off that the following procedure will occur
-#Check if Docker was installed
-#Check if Docker container with provided name exists.
-#If yes then check if Docker container is not running and start it
-
-#If Docker container is running just exit
-#Check if Docker image was pulled
-#Check if login is required to get image and login (ask for password if it is not provided)
-#Pull Docker image
-#Start docker container with provided name and exit
-
-#If re-installation flag is On that the following procedure will occur
-#Check if Docker was installed
-#Check if Docker container with provided name exists.
-#If yes then stop container and delete container
-#Check if login is required to get image and login (ask for password if it is not provided)
-#Pull latest version of the Docker image
-#Start docker container with provided name and exit
-
 # From ANSI escape codes we have the following colours
 RED='\033[0;31m'
 GREEN='\033[0;32m'
@@ -212,8 +193,8 @@ if [ ${DESKTOP_ICON} = true ] ; then
     terminator -x bash -c 'cd ${APP_FOLDER}; ./launch.sh -i ${DOCKER_IMAGE_NAME} -n ${DOCKER_CONTAINER_NAME} ; exec bash'
     " > ${APP_FOLDER}/launcher_exec.sh
 
-    echo "Copying icon"
-    cp hand_h.png ${APP_FOLDER}
+    echo "Downloading icon"
+    cp hand_h.png ${APP_FOLDER}	+wget https://github.com/shadow-robot/sr-build-tools/blob/F%23SRC-1277_one_liner_docker_deployment/docker/hand_h.png -P ${APP_FOLDER}
 
     echo "Creating desktop file"
     printf "[Desktop Entry]
