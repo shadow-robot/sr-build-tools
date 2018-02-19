@@ -99,8 +99,8 @@ printf "#! /bin/bash
 terminator -x bash -c 'cd ; docker start  ${DOCKER_CONTAINER_NAME}; exec bash'
 " > ${APP_FOLDER}/launcher_exec.sh
 
-echo "Copying icon"
-cp hand_h.png ${APP_FOLDER}
+echo "Downloading icon"
+wget https://github.com/shadow-robot/sr-build-tools/blob/F%23SRC-1277_one_liner_docker_deployment/docker/hand_h.png -P ${APP_FOLDER}
 
 echo "Creating desktop file"
 printf "[Desktop Entry]
