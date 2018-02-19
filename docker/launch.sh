@@ -81,6 +81,69 @@ if [ -z ${DOCKER_IMAGE_NAME} ] || [ -z ${DOCKER_CONTAINER_NAME} ]; then
     exit 1
 fi
 
+HAND_E_NAME="dexterous-hand"
+HAND_H_NAME="flexible-hand"
+if echo "${DOCKER_IMAGE_NAME}" | grep -q "${HAND_E_NAME}"; then
+    echo "Hand E/G image requested"
+    HAND_H=false
+elif echo "${DOCKER_IMAGE_NAME}" | grep -q "${HAND_H_NAME}"; then
+    echo "Hand H image requested"
+    HAND_H=true
+else
+    echo "Unknown image requested"
+    HAND_H=""
+    exit 1
+fi
+
+# Setting up launch file
+if [ ${HAND_H} = true ]; then
+    LAUNCH_FILE = ""
+fi
+
+if [ ${DESKTOP_ICON} = true ] ; then
+    echo ""
+    echo " -------------------------------"
+    echo " |   Making desktop shortcut   |"
+    echo " -------------------------------"
+    echo ""
+
+    echo "Creating launcher folder"
+    APP_FOLDER=/home/$USER/launcher_app
+    if [ ! -d "${APP_FOLDER}" ]; then
+      mkdir ${APP_FOLDER}
+    fi
+
+    echo "Downloading the script"
+    # TODO: change this for master before merging
+    curl "https://raw.githubusercontent.com/shadow-robot/sr-build-tools/F%23SRC-1277_one_liner_docker_deployment/docker/launch.sh" >> ${APP_FOLDER}/launch.sh
+
+    echo "Creating executable file"
+    printf "#! /bin/bash
+    terminator -x bash -c 'cd ${APP_FOLDER}; ./launch.sh -i ${DOCKER_IMAGE_NAME} -n ${DOCKER_CONTAINER_NAME} -r false -d false; exec bash'" > ${APP_FOLDER}/launcher_exec.sh
+
+    echo "Downloading icon"
+    # TODO: change this for master before merging
+    wget https://github.com/shadow-robot/sr-build-tools/blob/F%23SRC-1277_one_liner_docker_deployment/docker/hand_h.png -P ${APP_FOLDER}
+
+    echo "Creating desktop file"
+    printf "[Desktop Entry]
+    Version=1.0
+    Name=Hand_Launcher
+    Comment=This is application launches the hand
+    Exec=/home/${USER}/launcher_app/launcher_exec.sh
+    Icon=/home/${USER}/launcher_app/hand_h.png
+    Terminal=false
+    Type=Application
+    Categories=Utility;Application;" > /home/$USER/Desktop/launcher.desktop
+
+    echo "Allowing files to be executable"
+    chmod +x ${APP_FOLDER}/launcher_exec.sh
+    chmod +x ${APP_FOLDER}/launch.sh
+    chmod +x /home/$USER/Desktop/launcher.desktop
+fi
+echo "finish"
+
+
 # From ANSI escape codes we have the following colours
 RED='\033[0;31m'
 GREEN='\033[0;32m'
@@ -170,48 +233,6 @@ else
     echo "Running container"
     docker run -it --privileged --name ${DOCKER_CONTAINER_NAME} --network=host -e DISPLAY -e QT_X11_NO_MITSHM=1 -e LOCAL_USER_ID=$(id -u) -v /tmp/.X11-unix:/tmp/.X11-unix:rw ${DOCKER_IMAGE_NAME}
 fi
-
-if [ ${DESKTOP_ICON} = true ] ; then
-    echo ""
-    echo " -------------------------------"
-    echo " |   Making desktop shortcut   |"
-    echo " -------------------------------"
-    echo ""
-
-    echo "Creating launcher folder"
-    APP_FOLDER=/home/$USER/launcher_app
-    if [ ! -d "${APP_FOLDER}" ]; then
-      mkdir ${APP_FOLDER}
-    fi
-
-    echo "Downloading the script"
-    # TODO: change this for master before merging
-    curl "https://raw.githubusercontent.com/shadow-robot/sr-build-tools/F%23SRC-1277_one_liner_docker_deployment/docker/launch.sh" >> ${APP_FOLDER}/launch.sh
-
-    echo "Creating executable file"
-    printf "#! /bin/bash
-    terminator -x bash -c 'cd ${APP_FOLDER}; ./launch.sh -i ${DOCKER_IMAGE_NAME} -n ${DOCKER_CONTAINER_NAME} ; exec bash'
-    " > ${APP_FOLDER}/launcher_exec.sh
-
-    echo "Downloading icon"
-    cp hand_h.png ${APP_FOLDER}	+wget https://github.com/shadow-robot/sr-build-tools/blob/F%23SRC-1277_one_liner_docker_deployment/docker/hand_h.png -P ${APP_FOLDER}
-
-    echo "Creating desktop file"
-    printf "[Desktop Entry]
-    Version=1.0
-    Name=Hand_Launcher
-    Comment=This is application launches the hand
-    Exec=/home/${USER}/launcher_app/launcher_exec.sh
-    Icon=/home/${USER}/launcher_app/hand_h.png
-    Terminal=false
-    Type=Application
-    Categories=Utility;Application;" > /home/$USER/Desktop/launcher.desktop
-
-    echo "Allowing files to be executable"
-    chmod +x ${APP_FOLDER}/launcher_exec.sh
-    chmod +x /home/$USER/Desktop/launcher.desktop
-fi
-
 
 echo "Login out from docker"
 docker logout
