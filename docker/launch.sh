@@ -194,7 +194,8 @@ if [ ${DESKTOP_ICON} = true ] ; then
     " > ${APP_FOLDER}/launcher_exec.sh
 
     echo "Downloading icon"
-    cp hand_h.png ${APP_FOLDER}	+wget https://github.com/shadow-robot/sr-build-tools/blob/F%23SRC-1277_one_liner_docker_deployment/docker/hand_h.png -P ${APP_FOLDER}
+    # TODO: change this for master before merging
+    wget https://github.com/shadow-robot/sr-build-tools/blob/F%23SRC-1277_one_liner_docker_deployment/docker/hand_h.png -P ${APP_FOLDER}
 
     echo "Creating desktop file"
     printf "[Desktop Entry]
