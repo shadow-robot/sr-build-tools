@@ -83,6 +83,82 @@ fi
 #Start docker container with provided name and exit
 
 echo ""
+echo " -----------------------------------"
+echo " |   Checking docker installation  |"
+echo " -----------------------------------"
+echo ""
+
+if [ -x "$(command -v docker)" ]; then
+    echo "Docker installed"
+else
+    echo "Install docker"
+    sudo apt-get update
+    sudo apt-get install \
+        apt-transport-https \
+        ca-certificates \
+        curl \
+        software-properties-common
+    curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+    sudo add-apt-repository \
+        "deb [arch=amd64] https://download.docker.com/linux/ubuntu \
+        $(lsb_release -cs) \
+        stable"
+
+    sudo apt-get update
+    sudo apt-get install docker-ce
+
+    sudo groupadd docker
+    sudo usermod -aG docker $USER
+fi
+
+echo "Longin to docker"
+
+if [ -n ${DOCKER_HUB_USER} ]; then
+    if [ -n ${DOCKER_HUB_PASSWORD} ]; then
+        docker login --username ${DOCKER_HUB_USER} --password ${DOCKER_HUB_PASSWORD}
+    else
+        docker login --username ${DOCKER_HUB_USER} --password-stdin
+    fi
+else
+    docker login
+fi
+login_result=$?
+
+if [ ${REINSTALL_DOCKER_CONTAINER} = false ] ; then
+   echo "Not reinstalling docker image"
+   if [ ! "$(docker ps -q -f name=${DOCKER_CONTAINER_NAME})" ]; then
+        if [ "$(docker ps -aq -f status=exited -f name=${DOCKER_CONTAINER_NAME})" ]; then
+            echo "Container with specified name already exist. Starting container"
+            docker start ${DOCKER_CONTAINER_NAME}
+        else
+            if [[ "$(docker images -q ${DOCKER_IMAGE_NAME} 2> /dev/null)" == "" ]]; then
+                # Image doesn't exist, pull it
+                docker pull ${DOCKER_IMAGE_NAME}
+            fi
+            echo "Running container"
+            docker run -it --privileged --name ${DOCKER_CONTAINER_NAME} --network=host -e DISPLAY -e QT_X11_NO_MITSHM=1 -e LOCAL_USER_ID=$(id -u) -v /tmp/.X11-unix:/tmp/.X11-unix:rw ${DOCKER_IMAGE_NAME}
+        fi
+   else
+        echo "Container already running"
+   fi
+else
+    echo "Reinstalling docker container"
+    if [ ! "$(docker ps -q -f name=${DOCKER_CONTAINER_NAME})" ]; then
+        echo "Container running. Stopping it"
+        docker stop ${DOCKER_CONTAINER_NAME}
+    fi
+    if [ "$(docker ps -aq -f status=exited -f name=${DOCKER_CONTAINER_NAME})" ]; then
+        echo "Container with specified name already exist. Removing container"
+        docker rm ${DOCKER_CONTAINER_NAME}
+    fi
+    echo "Pulling latest version of docker image"
+    docker pull ${DOCKER_IMAGE_NAME}
+
+    echo "Running container"
+    docker run -it --privileged --name ${DOCKER_CONTAINER_NAME} --network=host -e DISPLAY -e QT_X11_NO_MITSHM=1 -e LOCAL_USER_ID=$(id -u) -v /tmp/.X11-unix:/tmp/.X11-unix:rw ${DOCKER_IMAGE_NAME}
+fi
+
+echo ""
 echo " -------------------------------"
 echo " |   Making desktop shortcut   |"
 echo " -------------------------------"
@@ -117,57 +193,19 @@ echo "Allowing files to be executable"
 chmod +x ${APP_FOLDER}/launcher_exec.sh
 chmod +x /home/$USER/Desktop/launcher.desktop
 
-echo ""
-echo " -----------------------------------"
-echo " |   Checking docker installation  |"
-echo " -----------------------------------"
-echo ""
+echo "Login out from docker"
+docker logout
 
-if [ -x "$(command -v docker)" ]; then
-    echo "Docker installed"
-else
-    echo "Install docker"
-    # TODO
-fi
+# From ANSI escape codes we have the following colours
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+NC='\033[0m' # No Color
 
-if [ ${REINSTALL_DOCKER_CONTAINER} = false ] ; then
-   echo "Not reinstalling docker image"
-   if [ ! "$(docker ps -q -f name=${DOCKER_CONTAINER_NAME})" ]; then
-        if [ "$(docker ps -aq -f status=exited -f name=${DOCKER_CONTAINER_NAME})" ]; then
-            echo "Container with specified name already exist. Starting container"
-            docker start ${DOCKER_CONTAINER_NAME}
-        else
-            if [[ "$(docker images -q ${DOCKER_IMAGE_NAME} 2> /dev/null)" == "" ]]; then
-                # TODO check login details
-                # Image doesn't exist, pull it
-                docker pull ${DOCKER_IMAGE_NAME}
-            fi
-            echo "Running container"
-            docker run -it --privileged --name ${DOCKER_CONTAINER_NAME} --network=host -e DISPLAY -e QT_X11_NO_MITSHM=1 -e LOCAL_USER_ID=$(id -u) -v /tmp/.X11-unix:/tmp/.X11-unix:rw ${DOCKER_IMAGE_NAME}
-        fi
-   else
-        echo "Container already running"
-   fi
-else
-    echo "Reinstalling docker container"
-    if [ ! "$(docker ps -q -f name=${DOCKER_CONTAINER_NAME})" ]; then
-        echo "Container running. Stopping it"
-        docker stop ${DOCKER_CONTAINER_NAME}
-    fi
-    if [ "$(docker ps -aq -f status=exited -f name=${DOCKER_CONTAINER_NAME})" ]; then
-        echo "Container with specified name already exist. Removing container"
-        docker rm ${DOCKER_CONTAINER_NAME}
-    fi
-    echo "Pulling latest version of docker image"
-    # TODO check login details
-    docker pull ${DOCKER_IMAGE_NAME}
-
-    echo "Running container"
-    docker run -it --privileged --name ${DOCKER_CONTAINER_NAME} --network=host -e DISPLAY -e QT_X11_NO_MITSHM=1 -e LOCAL_USER_ID=$(id -u) -v /tmp/.X11-unix:/tmp/.X11-unix:rw ${DOCKER_IMAGE_NAME}
-fi
+echo -e "${YELLOW}Please logout and login again.${NC}"
 
 echo ""
-echo " ------------------------------------------------"
-echo " |            Operation completed               |"
-echo " ------------------------------------------------"
+echo -e "${GREEN} ------------------------------------------------${NC}"
+echo -e "${GREEN} |            Operation completed               |${NC}"
+echo -e "${GREEN} ------------------------------------------------${NC}"
 echo ""
