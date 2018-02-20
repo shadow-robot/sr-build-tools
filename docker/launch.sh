@@ -128,8 +128,6 @@ fi
 #    LAUNCH_FILE = ""
 #fi
 
-
-
 echo ""
 echo " -----------------------------------"
 echo " |   Checking docker installation  |"
@@ -139,24 +137,39 @@ echo ""
 if [ -x "$(command -v docker)" ]; then
     echo "Docker installed"
 else
-    echo "Install docker"
-    sudo apt-get update
-    sudo apt-get install  -y \
+    echo "Installing docker"
+    if [[ $(cat /etc/*release | grep VERSION_CODENAME) = *"xenial"* ]]; then
+        echo "Ubuntu version: Xenial"
+        sudo apt-get update
+        sudo apt-get install  -y \
         apt-transport-https \
         ca-certificates \
         curl \
         software-properties-common
-    curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
-    sudo add-apt-repository \
-        "deb [arch=amd64] https://download.docker.com/linux/ubuntu \
-        $(lsb_release -cs) \
-        stable"
+        curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+        sudo add-apt-repository \
+             "deb [arch=amd64] https://download.docker.com/linux/ubuntu \
+             $(lsb_release -cs) \
+             stable"
+        sudo apt-get update
+        sudo apt-get install -y docker-ce
+        
+        if ! grep -q docker /etc/group ; then
+            sudo groupadd docker
+        fi
 
-    sudo apt-get update
-    sudo apt-get install -y docker-ce
-
-    sudo groupadd docker
-    sudo usermod -aG docker $USER
+        sudo usermod -aG docker $USER
+    elif [[ $(cat /etc/*release | grep VERSION_CODENAMEe) = *"trusty"* ]]; then
+        echo "Ubuntu version: Trusty"
+        sudo apt-get update
+        sudo apt-get -y install docker.io
+        ln -sf /usr/bin/docker.io /usr/local/bin/docker
+        sed -i '$acomplete -F _docker docker' /etc/bash_completion.d/docker.io
+        update-rc.d docker.io defaults
+    else
+        echo "Unsupported ubuntu version!"
+        exit 1
+    fi
 fi
 
 # Log in to docker only for hand h images
