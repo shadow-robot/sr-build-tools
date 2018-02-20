@@ -43,6 +43,10 @@ case $key in
     CONFIG_BRANCH="$2"
     shift
     ;;
+    -g|--graphics)
+    NVIDIA="$2"
+    shift
+    ;;
     *)
     # ignore unknown option
     ;;
@@ -66,6 +70,11 @@ then
     LAUNCH_HAND=false
 fi
 
+if [ -z "${NVIDIA}" ];
+then
+    NVIDIA=false
+fi
+
 echo "================================================================="
 echo "|                                                               |"
 echo "|             Shadow default docker deployment                  |"
@@ -73,12 +82,13 @@ echo "|                                                               |"
 echo "================================================================="
 echo ""
 echo "possible options: "
-echo "  * -i or --image name of the Docker hub image to pull"
-echo "  * -u or --user Docker hub user name"
-echo "  * -p or --password Docker hub password"
-echo "  * -r or --reinstall flag to know if the docker container should be fully reinstalled (false by default)"
-echo "  * -n or --name name of the docker container"
+echo "  * -i or --image             name of the Docker hub image to pull"
+echo "  * -u or --user              Docker hub user name"
+echo "  * -p or --password          Docker hub password"
+echo "  * -r or --reinstall         flag to know if the docker container should be fully reinstalled (false by default)"
+echo "  * -n or --name              name of the docker container"
 echo "  * -e or --ethercatinterface ethercat interface of the hand"
+echo "  * -g or --graphics          enable nvidia-docker"
 echo ""
 echo "example hand E: ./launch.sh -i shadowrobot/dexterous-hand:indigo -n hand_e_indigo_real_hw -b "
 echo "example hand H: ./launch.sh -i shadowrobot/flexible-hand:kinetic-release -n hand_h_kinetic_real_hw -e enp0s25 -u mydockerhublogin -p mysupersecretpassword"
@@ -260,17 +270,20 @@ if [ ${REINSTALL_DOCKER_CONTAINER} = false ] ; then
             echo "Container with specified name already exist. Starting container"
             docker start ${DOCKER_CONTAINER_NAME}
         else
-            if [[ "$(docker images -q "${DOCKER_IMAGE_NAME}-nvidia" 2> /dev/null)" == "" ]]; then
+            if [[ "$(docker images -q ${DOCKER_IMAGE_NAME} 2> /dev/null)" == "" ]]; then
                 # Image doesn't exist, pull it
                 docker pull ${DOCKER_IMAGE_NAME}
-                bash <(curl -Ls https://raw.githubusercontent.com/shadow-robot/sr-build-tools/master/docker/utils/docker_nvidialize.sh) ${DOCKER_IMAGE_NAME}
+                if [ ${NVIDIA}=true ]; then
+                    bash <(curl -Ls https://raw.githubusercontent.com/shadow-robot/sr-build-tools/master/docker/utils/docker_nvidialize.sh) ${DOCKER_IMAGE_NAME}
+                    DOCKER_IMAGE_NAME="${DOCKER_IMAGE_NAME}-nvidia"
+                fi
             fi
             echo "Running the container"
             if [ ${HAND_H} = true ]; then
-                nvidia-docker create -it --privileged --name ${DOCKER_CONTAINER_NAME} -e verbose=true -e interface=${ETHERCAT_INTERFACE} --network=host -e DISPLAY -e QT_X11_NO_MITSHM=1 -e LOCAL_USER_ID=$(id -u) -v /tmp/.X11-unix:/tmp/.X11-unix:rw "${DOCKER_IMAGE_NAME}-nvidia" bash -c "/usr/local/bin/setup.sh & bash"
+                nvidia-docker create -it --privileged --name ${DOCKER_CONTAINER_NAME} -e verbose=true -e interface=${ETHERCAT_INTERFACE} --network=host -e DISPLAY -e QT_X11_NO_MITSHM=1 -e LOCAL_USER_ID=$(id -u) -v /tmp/.X11-unix:/tmp/.X11-unix:rw ${DOCKER_IMAGE_NAME} bash -c "/usr/local/bin/setup.sh & bash"
                 docker start ${DOCKER_CONTAINER_NAME}
             else
-                nvidia-docker create -it --privileged --name ${DOCKER_CONTAINER_NAME} --network=host -e DISPLAY -e QT_X11_NO_MITSHM=1 -e LOCAL_USER_ID=$(id -u) -v /tmp/.X11-unix:/tmp/.X11-unix:rw "${DOCKER_IMAGE_NAME}-nvidia" bash -c "/usr/local/bin/setup_dexterous_hand.sh & bash"
+                nvidia-docker create -it --privileged --name ${DOCKER_CONTAINER_NAME} --network=host -e DISPLAY -e QT_X11_NO_MITSHM=1 -e LOCAL_USER_ID=$(id -u) -v /tmp/.X11-unix:/tmp/.X11-unix:rw ${DOCKER_IMAGE_NAME} bash -c "/usr/local/bin/setup_dexterous_hand.sh & bash"
                 docker cp ${APP_FOLDER}/setup_dexterous_hand.sh ${DOCKER_CONTAINER_NAME}:/usr/local/bin/setup_dexterous_hand.sh
                 docker start ${DOCKER_CONTAINER_NAME}
             fi
@@ -290,14 +303,17 @@ else
     fi
     echo "Pulling latest version of docker image"
     docker pull ${DOCKER_IMAGE_NAME}
-    bash <(curl -Ls https://raw.githubusercontent.com/shadow-robot/sr-build-tools/master/docker/utils/docker_nvidialize.sh) ${DOCKER_IMAGE_NAME}
+    if [ ${NVIDIA}=true ]; then
+        bash <(curl -Ls https://raw.githubusercontent.com/shadow-robot/sr-build-tools/master/docker/utils/docker_nvidialize.sh) ${DOCKER_IMAGE_NAME}
+        DOCKER_IMAGE_NAME="${DOCKER_IMAGE_NAME}-nvidia"
+    fi
 
     echo "Running the container"
     if [ ${HAND_H} = true ]; then
-        nvidia-docker create -it --privileged --name ${DOCKER_CONTAINER_NAME} -e verbose=true -e interface=${ETHERCAT_INTERFACE} --network=host -e DISPLAY -e QT_X11_NO_MITSHM=1 -e LOCAL_USER_ID=$(id -u) -v /tmp/.X11-unix:/tmp/.X11-unix:rw "${DOCKER_IMAGE_NAME}-nvidia" bash -c "/usr/local/bin/setup.sh & bash"
+        nvidia-docker create -it --privileged --name ${DOCKER_CONTAINER_NAME} -e verbose=true -e interface=${ETHERCAT_INTERFACE} --network=host -e DISPLAY -e QT_X11_NO_MITSHM=1 -e LOCAL_USER_ID=$(id -u) -v /tmp/.X11-unix:/tmp/.X11-unix:rw ${DOCKER_IMAGE_NAME} bash -c "/usr/local/bin/setup.sh & bash"
         docker start ${DOCKER_CONTAINER_NAME}
     else
-        nvidia-docker create -it --privileged --name ${DOCKER_CONTAINER_NAME} --network=host -e DISPLAY -e QT_X11_NO_MITSHM=1 -e LOCAL_USER_ID=$(id -u) -v /tmp/.X11-unix:/tmp/.X11-unix:rw "${DOCKER_IMAGE_NAME}-nvidia" bash -c "/usr/local/bin/setup_dexterous_hand.sh & bash"
+        nvidia-docker create -it --privileged --name ${DOCKER_CONTAINER_NAME} --network=host -e DISPLAY -e QT_X11_NO_MITSHM=1 -e LOCAL_USER_ID=$(id -u) -v /tmp/.X11-unix:/tmp/.X11-unix:rw ${DOCKER_IMAGE_NAME} bash -c "/usr/local/bin/setup_dexterous_hand.sh & bash"
         docker cp ${APP_FOLDER}/setup_dexterous_hand.sh ${DOCKER_CONTAINER_NAME}:/usr/local/bin/setup_dexterous_hand.sh
         docker start ${DOCKER_CONTAINER_NAME}
     fi
