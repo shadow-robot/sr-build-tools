@@ -213,7 +213,10 @@ if [ ${DESKTOP_ICON} = true ] ; then
             git fetch
             git checkout ${CONFIG_BRANCH}
 
-            roslaunch sr_ethercat_hand_config sr_rhand.launch
+            # Changing ethernet interface
+            sed -i 's|eth_port\" value=.*|eth_port\" value=\"${ETHERCAT_INTERFACE}\" />|' $(rospack find sr_ethercat_hand_config)/launch/sr_rhand.launch
+
+            roslaunch sr_ethercat_hand_config $(rospack find sr_ethercat_hand_config)/launch/sr_rhand.launch
             " > ${APP_FOLDER}/setup_dexterous_hand.sh
             chmod +x ${APP_FOLDER}/setup_dexterous_hand.sh
         fi
