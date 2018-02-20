@@ -108,6 +108,12 @@ if [ -z ${DOCKER_IMAGE_NAME} ] || [ -z ${DOCKER_CONTAINER_NAME} ]; then
     exit 1
 fi
 
+if [ ${NVIDIA} = false ]; then
+    DOCKER="docker"
+else
+    DOCKER="nvidia-docker"
+fi
+
 HAND_E_NAME="dexterous-hand"
 HAND_H_NAME="flexible-hand"
 if echo "${DOCKER_IMAGE_NAME}" | grep -q "${HAND_E_NAME}"; then
@@ -266,20 +272,18 @@ fi
 if [ ${REINSTALL_DOCKER_CONTAINER} = false ] ; then
    echo "Not reinstalling docker image"
    if [ ! "$(docker ps -q -f name=${DOCKER_CONTAINER_NAME})" ]; then
-        if [ "$(docker ps -aq -f status=exited -f name=${DOCKER_CONTAINER_NAME}-nvidia)" ]; then
+        if [ "$(docker ps -aq -f status=exited -f name=${DOCKER_CONTAINER_NAME})" ]; then
             echo "Container with specified name already exist. Starting container"
             docker start ${DOCKER_CONTAINER_NAME}
         else
             if [[ "$(docker images -q ${DOCKER_IMAGE_NAME} 2> /dev/null)" == "" ]]; then
                 # Image doesn't exist, pull it
                 docker pull ${DOCKER_IMAGE_NAME}
-                DOCKER="docker"
                 if [ ${NVIDIA} = true ]; then
                     if [[ "$(docker images -q "${DOCKER_IMAGE_NAME}-nvidia" 2> /dev/null)" == "" ]]; then
                         bash <(curl -Ls https://raw.githubusercontent.com/shadow-robot/sr-build-tools/master/docker/utils/docker_nvidialize.sh) ${DOCKER_IMAGE_NAME}
                     fi
                     DOCKER_IMAGE_NAME="${DOCKER_IMAGE_NAME}-nvidia"
-                    DOCKER="nvidia-docker"
                 fi
             fi
             echo "Running the container"
@@ -307,13 +311,11 @@ else
     fi
     echo "Pulling latest version of docker image"
     docker pull ${DOCKER_IMAGE_NAME}
-    DOCKER="docker"
     if [ ${NVIDIA} = true ]; then
         if [[ "$(docker images -q "${DOCKER_IMAGE_NAME}-nvidia" 2> /dev/null)" == "" ]]; then
             bash <(curl -Ls https://raw.githubusercontent.com/shadow-robot/sr-build-tools/master/docker/utils/docker_nvidialize.sh) ${DOCKER_IMAGE_NAME}
         fi
         DOCKER_IMAGE_NAME="${DOCKER_IMAGE_NAME}-nvidia"
-        DOCKER="nvidia-docker"
     fi
 
     echo "Running the container"
