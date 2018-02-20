@@ -294,11 +294,6 @@ else
     fi
 fi
 
-# TODO: do we still need to do this?
-# echo "Login out from docker"
-# docker logout
-# echo -e "${YELLOW}Please logout and login again.${NC}"
-
 echo ""
 echo -e "${GREEN} ------------------------------------------------${NC}"
 echo -e "${GREEN} |            Operation completed               |${NC}"
