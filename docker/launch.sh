@@ -263,9 +263,9 @@ if [ ${REINSTALL_DOCKER_CONTAINER} = false ] ; then
             if [ ${HAND_H} = true ]; then
                 docker run -d -it --privileged --name ${DOCKER_CONTAINER_NAME} -e interface=${ETHERCAT_INTERFACE} --network=host -e DISPLAY -e QT_X11_NO_MITSHM=1 -e LOCAL_USER_ID=$(id -u) -v /tmp/.X11-unix:/tmp/.X11-unix:rw ${DOCKER_IMAGE_NAME}
             else
-                docker run -d -it --privileged --name ${DOCKER_CONTAINER_NAME} --network=host -e DISPLAY -e QT_X11_NO_MITSHM=1 -e LOCAL_USER_ID=$(id -u) -v /tmp/.X11-unix:/tmp/.X11-unix:rw ${DOCKER_IMAGE_NAME}
+                docker run -d -it --privileged --name ${DOCKER_CONTAINER_NAME} --network=host -e DISPLAY -e QT_X11_NO_MITSHM=1 -e LOCAL_USER_ID=$(id -u) -v /tmp/.X11-unix:/tmp/.X11-unix:rw ${DOCKER_IMAGE_NAME} /bin/bash
                 docker cp ${APP_FOLDER}/setup_dexterous_hand.sh ${DOCKER_CONTAINER_NAME}:/usr/local/bin/setup_dexterous_hand.sh
-                docker exec -it ${DOCKER_CONTAINER_NAME} bash -c /usr/local/bin/setup_dexterous_hand.sh
+                docker exec -it ${DOCKER_CONTAINER_NAME} bash -c /usr/local/bin/setup_dexterous_hand.sh &
             fi
         fi
    else
@@ -288,9 +288,9 @@ else
     if [ ${HAND_H} = true ]; then
         docker run -d -it --privileged --name ${DOCKER_CONTAINER_NAME} -e interface=${ETHERCAT_INTERFACE} --network=host -e DISPLAY -e QT_X11_NO_MITSHM=1 -e LOCAL_USER_ID=$(id -u) -v /tmp/.X11-unix:/tmp/.X11-unix:rw ${DOCKER_IMAGE_NAME}
     else
-        docker run -d -it --privileged --name ${DOCKER_CONTAINER_NAME} --network=host -e DISPLAY -e QT_X11_NO_MITSHM=1 -e LOCAL_USER_ID=$(id -u) -v /tmp/.X11-unix:/tmp/.X11-unix:rw ${DOCKER_IMAGE_NAME}
+        docker run -d -it --privileged --name ${DOCKER_CONTAINER_NAME} --network=host -e DISPLAY -e QT_X11_NO_MITSHM=1 -e LOCAL_USER_ID=$(id -u) -v /tmp/.X11-unix:/tmp/.X11-unix:rw ${DOCKER_IMAGE_NAME} /bin/bash
         docker cp ${APP_FOLDER}/setup_dexterous_hand.sh ${DOCKER_CONTAINER_NAME}:/usr/local/bin/setup_dexterous_hand.sh
-        docker exec -it ${DOCKER_CONTAINER_NAME} bash -c /usr/local/bin/setup_dexterous_hand.sh
+        docker exec -it ${DOCKER_CONTAINER_NAME} bash -c /usr/local/bin/setup_dexterous_hand.sh &
     fi
 fi
 
