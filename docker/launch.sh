@@ -66,11 +66,6 @@ then
     LAUNCH_HAND=false
 fi
 
-if [ -z "${CONFIG_BRANCH}" ];
-then
-    CONFIG_BRANCH="kinetic-devel"
-fi
-
 echo "================================================================="
 echo "|                                                               |"
 echo "|             Shadow default docker deployment                  |"
@@ -107,8 +102,6 @@ HAND_H_NAME="flexible-hand"
 if echo "${DOCKER_IMAGE_NAME}" | grep -q "${HAND_E_NAME}"; then
     echo "Hand E/G image requested"
     HAND_H=false
-    # Check if config branch name was specified
-
 elif echo "${DOCKER_IMAGE_NAME}" | grep -q "${HAND_H_NAME}"; then
     echo "Hand H image requested"
     HAND_H=true
@@ -122,11 +115,6 @@ else
     HAND_H=""
     exit 1
 fi
-
-## Setting up launch file
-#if [ ${HAND_H} = true ]; then
-#    LAUNCH_FILE = ""
-#fi
 
 echo ""
 echo " -----------------------------------"
@@ -183,7 +171,7 @@ if [ ${HAND_H} = true ]; then
         else
             echo "Docker username specified"
             if [ -z ${DOCKER_HUB_PASSWORD} ]; then
-                docker login --username ${DOCKER_HUB_USER} --password-stdin
+                docker login --username ${DOCKER_HUB_USER}
             else
                 docker login --username ${DOCKER_HUB_USER} --password ${DOCKER_HUB_PASSWORD}
             fi
@@ -210,7 +198,11 @@ if [ ${REINSTALL_DOCKER_CONTAINER} = false ] ; then
                 docker pull ${DOCKER_IMAGE_NAME}
             fi
             echo "Running container"
-            docker run -it --privileged --name ${DOCKER_CONTAINER_NAME} --network=host -e DISPLAY -e QT_X11_NO_MITSHM=1 -e LOCAL_USER_ID=$(id -u) -v /tmp/.X11-unix:/tmp/.X11-unix:rw ${DOCKER_IMAGE_NAME}
+            if [ ${HAND_H} = true ]; then
+                docker run -it --privileged --name ${DOCKER_CONTAINER_NAME} -e interface=${ETHERCAT_INTERFACE} --network=host -e DISPLAY -e QT_X11_NO_MITSHM=1 -e LOCAL_USER_ID=$(id -u) -v /tmp/.X11-unix:/tmp/.X11-unix:rw ${DOCKER_IMAGE_NAME}
+            else
+                docker run -it --privileged --name ${DOCKER_CONTAINER_NAME} --network=host -e DISPLAY -e QT_X11_NO_MITSHM=1 -e LOCAL_USER_ID=$(id -u) -v /tmp/.X11-unix:/tmp/.X11-unix:rw ${DOCKER_IMAGE_NAME}
+            fi
         fi
    else
         echo "Container already running"
@@ -229,7 +221,11 @@ else
     docker pull ${DOCKER_IMAGE_NAME}
 
     echo "Running container"
-    docker run -it --privileged --name ${DOCKER_CONTAINER_NAME} --network=host -e DISPLAY -e QT_X11_NO_MITSHM=1 -e LOCAL_USER_ID=$(id -u) -v /tmp/.X11-unix:/tmp/.X11-unix:rw ${DOCKER_IMAGE_NAME}
+    if [ ${HAND_H} = true ]; then
+        docker run -it --privileged --name ${DOCKER_CONTAINER_NAME} -e interface=${ETHERCAT_INTERFACE} --network=host -e DISPLAY -e QT_X11_NO_MITSHM=1 -e LOCAL_USER_ID=$(id -u) -v /tmp/.X11-unix:/tmp/.X11-unix:rw ${DOCKER_IMAGE_NAME}
+    else
+        docker run -it --privileged --name ${DOCKER_CONTAINER_NAME} --network=host -e DISPLAY -e QT_X11_NO_MITSHM=1 -e LOCAL_USER_ID=$(id -u) -v /tmp/.X11-unix:/tmp/.X11-unix:rw ${DOCKER_IMAGE_NAME}
+    fi
 fi
 
 # If running for the first time create desktop shortcut
