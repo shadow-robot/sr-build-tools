@@ -243,6 +243,7 @@ if [ ${DESKTOP_ICON} = true ] ; then
     chmod +x ${APP_FOLDER}/launcher_exec.sh
     chmod +x ${APP_FOLDER}/launch.sh
     chmod +x /home/$USER/Desktop/launcher.desktop
+    chmod +x ${APP_FOLDER}/setup_dexterous_hand.sh
 fi
 
 if [ ${REINSTALL_DOCKER_CONTAINER} = false ] ; then
