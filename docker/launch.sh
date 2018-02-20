@@ -186,49 +186,8 @@ if [ ${HAND_H} = true ]; then
     done
 fi
 
-if [ ${REINSTALL_DOCKER_CONTAINER} = false ] ; then
-   echo "Not reinstalling docker image"
-   if [ ! "$(docker ps -q -f name=${DOCKER_CONTAINER_NAME})" ]; then
-        if [ "$(docker ps -aq -f status=exited -f name=${DOCKER_CONTAINER_NAME})" ]; then
-            echo "Container with specified name already exist. Starting container"
-            docker start ${DOCKER_CONTAINER_NAME}
-        else
-            if [[ "$(docker images -q ${DOCKER_IMAGE_NAME} 2> /dev/null)" == "" ]]; then
-                # Image doesn't exist, pull it
-                docker pull ${DOCKER_IMAGE_NAME}
-            fi
-            echo "Running container"
-            if [ ${HAND_H} = true ]; then
-                docker run -it --privileged --name ${DOCKER_CONTAINER_NAME} -e interface=${ETHERCAT_INTERFACE} --network=host -e DISPLAY -e QT_X11_NO_MITSHM=1 -e LOCAL_USER_ID=$(id -u) -v /tmp/.X11-unix:/tmp/.X11-unix:rw ${DOCKER_IMAGE_NAME}
-            else
-                docker run -it --privileged --name ${DOCKER_CONTAINER_NAME} --network=host -e DISPLAY -e QT_X11_NO_MITSHM=1 -e LOCAL_USER_ID=$(id -u) -v /tmp/.X11-unix:/tmp/.X11-unix:rw ${DOCKER_IMAGE_NAME}
-            fi
-        fi
-   else
-        echo "Container already running"
-   fi
-else
-    echo "Reinstalling docker container"
-    if [ ! "$(docker ps -q -f name=${DOCKER_CONTAINER_NAME})" ]; then
-        echo "Container running. Stopping it"
-        docker stop ${DOCKER_CONTAINER_NAME}
-    fi
-    if [ "$(docker ps -aq -f status=exited -f name=${DOCKER_CONTAINER_NAME})" ]; then
-        echo "Container with specified name already exist. Removing container"
-        docker rm ${DOCKER_CONTAINER_NAME}
-    fi
-    echo "Pulling latest version of docker image"
-    docker pull ${DOCKER_IMAGE_NAME}
-
-    echo "Running container"
-    if [ ${HAND_H} = true ]; then
-        docker run -it --privileged --name ${DOCKER_CONTAINER_NAME} -e interface=${ETHERCAT_INTERFACE} --network=host -e DISPLAY -e QT_X11_NO_MITSHM=1 -e LOCAL_USER_ID=$(id -u) -v /tmp/.X11-unix:/tmp/.X11-unix:rw ${DOCKER_IMAGE_NAME}
-    else
-        docker run -it --privileged --name ${DOCKER_CONTAINER_NAME} --network=host -e DISPLAY -e QT_X11_NO_MITSHM=1 -e LOCAL_USER_ID=$(id -u) -v /tmp/.X11-unix:/tmp/.X11-unix:rw ${DOCKER_IMAGE_NAME}
-    fi
-fi
-
 # If running for the first time create desktop shortcut
+APP_FOLDER=/home/$USER/launcher_app
 if [ ${DESKTOP_ICON} = true ] ; then
     echo ""
     echo " -------------------------------"
@@ -237,9 +196,24 @@ if [ ${DESKTOP_ICON} = true ] ; then
     echo ""
 
     echo "Creating launcher folder"
-    APP_FOLDER=/home/$USER/launcher_app
     if [ ! -d "${APP_FOLDER}" ]; then
       mkdir ${APP_FOLDER}
+    fi
+
+    # Create a initial script for dexterous hand
+    if [ ${HAND_H} = false ]; then
+        if [ -z "${CONFIG_BRANCH}" ]; then
+            echo -e "${RED}Specify a config branch for your dexterous hand ${NC}"
+            exit 1
+        else
+            printf "#! /bin/bash
+            roscd sr_ethercat_hand_config
+            git fetch
+            git checkout ${CONFIG_BRANCH}
+
+            roslaunch sr_ethercat_hand_config sr_rhand.launch
+            " > ${APP_FOLDER}/setup_dexterous_hand.sh
+        fi
     fi
 
     echo "Downloading the script"
@@ -269,6 +243,48 @@ if [ ${DESKTOP_ICON} = true ] ; then
     chmod +x ${APP_FOLDER}/launcher_exec.sh
     chmod +x ${APP_FOLDER}/launch.sh
     chmod +x /home/$USER/Desktop/launcher.desktop
+fi
+
+if [ ${REINSTALL_DOCKER_CONTAINER} = false ] ; then
+   echo "Not reinstalling docker image"
+   if [ ! "$(docker ps -q -f name=${DOCKER_CONTAINER_NAME})" ]; then
+        if [ "$(docker ps -aq -f status=exited -f name=${DOCKER_CONTAINER_NAME})" ]; then
+            echo "Container with specified name already exist. Starting container"
+            docker start ${DOCKER_CONTAINER_NAME}
+        else
+            if [[ "$(docker images -q ${DOCKER_IMAGE_NAME} 2> /dev/null)" == "" ]]; then
+                # Image doesn't exist, pull it
+                docker pull ${DOCKER_IMAGE_NAME}
+            fi
+            echo "Running container"
+            if [ ${HAND_H} = true ]; then
+                docker run -it --privileged --name ${DOCKER_CONTAINER_NAME} -e interface=${ETHERCAT_INTERFACE} --network=host -e DISPLAY -e QT_X11_NO_MITSHM=1 -e LOCAL_USER_ID=$(id -u) -v /tmp/.X11-unix:/tmp/.X11-unix:rw ${DOCKER_IMAGE_NAME}
+            else
+                docker run -it --privileged --name ${DOCKER_CONTAINER_NAME} --network=host -e DISPLAY -e QT_X11_NO_MITSHM=1 -e LOCAL_USER_ID=$(id -u) -v /tmp/.X11-unix:/tmp/.X11-unix:rw ${DOCKER_IMAGE_NAME} ${APP_FOLDER}/setup_dexterous_hand.sh
+            fi
+        fi
+   else
+        echo "Container already running"
+   fi
+else
+    echo "Reinstalling docker container"
+    if [ ! "$(docker ps -q -f name=${DOCKER_CONTAINER_NAME})" ]; then
+        echo "Container running. Stopping it"
+        docker stop ${DOCKER_CONTAINER_NAME}
+    fi
+    if [ "$(docker ps -aq -f status=exited -f name=${DOCKER_CONTAINER_NAME})" ]; then
+        echo "Container with specified name already exist. Removing container"
+        docker rm ${DOCKER_CONTAINER_NAME}
+    fi
+    echo "Pulling latest version of docker image"
+    docker pull ${DOCKER_IMAGE_NAME}
+
+    echo "Running container"
+    if [ ${HAND_H} = true ]; then
+        docker run -it --privileged --name ${DOCKER_CONTAINER_NAME} -e interface=${ETHERCAT_INTERFACE} --network=host -e DISPLAY -e QT_X11_NO_MITSHM=1 -e LOCAL_USER_ID=$(id -u) -v /tmp/.X11-unix:/tmp/.X11-unix:rw ${DOCKER_IMAGE_NAME}
+    else
+        docker run -it --privileged --name ${DOCKER_CONTAINER_NAME} --network=host -e DISPLAY -e QT_X11_NO_MITSHM=1 -e LOCAL_USER_ID=$(id -u) -v /tmp/.X11-unix:/tmp/.X11-unix:rw ${DOCKER_IMAGE_NAME} ${APP_FOLDER}/setup_dexterous_hand.sh
+    fi
 fi
 
 # TODO: do we still need to do this?
