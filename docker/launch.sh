@@ -274,7 +274,7 @@ if [ ${REINSTALL_DOCKER_CONTAINER} = false ] ; then
                 # Image doesn't exist, pull it
                 docker pull ${DOCKER_IMAGE_NAME}
                 DOCKER="docker"
-                if [ ${NVIDIA}=true ]; then
+                if [ ${NVIDIA} = true ]; then
                     if [[ "$(docker images -q "${DOCKER_IMAGE_NAME}-nvidia" 2> /dev/null)" == "" ]]; then
                         bash <(curl -Ls https://raw.githubusercontent.com/shadow-robot/sr-build-tools/master/docker/utils/docker_nvidialize.sh) ${DOCKER_IMAGE_NAME}
                     fi
@@ -308,7 +308,7 @@ else
     echo "Pulling latest version of docker image"
     docker pull ${DOCKER_IMAGE_NAME}
     DOCKER="docker"
-    if [ ${NVIDIA}=true ]; then
+    if [ ${NVIDIA} = true ]; then
         if [[ "$(docker images -q "${DOCKER_IMAGE_NAME}-nvidia" 2> /dev/null)" == "" ]]; then
             bash <(curl -Ls https://raw.githubusercontent.com/shadow-robot/sr-build-tools/master/docker/utils/docker_nvidialize.sh) ${DOCKER_IMAGE_NAME}
         fi
