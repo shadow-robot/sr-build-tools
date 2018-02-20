@@ -208,6 +208,7 @@ if [ ${DESKTOP_ICON} = true ] ; then
             exit 1
         else
             printf "#! /bin/bash
+            source /home/user/projects/shadow_robot/base/devel/setup.bash
             roscd sr_ethercat_hand_config
             git fetch
             git checkout ${CONFIG_BRANCH}
@@ -272,7 +273,7 @@ if [ ${REINSTALL_DOCKER_CONTAINER} = false ] ; then
    fi
 else
     echo "Reinstalling docker container"
-    if [ ! "$(docker ps -q -f name=${DOCKER_CONTAINER_NAME})" ]; then
+    if [ "$(docker ps -q -f name=${DOCKER_CONTAINER_NAME})" ]; then
         echo "Container running. Stopping it"
         docker stop ${DOCKER_CONTAINER_NAME}
     fi
