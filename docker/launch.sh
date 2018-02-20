@@ -240,9 +240,11 @@ if [ ${DESKTOP_ICON} = true ] ; then
         fi
     fi
 
+    if [ ! -e ${APP_FOLDER}/launch.sh ]; then
     echo "Downloading the script"
-    # TODO: change this for master before merging
-    curl "https://raw.githubusercontent.com/shadow-robot/sr-build-tools/F%23SRC-1277_one_liner_docker_deployment/docker/launch.sh" >> ${APP_FOLDER}/launch.sh
+        # TODO: change this for master before merging
+        curl "https://raw.githubusercontent.com/shadow-robot/sr-build-tools/F%23SRC-1277_one_liner_docker_deployment/docker/launch.sh" >> ${APP_FOLDER}/launch.sh
+    fi
 
     echo "Creating executable file"
     printf "#! /bin/bash
