@@ -259,13 +259,14 @@ if [ ${REINSTALL_DOCKER_CONTAINER} = false ] ; then
                 # Image doesn't exist, pull it
                 docker pull ${DOCKER_IMAGE_NAME}
             fi
-            echo "Running container"
+            echo "Running the container"
             if [ ${HAND_H} = true ]; then
-                docker run -d -it --privileged --name ${DOCKER_CONTAINER_NAME} -e interface=${ETHERCAT_INTERFACE} --network=host -e DISPLAY -e QT_X11_NO_MITSHM=1 -e LOCAL_USER_ID=$(id -u) -v /tmp/.X11-unix:/tmp/.X11-unix:rw ${DOCKER_IMAGE_NAME}
+                docker create -it --privileged --name ${DOCKER_CONTAINER_NAME} -e interface=${ETHERCAT_INTERFACE} --network=host -e DISPLAY -e QT_X11_NO_MITSHM=1 -e LOCAL_USER_ID=$(id -u) -v /tmp/.X11-unix:/tmp/.X11-unix:rw ${DOCKER_IMAGE_NAME} bash & /usr/local/bin/setup.sh
+                docker start ${DOCKER_CONTAINER_NAME}
             else
-                docker run -d -it --privileged --name ${DOCKER_CONTAINER_NAME} --network=host -e DISPLAY -e QT_X11_NO_MITSHM=1 -e LOCAL_USER_ID=$(id -u) -v /tmp/.X11-unix:/tmp/.X11-unix:rw ${DOCKER_IMAGE_NAME} /bin/bash
+                docker create -it --privileged --name ${DOCKER_CONTAINER_NAME} --network=host -e DISPLAY -e QT_X11_NO_MITSHM=1 -e LOCAL_USER_ID=$(id -u) -v /tmp/.X11-unix:/tmp/.X11-unix:rw ${DOCKER_IMAGE_NAME} bash & /usr/local/bin/setup_dexterous_hand.sh
                 docker cp ${APP_FOLDER}/setup_dexterous_hand.sh ${DOCKER_CONTAINER_NAME}:/usr/local/bin/setup_dexterous_hand.sh
-                docker exec -it ${DOCKER_CONTAINER_NAME} terminator -x /usr/local/bin/setup_dexterous_hand.sh
+                docker start ${DOCKER_CONTAINER_NAME}
             fi
         fi
    else
@@ -284,13 +285,14 @@ else
     echo "Pulling latest version of docker image"
     docker pull ${DOCKER_IMAGE_NAME}
 
-    echo "Running container"
+    echo "Running the container"
     if [ ${HAND_H} = true ]; then
-        docker run -d -it --privileged --name ${DOCKER_CONTAINER_NAME} -e interface=${ETHERCAT_INTERFACE} --network=host -e DISPLAY -e QT_X11_NO_MITSHM=1 -e LOCAL_USER_ID=$(id -u) -v /tmp/.X11-unix:/tmp/.X11-unix:rw ${DOCKER_IMAGE_NAME}
+        docker create -i --privileged --name ${DOCKER_CONTAINER_NAME} -e interface=${ETHERCAT_INTERFACE} --network=host -e DISPLAY -e QT_X11_NO_MITSHM=1 -e LOCAL_USER_ID=$(id -u) -v /tmp/.X11-unix:/tmp/.X11-unix:rw ${DOCKER_IMAGE_NAME} bash & /usr/local/bin/setup.sh
+        docker start -i ${DOCKER_CONTAINER_NAME}
     else
-        docker run -d -it --privileged --name ${DOCKER_CONTAINER_NAME} --network=host -e DISPLAY -e QT_X11_NO_MITSHM=1 -e LOCAL_USER_ID=$(id -u) -v /tmp/.X11-unix:/tmp/.X11-unix:rw ${DOCKER_IMAGE_NAME} /bin/bash
+        docker create -i --privileged --name ${DOCKER_CONTAINER_NAME} --network=host -e DISPLAY -e QT_X11_NO_MITSHM=1 -e LOCAL_USER_ID=$(id -u) -v /tmp/.X11-unix:/tmp/.X11-unix:rw ${DOCKER_IMAGE_NAME} bash & /usr/local/bin/setup_dexterous_hand.sh
         docker cp ${APP_FOLDER}/setup_dexterous_hand.sh ${DOCKER_CONTAINER_NAME}:/usr/local/bin/setup_dexterous_hand.sh
-        docker exec -it ${DOCKER_CONTAINER_NAME} terminator -x /usr/local/bin/setup_dexterous_hand.sh
+        docker start -i ${DOCKER_CONTAINER_NAME}
     fi
 fi
 
@@ -299,3 +301,5 @@ echo -e "${GREEN} ------------------------------------------------${NC}"
 echo -e "${GREEN} |            Operation completed               |${NC}"
 echo -e "${GREEN} ------------------------------------------------${NC}"
 echo ""
+
+docker attach ${DOCKER_CONTAINER_NAME}
