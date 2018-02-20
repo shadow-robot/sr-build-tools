@@ -214,6 +214,7 @@ if [ ${DESKTOP_ICON} = true ] ; then
 
             roslaunch sr_ethercat_hand_config sr_rhand.launch
             " > ${APP_FOLDER}/setup_dexterous_hand.sh
+            chmod +x ${APP_FOLDER}/setup_dexterous_hand.sh
         fi
     fi
 
@@ -244,7 +245,6 @@ if [ ${DESKTOP_ICON} = true ] ; then
     chmod +x ${APP_FOLDER}/launcher_exec.sh
     chmod +x ${APP_FOLDER}/launch.sh
     chmod +x /home/$USER/Desktop/launcher.desktop
-    chmod +x ${APP_FOLDER}/setup_dexterous_hand.sh
 fi
 
 if [ ${REINSTALL_DOCKER_CONTAINER} = false ] ; then
