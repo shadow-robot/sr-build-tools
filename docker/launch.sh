@@ -142,6 +142,7 @@ else
              stable"
         sudo apt-get update
         sudo apt-get install -y docker-ce
+        sudo apt-get install -y nvidia-docker
         
         if ! grep -q docker /etc/group ; then
             sudo groupadd docker
@@ -155,6 +156,7 @@ else
         ln -sf /usr/bin/docker.io /usr/local/bin/docker
         sed -i '$acomplete -F _docker docker' /etc/bash_completion.d/docker.io
         update-rc.d docker.io defaults
+        sudo apt-get install -y nvidia-docker
     else
         echo "Unsupported ubuntu version!"
         exit 1
@@ -254,20 +256,21 @@ fi
 if [ ${REINSTALL_DOCKER_CONTAINER} = false ] ; then
    echo "Not reinstalling docker image"
    if [ ! "$(docker ps -q -f name=${DOCKER_CONTAINER_NAME})" ]; then
-        if [ "$(docker ps -aq -f status=exited -f name=${DOCKER_CONTAINER_NAME})" ]; then
+        if [ "$(docker ps -aq -f status=exited -f name=${DOCKER_CONTAINER_NAME}-nvidia)" ]; then
             echo "Container with specified name already exist. Starting container"
             docker start ${DOCKER_CONTAINER_NAME}
         else
-            if [[ "$(docker images -q ${DOCKER_IMAGE_NAME} 2> /dev/null)" == "" ]]; then
+            if [[ "$(docker images -q "${DOCKER_IMAGE_NAME}-nvidia" 2> /dev/null)" == "" ]]; then
                 # Image doesn't exist, pull it
                 docker pull ${DOCKER_IMAGE_NAME}
+                bash <(curl -Ls https://raw.githubusercontent.com/shadow-robot/sr-build-tools/master/docker/utils/docker_nvidialize.sh) ${DOCKER_IMAGE_NAME}
             fi
             echo "Running the container"
             if [ ${HAND_H} = true ]; then
-                docker create -it --privileged --name ${DOCKER_CONTAINER_NAME} -e verbose=true -e interface=${ETHERCAT_INTERFACE} --network=host -e DISPLAY -e QT_X11_NO_MITSHM=1 -e LOCAL_USER_ID=$(id -u) -v /tmp/.X11-unix:/tmp/.X11-unix:rw ${DOCKER_IMAGE_NAME} bash -c "/usr/local/bin/setup.sh & bash"
+                nvidia-docker create -it --privileged --name ${DOCKER_CONTAINER_NAME} -e verbose=true -e interface=${ETHERCAT_INTERFACE} --network=host -e DISPLAY -e QT_X11_NO_MITSHM=1 -e LOCAL_USER_ID=$(id -u) -v /tmp/.X11-unix:/tmp/.X11-unix:rw "${DOCKER_IMAGE_NAME}-nvidia" bash -c "/usr/local/bin/setup.sh & bash"
                 docker start ${DOCKER_CONTAINER_NAME}
             else
-                docker create -it --privileged --name ${DOCKER_CONTAINER_NAME} --network=host -e DISPLAY -e QT_X11_NO_MITSHM=1 -e LOCAL_USER_ID=$(id -u) -v /tmp/.X11-unix:/tmp/.X11-unix:rw ${DOCKER_IMAGE_NAME} bash -c "/usr/local/bin/setup_dexterous_hand.sh & bash"
+                nvidia-docker create -it --privileged --name ${DOCKER_CONTAINER_NAME} --network=host -e DISPLAY -e QT_X11_NO_MITSHM=1 -e LOCAL_USER_ID=$(id -u) -v /tmp/.X11-unix:/tmp/.X11-unix:rw "${DOCKER_IMAGE_NAME}-nvidia" bash -c "/usr/local/bin/setup_dexterous_hand.sh & bash"
                 docker cp ${APP_FOLDER}/setup_dexterous_hand.sh ${DOCKER_CONTAINER_NAME}:/usr/local/bin/setup_dexterous_hand.sh
                 docker start ${DOCKER_CONTAINER_NAME}
             fi
@@ -287,13 +290,14 @@ else
     fi
     echo "Pulling latest version of docker image"
     docker pull ${DOCKER_IMAGE_NAME}
+    bash <(curl -Ls https://raw.githubusercontent.com/shadow-robot/sr-build-tools/master/docker/utils/docker_nvidialize.sh) ${DOCKER_IMAGE_NAME}
 
     echo "Running the container"
     if [ ${HAND_H} = true ]; then
-        docker create -it --privileged --name ${DOCKER_CONTAINER_NAME} -e verbose=true -e interface=${ETHERCAT_INTERFACE} --network=host -e DISPLAY -e QT_X11_NO_MITSHM=1 -e LOCAL_USER_ID=$(id -u) -v /tmp/.X11-unix:/tmp/.X11-unix:rw ${DOCKER_IMAGE_NAME} bash -c "/usr/local/bin/setup.sh & bash"
+        nvidia-docker create -it --privileged --name ${DOCKER_CONTAINER_NAME} -e verbose=true -e interface=${ETHERCAT_INTERFACE} --network=host -e DISPLAY -e QT_X11_NO_MITSHM=1 -e LOCAL_USER_ID=$(id -u) -v /tmp/.X11-unix:/tmp/.X11-unix:rw "${DOCKER_IMAGE_NAME}-nvidia" bash -c "/usr/local/bin/setup.sh & bash"
         docker start ${DOCKER_CONTAINER_NAME}
     else
-        docker create -it --privileged --name ${DOCKER_CONTAINER_NAME} --network=host -e DISPLAY -e QT_X11_NO_MITSHM=1 -e LOCAL_USER_ID=$(id -u) -v /tmp/.X11-unix:/tmp/.X11-unix:rw ${DOCKER_IMAGE_NAME} bash -c "/usr/local/bin/setup_dexterous_hand.sh & bash"
+        nvidia-docker create -it --privileged --name ${DOCKER_CONTAINER_NAME} --network=host -e DISPLAY -e QT_X11_NO_MITSHM=1 -e LOCAL_USER_ID=$(id -u) -v /tmp/.X11-unix:/tmp/.X11-unix:rw "${DOCKER_IMAGE_NAME}-nvidia" bash -c "/usr/local/bin/setup_dexterous_hand.sh & bash"
         docker cp ${APP_FOLDER}/setup_dexterous_hand.sh ${DOCKER_CONTAINER_NAME}:/usr/local/bin/setup_dexterous_hand.sh
         docker start ${DOCKER_CONTAINER_NAME}
     fi
