@@ -110,7 +110,7 @@ YELLOW='\033[1;33m'
 NC='\033[0m' # No Color
 
 if [ -z ${DOCKER_IMAGE_NAME} ] || [ -z ${DOCKER_CONTAINER_NAME} ]; then
-    echo "Docker image name and name of container are required"
+    echo "${RED}Docker image name and name of container are required ${NC}"
     exit 1
 fi
 
@@ -135,7 +135,7 @@ elif echo "${DOCKER_IMAGE_NAME}" | grep -q "${HAND_H_NAME}"; then
         exit 1
     fi
 else
-    echo "Unknown image requested"
+    echo "${RED}Unknown image requested ${NC}"
     HAND_H=""
     exit 1
 fi
@@ -179,7 +179,7 @@ else
         sed -i '$acomplete -F _docker docker' /etc/bash_completion.d/docker.io
         update-rc.d docker.io defaults
     else
-        echo "Unsupported ubuntu version!"
+        echo "${RED}Unsupported ubuntu version! ${NC}"
         exit 1
     fi
 fi
@@ -360,5 +360,7 @@ echo -e "${GREEN} ------------------------------------------------${NC}"
 echo -e "${GREEN} |            Operation completed               |${NC}"
 echo -e "${GREEN} ------------------------------------------------${NC}"
 echo ""
+
+echo "${YELLOW}Please wait fo docker to start. This might take a while...${NC}"
 
 docker attach ${DOCKER_CONTAINER_NAME}
