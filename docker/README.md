@@ -100,12 +100,13 @@ bash <(curl -Ls https://raw.githubusercontent.com/shadow-robot/sr-build-tools/ki
 
 Posible options for the oneliner are:
 
-* -i or --image name of the Docker hub image to pull
-* -u or --user Docker hub user name
-* -p or --password Docker hub password
-* -r or --reinstall flag to know if the docker container should be fully reinstalled (false by default)
-* -n or --name name of the docker container
+* -i or --image             name of the Docker hub image to pull
+* -u or --user              Docker hub user name
+* -p or --password          Docker hub password
+* -r or --reinstall         flag to know if the docker container should be fully reinstalled (false by default)
+* -n or --name              name of the docker container
 * -e or --ethercatinterface ethercat interface of the hand
+* -g or --nvidiagraphics          enable nvidia-docker
 
 To begin with, the oneliner checks the installation status of docker. If docker is not installed then a new clean installation is performed. If the required image is private, 
 then a valid Docker Hub account with pull credentials from Shadow Robot's Docker Hub is required. Then, the specified docker image is pulled and a docker 
