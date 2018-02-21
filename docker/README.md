@@ -106,7 +106,7 @@ Posible options for the oneliner are:
 * -r or --reinstall         flag to know if the docker container should be fully reinstalled (false by default)
 * -n or --name              name of the docker container
 * -e or --ethercatinterface ethercat interface of the hand
-* -g or --graphics          enable nvidia-docker
+* -g or --nvidiagraphics          enable nvidia-docker
 
 To begin with, the oneliner checks the installation status of docker. If docker is not installed then a new clean installation is performed. If the required image is private, 
 then a valid Docker Hub account with pull credentials from Shadow Robot's Docker Hub is required. Then, the specified docker image is pulled and a docker 
