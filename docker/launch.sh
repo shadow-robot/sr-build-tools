@@ -361,6 +361,6 @@ echo -e "${GREEN} |            Operation completed               |${NC}"
 echo -e "${GREEN} ------------------------------------------------${NC}"
 echo ""
 
-echo "${YELLOW}Please wait fo docker to start. This might take a while...${NC}"
+echo "${YELLOW}Please wait for docker container to start. This might take a while...${NC}"
 
 docker attach ${DOCKER_CONTAINER_NAME}
