@@ -158,7 +158,6 @@ else
              stable"
         sudo apt-get update
         sudo apt-get install -y docker-ce
-        sudo apt-get install -y nvidia-docker
         
         if ! grep -q docker /etc/group ; then
             sudo groupadd docker
@@ -172,11 +171,14 @@ else
         ln -sf /usr/bin/docker.io /usr/local/bin/docker
         sed -i '$acomplete -F _docker docker' /etc/bash_completion.d/docker.io
         update-rc.d docker.io defaults
-        sudo apt-get install -y nvidia-docker
     else
         echo "Unsupported ubuntu version!"
         exit 1
     fi
+fi
+
+if [ ${NVIDIA} = true ]; then
+    sudo apt-get install -y nvidia-docker
 fi
 
 # Log in to docker only for hand h images
@@ -240,11 +242,12 @@ if [ ${DESKTOP_ICON} = true ] ; then
         fi
     fi
 
-    if [ ! -e ${APP_FOLDER}/launch.sh ]; then
-    echo "Downloading the script"
-        # TODO: change this for master before merging
-        curl "https://raw.githubusercontent.com/shadow-robot/sr-build-tools/F%23SRC-1277_one_liner_docker_deployment/docker/launch.sh" >> ${APP_FOLDER}/launch.sh
+    if [ -e ${APP_FOLDER}/launch.sh ]; then
+        rm ${APP_FOLDER}/launch.sh
     fi
+    echo "Downloading the script"
+    # TODO: change this for master before merging
+    curl "https://raw.githubusercontent.com/shadow-robot/sr-build-tools/F%23SRC-1277_one_liner_docker_deployment/docker/launch.sh" >> ${APP_FOLDER}/launch.sh
 
     echo "Creating executable file"
     printf "#! /bin/bash
