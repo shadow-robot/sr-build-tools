@@ -189,30 +189,33 @@ if [ ${NVIDIA} = true ]; then
 fi
 
 # Log in to docker only for hand h images
-if [ ${HAND_H} = true ]; then
-    echo "Logging in to docker "
-    for i in 'seq 1 3';
-    do
-        if [ -z ${DOCKER_HUB_USER} ]; then
-            echo "Docker username not specified"
-            docker login
-        else
-            echo "Docker username specified"
-            if [ -z ${DOCKER_HUB_PASSWORD} ]; then
-                docker login --username ${DOCKER_HUB_USER}
+function docker_login
+{
+    if [ ${HAND_H} = true ]; then
+        echo "Logging in to docker "
+        for i in 'seq 1 3';
+        do
+            if [ -z ${DOCKER_HUB_USER} ]; then
+                echo "Docker username not specified"
+                docker login
             else
-                docker login --username ${DOCKER_HUB_USER} --password ${DOCKER_HUB_PASSWORD}
+                echo "Docker username specified"
+                if [ -z ${DOCKER_HUB_PASSWORD} ]; then
+                    docker login --username ${DOCKER_HUB_USER}
+                else
+                    docker login --username ${DOCKER_HUB_USER} --password ${DOCKER_HUB_PASSWORD}
+                fi
             fi
-        fi
-        if [ $? == 0 ]; then
-            break
-        fi
-        if [ ${i} == 3 and $? !=0 ]; then
-            echo -e "${RED}Docker login failed. You will not be able to pull private docker images.${NC}"
-            exit 1
-        fi
-    done
-fi
+            if [ $? == 0 ]; then
+                break
+            fi
+            if [ ${i} == 3 and $? !=0 ]; then
+                echo -e "${RED}Docker login failed. You will not be able to pull private docker images.${NC}"
+                exit 1
+            fi
+        done
+    fi
+}
 
 # If running for the first time create desktop shortcut
 APP_FOLDER=/home/$USER/launcher_app
@@ -299,6 +302,7 @@ if [ ${REINSTALL_DOCKER_CONTAINER} = false ] ; then
         else
             if [[ "$(docker images -q ${DOCKER_IMAGE_NAME} 2> /dev/null)" == "" ]]; then
                 # Image doesn't exist, pull it
+                docker_login
                 docker pull ${DOCKER_IMAGE_NAME}
                 if [ ${NVIDIA} = true ]; then
                     if [[ "$(docker images -q "${DOCKER_IMAGE_NAME}-nvidia" 2> /dev/null)" == "" ]]; then
@@ -331,6 +335,7 @@ else
         docker rm ${DOCKER_CONTAINER_NAME}
     fi
     echo "Pulling latest version of docker image"
+    docker_login
     docker pull ${DOCKER_IMAGE_NAME}
     if [ ${NVIDIA} = true ]; then
         if [[ "$(docker images -q "${DOCKER_IMAGE_NAME}-nvidia" 2> /dev/null)" == "" ]]; then
