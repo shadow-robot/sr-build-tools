@@ -322,7 +322,8 @@ if [ ${REINSTALL_DOCKER_CONTAINER} = false ] ; then
             fi
         fi
    else
-        echo "Container already running"
+        echo -e "${RED}Container already running ${NC}"
+        exit 1
    fi
 else
     echo "Reinstalling docker container"
