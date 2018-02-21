@@ -100,6 +100,7 @@ fi
 
 HAND_E_NAME="dexterous-hand"
 HAND_H_NAME="flexible-hand"
+
 if echo "${DOCKER_IMAGE_NAME}" | grep -q "${HAND_E_NAME}"; then
     echo "Hand E/G image requested"
     HAND_H=false
@@ -225,10 +226,19 @@ if [ ${DESKTOP_ICON} = true ] ; then
     echo "Downloading the script"
     # TODO: change this for master before merging
     curl "https://raw.githubusercontent.com/shadow-robot/sr-build-tools/F%23SRC-1277_one_liner_docker_deployment/docker/launch.sh" >> ${APP_FOLDER}/launch.sh
-
+    
+    echo "Checking if terminator installed"
+    if [ -x "$(command -v terminator)" ]; then
+        echo "terminator installed"
+    else
+        echo "No terminator. Installing..."
+        sudo apt update
+        sudo apt install -y terminator
+    fi
+    
     echo "Creating executable file"
     printf "#! /bin/bash
-    terminator -x bash -c 'cd ${APP_FOLDER}; ./launch.sh -i ${DOCKER_IMAGE_NAME} -n ${DOCKER_CONTAINER_NAME} -r false -d false; exec bash'" > ${APP_FOLDER}/launcher_exec.sh
+    terminator -x bash -c 'cd ${APP_FOLDER}; ./launch.sh -i ${DOCKER_IMAGE_NAME} -n ${DOCKER_CONTAINER_NAME} -e ${ETHERCAT_INTERFACE} -r false -d false; exec bash'" > ${APP_FOLDER}/launcher_exec.sh
 
     echo "Downloading icon"
     # TODO: change this for master before merging
