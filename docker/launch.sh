@@ -75,6 +75,12 @@ then
     NVIDIA=false
 fi
 
+function clean_exit
+{
+    docker stop ${DOCKER_CONTAINER_NAME}
+}
+trap clean_exit 0
+
 echo "================================================================="
 echo "|                                                               |"
 echo "|             Shadow default docker deployment                  |"
@@ -261,7 +267,7 @@ if [ ${DESKTOP_ICON} = true ] ; then
     
     echo "Creating executable file"
     printf "#! /bin/bash
-    terminator -x bash -c 'cd ${APP_FOLDER}; ./launch.sh -i ${DOCKER_IMAGE_NAME} -n ${DOCKER_CONTAINER_NAME} -e ${ETHERCAT_INTERFACE} -r false -d false; exec bash'" > ${APP_FOLDER}/launcher_exec.sh
+    terminator -x bash -c 'cd ${APP_FOLDER}; ./launch.sh -i ${DOCKER_IMAGE_NAME} -n ${DOCKER_CONTAINER_NAME} -e ${ETHERCAT_INTERFACE} -r false -d false'" > ${APP_FOLDER}/launcher_exec.sh
 
     echo "Downloading icon"
     # TODO: change this for master before merging
