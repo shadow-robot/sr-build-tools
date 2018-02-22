@@ -75,9 +75,13 @@ then
     NVIDIA=false
 fi
 
+CLEAN_EXIT=false
+
 function clean_exit
 {
-    docker stop ${DOCKER_CONTAINER_NAME}
+    if [ ${CLEAN_EXIT} = false]; then
+        docker stop ${DOCKER_CONTAINER_NAME}
+    fi
 }
 trap clean_exit 0
 
@@ -323,6 +327,7 @@ if [ ${REINSTALL_DOCKER_CONTAINER} = false ] ; then
         fi
    else
         echo -e "${RED}Container already running ${NC}"
+        CLEAN_EXIT=true
         exit 1
    fi
 else
