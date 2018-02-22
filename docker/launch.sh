@@ -117,6 +117,7 @@ NC='\033[0m' # No Color
 
 if [ -z ${DOCKER_IMAGE_NAME} ] || [ -z ${DOCKER_CONTAINER_NAME} ]; then
     echo -e "${RED}Docker image name and name of container are required ${NC}"
+    CLEAN_EXIT=true
     exit 1
 fi
 
@@ -138,11 +139,13 @@ elif echo "${DOCKER_IMAGE_NAME}" | grep -q "${HAND_H_NAME}"; then
     # Check if they have specified the ethercat interface
     if [ -z ${ETHERCAT_INTERFACE} ] ; then
         echo -e "${RED}Ethercat interface ID needs to be specified ${NC}"
+        CLEAN_EXIT=true
         exit 1
     fi
 else
     echo "${RED}Unknown image requested ${NC}"
     HAND_H=""
+    CLEAN_EXIT=true
     exit 1
 fi
 
@@ -186,6 +189,7 @@ else
         update-rc.d docker.io defaults
     else
         echo -e "${RED}Unsupported ubuntu version! ${NC}"
+        CLEAN_EXIT=true
         exit 1
     fi
 fi
@@ -217,6 +221,7 @@ function docker_login
             fi
             if [ ${i} == 3 and $? !=0 ]; then
                 echo -e "${RED}Docker login failed. You will not be able to pull private docker images.${NC}"
+                CLEAN_EXIT=true
                 exit 1
             fi
         done
@@ -241,6 +246,7 @@ if [ ${DESKTOP_ICON} = true ] ; then
     if [ ${HAND_H} = false ]; then
         if [ -z "${CONFIG_BRANCH}" ]; then
             echo -e "${RED}Specify a config branch for your dexterous hand ${NC}"
+            CLEAN_EXIT=true
             exit 1
         else
             printf "#! /bin/bash
