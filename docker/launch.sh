@@ -79,7 +79,7 @@ CLEAN_EXIT=false
 
 function clean_exit
 {
-    if [ ${CLEAN_EXIT} = false]; then
+    if [ ${CLEAN_EXIT} = false ]; then
         docker stop ${DOCKER_CONTAINER_NAME}
     fi
 }
