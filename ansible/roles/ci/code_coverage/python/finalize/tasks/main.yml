@@ -1,24 +1,56 @@
 ---
 # Finalising the python code coverage tasks (combining files and exporting to xml)
 
-- name: Find all .coverage files in {{ros_workspace}}
-  shell: find -type f -name .coverage -printf "%h\n" chdir={{ros_workspace}}
+- name: Find all .coverage files in "{{ros_workspace}}"
+  shell: cd `echo "{{repo_sources_path}}/{{item.path}}" | sed "s_{{ros_workspace}}/src/_{{ros_workspace}}/build/_"` && find `pwd` -type f -name .coverage -printf "%p "
+  with_items: "{{repo_packages_list|default([])}}"
   register: coverage_paths_list
 
-- name: Set variable to workaround ansible type evaluation issue
-  set_fact:
-    coverage_paths_list_stdout_lines: "{{coverage_paths_list.stdout_lines}}"
+# - name: Simplify coverage_paths_list
+#   set_fact:
+#     coverage_paths_list: "{{ coverage_paths_list_tmp | json_query('results[*].{package_name: item.name, package_path: item.path, coverage_files: stdout}') }}"
 
-- name: Loop through coverage files
-  shell: cp {{item.1}}/.coverage {{code_coverage_results_dir}}/.coverage.{{item.0}} chdir={{ros_workspace}}
-  with_indexed_items: "{{coverage_paths_list_stdout_lines|default([])}}"
-  when: item != ""
-  ignore_errors: True
+- name: Make coverage folder for each package that has coverage information
+  file: state=directory path={{code_coverage_results_dir}}/{{item.item.name}}
+  with_items: "{{ coverage_paths_list.results }}"
+  when: item.stdout|length > 0
 
 - name: Combine the coverage files
-  shell: bash -c 'coverage combine' chdir={{code_coverage_results_dir}}
-  ignore_errors: True
+  shell: bash -c 'coverage combine {{item.stdout}}' chdir={{code_coverage_results_dir}}/{{item.item.name}}
+  with_items: "{{ coverage_paths_list.results }}"
+  when: item.stdout|length > 0
 
-- name: Generate xml for the coverage
-  shell: coverage xml -o coverage.python.xml chdir={{code_coverage_results_dir}}
-  ignore_errors: True
+- name: Touch .coveragerc for all repos, creating it if necessary
+  shell: touch "{{repo_sources_path}}/{{item.item.path}}/.coveragerc"
+  with_items: "{{ coverage_paths_list.results }}"
+  when: item.stdout|length > 0
+
+- name: Move .coveragerc files to coverage data folder
+  shell: cp "{{repo_sources_path}}/{{item.item.path}}/.coveragerc" {{item.item.name}} chdir={{code_coverage_results_dir}}
+  with_items: "{{ coverage_paths_list.results }}"
+  when: item.stdout|length > 0
+
+- name: Generate xml coverage report
+  shell: coverage xml -o coverage.python.xml --rcfile=.coveragerc chdir={{code_coverage_results_dir}}/{{item.item.name}}
+  with_items: "{{ coverage_paths_list.results }}"
+  when: item.stdout|length > 0
+
+- name: Generate html coverage report
+  shell: coverage html -d coverage_html --rcfile=.coveragerc chdir={{code_coverage_results_dir}}/{{item.item.name}}
+  with_items: "{{ coverage_paths_list.results }}"
+  when: item.stdout|length > 0
+
+- name: Replace paths in coverage report to be relative
+  replace:
+    path: "{{code_coverage_results_dir}}/{{item.item.name}}/coverage.python.xml"
+    regexp: "{{ repo_sources_path | regex_escape() }}"
+    replace: "."
+  with_items: "{{ coverage_paths_list.results }}"
+  when: item.stdout|length > 0
+
+- name: Replace package names in coverage report
+  replace:
+    path: "{{code_coverage_results_dir}}/{{item.item.name}}/coverage.python.xml"
+    regexp: "{{ repo_sources_path.replace('/', '.') + '.' | regex_escape() }}"
+  with_items: "{{ coverage_paths_list.results }}"
+  when: item.stdout|length > 0
