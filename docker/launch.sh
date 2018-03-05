@@ -43,6 +43,10 @@ case $key in
     NVIDIA="$2"
     shift
     ;;
+    -s|--startcontainer)
+    START_CONTAINER="$2"
+    shift
+    ;;
     *)
     # ignore unknown option
     ;;
@@ -64,6 +68,11 @@ fi
 if [ -z "${NVIDIA}" ];
 then
     NVIDIA=false
+fi
+
+if [ -z "${START_CONTAINER}" ];
+then
+    START_CONTAINER=false
 fi
 
 CLEAN_EXIT=false
@@ -275,7 +284,7 @@ if [ ${DESKTOP_ICON} = true ] ; then
     
     echo "Creating executable file"
     printf "#! /bin/bash
-    terminator -x bash -c 'cd ${APP_FOLDER}; ./launch.sh -i ${DOCKER_IMAGE_NAME} -n ${DOCKER_CONTAINER_NAME} -e ${ETHERCAT_INTERFACE} -r false -d false'" > ${APP_FOLDER}/launcher_exec.sh
+    terminator -x bash -c 'cd ${APP_FOLDER}; ./launch.sh -i ${DOCKER_IMAGE_NAME} -n ${DOCKER_CONTAINER_NAME} -e ${ETHERCAT_INTERFACE} -r false -d false -s true'" > ${APP_FOLDER}/launcher_exec.sh
 
     echo "Downloading icon"
     # TODO: change this for master before merging
@@ -302,8 +311,7 @@ if [ ${REINSTALL_DOCKER_CONTAINER} = false ] ; then
    echo "Not reinstalling docker image"
    if [ ! "$(docker ps -q -f name=${DOCKER_CONTAINER_NAME})" ]; then
         if [ "$(docker ps -aq -f status=exited -f name=${DOCKER_CONTAINER_NAME})" ]; then
-            echo "Container with specified name already exist. Starting container"
-            docker start ${DOCKER_CONTAINER_NAME}
+            echo "Container with specified name already exists."
         else
             if [[ "$(docker images -q ${DOCKER_IMAGE_NAME} 2> /dev/null)" == "" ]]; then
                 # Image doesn't exist, pull it
@@ -316,14 +324,12 @@ if [ ${REINSTALL_DOCKER_CONTAINER} = false ] ; then
                     DOCKER_IMAGE_NAME="${DOCKER_IMAGE_NAME}-nvidia"
                 fi
             fi
-            echo "Running the container"
+            echo "Creating the container"
             if [ ${HAND_H} = true ]; then
                 ${DOCKER} create -it --privileged --name ${DOCKER_CONTAINER_NAME} -e verbose=true -e interface=${ETHERCAT_INTERFACE} --network=host -e DISPLAY -e QT_X11_NO_MITSHM=1 -e LOCAL_USER_ID=$(id -u) -v /tmp/.X11-unix:/tmp/.X11-unix:rw ${DOCKER_IMAGE_NAME} bash -c "/usr/local/bin/setup.sh && bash"
-                docker start ${DOCKER_CONTAINER_NAME}
             else
                 ${DOCKER} create -it --privileged --name ${DOCKER_CONTAINER_NAME} --network=host -e DISPLAY -e QT_X11_NO_MITSHM=1 -e LOCAL_USER_ID=$(id -u) -v /tmp/.X11-unix:/tmp/.X11-unix:rw ${DOCKER_IMAGE_NAME} bash -c "/usr/local/bin/setup_dexterous_hand.sh && bash"
                 docker cp ${APP_FOLDER}/setup_dexterous_hand.sh ${DOCKER_CONTAINER_NAME}:/usr/local/bin/setup_dexterous_hand.sh
-                docker start ${DOCKER_CONTAINER_NAME}
             fi
         fi
    else
@@ -354,11 +360,9 @@ else
     echo "Running the container"
     if [ ${HAND_H} = true ]; then
         ${DOCKER} create -it --privileged --name ${DOCKER_CONTAINER_NAME} -e verbose=true -e interface=${ETHERCAT_INTERFACE} --network=host -e DISPLAY -e QT_X11_NO_MITSHM=1 -e LOCAL_USER_ID=$(id -u) -v /tmp/.X11-unix:/tmp/.X11-unix:rw ${DOCKER_IMAGE_NAME} bash -c "/usr/local/bin/setup.sh && bash"
-        docker start ${DOCKER_CONTAINER_NAME}
     else
         ${DOCKER} create -it --privileged --name ${DOCKER_CONTAINER_NAME} --network=host -e DISPLAY -e QT_X11_NO_MITSHM=1 -e LOCAL_USER_ID=$(id -u) -v /tmp/.X11-unix:/tmp/.X11-unix:rw ${DOCKER_IMAGE_NAME} bash -c "/usr/local/bin/setup_dexterous_hand.sh && bash"
         docker cp ${APP_FOLDER}/setup_dexterous_hand.sh ${DOCKER_CONTAINER_NAME}:/usr/local/bin/setup_dexterous_hand.sh
-        docker start ${DOCKER_CONTAINER_NAME}
     fi
 fi
 
@@ -368,6 +372,8 @@ echo -e "${GREEN} |            Operation completed               |${NC}"
 echo -e "${GREEN} ------------------------------------------------${NC}"
 echo ""
 
-echo -e "${YELLOW}Please wait for docker container to start. This might take a while...${NC}"
-
-docker attach ${DOCKER_CONTAINER_NAME}
+if [ ${START_CONTAINER} = true ]; then
+    echo -e "${YELLOW}Please wait for docker container to start. This might take a while...${NC}"
+    docker start ${DOCKER_CONTAINER_NAME}
+    docker attach ${DOCKER_CONTAINER_NAME}
+fi
