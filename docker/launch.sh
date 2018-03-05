@@ -83,7 +83,6 @@ function clean_exit
         echo "Stoping docker container..."
         docker stop ${DOCKER_CONTAINER_NAME}
     fi
-    echo "Exiting program..."
 }
 trap clean_exit 0
 
