@@ -31,10 +31,6 @@ case $key in
     DESKTOP_ICON="$2"
     shift
     ;;
-    -l|--launchhand)
-    LAUNCH_HAND="$2"
-    shift
-    ;;
     -e|--ethercatinterface)
     ETHERCAT_INTERFACE="$2"
     shift
@@ -63,11 +59,6 @@ fi
 if [ -z "${DESKTOP_ICON}" ];
 then
     DESKTOP_ICON=true
-fi
-
-if [ -z "${LAUNCH_HAND}" ];
-then
-    LAUNCH_HAND=false
 fi
 
 if [ -z "${NVIDIA}" ];
