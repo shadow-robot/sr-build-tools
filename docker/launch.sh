@@ -282,8 +282,8 @@ if [ ${DESKTOP_ICON} = true ] ; then
     fi
     
     echo "Creating executable file"
-    printf '#! /bin/bash
-    terminator -x bash -c "cd ${APP_FOLDER}; ./launch.sh -i ${DOCKER_IMAGE_NAME} -n ${DOCKER_CONTAINER_NAME} -e ${ETHERCAT_INTERFACE} -r false -d false -s true"' > ${APP_FOLDER}/launcher_exec.sh
+    printf "#! /bin/bash
+    terminator -x bash -c \"cd ${APP_FOLDER}; ./launch.sh -i ${DOCKER_IMAGE_NAME} -n ${DOCKER_CONTAINER_NAME} -e ${ETHERCAT_INTERFACE} -r false -d false -s true\"" > ${APP_FOLDER}/launcher_exec.sh
 
     echo "Downloading icon"
     # TODO: change this for master before merging
