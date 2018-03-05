@@ -100,13 +100,16 @@ bash <(curl -Ls https://raw.githubusercontent.com/shadow-robot/sr-build-tools/ki
 
 Posible options for the oneliner are:
 
-* -i or --image             name of the Docker hub image to pull
+* -i or --image             Name of the Docker hub image to pull
 * -u or --user              Docker hub user name
 * -p or --password          Docker hub password
-* -r or --reinstall         flag to know if the docker container should be fully reinstalled (false by default)
-* -n or --name              name of the docker container
-* -e or --ethercatinterface ethercat interface of the hand
-* -g or --nvidiagraphics          enable nvidia-docker
+* -r or --reinstall         Flag to know if the docker container should be fully reinstalled (Default: false)
+* -n or --name              Name of the docker container
+* -e or --ethercatinterface Ethercat interface of the hand
+* -g or --nvidiagraphics    Enable nvidia-docker (Default: false)
+* -d or --desktopicon       Generates a desktop icon to launch the hand (Default: true)
+* -b or --configbranch      Specify the branch for the specific hand (Only for dexterous hand)
+
 
 To begin with, the oneliner checks the installation status of docker. If docker is not installed then a new clean installation is performed. If the required image is private, 
 then a valid Docker Hub account with pull credentials from Shadow Robot's Docker Hub is required. Then, the specified docker image is pulled and a docker 
@@ -115,9 +118,6 @@ the hand.
 
 Usage example hand E:
 ```
-bash <(curl -Ls https://raw.githubusercontent.com/shadow-robot/sr-build-tools/kinetic-devel/docker/launch.sh) -i shadowrobot/dexterous-hand:indigo -n hand_e_indigo_real_hw
+bash <(curl -Ls https://raw.githubusercontent.com/shadow-robot/sr-build-tools/kinetic-devel/docker/launch.sh) -i shadowrobot/dexterous-hand:kinetic -n hand_e_kinetic_real_hw -e enp0s25 -b shadowrobot_demo_hand -r true
 ```
-Usage example hand H:
-```
-bash <(curl -Ls https://raw.githubusercontent.com/shadow-robot/sr-build-tools/kinetic-devel/docker/launch.sh) -i shadowrobot/flexible-hand:kinetic-release -n hand_h_kinetic_real_hw -e enp0s25
-```
+
