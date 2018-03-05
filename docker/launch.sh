@@ -283,7 +283,7 @@ if [ ${DESKTOP_ICON} = true ] ; then
     
     echo "Creating executable file"
     printf "#! /bin/bash
-    terminator -x bash -c 'cd ${APP_FOLDER}; ./launch.sh -i ${DOCKER_IMAGE_NAME} -n ${DOCKER_CONTAINER_NAME} -e ${ETHERCAT_INTERFACE} -r false -d false -s true'" > ${APP_FOLDER}/launcher_exec.sh
+    terminator -x bash -c "cd ${APP_FOLDER}; ./launch.sh -i ${DOCKER_IMAGE_NAME} -n ${DOCKER_CONTAINER_NAME} -e ${ETHERCAT_INTERFACE} -r false -d false -s true" > ${APP_FOLDER}/launcher_exec.sh
 
     echo "Downloading icon"
     # TODO: change this for master before merging
@@ -309,7 +309,7 @@ fi
 if [ ${REINSTALL_DOCKER_CONTAINER} = false ] ; then
    echo "Not reinstalling docker image"
    if [ ! "$(docker ps -q -f name=${DOCKER_CONTAINER_NAME})" ]; then
-        if [ "$(docker ps -aq -f status=exited -f name=${DOCKER_CONTAINER_NAME})" ]; then
+        if [ "$(docker ps -aq -f name=${DOCKER_CONTAINER_NAME})" ]; then
             echo "Container with specified name already exists."
         else
             if [[ "$(docker images -q ${DOCKER_IMAGE_NAME} 2> /dev/null)" == "" ]]; then
