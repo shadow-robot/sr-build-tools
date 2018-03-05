@@ -96,7 +96,7 @@ Built from [`dexterous-hand:kinetic`](#dexterous-handkinetic). Adds support for 
 # Oneliner
 
 
-bash <(curl -Ls https://raw.githubusercontent.com/shadow-robot/sr-build-tools/kinetic-devel/docker/launch.sh) -i [image_name] -n [container name] -r [true/false]
+bash <(curl -Ls https://raw.githubusercontent.com/shadow-robot/sr-build-tools/master/docker/launch.sh) -i [image_name] -n [container_name] -e [interface] -b [git_branch] -r [true/false] -g [true/false]
 
 Posible options for the oneliner are:
 
@@ -118,6 +118,10 @@ the hand.
 
 Usage example hand E:
 ```
-bash <(curl -Ls https://raw.githubusercontent.com/shadow-robot/sr-build-tools/kinetic-devel/docker/launch.sh) -i shadowrobot/dexterous-hand:kinetic -n hand_e_kinetic_real_hw -e enp0s25 -b shadowrobot_demo_hand -r true
+bash <(curl -Ls https://raw.githubusercontent.com/shadow-robot/sr-build-tools/master/docker/launch.sh) -i shadowrobot/dexterous-hand:kinetic -n hand_e_kinetic_real_hw -e enp0s25 -b shadowrobot_demo_hand -r true -g false
 ```
 
+Usage example agile-grasper:
+```
+bash <(curl -Ls https://raw.githubusercontent.com/shadow-robot/sr-build-tools/master/docker/launch.sh) -i shadowrobot/agile-grasper:kinetic-release -n hand_e_kinetic_real_hw -e enp0s25 -r true -g false
+```
