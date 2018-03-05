@@ -338,13 +338,9 @@ if [ ${REINSTALL_DOCKER_CONTAINER} = false ] ; then
    fi
 else
     echo "Reinstalling docker container"
-    if [ "$(docker ps -q -f name=${DOCKER_CONTAINER_NAME})" ]; then
-        echo "Container running. Stopping it"
-        docker stop ${DOCKER_CONTAINER_NAME}
-    fi
-    if [ "$(docker ps -aq -f status=exited -f name=${DOCKER_CONTAINER_NAME})" ]; then
+    if [ "$(docker ps -aq -f name=${DOCKER_CONTAINER_NAME})" ]; then
         echo "Container with specified name already exist. Removing container"
-        docker rm ${DOCKER_CONTAINER_NAME}
+        docker rm -f ${DOCKER_CONTAINER_NAME}
     fi
     echo "Pulling latest version of docker image"
     docker_login
