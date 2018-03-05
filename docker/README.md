@@ -123,5 +123,5 @@ bash <(curl -Ls https://raw.githubusercontent.com/shadow-robot/sr-build-tools/ma
 
 Usage example agile-grasper:
 ```
-bash <(curl -Ls https://raw.githubusercontent.com/shadow-robot/sr-build-tools/master/docker/launch.sh) -i shadowrobot/agile-grasper:kinetic-release -n hand_e_kinetic_real_hw -e enp0s25 -r true -g false
+bash <(curl -Ls https://raw.githubusercontent.com/shadow-robot/sr-build-tools/master/docker/launch.sh) -i shadowrobot/agile-grasper:kinetic-release -n agile_grasper_kinetic_real_hw -e enp0s25 -r true -g false
 ```
