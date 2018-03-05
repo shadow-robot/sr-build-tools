@@ -54,6 +54,7 @@ Follow these steps to setup Jenkins job
   
   export unit_tests_result_dir="$relative_job_path/unit_tests"
   export coverage_tests_result_dir="$relative_job_path/code_coverage"
+  export lint_result_dir="$relative_job_path/lint_results"
   
   export remote_shell_script="https://raw.githubusercontent.com/shadow-robot/sr-build-tools/$toolset_branch/bin/sr-run-ci-build.sh"
   curl -s "$( echo "$remote_shell_script" | sed 's/#/%23/g' )" | bash /dev/stdin "$toolset_branch" $server_type $used_modules $relative_job_path

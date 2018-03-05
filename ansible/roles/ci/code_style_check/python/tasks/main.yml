@@ -22,14 +22,14 @@
     python_files_without_extension_results: "{{python_files_without_extension.results}}"
 
 - name: Execute roslint for every package and .py files and write results in unit tests format
-  shell: bash -c "source /opt/ros/{{ros_release}}/setup.bash && rosrun roslint test_wrapper {{ros_workspace}}/build/test_results/{{item.item.name}}/roslint-python-py-{{item.item.name}}.xml 'rosrun roslint pep8 --max-line-length=120 {{item.stdout}}' "
+  shell: bash -c "source /opt/ros/{{ros_release}}/setup.bash && mkdir -p \"{{lint_result_dir}}/{{item.item.name}}\" && rosrun roslint pep8 --format=pylint --max-line-length=120 {{item.stdout}} > \"{{lint_result_dir}}/{{item.item.name}}/roslint-python-py-{{item.item.name}}.pylint\""
     chdir={{repo_sources_path}}/{{item.item.path}}
   with_items: "{{python_files_with_extension_results|default([])}}"
   when: item.stdout != ""
   ignore_errors: True
 
 - name: Execute roslint for every package and no extension files and write results in unit tests format
-  shell: bash -c "source /opt/ros/{{ros_release}}/setup.bash && rosrun roslint test_wrapper {{ros_workspace}}/build/test_results/{{item.item.name}}/roslint-python-ex-{{item.item.name}}.xml 'rosrun roslint pep8 --max-line-length=120 {{item.stdout}}' "
+  shell: bash -c "source /opt/ros/{{ros_release}}/setup.bash && mkdir -p \"{{lint_result_dir}}/{{item.item.name}}\" && rosrun roslint pep8 --format=pylint --max-line-length=120 {{item.stdout}} > \"{{lint_result_dir}}/{{item.item.name}}/roslint-python-ex-{{item.item.name}}.pylint\""
     chdir={{repo_sources_path}}/{{item.item.path}}
   with_items: "{{python_files_without_extension_results|default([])}}"
   when: item.stdout != ""

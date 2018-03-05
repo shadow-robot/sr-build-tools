@@ -13,6 +13,10 @@
   fail: msg="Variable local_code_coverage_dir was not set by CI server"
   when: local_code_coverage_dir is not defined
 
+- name: check if local_lint_result_dir variable was set by build server
+  fail: msg="Variable local_lint_result_dir was not set by CI server"
+  when: local_lint_result_dir is not defined
+
 - name: check if local_benchmarking_dir variable was set by build server
   fail: msg="Variable local_benchmarking_dir was not set by CI server"
   when: local_benchmarking_dir is not defined
@@ -53,21 +57,31 @@
   set_fact:
     code_coverage_results_dir: "{{local_code_coverage_dir}}"
 
+- name: Set lint_result_dir
+  set_fact:
+    lint_result_dir: "{{local_lint_result_dir}}"
+
 - name: Set benchmarking_results_dir
   set_fact:
     benchmarking_results_dir: "{{local_benchmarking_dir}}"
 
+- name: Clean test results directory in case of failure during cache build
+  shell: bash -c "rm -rf {{test_results_dir}}"
+
 - name: Create tests directory
   file: state=directory path={{test_results_dir}}
 
-- name: Clean tests results directory in case of failure during cache build
-  shell: bash -c "rm -rf {{test_results_dir}}/*"
+- name: Clean coverage results directory in case of failure during cached build
+  shell: bash -c "rm -rf {{code_coverage_results_dir}}"
 
 - name: Create coverage directory
   file: state=directory path={{code_coverage_results_dir}}
 
-- name: Clean coverage results directory in case of failure during cached build
-  shell: bash -c "rm -rf {{code_coverage_results_dir}}/*"
+- name: Clean lint result directory in case of failure during cached build
+  shell: bash -c "rm -rf {{lint_result_dir}}"
+
+- name: Create lint directory
+  file: state=directory path={{lint_result_dir}}
 
 - name: Create benchmarking directory
   file: state=directory path={{benchmarking_results_dir}}
