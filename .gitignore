@@ -5,5 +5,8 @@ vagrant_ansible_inventory*
 # Python byte code
 *.pyc
 
+# Eclipse
+.project
+
 #PyCharm IDE
 .idea
