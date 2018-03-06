@@ -131,18 +131,19 @@ fi
 HAND_E_NAME="dexterous-hand"
 HAND_H_NAME="flexible-hand"
 
+# Check if they have specified the ethercat interface
+if [ -z ${ETHERCAT_INTERFACE} ] ; then
+    echo -e "${RED}Ethercat interface ID needs to be specified ${NC}"
+    CLEAN_EXIT=true
+    exit 1
+fi
+
 if echo "${DOCKER_IMAGE_NAME}" | grep -q "${HAND_E_NAME}"; then
     echo "Hand E/G image requested"
     HAND_H=false
 elif echo "${DOCKER_IMAGE_NAME}" | grep -q "${HAND_H_NAME}"; then
     echo "Hand H image requested"
     HAND_H=true
-    # Check if they have specified the ethercat interface
-    if [ -z ${ETHERCAT_INTERFACE} ] ; then
-        echo -e "${RED}Ethercat interface ID needs to be specified ${NC}"
-        CLEAN_EXIT=true
-        exit 1
-    fi
 else
     echo "${RED}Unknown image requested ${NC}"
     HAND_H=""
