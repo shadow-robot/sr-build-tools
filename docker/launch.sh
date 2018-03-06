@@ -31,16 +31,20 @@ case $key in
     DESKTOP_ICON="$2"
     shift
     ;;
-    -l|--launchhand)
-    LAUNCH_HAND="$2"
-    shift
-    ;;
     -e|--ethercatinterface)
     ETHERCAT_INTERFACE="$2"
     shift
     ;;
     -b|--configbranch)
     CONFIG_BRANCH="$2"
+    shift
+    ;;
+    -g|--nvidiagraphics)
+    NVIDIA="$2"
+    shift
+    ;;
+    -s|--startcontainer)
+    START_CONTAINER="$2"
     shift
     ;;
     *)
@@ -61,10 +65,26 @@ then
     DESKTOP_ICON=true
 fi
 
-if [ -z "${LAUNCH_HAND}" ];
+if [ -z "${NVIDIA}" ];
 then
-    LAUNCH_HAND=false
+    NVIDIA=false
 fi
+
+if [ -z "${START_CONTAINER}" ];
+then
+    START_CONTAINER=false
+fi
+
+CLEAN_EXIT=false
+
+function clean_exit
+{
+    if [[ ${CLEAN_EXIT} = false && $(docker ps -q -f name=${DOCKER_CONTAINER_NAME}) ]]; then
+        echo "Stoping docker container..."
+        docker stop ${DOCKER_CONTAINER_NAME}
+    fi
+}
+trap clean_exit 0
 
 echo "================================================================="
 echo "|                                                               |"
@@ -73,15 +93,19 @@ echo "|                                                               |"
 echo "================================================================="
 echo ""
 echo "possible options: "
-echo "  * -i or --image name of the Docker hub image to pull"
-echo "  * -u or --user Docker hub user name"
-echo "  * -p or --password Docker hub password"
-echo "  * -r or --reinstall flag to know if the docker container should be fully reinstalled (false by default)"
-echo "  * -n or --name name of the docker container"
-echo "  * -e or --ethercatinterface ethercat interface of the hand"
+echo "  * -i or --image               Name of the Docker hub image to pull"
+echo "  * -u or --user                Docker hub user name"
+echo "  * -p or --password            Docker hub password"
+echo "  * -r or --reinstall           Flag to know if the docker container should be fully reinstalled (false by default)"
+echo "  * -n or --name                Name of the docker container"
+echo "  * -e or --ethercatinterface   Ethercat interface of the hand"
+echo "  * -g or --nvidiagraphics      Enable nvidia-docker"
+echo "  * -d or --desktopicon         Generates a desktop icon to launch the hand"
+echo "  * -b or --configbranch        Specify the branch for the specific hand (Only for dexterous hand)"
 echo ""
-echo "example hand E: ./launch.sh -i shadowrobot/dexterous-hand:indigo -n hand_e_indigo_real_hw -b "
-echo "example hand H: ./launch.sh -i shadowrobot/agile-grasper:kinetic-release -n agile-grasper -e enp0s25 -u mydockerhublogin -p mysupersecretpassword"
+echo "example hand E: ./launch.sh -i shadowrobot/dexterous-hand:kinetic -n hand_e_kinetic_real_hw -e enp0s25 -b shadowrobot_demo_hand -r true -g false"
+echo "example agile-grasper: ./launch.sh -i shadowrobot/agile-grasper:kinetic-release -n agile_grasper -e enp0s25 -r true -g false -u mydockerhublogin -p mysupersecretpassword"
+
 echo ""
 echo "image name        = ${DOCKER_IMAGE_NAME}"
 echo "container name    = ${DOCKER_CONTAINER_NAME}"
@@ -94,26 +118,37 @@ YELLOW='\033[1;33m'
 NC='\033[0m' # No Color
 
 if [ -z ${DOCKER_IMAGE_NAME} ] || [ -z ${DOCKER_CONTAINER_NAME} ]; then
-    echo "Docker image name and name of container are required"
+    echo -e "${RED}Docker image name and name of container are required ${NC}"
+    CLEAN_EXIT=true
     exit 1
+fi
+
+if [ ${NVIDIA} = false ]; then
+    DOCKER="docker"
+else
+    DOCKER="nvidia-docker"
 fi
 
 HAND_E_NAME="dexterous-hand"
 HAND_H_NAME="agile-grasper"
+
+# Check if they have specified the ethercat interface
+if [ -z ${ETHERCAT_INTERFACE} ] ; then
+    echo -e "${RED}Ethercat interface ID needs to be specified ${NC}"
+    CLEAN_EXIT=true
+    exit 1
+fi
+
 if echo "${DOCKER_IMAGE_NAME}" | grep -q "${HAND_E_NAME}"; then
     echo "Hand E/G image requested"
     HAND_H=false
 elif echo "${DOCKER_IMAGE_NAME}" | grep -q "${HAND_H_NAME}"; then
     echo "Hand H image requested"
     HAND_H=true
-    # Check if they have specified the ethercat interface
-    if [ -z ${ETHERCAT_INTERFACE} ] ; then
-        echo -e "${RED}Ethercat interface ID needs to be specified ${NC}"
-        exit 1
-    fi
 else
-    echo "Unknown image requested"
+    echo "${RED}Unknown image requested ${NC}"
     HAND_H=""
+    CLEAN_EXIT=true
     exit 1
 fi
 
@@ -156,39 +191,49 @@ else
         sed -i '$acomplete -F _docker docker' /etc/bash_completion.d/docker.io
         update-rc.d docker.io defaults
     else
-        echo "Unsupported ubuntu version!"
+        echo -e "${RED}Unsupported ubuntu version! ${NC}"
+        CLEAN_EXIT=true
         exit 1
     fi
 fi
 
-# Log in to docker only for hand h images
-if [ ${HAND_H} = true ]; then
-    echo "Logging in to docker "
-    for i in 'seq 1 3';
-    do
-        if [ -z ${DOCKER_HUB_USER} ]; then
-            echo "Docker username not specified"
-            docker login
-        else
-            echo "Docker username specified"
-            if [ -z ${DOCKER_HUB_PASSWORD} ]; then
-                docker login --username ${DOCKER_HUB_USER}
-            else
-                docker login --username ${DOCKER_HUB_USER} --password ${DOCKER_HUB_PASSWORD}
-            fi
-        fi
-        if [ $? == 0 ]; then
-            break
-        fi
-        if [ ${i} == 3 and $? !=0 ]; then
-            echo -e "${RED}Docker login failed. You will not be able to pull private docker images.${NC}"
-            exit 1
-        fi
-    done
+if [ ${NVIDIA} = true ]; then
+    sudo apt-get install -y nvidia-docker
 fi
+
+# Log in to docker only for hand h images
+function docker_login
+{
+    if [ ${HAND_H} = true ]; then
+        echo "Logging in to docker "
+        for i in 'seq 1 3';
+        do
+            if [ -z ${DOCKER_HUB_USER} ]; then
+                echo "Docker username not specified"
+                docker login
+            else
+                echo "Docker username specified"
+                if [ -z ${DOCKER_HUB_PASSWORD} ]; then
+                    docker login --username ${DOCKER_HUB_USER}
+                else
+                    docker login --username ${DOCKER_HUB_USER} --password ${DOCKER_HUB_PASSWORD}
+                fi
+            fi
+            if [ $? == 0 ]; then
+                break
+            fi
+            if [ ${i} == 3 and $? !=0 ]; then
+                echo -e "${RED}Docker login failed. You will not be able to pull private docker images.${NC}"
+                CLEAN_EXIT=true
+                exit 1
+            fi
+        done
+    fi
+}
 
 # If running for the first time create desktop shortcut
 APP_FOLDER=/home/$USER/launcher_app
+BUILD_TOOLS_BRANCH=master
 if [ ${DESKTOP_ICON} = true ] ; then
     echo ""
     echo " -------------------------------"
@@ -205,6 +250,7 @@ if [ ${DESKTOP_ICON} = true ] ; then
     if [ ${HAND_H} = false ]; then
         if [ -z "${CONFIG_BRANCH}" ]; then
             echo -e "${RED}Specify a config branch for your dexterous hand ${NC}"
+            CLEAN_EXIT=true
             exit 1
         else
             printf "#! /bin/bash
@@ -214,25 +260,35 @@ if [ ${DESKTOP_ICON} = true ] ; then
             git checkout ${CONFIG_BRANCH}
 
             # Changing ethernet interface
-            sed -i 's|eth_port\" value=.*|eth_port\" value=\"${ETHERCAT_INTERFACE}\" />|' $(rospack find sr_ethercat_hand_config)/launch/sr_rhand.launch
+            sed -i 's|eth_port\" value=.*|eth_port\" value=\"${ETHERCAT_INTERFACE}\" />|' \$(rospack find sr_ethercat_hand_config)/launch/sr_rhand.launch
 
-            roslaunch sr_ethercat_hand_config $(rospack find sr_ethercat_hand_config)/launch/sr_rhand.launch
+            roslaunch sr_ethercat_hand_config sr_rhand.launch
             " > ${APP_FOLDER}/setup_dexterous_hand.sh
             chmod +x ${APP_FOLDER}/setup_dexterous_hand.sh
         fi
     fi
 
+    if [ -e ${APP_FOLDER}/launch.sh ]; then
+        rm ${APP_FOLDER}/launch.sh
+    fi
     echo "Downloading the script"
-    # TODO: change this for master before merging
-    curl "https://raw.githubusercontent.com/shadow-robot/sr-build-tools/F%23SRC-1277_one_liner_docker_deployment/docker/launch.sh" >> ${APP_FOLDER}/launch.sh
-
+    curl "https://raw.githubusercontent.com/shadow-robot/sr-build-tools/${BUILD_TOOLS_BRANCH}/docker/launch.sh" >> ${APP_FOLDER}/launch.sh
+    
+    echo "Checking if terminator installed"
+    if [ -x "$(command -v terminator)" ]; then
+        echo "terminator installed"
+    else
+        echo "No terminator. Installing..."
+        sudo apt update
+        sudo apt install -y terminator
+    fi
+    
     echo "Creating executable file"
     printf "#! /bin/bash
-    terminator -x bash -c 'cd ${APP_FOLDER}; ./launch.sh -i ${DOCKER_IMAGE_NAME} -n ${DOCKER_CONTAINER_NAME} -r false -d false; exec bash'" > ${APP_FOLDER}/launcher_exec.sh
+    terminator -x bash -c \"cd ${APP_FOLDER}; ./launch.sh -i ${DOCKER_IMAGE_NAME} -n ${DOCKER_CONTAINER_NAME} -e ${ETHERCAT_INTERFACE} -r false -d false -s true\"" > ${APP_FOLDER}/launcher_exec.sh
 
     echo "Downloading icon"
-    # TODO: change this for master before merging
-    wget --no-check-certificate https://raw.githubusercontent.com/shadow-robot/sr-build-tools/F%23SRC-1277_one_liner_docker_deployment/docker/hand_h.png -O ${APP_FOLDER}/hand_h.png
+    wget --no-check-certificate https://raw.githubusercontent.com/shadow-robot/sr-build-tools/${BUILD_TOOLS_BRANCH}/docker/hand_h.png -O ${APP_FOLDER}/hand_h.png
 
     echo "Creating desktop file"
     printf "[Desktop Entry]
@@ -254,46 +310,55 @@ fi
 if [ ${REINSTALL_DOCKER_CONTAINER} = false ] ; then
    echo "Not reinstalling docker image"
    if [ ! "$(docker ps -q -f name=${DOCKER_CONTAINER_NAME})" ]; then
-        if [ "$(docker ps -aq -f status=exited -f name=${DOCKER_CONTAINER_NAME})" ]; then
-            echo "Container with specified name already exist. Starting container"
-            docker start ${DOCKER_CONTAINER_NAME}
+        if [ "$(docker ps -aq -f name=${DOCKER_CONTAINER_NAME})" ]; then
+            echo "Container with specified name already exists."
         else
             if [[ "$(docker images -q ${DOCKER_IMAGE_NAME} 2> /dev/null)" == "" ]]; then
                 # Image doesn't exist, pull it
+                docker_login
                 docker pull ${DOCKER_IMAGE_NAME}
+                if [ ${NVIDIA} = true ]; then
+                    if [[ "$(docker images -q "${DOCKER_IMAGE_NAME}-nvidia" 2> /dev/null)" == "" ]]; then
+                        bash <(curl -Ls https://raw.githubusercontent.com/shadow-robot/sr-build-tools/master/docker/utils/docker_nvidialize.sh) ${DOCKER_IMAGE_NAME}
+                    fi
+                    DOCKER_IMAGE_NAME="${DOCKER_IMAGE_NAME}-nvidia"
+                fi
             fi
-            echo "Running container"
+            echo "Creating the container"
             if [ ${HAND_H} = true ]; then
-                docker run -d -it --privileged --name ${DOCKER_CONTAINER_NAME} -e interface=${ETHERCAT_INTERFACE} --network=host -e DISPLAY -e QT_X11_NO_MITSHM=1 -e LOCAL_USER_ID=$(id -u) -v /tmp/.X11-unix:/tmp/.X11-unix:rw ${DOCKER_IMAGE_NAME}
+                ${DOCKER} create -it --privileged --name ${DOCKER_CONTAINER_NAME} -e verbose=true -e interface=${ETHERCAT_INTERFACE} --network=host -e DISPLAY -e QT_X11_NO_MITSHM=1 -e LOCAL_USER_ID=$(id -u) -v /tmp/.X11-unix:/tmp/.X11-unix:rw ${DOCKER_IMAGE_NAME} bash -c "/usr/local/bin/setup.sh && bash"
             else
-                docker run -d -it --privileged --name ${DOCKER_CONTAINER_NAME} --network=host -e DISPLAY -e QT_X11_NO_MITSHM=1 -e LOCAL_USER_ID=$(id -u) -v /tmp/.X11-unix:/tmp/.X11-unix:rw ${DOCKER_IMAGE_NAME} /bin/bash
+                ${DOCKER} create -it --privileged --name ${DOCKER_CONTAINER_NAME} --network=host -e DISPLAY -e QT_X11_NO_MITSHM=1 -e LOCAL_USER_ID=$(id -u) -v /tmp/.X11-unix:/tmp/.X11-unix:rw ${DOCKER_IMAGE_NAME} bash -c "/usr/local/bin/setup_dexterous_hand.sh && bash"
                 docker cp ${APP_FOLDER}/setup_dexterous_hand.sh ${DOCKER_CONTAINER_NAME}:/usr/local/bin/setup_dexterous_hand.sh
-                docker exec -it ${DOCKER_CONTAINER_NAME} terminator -x /usr/local/bin/setup_dexterous_hand.sh
             fi
         fi
    else
-        echo "Container already running"
+        echo -e "${RED}Container already running ${NC}"
+        CLEAN_EXIT=true
+        exit 1
    fi
 else
     echo "Reinstalling docker container"
-    if [ "$(docker ps -q -f name=${DOCKER_CONTAINER_NAME})" ]; then
-        echo "Container running. Stopping it"
-        docker stop ${DOCKER_CONTAINER_NAME}
-    fi
-    if [ "$(docker ps -aq -f status=exited -f name=${DOCKER_CONTAINER_NAME})" ]; then
+    if [ "$(docker ps -aq -f name=${DOCKER_CONTAINER_NAME})" ]; then
         echo "Container with specified name already exist. Removing container"
-        docker rm ${DOCKER_CONTAINER_NAME}
+        docker rm -f ${DOCKER_CONTAINER_NAME}
     fi
     echo "Pulling latest version of docker image"
+    docker_login
     docker pull ${DOCKER_IMAGE_NAME}
+    if [ ${NVIDIA} = true ]; then
+        if [[ "$(docker images -q "${DOCKER_IMAGE_NAME}-nvidia" 2> /dev/null)" == "" ]]; then
+            bash <(curl -Ls https://raw.githubusercontent.com/shadow-robot/sr-build-tools/master/docker/utils/docker_nvidialize.sh) ${DOCKER_IMAGE_NAME}
+        fi
+        DOCKER_IMAGE_NAME="${DOCKER_IMAGE_NAME}-nvidia"
+    fi
 
-    echo "Running container"
+    echo "Running the container"
     if [ ${HAND_H} = true ]; then
-        docker run -d -it --privileged --name ${DOCKER_CONTAINER_NAME} -e interface=${ETHERCAT_INTERFACE} --network=host -e DISPLAY -e QT_X11_NO_MITSHM=1 -e LOCAL_USER_ID=$(id -u) -v /tmp/.X11-unix:/tmp/.X11-unix:rw ${DOCKER_IMAGE_NAME}
+        ${DOCKER} create -it --privileged --name ${DOCKER_CONTAINER_NAME} -e verbose=true -e interface=${ETHERCAT_INTERFACE} --network=host -e DISPLAY -e QT_X11_NO_MITSHM=1 -e LOCAL_USER_ID=$(id -u) -v /tmp/.X11-unix:/tmp/.X11-unix:rw ${DOCKER_IMAGE_NAME} bash -c "/usr/local/bin/setup.sh && bash"
     else
-        docker run -d -it --privileged --name ${DOCKER_CONTAINER_NAME} --network=host -e DISPLAY -e QT_X11_NO_MITSHM=1 -e LOCAL_USER_ID=$(id -u) -v /tmp/.X11-unix:/tmp/.X11-unix:rw ${DOCKER_IMAGE_NAME} /bin/bash
+        ${DOCKER} create -it --privileged --name ${DOCKER_CONTAINER_NAME} --network=host -e DISPLAY -e QT_X11_NO_MITSHM=1 -e LOCAL_USER_ID=$(id -u) -v /tmp/.X11-unix:/tmp/.X11-unix:rw ${DOCKER_IMAGE_NAME} bash -c "/usr/local/bin/setup_dexterous_hand.sh && bash"
         docker cp ${APP_FOLDER}/setup_dexterous_hand.sh ${DOCKER_CONTAINER_NAME}:/usr/local/bin/setup_dexterous_hand.sh
-        docker exec -it ${DOCKER_CONTAINER_NAME} terminator -x /usr/local/bin/setup_dexterous_hand.sh
     fi
 fi
 
@@ -302,3 +367,9 @@ echo -e "${GREEN} ------------------------------------------------${NC}"
 echo -e "${GREEN} |            Operation completed               |${NC}"
 echo -e "${GREEN} ------------------------------------------------${NC}"
 echo ""
+
+if [ ${START_CONTAINER} = true ]; then
+    echo -e "${YELLOW}Please wait for docker container to start. This might take a while...${NC}"
+    docker start ${DOCKER_CONTAINER_NAME}
+    docker attach ${DOCKER_CONTAINER_NAME}
+fi
