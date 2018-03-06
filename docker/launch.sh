@@ -232,8 +232,7 @@ function docker_login
 
 # If running for the first time create desktop shortcut
 APP_FOLDER=/home/$USER/launcher_app
-# TODO: change this for master before merging
-BUILD_TOOLS_BRANCH=F%23SRC-1277_one_liner_docker_deployment
+BUILD_TOOLS_BRANCH=master
 if [ ${DESKTOP_ICON} = true ] ; then
     echo ""
     echo " -------------------------------"
