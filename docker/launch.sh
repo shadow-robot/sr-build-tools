@@ -81,7 +81,7 @@ echo "  * -n or --name name of the docker container"
 echo "  * -e or --ethercatinterface ethercat interface of the hand"
 echo ""
 echo "example hand E: ./launch.sh -i shadowrobot/dexterous-hand:indigo -n hand_e_indigo_real_hw -b "
-echo "example hand H: ./launch.sh -i shadowrobot/flexible-hand:kinetic-release -n hand_h_kinetic_real_hw -e enp0s25 -u mydockerhublogin -p mysupersecretpassword"
+echo "example hand H: ./launch.sh -i shadowrobot/agile-grasper:kinetic-release -n agile-grasper -e enp0s25 -u mydockerhublogin -p mysupersecretpassword"
 echo ""
 echo "image name        = ${DOCKER_IMAGE_NAME}"
 echo "container name    = ${DOCKER_CONTAINER_NAME}"
@@ -99,7 +99,7 @@ if [ -z ${DOCKER_IMAGE_NAME} ] || [ -z ${DOCKER_CONTAINER_NAME} ]; then
 fi
 
 HAND_E_NAME="dexterous-hand"
-HAND_H_NAME="flexible-hand"
+HAND_H_NAME="agile-grasper"
 if echo "${DOCKER_IMAGE_NAME}" | grep -q "${HAND_E_NAME}"; then
     echo "Hand E/G image requested"
     HAND_H=false
