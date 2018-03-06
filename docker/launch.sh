@@ -232,6 +232,7 @@ function docker_login
 
 # If running for the first time create desktop shortcut
 APP_FOLDER=/home/$USER/launcher_app
+# TODO: change this for master before merging
 BUILD_TOOLS_BRANCH=F%23SRC-1277_one_liner_docker_deployment
 if [ ${DESKTOP_ICON} = true ] ; then
     echo ""
@@ -271,7 +272,6 @@ if [ ${DESKTOP_ICON} = true ] ; then
         rm ${APP_FOLDER}/launch.sh
     fi
     echo "Downloading the script"
-    # TODO: change this for master before merging
     curl "https://raw.githubusercontent.com/shadow-robot/sr-build-tools/${BUILD_TOOLS_BRANCH}/docker/launch.sh" >> ${APP_FOLDER}/launch.sh
     
     echo "Checking if terminator installed"
@@ -288,7 +288,6 @@ if [ ${DESKTOP_ICON} = true ] ; then
     terminator -x bash -c \"cd ${APP_FOLDER}; ./launch.sh -i ${DOCKER_IMAGE_NAME} -n ${DOCKER_CONTAINER_NAME} -e ${ETHERCAT_INTERFACE} -r false -d false -s true\"" > ${APP_FOLDER}/launcher_exec.sh
 
     echo "Downloading icon"
-    # TODO: change this for master before merging
     wget --no-check-certificate https://raw.githubusercontent.com/shadow-robot/sr-build-tools/${BUILD_TOOLS_BRANCH}/docker/hand_h.png -O ${APP_FOLDER}/hand_h.png
 
     echo "Creating desktop file"
