@@ -123,7 +123,7 @@ Posible options for the oneliner are:
 * -g or --nvidiagraphics    Enable nvidia-docker (default: false)
 * -d or --desktopicon       Generates a desktop icon to launch the hand (default: true)
 * -b or --configbranch      Specify the branch for the specific hand (Only for dexterous hand)
-
+* -sn or --shortcutname     Specify the name for the desktop icon (default: Shadow_Hand_Launcher)
 
 To begin with, the one-liner checks the installation status of docker. If docker is not installed then a new clean installation is performed. If the required image is private, 
 then a valid Docker Hub account with pull credentials from Shadow Robot's Docker Hub is required. Then, the specified docker image is pulled and a docker 
