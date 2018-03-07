@@ -111,6 +111,7 @@ echo "  * -e or --ethercatinterface   Ethercat interface of the hand"
 echo "  * -g or --nvidiagraphics      Enable nvidia-docker"
 echo "  * -d or --desktopicon         Generates a desktop icon to launch the hand"
 echo "  * -b or --configbranch        Specify the branch for the specific hand (Only for dexterous hand)"
+echo "  * -sn or --shortcutname       Specify the name for the desktop icon (default: Shadow_Hand_Launcher)"
 echo ""
 echo "example hand E: ./launch.sh -i shadowrobot/dexterous-hand:kinetic -n hand_e_kinetic_real_hw -e enp0s25 -b shadowrobot_demo_hand -r true -g false"
 echo "example agile-grasper: ./launch.sh -i shadowrobot/agile-grasper:kinetic-release -n agile_grasper -e enp0s25 -r true -g false -u mydockerhublogin -p mysupersecretpassword"
@@ -151,9 +152,11 @@ fi
 if echo "${DOCKER_IMAGE_NAME}" | grep -q "${HAND_E_NAME}"; then
     echo "Hand E/G image requested"
     HAND_H=false
+    HAND_ICON=hand_E.png
 elif echo "${DOCKER_IMAGE_NAME}" | grep -q "${HAND_H_NAME}"; then
     echo "Hand H image requested"
     HAND_H=true
+    HAND_ICON=hand_H.png
 else
     echo -e "${RED}Unknown image requested ${NC}"
     HAND_H=""
@@ -305,15 +308,15 @@ if [ ${DESKTOP_ICON} = true ] ; then
     terminator -x bash -c \"cd ${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}; ./launch.sh -i ${DOCKER_IMAGE_NAME} -n ${DOCKER_CONTAINER_NAME} -e ${ETHERCAT_INTERFACE} -r false -d false -s true\"" > ${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/launcher_exec.sh
 
     echo "Downloading icon"
-    wget --no-check-certificate https://raw.githubusercontent.com/shadow-robot/sr-build-tools/${BUILD_TOOLS_BRANCH}/docker/hand_h.png -O ${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/hand_h.png
+    wget --no-check-certificate https://raw.githubusercontent.com/shadow-robot/sr-build-tools/${BUILD_TOOLS_BRANCH}/docker/${HAND_ICON} -O ${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/${HAND_ICON}
 
     echo "Creating desktop file"
     printf "[Desktop Entry]
     Version=1.0
     Name=${DESKTOP_SHORTCUT_NAME}
     Comment=This is application launches the hand
-    Exec=/home/${USER}/launcher_app/launcher_exec.sh
-    Icon=/home/${USER}/launcher_app/hand_h.png
+    Exec=/home/${USER}/.launcher_app/${DESKTOP_SHORTCUT_NAME}/launcher_exec.sh
+    Icon=/home/${USER}/.launcher_app/${DESKTOP_SHORTCUT_NAME}/${HAND_ICON}
     Terminal=false
     Type=Application
     Categories=Utility;Application;" > /home/$USER/Desktop/${DESKTOP_SHORTCUT_NAME}.desktop
