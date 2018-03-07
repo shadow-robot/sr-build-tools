@@ -151,9 +151,11 @@ fi
 if echo "${DOCKER_IMAGE_NAME}" | grep -q "${HAND_E_NAME}"; then
     echo "Hand E/G image requested"
     HAND_H=false
+    HAND_ICON=hand_E.png
 elif echo "${DOCKER_IMAGE_NAME}" | grep -q "${HAND_H_NAME}"; then
     echo "Hand H image requested"
     HAND_H=true
+    HAND_ICON=hand_H.png
 else
     echo -e "${RED}Unknown image requested ${NC}"
     HAND_H=""
@@ -305,7 +307,7 @@ if [ ${DESKTOP_ICON} = true ] ; then
     terminator -x bash -c \"cd ${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}; ./launch.sh -i ${DOCKER_IMAGE_NAME} -n ${DOCKER_CONTAINER_NAME} -e ${ETHERCAT_INTERFACE} -r false -d false -s true\"" > ${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/launcher_exec.sh
 
     echo "Downloading icon"
-    wget --no-check-certificate https://raw.githubusercontent.com/shadow-robot/sr-build-tools/${BUILD_TOOLS_BRANCH}/docker/hand_h.png -O ${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/hand_h.png
+    wget --no-check-certificate https://raw.githubusercontent.com/shadow-robot/sr-build-tools/${BUILD_TOOLS_BRANCH}/docker/${HAND_ICON} -O ${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/HAND_ICON
 
     echo "Creating desktop file"
     printf "[Desktop Entry]
@@ -313,7 +315,7 @@ if [ ${DESKTOP_ICON} = true ] ; then
     Name=${DESKTOP_SHORTCUT_NAME}
     Comment=This is application launches the hand
     Exec=/home/${USER}/launcher_app/launcher_exec.sh
-    Icon=/home/${USER}/launcher_app/hand_h.png
+    Icon=/home/${USER}/launcher_app/${HAND_ICON}
     Terminal=false
     Type=Application
     Categories=Utility;Application;" > /home/$USER/Desktop/${DESKTOP_SHORTCUT_NAME}.desktop
