@@ -47,6 +47,10 @@ case $key in
     START_CONTAINER="$2"
     shift
     ;;
+    -sn|--shortcutname)
+    DESKTOP_SHORTCUT_NAME="$2"
+    shift
+    ;;
     *)
     # ignore unknown option
     ;;
@@ -73,6 +77,11 @@ fi
 if [ -z "${START_CONTAINER}" ];
 then
     START_CONTAINER=false
+fi
+
+if [ -z "${DESKTOP_SHORTCUT_NAME}" ];
+then
+    DESKTOP_SHORTCUT_NAME=Shadow_Hand_Launcher
 fi
 
 CLEAN_EXIT=false
@@ -232,7 +241,7 @@ function docker_login
 }
 
 # If running for the first time create desktop shortcut
-APP_FOLDER=/home/$USER/launcher_app
+APP_FOLDER=/home/$USER/.launcher_app
 BUILD_TOOLS_BRANCH=master
 if [ ${DESKTOP_ICON} = true ] ; then
     echo ""
@@ -245,6 +254,14 @@ if [ ${DESKTOP_ICON} = true ] ; then
     if [ ! -d "${APP_FOLDER}" ]; then
       mkdir ${APP_FOLDER}
     fi
+
+    cd ${APP_FOLDER}
+
+    if [ ! -d "${DESKTOP_SHORTCUT_NAME}" ]; then
+      mkdir ${DESKTOP_SHORTCUT_NAME}
+    fi
+
+    cd ..
 
     # Create a initial script for dexterous hand
     if [ ${HAND_H} = false ]; then
@@ -263,16 +280,16 @@ if [ ${DESKTOP_ICON} = true ] ; then
             sed -i 's|eth_port\" value=.*|eth_port\" value=\"${ETHERCAT_INTERFACE}\" />|' \$(rospack find sr_ethercat_hand_config)/launch/sr_rhand.launch
 
             roslaunch sr_ethercat_hand_config sr_rhand.launch
-            " > ${APP_FOLDER}/setup_dexterous_hand.sh
-            chmod +x ${APP_FOLDER}/setup_dexterous_hand.sh
+            " > ${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/setup_dexterous_hand.sh
+            chmod +x ${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/setup_dexterous_hand.sh
         fi
     fi
 
-    if [ -e ${APP_FOLDER}/launch.sh ]; then
-        rm ${APP_FOLDER}/launch.sh
+    if [ -e ${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/launch.sh ]; then
+        rm ${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/launch.sh
     fi
     echo "Downloading the script"
-    curl "https://raw.githubusercontent.com/shadow-robot/sr-build-tools/${BUILD_TOOLS_BRANCH}/docker/launch.sh" >> ${APP_FOLDER}/launch.sh
+    curl "https://raw.githubusercontent.com/shadow-robot/sr-build-tools/${BUILD_TOOLS_BRANCH}/docker/launch.sh" >> ${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/launch.sh
     
     echo "Checking if terminator installed"
     if [ -x "$(command -v terminator)" ]; then
@@ -285,15 +302,15 @@ if [ ${DESKTOP_ICON} = true ] ; then
     
     echo "Creating executable file"
     printf "#! /bin/bash
-    terminator -x bash -c \"cd ${APP_FOLDER}; ./launch.sh -i ${DOCKER_IMAGE_NAME} -n ${DOCKER_CONTAINER_NAME} -e ${ETHERCAT_INTERFACE} -r false -d false -s true\"" > ${APP_FOLDER}/launcher_exec.sh
+    terminator -x bash -c \"cd ${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}; ./launch.sh -i ${DOCKER_IMAGE_NAME} -n ${DOCKER_CONTAINER_NAME} -e ${ETHERCAT_INTERFACE} -r false -d false -s true\"" > ${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/launcher_exec.sh
 
     echo "Downloading icon"
-    wget --no-check-certificate https://raw.githubusercontent.com/shadow-robot/sr-build-tools/${BUILD_TOOLS_BRANCH}/docker/hand_h.png -O ${APP_FOLDER}/hand_h.png
+    wget --no-check-certificate https://raw.githubusercontent.com/shadow-robot/sr-build-tools/${BUILD_TOOLS_BRANCH}/docker/hand_h.png -O ${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/hand_h.png
 
     echo "Creating desktop file"
     printf "[Desktop Entry]
     Version=1.0
-    Name=Hand_Launcher
+    Name=${DESKTOP_SHORTCUT_NAME}
     Comment=This is application launches the hand
     Exec=/home/${USER}/launcher_app/launcher_exec.sh
     Icon=/home/${USER}/launcher_app/hand_h.png
@@ -302,8 +319,8 @@ if [ ${DESKTOP_ICON} = true ] ; then
     Categories=Utility;Application;" > /home/$USER/Desktop/launcher.desktop
 
     echo "Allowing files to be executable"
-    chmod +x ${APP_FOLDER}/launcher_exec.sh
-    chmod +x ${APP_FOLDER}/launch.sh
+    chmod +x ${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/launcher_exec.sh
+    chmod +x ${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/launch.sh
     chmod +x /home/$USER/Desktop/launcher.desktop
 fi
 
@@ -329,7 +346,7 @@ if [ ${REINSTALL_DOCKER_CONTAINER} = false ] ; then
                 ${DOCKER} create -it --privileged --name ${DOCKER_CONTAINER_NAME} -e verbose=true -e interface=${ETHERCAT_INTERFACE} --network=host -e DISPLAY -e QT_X11_NO_MITSHM=1 -e LOCAL_USER_ID=$(id -u) -v /tmp/.X11-unix:/tmp/.X11-unix:rw ${DOCKER_IMAGE_NAME} bash -c "/usr/local/bin/setup.sh && bash"
             else
                 ${DOCKER} create -it --privileged --name ${DOCKER_CONTAINER_NAME} --network=host -e DISPLAY -e QT_X11_NO_MITSHM=1 -e LOCAL_USER_ID=$(id -u) -v /tmp/.X11-unix:/tmp/.X11-unix:rw ${DOCKER_IMAGE_NAME} bash -c "/usr/local/bin/setup_dexterous_hand.sh && bash"
-                docker cp ${APP_FOLDER}/setup_dexterous_hand.sh ${DOCKER_CONTAINER_NAME}:/usr/local/bin/setup_dexterous_hand.sh
+                docker cp ${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/setup_dexterous_hand.sh ${DOCKER_CONTAINER_NAME}:/usr/local/bin/setup_dexterous_hand.sh
             fi
         fi
    else
@@ -358,7 +375,7 @@ else
         ${DOCKER} create -it --privileged --name ${DOCKER_CONTAINER_NAME} -e verbose=true -e interface=${ETHERCAT_INTERFACE} --network=host -e DISPLAY -e QT_X11_NO_MITSHM=1 -e LOCAL_USER_ID=$(id -u) -v /tmp/.X11-unix:/tmp/.X11-unix:rw ${DOCKER_IMAGE_NAME} bash -c "/usr/local/bin/setup.sh && bash"
     else
         ${DOCKER} create -it --privileged --name ${DOCKER_CONTAINER_NAME} --network=host -e DISPLAY -e QT_X11_NO_MITSHM=1 -e LOCAL_USER_ID=$(id -u) -v /tmp/.X11-unix:/tmp/.X11-unix:rw ${DOCKER_IMAGE_NAME} bash -c "/usr/local/bin/setup_dexterous_hand.sh && bash"
-        docker cp ${APP_FOLDER}/setup_dexterous_hand.sh ${DOCKER_CONTAINER_NAME}:/usr/local/bin/setup_dexterous_hand.sh
+        docker cp ${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/setup_dexterous_hand.sh ${DOCKER_CONTAINER_NAME}:/usr/local/bin/setup_dexterous_hand.sh
     fi
 fi
 
