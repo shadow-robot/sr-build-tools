@@ -79,7 +79,7 @@ CLEAN_EXIT=false
 
 function clean_exit
 {
-    if [[ ${CLEAN_EXIT} = false && $(docker ps -q -f name=${DOCKER_CONTAINER_NAME}) ]]; then
+    if [[ ${CLEAN_EXIT} = false && $(docker ps -q -f name=^/${DOCKER_CONTAINER_NAME}$) ]]; then
         echo "Stoping docker container..."
         docker stop ${DOCKER_CONTAINER_NAME}
     fi
@@ -104,7 +104,8 @@ echo "  * -d or --desktopicon         Generates a desktop icon to launch the han
 echo "  * -b or --configbranch        Specify the branch for the specific hand (Only for dexterous hand)"
 echo ""
 echo "example hand E: ./launch.sh -i shadowrobot/dexterous-hand:kinetic -n hand_e_kinetic_real_hw -e enp0s25 -b shadowrobot_demo_hand -r true -g false"
-echo "example agile-grasper: ./launch.sh -i shadowrobot/agile-grasper:kinetic-release -n agile_grasper_kinetic_real_hw -e enp0s25 -r true -g false -u mydockerhublogin -p mysupersecretpassword"
+echo "example agile-grasper: ./launch.sh -i shadowrobot/agile-grasper:kinetic-release -n agile_grasper -e enp0s25 -r true -g false -u mydockerhublogin -p mysupersecretpassword"
+
 echo ""
 echo "image name        = ${DOCKER_IMAGE_NAME}"
 echo "container name    = ${DOCKER_CONTAINER_NAME}"
@@ -129,7 +130,7 @@ else
 fi
 
 HAND_E_NAME="dexterous-hand"
-HAND_H_NAME="flexible-hand"
+HAND_H_NAME="agile-grasper"
 
 # Check if they have specified the ethercat interface
 if [ -z ${ETHERCAT_INTERFACE} ] ; then
@@ -145,7 +146,7 @@ elif echo "${DOCKER_IMAGE_NAME}" | grep -q "${HAND_H_NAME}"; then
     echo "Hand H image requested"
     HAND_H=true
 else
-    echo "${RED}Unknown image requested ${NC}"
+    echo -e "${RED}Unknown image requested ${NC}"
     HAND_H=""
     CLEAN_EXIT=true
     exit 1
@@ -308,8 +309,8 @@ fi
 
 if [ ${REINSTALL_DOCKER_CONTAINER} = false ] ; then
    echo "Not reinstalling docker image"
-   if [ ! "$(docker ps -q -f name=${DOCKER_CONTAINER_NAME})" ]; then
-        if [ "$(docker ps -aq -f name=${DOCKER_CONTAINER_NAME})" ]; then
+   if [ ! "$(docker ps -q -f name=^/${DOCKER_CONTAINER_NAME}$)" ]; then
+        if [ "$(docker ps -aq -f name=^/${DOCKER_CONTAINER_NAME}$)" ]; then
             echo "Container with specified name already exists."
         else
             if [[ "$(docker images -q ${DOCKER_IMAGE_NAME} 2> /dev/null)" == "" ]]; then
@@ -338,7 +339,7 @@ if [ ${REINSTALL_DOCKER_CONTAINER} = false ] ; then
    fi
 else
     echo "Reinstalling docker container"
-    if [ "$(docker ps -aq -f name=${DOCKER_CONTAINER_NAME})" ]; then
+    if [ "$(docker ps -aq -f name=^/${DOCKER_CONTAINER_NAME}$)" ]; then
         echo "Container with specified name already exist. Removing container"
         docker rm -f ${DOCKER_CONTAINER_NAME}
     fi
