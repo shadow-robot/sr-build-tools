@@ -316,7 +316,7 @@ if [ ${DESKTOP_ICON} = true ] ; then
     Icon=/home/${USER}/launcher_app/hand_h.png
     Terminal=false
     Type=Application
-    Categories=Utility;Application;" > /home/$USER/Desktop/launcher.desktop
+    Categories=Utility;Application;" > /home/$USER/Desktop/${DESKTOP_SHORTCUT_NAME}.desktop
 
     echo "Allowing files to be executable"
     chmod +x ${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/launcher_exec.sh
