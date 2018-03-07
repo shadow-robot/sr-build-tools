@@ -146,7 +146,7 @@ elif echo "${DOCKER_IMAGE_NAME}" | grep -q "${HAND_H_NAME}"; then
     echo "Hand H image requested"
     HAND_H=true
 else
-    echo "${RED}Unknown image requested ${NC}"
+    echo -e "${RED}Unknown image requested ${NC}"
     HAND_H=""
     CLEAN_EXIT=true
     exit 1
