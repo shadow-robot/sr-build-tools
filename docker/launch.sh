@@ -79,7 +79,7 @@ CLEAN_EXIT=false
 
 function clean_exit
 {
-    if [[ ${CLEAN_EXIT} = false && $(docker ps -q -f name=${DOCKER_CONTAINER_NAME}) ]]; then
+    if [[ ${CLEAN_EXIT} = false && $(docker ps -q -f name=^/${DOCKER_CONTAINER_NAME}$) ]]; then
         echo "Stoping docker container..."
         docker stop ${DOCKER_CONTAINER_NAME}
     fi
