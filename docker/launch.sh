@@ -321,7 +321,7 @@ if [ ${DESKTOP_ICON} = true ] ; then
     echo "Allowing files to be executable"
     chmod +x ${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/launcher_exec.sh
     chmod +x ${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/launch.sh
-    chmod +x /home/$USER/Desktop/launcher.desktop
+    chmod +x /home/$USER/Desktop/${DESKTOP_SHORTCUT_NAME}.desktop
 fi
 
 if [ ${REINSTALL_DOCKER_CONTAINER} = false ] ; then
