@@ -309,8 +309,8 @@ fi
 
 if [ ${REINSTALL_DOCKER_CONTAINER} = false ] ; then
    echo "Not reinstalling docker image"
-   if [ ! "$(docker ps -q -f name=${DOCKER_CONTAINER_NAME})" ]; then
-        if [ "$(docker ps -aq -f name=${DOCKER_CONTAINER_NAME})" ]; then
+   if [ ! "$(docker ps -q -f name=^/${DOCKER_CONTAINER_NAME}$)" ]; then
+        if [ "$(docker ps -aq -f name=^/${DOCKER_CONTAINER_NAME}$)" ]; then
             echo "Container with specified name already exists."
         else
             if [[ "$(docker images -q ${DOCKER_IMAGE_NAME} 2> /dev/null)" == "" ]]; then
@@ -339,7 +339,7 @@ if [ ${REINSTALL_DOCKER_CONTAINER} = false ] ; then
    fi
 else
     echo "Reinstalling docker container"
-    if [ "$(docker ps -aq -f name=${DOCKER_CONTAINER_NAME})" ]; then
+    if [ "$(docker ps -aq -f name=^/${DOCKER_CONTAINER_NAME}$)" ]; then
         echo "Container with specified name already exist. Removing container"
         docker rm -f ${DOCKER_CONTAINER_NAME}
     fi
