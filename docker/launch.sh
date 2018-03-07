@@ -307,7 +307,7 @@ if [ ${DESKTOP_ICON} = true ] ; then
     terminator -x bash -c \"cd ${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}; ./launch.sh -i ${DOCKER_IMAGE_NAME} -n ${DOCKER_CONTAINER_NAME} -e ${ETHERCAT_INTERFACE} -r false -d false -s true\"" > ${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/launcher_exec.sh
 
     echo "Downloading icon"
-    wget --no-check-certificate https://raw.githubusercontent.com/shadow-robot/sr-build-tools/${BUILD_TOOLS_BRANCH}/docker/${HAND_ICON} -O ${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/HAND_ICON
+    wget --no-check-certificate https://raw.githubusercontent.com/shadow-robot/sr-build-tools/${BUILD_TOOLS_BRANCH}/docker/${HAND_ICON} -O ${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/${HAND_ICON}
 
     echo "Creating desktop file"
     printf "[Desktop Entry]
