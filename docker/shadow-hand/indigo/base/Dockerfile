@@ -13,25 +13,25 @@ RUN echo "Fixing file system" && \
     chmod 755 /tmp/oneliner && \
     gosu $MY_USERNAME /tmp/oneliner -b "$toolset_branch" -w /home/user/projects/shadow_robot/base  && \
 
-    echo "Removing cache" && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
-
     echo "Installing Eepromtool" && \
     cd /home/user/ && \
     wget https://github.com/shadow-robot/sr-build-tools/raw/master/bin/eepromtool && \
-    chmod +x /home/user/eepromtool
+    chmod +x /home/user/eepromtool && \
 
     echo "Installing Gedit" && \
-    apt-get install gedit
+    apt-get -y install gedit && \
 
     echo "Installing Multiplot" && \
-    apt-get install ros-kinetic-rqt-multiplot
+    apt-get -y install ros-kinetic-rqt-multiplot && \
 
     echo "Installing Multiplot Configs" && \
     cd /home/user/ && \
     git clone https://github.com/shadow-robot/sr_multiplot_config.git --depth 1 && \
-    chown -R $MY_USERNAME:$MY_USERNAME /home/user/sr_multiplot_config
+    chown -R $MY_USERNAME:$MY_USERNAME /home/user/sr_multiplot_config && \
+
+    echo "Removing cache" && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
 
