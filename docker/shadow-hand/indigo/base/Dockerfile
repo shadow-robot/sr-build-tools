@@ -22,7 +22,7 @@ RUN echo "Fixing file system" && \
     apt-get -y install gedit && \
 
     echo "Installing Multiplot" && \
-    apt-get -y install ros-kinetic-rqt-multiplot && \
+    apt-get -y install ros-indigo-rqt-multiplot && \
 
     echo "Installing Multiplot Configs" && \
     cd /home/user/ && \
