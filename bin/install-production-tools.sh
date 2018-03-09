@@ -1,6 +1,6 @@
 echo "Installing Eepromtool"
 cd /home/user/
-wget https://github.com/shadow-robot/sr-build-tools/raw/${toolset_branch}/bin/eepromtool
+wget https://github.com/shadow-robot/sr-build-tools/raw/$(echo $toolset_branch | sed 's/#/%23/g')/bin/eepromtool
 chmod 700 /home/user/eepromtool
 echo "Installing Gedit"
 apt-get -y install gedit

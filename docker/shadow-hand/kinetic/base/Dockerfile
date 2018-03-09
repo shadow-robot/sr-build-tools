@@ -5,27 +5,17 @@ LABEL Description="This ROS Kinetic image contains Shadow's dexterous hand softw
 ENV remote_shell_script="https://raw.githubusercontent.com/shadow-robot/sr-build-tools/$toolset_branch/ansible/deploy.sh"
 
 ENV PROJECTS_WS=/home/user/projects/shadow_robot
+
+ENV toolset_branch="F#SRC-1411_hand_e_docker"
+
 RUN echo "Running one-liner" && \
     apt-get update && \
     wget -O /tmp/oneliner "$( echo "$remote_shell_script" | sed 's/#/%23/g' )" && \
     chmod 755 /tmp/oneliner && \
     gosu $MY_USERNAME /tmp/oneliner -w $PROJECTS_WS/base -r sr-build-tools -b $toolset_branch -i data/shadow_robot-kinetic.rosinstall -v "kinetic" -t mongodb,pyassimp && \
 
-    echo "Installing Eepromtool" && \
-    cd /home/user/ && \
-    wget https://github.com/shadow-robot/sr-build-tools/raw/master/bin/eepromtool && \
-    chmod +x /home/user/eepromtool  && \
-
-    echo "Installing Gedit" && \
-    apt-get -y install gedit && \
-
-    echo "Installing Multiplot" && \
-    apt-get -y install ros-kinetic-rqt-multiplot && \
-
-    echo "Installing Multiplot Configs" && \
-    cd /home/user/ && \
-    git clone https://github.com/shadow-robot/sr_multiplot_config.git --depth 1 && \
-    chown -R $MY_USERNAME:$MY_USERNAME /home/user/sr_multiplot_config && \
+    echo "Installing production tools" && \
+    curl https://raw.githubusercontent.com/shadow-robot/sr-build-tools/$(echo $toolset_branch | sed 's/#/%23/g')/bin/install-production-tools.sh | bash && \
 
     echo "Removing cache" && \
     apt-get clean && \

@@ -4,6 +4,8 @@ LABEL Description="This ROS Indigo image contains Shadow's dexterous hand softwa
 
 ENV remote_shell_script="https://raw.githubusercontent.com/shadow-robot/sr-build-tools/$toolset_branch/bin/setup_dev_machine"
 
+ENV toolset_branch="F#SRC-1411_hand_e_docker"
+
 RUN echo "Fixing file system" && \
     mkdir -p /etc/apt/sources.list.d && \
     rm -f /etc/apt/sources.list.d/ros-latest.list && \
@@ -13,21 +15,8 @@ RUN echo "Fixing file system" && \
     chmod 755 /tmp/oneliner && \
     gosu $MY_USERNAME /tmp/oneliner -b "$toolset_branch" -w /home/user/projects/shadow_robot/base  && \
 
-    echo "Installing Eepromtool" && \
-    cd /home/user/ && \
-    wget https://github.com/shadow-robot/sr-build-tools/raw/master/bin/eepromtool && \
-    chmod +x /home/user/eepromtool && \
-
-    echo "Installing Gedit" && \
-    apt-get -y install gedit && \
-
-    echo "Installing Multiplot" && \
-    apt-get -y install ros-indigo-rqt-multiplot && \
-
-    echo "Installing Multiplot Configs" && \
-    cd /home/user/ && \
-    git clone https://github.com/shadow-robot/sr_multiplot_config.git --depth 1 && \
-    chown -R $MY_USERNAME:$MY_USERNAME /home/user/sr_multiplot_config && \
+    echo "Installing production tools" && \
+    curl https://raw.githubusercontent.com/shadow-robot/sr-build-tools/$(echo $toolset_branch | sed 's/#/%23/g')/bin/install-production-tools.sh | bash && \
 
     echo "Removing cache" && \
     apt-get clean && \
