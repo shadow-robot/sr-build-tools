@@ -6,8 +6,6 @@ ENV remote_shell_script="https://raw.githubusercontent.com/shadow-robot/sr-build
 
 ENV PROJECTS_WS=/home/user/projects/shadow_robot
 
-ENV toolset_branch="F#SRC-1411_hand_e_docker"
-
 RUN echo "Running one-liner" && apt-get update && \
     wget -O /tmp/oneliner "$( echo "$remote_shell_script" | sed 's/#/%23/g' )" && \
     chmod 755 /tmp/oneliner && \
