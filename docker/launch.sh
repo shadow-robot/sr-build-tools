@@ -391,4 +391,5 @@ echo ""
 if [ ${START_CONTAINER} = true ]; then
     echo -e "${YELLOW}Please wait for docker container to start. This might take a while...${NC}"
     docker start ${DOCKER_CONTAINER_NAME}
+    CLEAN_EXIT=true
 fi
