@@ -389,7 +389,7 @@ echo -e "${GREEN} ------------------------------------------------${NC}"
 echo ""
 
 if [ ${START_CONTAINER} = true ]; then
-    echo -e "${YELLOW}Please wait for docker container to start. This might take a while...${NC}"
+    echo -e "${YELLOW}Please wait for docker container to start on a new terminal (This one will be closing soon). This might take a while...${NC}"
     docker start ${DOCKER_CONTAINER_NAME}
     sleep 60
     CLEAN_EXIT=true
