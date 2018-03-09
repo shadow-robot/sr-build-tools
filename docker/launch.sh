@@ -84,16 +84,6 @@ then
     DESKTOP_SHORTCUT_NAME=Shadow_Hand_Launcher
 fi
 
-CLEAN_EXIT=false
-
-function clean_exit
-{
-    if [[ ${CLEAN_EXIT} = false && $(docker ps -q -f name=^/${DOCKER_CONTAINER_NAME}$) ]]; then
-        echo "Stoping docker container..."
-        docker stop ${DOCKER_CONTAINER_NAME}
-    fi
-}
-trap clean_exit 0
 
 echo "================================================================="
 echo "|                                                               |"
@@ -129,7 +119,6 @@ NC='\033[0m' # No Color
 
 if [ -z ${DOCKER_IMAGE_NAME} ] || [ -z ${DOCKER_CONTAINER_NAME} ]; then
     echo -e "${RED}Docker image name and name of container are required ${NC}"
-    CLEAN_EXIT=true
     exit 1
 fi
 
@@ -145,7 +134,6 @@ HAND_H_NAME="agile-grasper"
 # Check if they have specified the ethercat interface
 if [ -z ${ETHERCAT_INTERFACE} ] ; then
     echo -e "${RED}Ethercat interface ID needs to be specified ${NC}"
-    CLEAN_EXIT=true
     exit 1
 fi
 
@@ -160,7 +148,6 @@ elif echo "${DOCKER_IMAGE_NAME}" | grep -q "${HAND_H_NAME}"; then
 else
     echo -e "${RED}Unknown image requested ${NC}"
     HAND_H=""
-    CLEAN_EXIT=true
     exit 1
 fi
 
@@ -204,7 +191,6 @@ else
         update-rc.d docker.io defaults
     else
         echo -e "${RED}Unsupported ubuntu version! ${NC}"
-        CLEAN_EXIT=true
         exit 1
     fi
 fi
@@ -236,7 +222,6 @@ function docker_login
             fi
             if [ ${i} == 3 and $? !=0 ]; then
                 echo -e "${RED}Docker login failed. You will not be able to pull private docker images.${NC}"
-                CLEAN_EXIT=true
                 exit 1
             fi
         done
@@ -270,7 +255,6 @@ if [ ${DESKTOP_ICON} = true ] ; then
     if [ ${HAND_H} = false ]; then
         if [ -z "${CONFIG_BRANCH}" ]; then
             echo -e "${RED}Specify a config branch for your dexterous hand ${NC}"
-            CLEAN_EXIT=true
             exit 1
         else
             printf "#! /bin/bash
@@ -354,7 +338,6 @@ if [ ${REINSTALL_DOCKER_CONTAINER} = false ] ; then
         fi
    else
         echo -e "${RED}Container already running ${NC}"
-        CLEAN_EXIT=true
         exit 1
    fi
 else
@@ -392,5 +375,4 @@ if [ ${START_CONTAINER} = true ]; then
     echo -e "${YELLOW}Please wait for docker container to start on a new terminal as this might take a while (This one will be closing soon) ${NC}"
     docker start ${DOCKER_CONTAINER_NAME}
     sleep 30
-    CLEAN_EXIT=true
 fi
