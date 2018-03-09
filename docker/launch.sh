@@ -245,7 +245,7 @@ function docker_login
 
 # If running for the first time create desktop shortcut
 APP_FOLDER=/home/$USER/.launcher_app
-BUILD_TOOLS_BRANCH=master
+BUILD_TOOLS_BRANCH=F%23SRC-1434_detach_terminator_from_icon
 if [ ${DESKTOP_ICON} = true ] ; then
     echo ""
     echo " -------------------------------"
@@ -346,9 +346,9 @@ if [ ${REINSTALL_DOCKER_CONTAINER} = false ] ; then
             fi
             echo "Creating the container"
             if [ ${HAND_H} = true ]; then
-                ${DOCKER} create -it --privileged --name ${DOCKER_CONTAINER_NAME} -e verbose=true -e interface=${ETHERCAT_INTERFACE} --network=host -e DISPLAY -e QT_X11_NO_MITSHM=1 -e LOCAL_USER_ID=$(id -u) -v /tmp/.X11-unix:/tmp/.X11-unix:rw ${DOCKER_IMAGE_NAME} bash -c "/usr/local/bin/setup.sh && bash"
+                ${DOCKER} create -it --privileged --name ${DOCKER_CONTAINER_NAME} -e verbose=true -e interface=${ETHERCAT_INTERFACE} --network=host -e DISPLAY -e QT_X11_NO_MITSHM=1 -e LOCAL_USER_ID=$(id -u) -v /tmp/.X11-unix:/tmp/.X11-unix:rw ${DOCKER_IMAGE_NAME} terminator -x bash -c "/usr/local/bin/setup.sh && bash || bash"
             else
-                ${DOCKER} create -it --privileged --name ${DOCKER_CONTAINER_NAME} --network=host -e DISPLAY -e QT_X11_NO_MITSHM=1 -e LOCAL_USER_ID=$(id -u) -v /tmp/.X11-unix:/tmp/.X11-unix:rw ${DOCKER_IMAGE_NAME} bash -c "/usr/local/bin/setup_dexterous_hand.sh && bash"
+                ${DOCKER} create -it --privileged --name ${DOCKER_CONTAINER_NAME} --network=host -e DISPLAY -e QT_X11_NO_MITSHM=1 -e LOCAL_USER_ID=$(id -u) -v /tmp/.X11-unix:/tmp/.X11-unix:rw ${DOCKER_IMAGE_NAME} terminator -x bash -c "/usr/local/bin/setup_dexterous_hand.sh && bash || bash"
                 docker cp ${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/setup_dexterous_hand.sh ${DOCKER_CONTAINER_NAME}:/usr/local/bin/setup_dexterous_hand.sh
             fi
         fi
@@ -375,9 +375,9 @@ else
 
     echo "Running the container"
     if [ ${HAND_H} = true ]; then
-        ${DOCKER} create -it --privileged --name ${DOCKER_CONTAINER_NAME} -e verbose=true -e interface=${ETHERCAT_INTERFACE} --network=host -e DISPLAY -e QT_X11_NO_MITSHM=1 -e LOCAL_USER_ID=$(id -u) -v /tmp/.X11-unix:/tmp/.X11-unix:rw ${DOCKER_IMAGE_NAME} bash -c "/usr/local/bin/setup.sh && bash"
+        ${DOCKER} create -it --privileged --name ${DOCKER_CONTAINER_NAME} -e verbose=true -e interface=${ETHERCAT_INTERFACE} --network=host -e DISPLAY -e QT_X11_NO_MITSHM=1 -e LOCAL_USER_ID=$(id -u) -v /tmp/.X11-unix:/tmp/.X11-unix:rw ${DOCKER_IMAGE_NAME} terminator -x bash -c "/usr/local/bin/setup.sh && bash || bash"
     else
-        ${DOCKER} create -it --privileged --name ${DOCKER_CONTAINER_NAME} --network=host -e DISPLAY -e QT_X11_NO_MITSHM=1 -e LOCAL_USER_ID=$(id -u) -v /tmp/.X11-unix:/tmp/.X11-unix:rw ${DOCKER_IMAGE_NAME} bash -c "/usr/local/bin/setup_dexterous_hand.sh && bash"
+        ${DOCKER} create -it --privileged --name ${DOCKER_CONTAINER_NAME} --network=host -e DISPLAY -e QT_X11_NO_MITSHM=1 -e LOCAL_USER_ID=$(id -u) -v /tmp/.X11-unix:/tmp/.X11-unix:rw ${DOCKER_IMAGE_NAME} terminator -x bash -c "/usr/local/bin/setup_dexterous_hand.sh && bash || bash"
         docker cp ${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/setup_dexterous_hand.sh ${DOCKER_CONTAINER_NAME}:/usr/local/bin/setup_dexterous_hand.sh
     fi
 fi
@@ -391,5 +391,4 @@ echo ""
 if [ ${START_CONTAINER} = true ]; then
     echo -e "${YELLOW}Please wait for docker container to start. This might take a while...${NC}"
     docker start ${DOCKER_CONTAINER_NAME}
-    docker attach ${DOCKER_CONTAINER_NAME}
 fi
