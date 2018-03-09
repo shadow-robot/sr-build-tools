@@ -6,7 +6,7 @@ echo "Installing Gedit"
 apt-get -y install gedit
 
 echo "Installing Multiplot"
-apt-get -y install ros-${ros-release-name}-rqt-multiplot
+apt-get -y install ros-${ros_release_name}-rqt-multiplot
 
 echo "Installing Multiplot Configs"
 cd /home/user/
