@@ -51,6 +51,10 @@ case $key in
     DESKTOP_SHORTCUT_NAME="$2"
     shift
     ;;
+    -o|--optoforce)
+    OPTOFORCE="$2"
+    shift
+    ;;
     *)
     # ignore unknown option
     ;;
@@ -84,6 +88,17 @@ then
     DESKTOP_SHORTCUT_NAME=Shadow_Hand_Launcher
 fi
 
+if [ -z "${OPTOFORCE}" ];
+then
+    OPTOFORCE=false
+fi
+
+if [ ${OPTOFORCE} = true ];
+then
+    OPTOFORCE_PATH="-v=/dev/optoforce:/dev/optoforce"
+else
+    OPTOFORCE_PATH=""
+fi
 
 echo "================================================================="
 echo "|                                                               |"
@@ -98,10 +113,11 @@ echo "  * -p or --password            Docker hub password"
 echo "  * -r or --reinstall           Flag to know if the docker container should be fully reinstalled (false by default)"
 echo "  * -n or --name                Name of the docker container"
 echo "  * -e or --ethercatinterface   Ethercat interface of the hand"
-echo "  * -g or --nvidiagraphics      Enable nvidia-docker"
+echo "  * -g or --nvidiagraphics      Enable nvidia-docker (default: false)"
 echo "  * -d or --desktopicon         Generates a desktop icon to launch the hand"
 echo "  * -b or --configbranch        Specify the branch for the specific hand (Only for dexterous hand)"
 echo "  * -sn or --shortcutname       Specify the name for the desktop icon (default: Shadow_Hand_Launcher)"
+echo "  * -o or --optoforce           Specify if optoforce sensors are going to be used (default: false)"
 echo ""
 echo "example hand E: ./launch.sh -i shadowrobot/dexterous-hand:kinetic -n hand_e_kinetic_real_hw -e enp0s25 -b shadowrobot_demo_hand -r true -g false"
 echo "example agile-grasper: ./launch.sh -i shadowrobot/agile-grasper:kinetic-release -n agile_grasper -e enp0s25 -r true -g false -u mydockerhublogin -p mysupersecretpassword"
@@ -230,7 +246,7 @@ function docker_login
 
 # If running for the first time create desktop shortcut
 APP_FOLDER=/home/$USER/.launcher_app
-BUILD_TOOLS_BRANCH=master
+BUILD_TOOLS_BRANCH=F_auto_close_anastasis
 if [ ${DESKTOP_ICON} = true ] ; then
     echo ""
     echo " -------------------------------"
@@ -321,9 +337,9 @@ if [ ${REINSTALL_DOCKER_CONTAINER} = false ] ; then
             fi
             echo "Creating the container"
             if [ ${HAND_H} = true ]; then
-                ${DOCKER} create -it --privileged --name ${DOCKER_CONTAINER_NAME} -e verbose=true -e interface=${ETHERCAT_INTERFACE} --network=host --pid=host -e DISPLAY -e QT_X11_NO_MITSHM=1 -e LOCAL_USER_ID=$(id -u) -v /tmp/.X11-unix:/tmp/.X11-unix:rw ${DOCKER_IMAGE_NAME} terminator -x bash -c "pkill -f \"^\"launcher_app_xterm && /usr/local/bin/setup.sh && bash || bash"
+                ${DOCKER} create -it --privileged --name ${DOCKER_CONTAINER_NAME} ${OPTOFORCE_PATH} -e verbose=true -e interface=${ETHERCAT_INTERFACE} --network=host --pid=host -e DISPLAY -e QT_X11_NO_MITSHM=1 -e LOCAL_USER_ID=$(id -u) -v /tmp/.X11-unix:/tmp/.X11-unix:rw ${DOCKER_IMAGE_NAME} terminator -x bash -c "pkill -f \"^\"launcher_app_xterm && /usr/local/bin/setup.sh && bash || bash"
             else
-                ${DOCKER} create -it --privileged --name ${DOCKER_CONTAINER_NAME} --network=host --pid=host -e DISPLAY -e QT_X11_NO_MITSHM=1 -e LOCAL_USER_ID=$(id -u) -v /tmp/.X11-unix:/tmp/.X11-unix:rw ${DOCKER_IMAGE_NAME} terminator -x bash -c "pkill -f \"^\"launcher_app_xterm && /usr/local/bin/setup_dexterous_hand.sh && bash || bash"
+                ${DOCKER} create -it --privileged --name ${DOCKER_CONTAINER_NAME} ${OPTOFORCE_PATH} --network=host --pid=host -e DISPLAY -e QT_X11_NO_MITSHM=1 -e LOCAL_USER_ID=$(id -u) -v /tmp/.X11-unix:/tmp/.X11-unix:rw ${DOCKER_IMAGE_NAME} terminator -x bash -c "pkill -f \"^\"launcher_app_xterm && /usr/local/bin/setup_dexterous_hand.sh && bash || bash"
                 docker cp ${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/setup_dexterous_hand.sh ${DOCKER_CONTAINER_NAME}:/usr/local/bin/setup_dexterous_hand.sh
             fi
         fi
@@ -350,9 +366,9 @@ else
 
     echo "Running the container"
     if [ ${HAND_H} = true ]; then
-        ${DOCKER} create -it --privileged --name ${DOCKER_CONTAINER_NAME} -e verbose=true -e interface=${ETHERCAT_INTERFACE} --network=host --pid=host -e DISPLAY -e QT_X11_NO_MITSHM=1 -e LOCAL_USER_ID=$(id -u) -v /tmp/.X11-unix:/tmp/.X11-unix:rw ${DOCKER_IMAGE_NAME} terminator -x bash -c "pkill -f \"^\"launcher_app_xterm && /usr/local/bin/setup.sh && bash || bash"
+        ${DOCKER} create -it --privileged --name ${DOCKER_CONTAINER_NAME} ${OPTOFORCE_PATH} -e verbose=true -e interface=${ETHERCAT_INTERFACE} --network=host --pid=host -e DISPLAY -e QT_X11_NO_MITSHM=1 -e LOCAL_USER_ID=$(id -u) -v /tmp/.X11-unix:/tmp/.X11-unix:rw ${DOCKER_IMAGE_NAME} terminator -x bash -c "pkill -f \"^\"launcher_app_xterm && /usr/local/bin/setup.sh && bash || bash"
     else
-        ${DOCKER} create -it --privileged --name ${DOCKER_CONTAINER_NAME} --network=host --pid=host -e DISPLAY -e QT_X11_NO_MITSHM=1 -e LOCAL_USER_ID=$(id -u) -v /tmp/.X11-unix:/tmp/.X11-unix:rw ${DOCKER_IMAGE_NAME} terminator -x bash -c "pkill -f \"^\"launcher_app_xterm && /usr/local/bin/setup_dexterous_hand.sh && bash || bash"
+        ${DOCKER} create -it --privileged --name ${DOCKER_CONTAINER_NAME} ${OPTOFORCE_PATH} --network=host --pid=host -e DISPLAY -e QT_X11_NO_MITSHM=1 -e LOCAL_USER_ID=$(id -u) -v /tmp/.X11-unix:/tmp/.X11-unix:rw ${DOCKER_IMAGE_NAME} terminator -x bash -c "pkill -f \"^\"launcher_app_xterm && /usr/local/bin/setup_dexterous_hand.sh && bash || bash"
         docker cp ${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/setup_dexterous_hand.sh ${DOCKER_CONTAINER_NAME}:/usr/local/bin/setup_dexterous_hand.sh
     fi
 fi
