@@ -246,7 +246,7 @@ function docker_login
 
 # If running for the first time create desktop shortcut
 APP_FOLDER=/home/$USER/.launcher_app
-BUILD_TOOLS_BRANCH=master
+BUILD_TOOLS_BRANCH=F_auto_close_anastasis
 if [ ${DESKTOP_ICON} = true ] ; then
     echo ""
     echo " -------------------------------"
