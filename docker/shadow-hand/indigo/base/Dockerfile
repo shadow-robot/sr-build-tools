@@ -14,8 +14,8 @@ RUN echo "Fixing file system" && \
     gosu $MY_USERNAME /tmp/oneliner -b "$toolset_branch" -w /home/user/projects/shadow_robot/base  && \
     \
     echo "Installing production tools" && \
-    url="https://raw.githubusercontent.com/shadow-robot/sr-build-tools/$(echo $toolset_branch | sed 's/#/%23/g')/bin/install-production-tools.sh" && \
-    curl -Ls $url | bash -s -- -v "$ros_release_name" -b "$toolset_branch"  && \
+    wget -O /tmp/production_tools https://raw.githubusercontent.com/shadow-robot/sr-build-tools/$(echo $toolset_branch | sed 's/#/%23/g')/bin/install-production-tools.sh && \
+    bash /tmp/production_tools -v "$ros_release_name" -b "$toolset_branch"  && \
     \
     echo "Removing cache" && \
     apt-get clean && \

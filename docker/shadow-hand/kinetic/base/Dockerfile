@@ -13,8 +13,8 @@ RUN echo "Running one-liner" && \
     gosu $MY_USERNAME /tmp/oneliner -w $PROJECTS_WS/base -r sr-build-tools -b $toolset_branch -i data/shadow_robot-kinetic.rosinstall -v "kinetic" -t mongodb,pyassimp && \
     \
     echo "Installing production tools" && \
-    url=https://raw.githubusercontent.com/shadow-robot/sr-build-tools/$(echo $toolset_branch | sed 's/#/%23/g')/bin/install-production-tools.sh && \
-    curl -Ls $url | bash -s -- -v "$ros_release_name" -b "$toolset_branch"  && \
+    wget -O /tmp/production_tools https://raw.githubusercontent.com/shadow-robot/sr-build-tools/$(echo $toolset_branch | sed 's/#/%23/g')/bin/install-production-tools.sh && \
+    bash /tmp/production_tools -v "$ros_release_name" -b "$toolset_branch"  && \
     \
     echo "Removing cache" && \
     apt-get clean && \
