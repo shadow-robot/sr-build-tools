@@ -12,3 +12,8 @@
 - name: Create easy access symlink
   file: src=/usr/share/code/code dest=/usr/bin/vscode state=link
   become: yes
+
+- name: Remove vscode list from sources
+  file:
+    state: absent
+    path: /etc/apt/source.list.d/vscode.list
