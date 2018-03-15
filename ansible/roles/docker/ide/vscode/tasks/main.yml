@@ -17,3 +17,4 @@
   file:
     state: absent
     path: /etc/apt/source.list.d/vscode.list
+  become: yes
