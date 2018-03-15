@@ -32,5 +32,5 @@ echo "Installing Multiplot"
 apt-get -y install ros-${VERSION}-rqt-multiplot
 
 echo "Installing Multiplot Configs"
-git clone https://github.com/shadow-robot/sr_multiplot_config.git --depth 1 /home/user/
+git clone https://github.com/shadow-robot/sr_multiplot_config.git --depth 1 /home/user/sr_multiplot_config
 chown -R $MY_USERNAME:$MY_USERNAME /home/user/sr_multiplot_config
