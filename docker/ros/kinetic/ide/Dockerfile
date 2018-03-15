@@ -11,7 +11,7 @@ MAINTAINER "Shadow Robot's Software Team <software@shadowrobot.com>"
 LABEL Description="This image is used to make ROS Kinetic based projects build faster using build tools" Vendor="Shadow Robot" Version="1.0"
 
 # TODO: Remove two lines from below it is for Debug purposes only !!!
-ENV toolset_branch="F#SRC-1411_hand_e_docker"	
+ENV toolset_branch="B_vscode_fix"
 ENV remote_shell_script="https://raw.githubusercontent.com/shadow-robot/sr-build-tools/$toolset_branch/bin/sr-run-ci-build.sh"	
 # Finish of DEBUG !!!
 
