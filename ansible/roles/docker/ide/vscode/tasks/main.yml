@@ -16,5 +16,5 @@
 - name: Remove vscode list from sources
   file:
     state: absent
-    path: /etc/apt/source.list.d/vscode.list
+    path: /etc/apt/sources.list.d/vscode.list
   become: yes
