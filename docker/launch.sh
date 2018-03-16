@@ -278,18 +278,9 @@ if [ ${DESKTOP_ICON} = true ] ; then
     echo "Downloading the script"
     curl "https://raw.githubusercontent.com/shadow-robot/sr-build-tools/${BUILD_TOOLS_BRANCH}/docker/launch.sh" >> ${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/launch.sh
     
-    echo "Checking if terminator installed"
-    if [ -x "$(command -v terminator)" ]; then
-        echo "terminator installed"
-    else
-        echo "No terminator. Installing..."
-        sudo apt update
-        sudo apt install -y terminator
-    fi
-    
     echo "Creating executable file"
     printf "#! /bin/bash
-    terminator -x bash -c \"cd ${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}; ./launch.sh -i ${DOCKER_IMAGE_NAME} -n ${DOCKER_CONTAINER_NAME} -e ${ETHERCAT_INTERFACE} -r false -d false -s true\"" > ${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/launcher_exec.sh
+    exec -a launcher_app_xterm xterm -e \"cd ${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}; ./launch.sh -i ${DOCKER_IMAGE_NAME} -n ${DOCKER_CONTAINER_NAME} -e ${ETHERCAT_INTERFACE} -r false -d false -s true\"" > ${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/launcher_exec.sh
 
     echo "Downloading icon"
     wget --no-check-certificate https://raw.githubusercontent.com/shadow-robot/sr-build-tools/${BUILD_TOOLS_BRANCH}/docker/${HAND_ICON} -O ${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/${HAND_ICON}
@@ -330,14 +321,15 @@ if [ ${REINSTALL_DOCKER_CONTAINER} = false ] ; then
             fi
             echo "Creating the container"
             if [ ${HAND_H} = true ]; then
-                ${DOCKER} create -it --privileged --name ${DOCKER_CONTAINER_NAME} -e verbose=true -e interface=${ETHERCAT_INTERFACE} --network=host -e DISPLAY -e QT_X11_NO_MITSHM=1 -e LOCAL_USER_ID=$(id -u) -v /tmp/.X11-unix:/tmp/.X11-unix:rw ${DOCKER_IMAGE_NAME} terminator -x bash -c "/usr/local/bin/setup.sh && bash || bash"
+                ${DOCKER} create -it --privileged --name ${DOCKER_CONTAINER_NAME} -e verbose=true -e interface=${ETHERCAT_INTERFACE} --network=host --pid=host -e DISPLAY -e QT_X11_NO_MITSHM=1 -e LOCAL_USER_ID=$(id -u) -v /tmp/.X11-unix:/tmp/.X11-unix:rw ${DOCKER_IMAGE_NAME} terminator -x bash -c "pkill -f \"^\"launcher_app_xterm && /usr/local/bin/setup.sh && bash || bash"
             else
-                ${DOCKER} create -it --privileged --name ${DOCKER_CONTAINER_NAME} --network=host -e DISPLAY -e QT_X11_NO_MITSHM=1 -e LOCAL_USER_ID=$(id -u) -v /tmp/.X11-unix:/tmp/.X11-unix:rw ${DOCKER_IMAGE_NAME} terminator -x bash -c "/usr/local/bin/setup_dexterous_hand.sh && bash || bash"
+                ${DOCKER} create -it --privileged --name ${DOCKER_CONTAINER_NAME} --network=host --pid=host -e DISPLAY -e QT_X11_NO_MITSHM=1 -e LOCAL_USER_ID=$(id -u) -v /tmp/.X11-unix:/tmp/.X11-unix:rw ${DOCKER_IMAGE_NAME} terminator -x bash -c "pkill -f \"^\"launcher_app_xterm && /usr/local/bin/setup_dexterous_hand.sh && bash || bash"
                 docker cp ${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/setup_dexterous_hand.sh ${DOCKER_CONTAINER_NAME}:/usr/local/bin/setup_dexterous_hand.sh
             fi
         fi
    else
-        echo -e "${RED}Container already running ${NC}"
+        echo -e "${RED}Container already running! This window will be closed shortly... ${NC}"
+        sleep 5
         exit 1
    fi
 else
@@ -358,9 +350,9 @@ else
 
     echo "Running the container"
     if [ ${HAND_H} = true ]; then
-        ${DOCKER} create -it --privileged --name ${DOCKER_CONTAINER_NAME} -e verbose=true -e interface=${ETHERCAT_INTERFACE} --network=host -e DISPLAY -e QT_X11_NO_MITSHM=1 -e LOCAL_USER_ID=$(id -u) -v /tmp/.X11-unix:/tmp/.X11-unix:rw ${DOCKER_IMAGE_NAME} terminator -x bash -c "/usr/local/bin/setup.sh && bash || bash"
+        ${DOCKER} create -it --privileged --name ${DOCKER_CONTAINER_NAME} -e verbose=true -e interface=${ETHERCAT_INTERFACE} --network=host --pid=host -e DISPLAY -e QT_X11_NO_MITSHM=1 -e LOCAL_USER_ID=$(id -u) -v /tmp/.X11-unix:/tmp/.X11-unix:rw ${DOCKER_IMAGE_NAME} terminator -x bash -c "pkill -f \"^\"launcher_app_xterm && /usr/local/bin/setup.sh && bash || bash"
     else
-        ${DOCKER} create -it --privileged --name ${DOCKER_CONTAINER_NAME} --network=host -e DISPLAY -e QT_X11_NO_MITSHM=1 -e LOCAL_USER_ID=$(id -u) -v /tmp/.X11-unix:/tmp/.X11-unix:rw ${DOCKER_IMAGE_NAME} terminator -x bash -c "/usr/local/bin/setup_dexterous_hand.sh && bash || bash"
+        ${DOCKER} create -it --privileged --name ${DOCKER_CONTAINER_NAME} --network=host --pid=host -e DISPLAY -e QT_X11_NO_MITSHM=1 -e LOCAL_USER_ID=$(id -u) -v /tmp/.X11-unix:/tmp/.X11-unix:rw ${DOCKER_IMAGE_NAME} terminator -x bash -c "pkill -f \"^\"launcher_app_xterm && /usr/local/bin/setup_dexterous_hand.sh && bash || bash"
         docker cp ${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/setup_dexterous_hand.sh ${DOCKER_CONTAINER_NAME}:/usr/local/bin/setup_dexterous_hand.sh
     fi
 fi
@@ -372,8 +364,7 @@ echo -e "${GREEN} ------------------------------------------------${NC}"
 echo ""
 
 if [ ${START_CONTAINER} = true ]; then
-    echo -e "${YELLOW}Please wait for docker container to start on a new terminal as this might take a while. ${NC}"
-    echo -e "${YELLOW}This terminal will be closing soon..."
-    docker start ${DOCKER_CONTAINER_NAME}
-    sleep 30
+    echo -e "${YELLOW}Please wait for docker container to start in a new terminal as this might take a while... ${NC}"
+    docker start ${DOCKER_CONTAINER_NAME} &> /dev/null
+    sleep infinity
 fi
