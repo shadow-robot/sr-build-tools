@@ -51,6 +51,10 @@ case $key in
     DESKTOP_SHORTCUT_NAME="$2"
     shift
     ;;
+    -o|--optoforce)
+    OPTOFORCE="$2"
+    shift
+    ;;
     *)
     # ignore unknown option
     ;;
@@ -84,6 +88,17 @@ then
     DESKTOP_SHORTCUT_NAME=Shadow_Hand_Launcher
 fi
 
+if [ -z "${OPTOFORCE}" ];
+then
+    OPTOFORCE=false
+fi
+
+if [ ${OPTOFORCE} = true ];
+then
+    OPTOFORCE_PATH="-v=/dev/optoforce:/dev/optoforce"
+else
+    OPTOFORCE_PATH=""
+fi
 
 echo "================================================================="
 echo "|                                                               |"
@@ -98,10 +113,11 @@ echo "  * -p or --password            Docker hub password"
 echo "  * -r or --reinstall           Flag to know if the docker container should be fully reinstalled (false by default)"
 echo "  * -n or --name                Name of the docker container"
 echo "  * -e or --ethercatinterface   Ethercat interface of the hand"
-echo "  * -g or --nvidiagraphics      Enable nvidia-docker"
+echo "  * -g or --nvidiagraphics      Enable nvidia-docker (default: false)"
 echo "  * -d or --desktopicon         Generates a desktop icon to launch the hand"
 echo "  * -b or --configbranch        Specify the branch for the specific hand (Only for dexterous hand)"
 echo "  * -sn or --shortcutname       Specify the name for the desktop icon (default: Shadow_Hand_Launcher)"
+echo "  * -o or --optoforce           Specify if optoforce sensors are going to be used (default: false)"
 echo ""
 echo "example hand E: ./launch.sh -i shadowrobot/dexterous-hand:kinetic -n hand_e_kinetic_real_hw -e enp0s25 -b shadowrobot_demo_hand -r true -g false"
 echo "example agile-grasper: ./launch.sh -i shadowrobot/agile-grasper:kinetic-release -n agile_grasper -e enp0s25 -r true -g false -u mydockerhublogin -p mysupersecretpassword"
@@ -228,8 +244,33 @@ function docker_login
     fi
 }
 
+function optoforce_setup
+{
+    cd ${APP_FOLDER}
+    if [ ! -d "optoforce" ]; then
+        echo ""
+        echo " ---------------------------"
+        echo " |   Seting up optoforce   |"
+        echo " ---------------------------"
+        echo ""
+
+        echo "Cloning optoforce package..."
+        git clone https://github.com/shadow-robot/optoforce.git
+    fi
+
+    if [ ! -f "/etc/udev/rules.d/optoforce.rules" ]; then
+        cd ${APP_FOLDER}/optoforce/optoforce
+        sed -i "s|/PATH/TO|${APP_FOLDER}|g" optoforce.rules
+        sudo cp optoforce.rules /etc/udev/rules.d/
+        cd ${APP_FOLDER}/optoforce/optoforce/src/optoforce
+        chmod +x get_serial.py
+        sudo udevadm control --reload-rules
+        sudo udevadm trigger
+    fi
+}
+
 # If running for the first time create desktop shortcut
-APP_FOLDER=/home/$USER/.launcher_app
+APP_FOLDER=/home/$USER/.shadow_launcher_app
 BUILD_TOOLS_BRANCH=master
 if [ ${DESKTOP_ICON} = true ] ; then
     echo ""
@@ -280,7 +321,7 @@ if [ ${DESKTOP_ICON} = true ] ; then
     
     echo "Creating executable file"
     printf "#! /bin/bash
-    exec -a launcher_app_xterm xterm -e \"cd ${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}; ./launch.sh -i ${DOCKER_IMAGE_NAME} -n ${DOCKER_CONTAINER_NAME} -e ${ETHERCAT_INTERFACE} -r false -d false -s true\"" > ${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/launcher_exec.sh
+    exec -a shadow_launcher_app_xterm xterm -e \"cd ${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}; ./launch.sh -i ${DOCKER_IMAGE_NAME} -n ${DOCKER_CONTAINER_NAME} -e ${ETHERCAT_INTERFACE} -r false -d false -s true\"" > ${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/shadow_launcher_exec.sh
 
     echo "Downloading icon"
     wget --no-check-certificate https://raw.githubusercontent.com/shadow-robot/sr-build-tools/${BUILD_TOOLS_BRANCH}/docker/${HAND_ICON} -O ${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/${HAND_ICON}
@@ -290,14 +331,14 @@ if [ ${DESKTOP_ICON} = true ] ; then
     Version=1.0
     Name=${DESKTOP_SHORTCUT_NAME}
     Comment=This is application launches the hand
-    Exec=/home/${USER}/.launcher_app/${DESKTOP_SHORTCUT_NAME}/launcher_exec.sh
-    Icon=/home/${USER}/.launcher_app/${DESKTOP_SHORTCUT_NAME}/${HAND_ICON}
+    Exec=/home/${USER}/.shadow_launcher_app/${DESKTOP_SHORTCUT_NAME}/shadow_launcher_exec.sh
+    Icon=/home/${USER}/.shadow_launcher_app/${DESKTOP_SHORTCUT_NAME}/${HAND_ICON}
     Terminal=false
     Type=Application
     Categories=Utility;Application;" > /home/$USER/Desktop/${DESKTOP_SHORTCUT_NAME}.desktop
 
     echo "Allowing files to be executable"
-    chmod +x ${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/launcher_exec.sh
+    chmod +x ${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/shadow_launcher_exec.sh
     chmod +x ${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/launch.sh
     chmod +x /home/$USER/Desktop/${DESKTOP_SHORTCUT_NAME}.desktop
 fi
@@ -319,11 +360,16 @@ if [ ${REINSTALL_DOCKER_CONTAINER} = false ] ; then
                     DOCKER_IMAGE_NAME="${DOCKER_IMAGE_NAME}-nvidia"
                 fi
             fi
+
+            if [ ${OPTOFORCE} = true ]; then
+                optoforce_setup
+            fi
+
             echo "Creating the container"
             if [ ${HAND_H} = true ]; then
-                ${DOCKER} create -it --privileged --name ${DOCKER_CONTAINER_NAME} -e verbose=true -e interface=${ETHERCAT_INTERFACE} --network=host --pid=host -e DISPLAY -e QT_X11_NO_MITSHM=1 -e LOCAL_USER_ID=$(id -u) -v /tmp/.X11-unix:/tmp/.X11-unix:rw ${DOCKER_IMAGE_NAME} terminator -x bash -c "pkill -f \"^\"launcher_app_xterm && /usr/local/bin/setup.sh && bash || bash"
+                ${DOCKER} create -it --privileged --name ${DOCKER_CONTAINER_NAME} ${OPTOFORCE_PATH} -e verbose=true -e interface=${ETHERCAT_INTERFACE} --network=host --pid=host -e DISPLAY -e QT_X11_NO_MITSHM=1 -e LOCAL_USER_ID=$(id -u) -v /tmp/.X11-unix:/tmp/.X11-unix:rw ${DOCKER_IMAGE_NAME} terminator -x bash -c "pkill -f \"^\"shadow_launcher_app_xterm && /usr/local/bin/setup.sh && bash || bash"
             else
-                ${DOCKER} create -it --privileged --name ${DOCKER_CONTAINER_NAME} --network=host --pid=host -e DISPLAY -e QT_X11_NO_MITSHM=1 -e LOCAL_USER_ID=$(id -u) -v /tmp/.X11-unix:/tmp/.X11-unix:rw ${DOCKER_IMAGE_NAME} terminator -x bash -c "pkill -f \"^\"launcher_app_xterm && /usr/local/bin/setup_dexterous_hand.sh && bash || bash"
+                ${DOCKER} create -it --privileged --name ${DOCKER_CONTAINER_NAME} ${OPTOFORCE_PATH} --network=host --pid=host -e DISPLAY -e QT_X11_NO_MITSHM=1 -e LOCAL_USER_ID=$(id -u) -v /tmp/.X11-unix:/tmp/.X11-unix:rw ${DOCKER_IMAGE_NAME} terminator -x bash -c "pkill -f \"^\"shadow_launcher_app_xterm && /usr/local/bin/setup_dexterous_hand.sh && bash || bash"
                 docker cp ${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/setup_dexterous_hand.sh ${DOCKER_CONTAINER_NAME}:/usr/local/bin/setup_dexterous_hand.sh
             fi
         fi
@@ -348,11 +394,19 @@ else
         DOCKER_IMAGE_NAME="${DOCKER_IMAGE_NAME}-nvidia"
     fi
 
-    echo "Running the container"
+    if [ ${OPTOFORCE} = true ]; then
+        if [ -d "${APP_FOLDER}/optoforce" ]; then
+            rm -rf ${APP_FOLDER}/optoforce
+            sudo rm /etc/udev/rules.d/optoforce.rules
+        fi
+        optoforce_setup
+    fi
+
+    echo "Creating the container"
     if [ ${HAND_H} = true ]; then
-        ${DOCKER} create -it --privileged --name ${DOCKER_CONTAINER_NAME} -e verbose=true -e interface=${ETHERCAT_INTERFACE} --network=host --pid=host -e DISPLAY -e QT_X11_NO_MITSHM=1 -e LOCAL_USER_ID=$(id -u) -v /tmp/.X11-unix:/tmp/.X11-unix:rw ${DOCKER_IMAGE_NAME} terminator -x bash -c "pkill -f \"^\"launcher_app_xterm && /usr/local/bin/setup.sh && bash || bash"
+        ${DOCKER} create -it --privileged --name ${DOCKER_CONTAINER_NAME} ${OPTOFORCE_PATH} -e verbose=true -e interface=${ETHERCAT_INTERFACE} --network=host --pid=host -e DISPLAY -e QT_X11_NO_MITSHM=1 -e LOCAL_USER_ID=$(id -u) -v /tmp/.X11-unix:/tmp/.X11-unix:rw ${DOCKER_IMAGE_NAME} terminator -x bash -c "pkill -f \"^\"shadow_launcher_app_xterm && /usr/local/bin/setup.sh && bash || bash"
     else
-        ${DOCKER} create -it --privileged --name ${DOCKER_CONTAINER_NAME} --network=host --pid=host -e DISPLAY -e QT_X11_NO_MITSHM=1 -e LOCAL_USER_ID=$(id -u) -v /tmp/.X11-unix:/tmp/.X11-unix:rw ${DOCKER_IMAGE_NAME} terminator -x bash -c "pkill -f \"^\"launcher_app_xterm && /usr/local/bin/setup_dexterous_hand.sh && bash || bash"
+        ${DOCKER} create -it --privileged --name ${DOCKER_CONTAINER_NAME} ${OPTOFORCE_PATH} --network=host --pid=host -e DISPLAY -e QT_X11_NO_MITSHM=1 -e LOCAL_USER_ID=$(id -u) -v /tmp/.X11-unix:/tmp/.X11-unix:rw ${DOCKER_IMAGE_NAME} terminator -x bash -c "pkill -f \"^\"shadow_launcher_app_xterm && /usr/local/bin/setup_dexterous_hand.sh && bash || bash"
         docker cp ${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/setup_dexterous_hand.sh ${DOCKER_CONTAINER_NAME}:/usr/local/bin/setup_dexterous_hand.sh
     fi
 fi
