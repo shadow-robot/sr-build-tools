@@ -395,6 +395,10 @@ else
     fi
 
     if [ ${OPTOFORCE} = true ]; then
+        if [ -d "${APP_FOLDER}/optoforce" ]; then
+            rm -rf ${APP_FOLDER}/optoforce
+            sudo rm /etc/udev/rules.d/optoforce.rules
+        fi
         optoforce_setup
     fi
 
