@@ -261,7 +261,7 @@ function optoforce_setup
     if [ ! -f "/etc/udev/rules.d/optoforce.rules" ]; then
         cd ${APP_FOLDER}/optoforce/optoforce
         sed -i "s|/PATH/TO|${APP_FOLDER}|g" optoforce.rules
-        cp optoforce.rules /etc/udev/rules.d/
+        sudo cp optoforce.rules /etc/udev/rules.d/
         cd ${APP_FOLDER}/optoforce/optoforce/src/optoforce
         chmod +x get_serial.py
         sudo udevadm control --reload-rules
