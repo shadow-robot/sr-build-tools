@@ -244,6 +244,31 @@ function docker_login
     fi
 }
 
+function optoforce_setup
+{
+    cd ${APP_FOLDER}
+    if [ ! -d "optoforce" ]; then
+        echo ""
+        echo " ---------------------------"
+        echo " |   Seting up optoforce   |"
+        echo " ---------------------------"
+        echo ""
+
+        echo "Cloning optoforce package..."
+        git clone https://github.com/shadow-robot/optoforce.git
+    fi
+
+    if [ ! -f "/etc/udev/rules.d/optoforce.rules" ]; then
+        cd ${APP_FOLDER}/optoforce/optoforce
+        sed -i "s|/PATH/TO|${APP_FOLDER}|g" optoforce.rules
+        cp optoforce.rules /etc/udev/rules.d/
+        cd ${APP_FOLDER}/optoforce/optoforce/src/optoforce
+        chmod +x get_serial.py
+        sudo udevadm control --reload-rules
+        sudo udevadm trigger
+    fi
+}
+
 # If running for the first time create desktop shortcut
 APP_FOLDER=/home/$USER/.shadow_launcher_app
 BUILD_TOOLS_BRANCH=F_auto_close_anastasis
@@ -296,7 +321,7 @@ if [ ${DESKTOP_ICON} = true ] ; then
     
     echo "Creating executable file"
     printf "#! /bin/bash
-    exec -a shadow_launcher_app_xterm xterm -e \"cd ${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}; ./launch.sh -i ${DOCKER_IMAGE_NAME} -n ${DOCKER_CONTAINER_NAME} -e ${ETHERCAT_INTERFACE} -r false -d false -s true\"" > ${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/launcher_exec.sh
+    exec -a shadow_launcher_app_xterm xterm -e \"cd ${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}; ./launch.sh -i ${DOCKER_IMAGE_NAME} -n ${DOCKER_CONTAINER_NAME} -e ${ETHERCAT_INTERFACE} -r false -d false -s true\"" > ${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/shadow_launcher_exec.sh
 
     echo "Downloading icon"
     wget --no-check-certificate https://raw.githubusercontent.com/shadow-robot/sr-build-tools/${BUILD_TOOLS_BRANCH}/docker/${HAND_ICON} -O ${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/${HAND_ICON}
@@ -306,14 +331,14 @@ if [ ${DESKTOP_ICON} = true ] ; then
     Version=1.0
     Name=${DESKTOP_SHORTCUT_NAME}
     Comment=This is application launches the hand
-    Exec=/home/${USER}/.shadow_launcher_app/${DESKTOP_SHORTCUT_NAME}/launcher_exec.sh
+    Exec=/home/${USER}/.shadow_launcher_app/${DESKTOP_SHORTCUT_NAME}/shadow_launcher_exec.sh
     Icon=/home/${USER}/.shadow_launcher_app/${DESKTOP_SHORTCUT_NAME}/${HAND_ICON}
     Terminal=false
     Type=Application
     Categories=Utility;Application;" > /home/$USER/Desktop/${DESKTOP_SHORTCUT_NAME}.desktop
 
     echo "Allowing files to be executable"
-    chmod +x ${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/launcher_exec.sh
+    chmod +x ${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/shadow_launcher_exec.sh
     chmod +x ${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/launch.sh
     chmod +x /home/$USER/Desktop/${DESKTOP_SHORTCUT_NAME}.desktop
 fi
@@ -335,6 +360,11 @@ if [ ${REINSTALL_DOCKER_CONTAINER} = false ] ; then
                     DOCKER_IMAGE_NAME="${DOCKER_IMAGE_NAME}-nvidia"
                 fi
             fi
+
+            if [ ${OPTOFORCE} = true ]; then
+                optoforce_setup
+            fi
+
             echo "Creating the container"
             if [ ${HAND_H} = true ]; then
                 ${DOCKER} create -it --privileged --name ${DOCKER_CONTAINER_NAME} ${OPTOFORCE_PATH} -e verbose=true -e interface=${ETHERCAT_INTERFACE} --network=host --pid=host -e DISPLAY -e QT_X11_NO_MITSHM=1 -e LOCAL_USER_ID=$(id -u) -v /tmp/.X11-unix:/tmp/.X11-unix:rw ${DOCKER_IMAGE_NAME} terminator -x bash -c "pkill -f \"^\"shadow_launcher_app_xterm && /usr/local/bin/setup.sh && bash || bash"
@@ -364,7 +394,11 @@ else
         DOCKER_IMAGE_NAME="${DOCKER_IMAGE_NAME}-nvidia"
     fi
 
-    echo "Running the container"
+    if [ ${OPTOFORCE} = true ]; then
+        optoforce_setup
+    fi
+
+    echo "Creating the container"
     if [ ${HAND_H} = true ]; then
         ${DOCKER} create -it --privileged --name ${DOCKER_CONTAINER_NAME} ${OPTOFORCE_PATH} -e verbose=true -e interface=${ETHERCAT_INTERFACE} --network=host --pid=host -e DISPLAY -e QT_X11_NO_MITSHM=1 -e LOCAL_USER_ID=$(id -u) -v /tmp/.X11-unix:/tmp/.X11-unix:rw ${DOCKER_IMAGE_NAME} terminator -x bash -c "pkill -f \"^\"shadow_launcher_app_xterm && /usr/local/bin/setup.sh && bash || bash"
     else
