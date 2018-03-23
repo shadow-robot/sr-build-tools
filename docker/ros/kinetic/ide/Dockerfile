@@ -15,7 +15,7 @@ RUN set -x && \
     echo "Running one-liner" && \
     wget -O /tmp/oneliner "$( echo "$remote_shell_script" | sed 's/#/%23/g' )" && \
     chmod 755 /tmp/oneliner && \
-    gosu $MY_USERNAME /tmp/oneliner "$toolset_branch" $server_type 'setup_docker_pycharm,setup_docker_qtcreator' && \
+    gosu $MY_USERNAME /tmp/oneliner "$toolset_branch" $server_type 'setup_docker_ide' && \
 
     apt-get install -y emacs && \
     apt-get install -y gnome-icon-theme && \

@@ -48,10 +48,11 @@ RUN set -x && \
     echo "Setting default terminator config" && \
     mkdir -p /home/$MY_USERNAME/.config/terminator/ && \
     mv /tmp/terminator_config /home/$MY_USERNAME/.config/terminator/config && \
+    chown -R $MY_USERNAME:$MY_USERNAME /home/$MY_USERNAME/.config &&\
 
     echo "Removing cache" && \
     apt-get clean && \
-    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /home/$MY_USERNAME/.ansible /home/$MY_USERNAME/.gitconfig
+    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /home/$MY_USERNAME/.ansible /home/$MY_USERNAME/.gitconfig /home/$MY_USERNAME/.cache
 
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
 

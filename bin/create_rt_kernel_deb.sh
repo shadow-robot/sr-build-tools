@@ -1,6 +1,6 @@
 #!/bin/bash
 
-KERNEL_VERSION="4.1.10"
+KERNEL_VERSION="4.4.73"
 
 # https://www.debian.org/releases/stable/i386/ch08s06.html.en
 sudo apt-get install kernel-package fakeroot
