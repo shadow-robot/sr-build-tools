@@ -55,6 +55,10 @@ case $key in
     OPTOFORCE="$2"
     shift
     ;;
+    -l|--launchhand)
+    LAUNCH_HAND="$2"
+    shift
+    ;;
     *)
     # ignore unknown option
     ;;
@@ -93,6 +97,11 @@ then
     OPTOFORCE=false
 fi
 
+if [ -z "${LAUNCH_HAND}" ];
+then
+    LAUNCH_HAND=true
+fi
+
 if [ ${OPTOFORCE} = true ];
 then
     OPTOFORCE_PATH="-v=/dev/optoforce:/dev/optoforce"
@@ -118,6 +127,7 @@ echo "  * -d or --desktopicon         Generates a desktop icon to launch the han
 echo "  * -b or --configbranch        Specify the branch for the specific hand (Only for dexterous hand)"
 echo "  * -sn or --shortcutname       Specify the name for the desktop icon (default: Shadow_Hand_Launcher)"
 echo "  * -o or --optoforce           Specify if optoforce sensors are going to be used (default: false)"
+echo "  * -l or --launchhand          Specify if hand driver should start when double clicking desktop icon (default: true)"
 echo ""
 echo "example hand E: ./launch.sh -i shadowrobot/dexterous-hand:kinetic -n hand_e_kinetic_real_hw -e enp0s25 -b shadowrobot_demo_hand -r true -g false"
 echo "example agile-grasper: ./launch.sh -i shadowrobot/agile-grasper:kinetic-release -n agile_grasper -e enp0s25 -r true -g false -u mydockerhublogin -p mysupersecretpassword"
@@ -173,6 +183,13 @@ echo " |   Checking docker installation  |"
 echo " -----------------------------------"
 echo ""
 
+if [ -x "$(command -v curl)" ]; then
+    echo "curl installed"
+else
+    sudo apt-get update
+    sudo apt-get install  -y curl
+fi
+
 if [ -x "$(command -v docker)" ]; then
     echo "Docker installed"
 else
@@ -183,7 +200,6 @@ else
         sudo apt-get install  -y \
         apt-transport-https \
         ca-certificates \
-        curl \
         software-properties-common
         curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
         sudo add-apt-repository \
@@ -251,7 +267,7 @@ function optoforce_setup
     if [ ! -d "optoforce" ]; then
         echo ""
         echo " ---------------------------"
-        echo " |   Seting up optoforce   |"
+        echo " |   Setting up optoforce   |"
         echo " ---------------------------"
         echo ""
 
@@ -308,10 +324,22 @@ if [ ${DESKTOP_ICON} = true ] ; then
             # Changing ethernet interface
             sed -i 's|eth_port\" value=.*|eth_port\" value=\"${ETHERCAT_INTERFACE}\" />|' \$(rospack find sr_ethercat_hand_config)/launch/sr_rhand.launch
 
-            roslaunch sr_ethercat_hand_config sr_rhand.launch
             " > ${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/setup_dexterous_hand.sh
+
+            if [ ${LAUNCH_HAND} = true ]; then
+                printf "roslaunch sr_ethercat_hand_config sr_rhand.launch" >> ${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/setup_dexterous_hand.sh
+            fi
             chmod +x ${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/setup_dexterous_hand.sh
         fi
+    else
+        # If LAUNCH_HAND = true for agile grasper, it uses the default script
+        if [ ${LAUNCH_HAND} = false ]; then
+            printf "#! /bin/bash
+            source /home/user/projects/shadow_robot/base/devel/setup.bash
+            sed -i 's|ethercat_port: .*|ethercat_port: ${ETHERCAT_INTERFACE}|' \$(rospack find fh_config)/hardware/hand_H_hardware.yaml
+            " > ${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/setup_agile_grasper.sh
+        fi
+        chmod +x ${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/setup_agile_grasper.sh
     fi
 
     if [ -e ${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/launch.sh ]; then
@@ -368,7 +396,12 @@ if [ ${REINSTALL_DOCKER_CONTAINER} = false ] ; then
 
             echo "Creating the container"
             if [ ${HAND_H} = true ]; then
-                ${DOCKER} create -it --privileged --name ${DOCKER_CONTAINER_NAME} ${OPTOFORCE_PATH} -e verbose=true -e interface=${ETHERCAT_INTERFACE} --network=host --pid=host -e DISPLAY -e QT_X11_NO_MITSHM=1 -e LOCAL_USER_ID=$(id -u) -v /tmp/.X11-unix:/tmp/.X11-unix:rw ${DOCKER_IMAGE_NAME} terminator -x bash -c "pkill -f \"^\"shadow_launcher_app_xterm && /usr/local/bin/setup.sh && bash || bash"
+                if [ ${LAUNCH_HAND} = false ]; then
+                    ${DOCKER} create -it --privileged --name ${DOCKER_CONTAINER_NAME} ${OPTOFORCE_PATH} -e verbose=true -e interface=${ETHERCAT_INTERFACE} --network=host --pid=host -e DISPLAY -e QT_X11_NO_MITSHM=1 -e LOCAL_USER_ID=$(id -u) -v /tmp/.X11-unix:/tmp/.X11-unix:rw ${DOCKER_IMAGE_NAME} terminator -x bash -c "pkill -f \"^\"shadow_launcher_app_xterm && /usr/local/bin/setup_agile_grasper.sh && bash || bash"
+                    docker cp ${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/setup_agile_grasper.sh ${DOCKER_CONTAINER_NAME}:/usr/local/bin/setup_agile_grasper.sh
+                else
+                    ${DOCKER} create -it --privileged --name ${DOCKER_CONTAINER_NAME} ${OPTOFORCE_PATH} -e verbose=true -e interface=${ETHERCAT_INTERFACE} --network=host --pid=host -e DISPLAY -e QT_X11_NO_MITSHM=1 -e LOCAL_USER_ID=$(id -u) -v /tmp/.X11-unix:/tmp/.X11-unix:rw ${DOCKER_IMAGE_NAME} terminator -x bash -c "pkill -f \"^\"shadow_launcher_app_xterm && /usr/local/bin/setup.sh && bash || bash"
+                fi
             else
                 ${DOCKER} create -it --privileged --name ${DOCKER_CONTAINER_NAME} ${OPTOFORCE_PATH} --network=host --pid=host -e DISPLAY -e QT_X11_NO_MITSHM=1 -e LOCAL_USER_ID=$(id -u) -v /tmp/.X11-unix:/tmp/.X11-unix:rw ${DOCKER_IMAGE_NAME} terminator -x bash -c "pkill -f \"^\"shadow_launcher_app_xterm && /usr/local/bin/setup_dexterous_hand.sh && bash || bash"
                 docker cp ${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/setup_dexterous_hand.sh ${DOCKER_CONTAINER_NAME}:/usr/local/bin/setup_dexterous_hand.sh
@@ -405,7 +438,12 @@ else
 
     echo "Creating the container"
     if [ ${HAND_H} = true ]; then
-        ${DOCKER} create -it --privileged --name ${DOCKER_CONTAINER_NAME} ${OPTOFORCE_PATH} -e verbose=true -e interface=${ETHERCAT_INTERFACE} --network=host --pid=host -e DISPLAY -e QT_X11_NO_MITSHM=1 -e LOCAL_USER_ID=$(id -u) -v /tmp/.X11-unix:/tmp/.X11-unix:rw ${DOCKER_IMAGE_NAME} terminator -x bash -c "pkill -f \"^\"shadow_launcher_app_xterm && /usr/local/bin/setup.sh && bash || bash"
+        if [ ${LAUNCH_HAND} = false ]; then
+            ${DOCKER} create -it --privileged --name ${DOCKER_CONTAINER_NAME} ${OPTOFORCE_PATH} -e verbose=true -e interface=${ETHERCAT_INTERFACE} --network=host --pid=host -e DISPLAY -e QT_X11_NO_MITSHM=1 -e LOCAL_USER_ID=$(id -u) -v /tmp/.X11-unix:/tmp/.X11-unix:rw ${DOCKER_IMAGE_NAME} terminator -x bash -c "pkill -f \"^\"shadow_launcher_app_xterm && /usr/local/bin/setup_agile_grasper.sh && bash || bash"
+            docker cp ${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/setup_agile_grasper.sh ${DOCKER_CONTAINER_NAME}:/usr/local/bin/setup_agile_grasper.sh
+        else
+            ${DOCKER} create -it --privileged --name ${DOCKER_CONTAINER_NAME} ${OPTOFORCE_PATH} -e verbose=true -e interface=${ETHERCAT_INTERFACE} --network=host --pid=host -e DISPLAY -e QT_X11_NO_MITSHM=1 -e LOCAL_USER_ID=$(id -u) -v /tmp/.X11-unix:/tmp/.X11-unix:rw ${DOCKER_IMAGE_NAME} terminator -x bash -c "pkill -f \"^\"shadow_launcher_app_xterm && /usr/local/bin/setup.sh && bash || bash"
+        fi
     else
         ${DOCKER} create -it --privileged --name ${DOCKER_CONTAINER_NAME} ${OPTOFORCE_PATH} --network=host --pid=host -e DISPLAY -e QT_X11_NO_MITSHM=1 -e LOCAL_USER_ID=$(id -u) -v /tmp/.X11-unix:/tmp/.X11-unix:rw ${DOCKER_IMAGE_NAME} terminator -x bash -c "pkill -f \"^\"shadow_launcher_app_xterm && /usr/local/bin/setup_dexterous_hand.sh && bash || bash"
         docker cp ${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/setup_dexterous_hand.sh ${DOCKER_CONTAINER_NAME}:/usr/local/bin/setup_dexterous_hand.sh
