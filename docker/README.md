@@ -125,6 +125,7 @@ Posible options for the oneliner are:
 * -b or --configbranch      Specify the branch for the specific hand (Only for dexterous hand)
 * -sn or --shortcutname     Specify the name for the desktop icon (default: Shadow_Hand_Launcher)
 * -o or --optoforce           Specify if optoforce sensors are going to be used (default: false)
+* -l or --launchhand          Specify if hand driver should start when double clicking desktop icon (default: true)
 
 To begin with, the one-liner checks the installation status of docker. If docker is not installed then a new clean installation is performed. If the required image is private, 
 then a valid Docker Hub account with pull credentials from Shadow Robot's Docker Hub is required. Then, the specified docker image is pulled and a docker 
@@ -134,6 +135,11 @@ the hand.
 Usage example hand E:
 ```
 bash <(curl -Ls http://bit.do/launch-sh) -i shadowrobot/dexterous-hand:kinetic -n hand_e_kinetic_real_hw -e enp0s25 -b shadowrobot_demo_hand -r true -g false
+```
+
+Usage example hand E for production:
+```
+bash <(curl -Ls http://bit.do/launch-sh) -i shadowrobot/dexterous-hand:kinetic -n hand_e_kinetic_real_hw -e enp0s25 -b shadowrobot_demo_hand -r true -g false -l false
 ```
 
 Usage example agile-grasper:
