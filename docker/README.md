@@ -175,11 +175,16 @@ The *shadowrobot/agile-grasper* images contain the Hand H software. Hand H is on
 ### Naming your image: ```-n``` and ```-sn```
 
 ### Setting port and config branch: ```-e``` and ```-b```
-### Ethernet port
+#### Ethernet port
 To select the correct ethernet port when starting a docker, use the one-liner option  ```-e ETH_PORT``` where *ETH_PORT* is the name of the port to which the robot is connected. If you don't know which port to use, typing ```sudo eepromtool``` in any running docker will give you the name of any port with Shadow hardware connected:
 ![Eepromtool](readme_images/eepromtool.png)
 
 In this case, ```enp3s0``` is the correct port.
+#### Config branch
+For Hand E, the correct config branch for the hand being tested must be specified when the Docker is first started. To do this, use ```-b CONFIG_BRANCH```. For instance to use the Demo hand, you would start the docker with ```-b demohand_E_v1```.
 
-### Starting The drive
-rf
+Hand H dockers do not need a specific config branch.
+
+### Starting the driver ```-l```
+
+When starting a new Docker, by default it's configured to run the driver automatically on startup. This is fine if you have simple tests to run or are configuring a customer machine for delivery. However, for other tasks, it can be very useful to just get a ```terminator`` on startup, from where you can start the driver/other programs (e.g. calibration/test etc.) Adding ```-l false``` to the oneliner command will do this.
