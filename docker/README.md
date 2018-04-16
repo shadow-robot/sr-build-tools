@@ -146,3 +146,37 @@ Usage example agile-grasper:
 ```
 bash <(curl -Ls http://bit.do/launch-sh) -i shadowrobot/agile-grasper:kinetic-release -n agile_grasper_kinetic_real_hw -e enp0s25 -r true -g false
 ```
+
+# Using Docker for Production
+
+The process for using Docker to enable production tasks ....
+
+## Starting a new container
+
+It's important to make sure that you're always working with the latest version of which ever software you're using. To ensure this, for each new task or hand, you should start a new container, using the ```-r true``` flag to pull the ensure the container will be running the latest version. This container should be used until the task is complete. Unused/abandoned containers will eat up disk space quickly, so make sure to clean up when you're done.
+
+### Setting port and config branch (```-e``` and '```-b```)
+
+### Starting The driver
+
+### Which image should I use? (```-i```)
+
+As shown [above](# Images) there are many different Docker images available for different tasks. In general, there are only a few that will be relevant for production use. The image that will be used is set using the ``` -i ``` flag when running the oneliner, as explained in the [previous section] (# One-liner).
+
+#### Hand E
+
+The *shadowrobot/dexterous-hand* images contain the Hand E software. Unless there is a specific reason to use something else, the correct images to use are simply:
+* *shadowrobot/dexterous-hand:indigo*
+* *shadowrobot/dexterous-hand:kinetic*
+
+#### Hand H/Agile Grasper
+
+The *shadowrobot/agile-grasper* images contain the Hand H software. Hand H is only supported on ```kinetic```. In general, the correct image to use is the latest release version:
+* *shadowrobot/agile-grasper:kinetic-release*
+
+##### -u -p
+
+### Naming your image (```-n``` and ```-sn```)
+
+### Starting The driver
+Other options
