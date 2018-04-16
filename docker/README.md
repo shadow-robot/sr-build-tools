@@ -172,7 +172,16 @@ The *shadowrobot/agile-grasper* images contain the Hand H software. Hand H is on
 
 ##### Docker Hub user credentials: ```-u``` and ```-p```
 
+The Hand H software and Docker Images are private. This means that you'll need to provide the one-liner with credentials for Docker Hub to allow the correct access. If you need credentials/have difficulty connecting, contact [mailto:software@shadowrobot.com]
+
+```oneliner```
+
 ### Naming your image: ```-n``` and ```-sn```
+
+The name that you give your container should be descriptive of the task for which you wish to it. This will make it easier to keep your containers organised and also to select the correct one if you have multiple on a machine. The container name, specified by the ```-n``` flag should be unique, as **it will be overwritten if you run the one-liner with the same value again**.
+
+The ```-sn``` flag gives the name of the desktop link that will be created for starting the driver. Keeping the container name and shortcut name the same will reduce the chance of confusion.
+
 
 ### Setting port and config branch: ```-e``` and ```-b```
 #### Ethernet port
@@ -187,4 +196,4 @@ Hand H dockers do not need a specific config branch.
 
 ### Starting the driver ```-l```
 
-When starting a new Docker, by default it's configured to run the driver automatically on startup. This is fine if you have simple tests to run or are configuring a customer machine for delivery. However, for other tasks, it can be very useful to just get a ```terminator`` on startup, from where you can start the driver/other programs (e.g. calibration/test etc.) Adding ```-l false``` to the oneliner command will do this.
+When starting a new Docker, by default it's configured to run the driver automatically on startup. This is fine if you have simple tests to run or are configuring a customer machine for delivery. However, for other tasks, it can be very useful to just get a ```terminator``` on startup, from where you can start the driver/other programs (e.g. calibration/test etc.) by hand.  Adding ```-l false``` to the oneliner command will do this.
