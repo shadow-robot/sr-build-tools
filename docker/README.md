@@ -155,11 +155,7 @@ The process for using Docker to enable production tasks ....
 
 It's important to make sure that you're always working with the latest version of which ever software you're using. To ensure this, for each new task or hand, you should start a new container, using the ```-r true``` flag ensures that the container will be running the latest version. This container should be used until the task is complete. Unused/abandoned containers will eat up disk space quickly, so make sure to clean up when you're done.
 
-### Setting port and config branch - ```-e``` and ```-b``` 
-
-### Starting The driver
-
-### Which image should I use? ```-i```
+### Which image should I use: ```-i```
 
 As shown [above](#images) there are many different Docker images available for different tasks. In general, there are only a few that will be relevant for production use. The image that will be used is set using the ``` -i ``` flag when running the oneliner, as explained in the [previous section](#one-liner).
 
@@ -174,9 +170,16 @@ The *shadowrobot/dexterous-hand* images contain the Hand E software. Unless ther
 The *shadowrobot/agile-grasper* images contain the Hand H software. Hand H is only supported on ```kinetic```. In general, the correct image to use is the latest release version:
 * *shadowrobot/agile-grasper:kinetic-release*
 
-##### -u -p
+##### Docker Hub user credentials: ```-u``` and ```-p```
 
-### Naming your image ```-n``` and ```-sn```
+### Naming your image: ```-n``` and ```-sn```
 
-### Starting The driver
-Other options
+### Setting port and config branch: ```-e``` and ```-b```
+### Ethernet port
+To select the correct ethernet port when starting a docker, use the one-liner option  ```-e ETH_PORT``` where *ETH_PORT* is the name of the port to which the robot is connected. If you don't know which port to use, typing ```sudo eepromtool``` in any running docker will give you the name of any port with Shadow hardware connected:
+![Eepromtool](readme_images/eepromtool.png)
+
+In this case, ```enp3s0``` is the correct port.
+
+### Starting The drive
+rf
