@@ -134,12 +134,12 @@ the hand.
 
 Usage example hand E:
 ```
-bash <(curl -Ls http://bit.do/launch-sh) -i shadowrobot/dexterous-hand:kinetic -n hand_e_kinetic_real_hw -e enp0s25 -b shadowrobot_demo_hand -r true -g false
+bash <(curl -Ls http://bit.do/launch-sh) -i shadowrobot/dexterous-hand:kinetic-release -n hand_e_kinetic_real_hw -e enp0s25 -b shadowrobot_demo_hand -r true -g false
 ```
 
 Usage example hand E for production:
 ```
-bash <(curl -Ls http://bit.do/launch-sh) -i shadowrobot/dexterous-hand:kinetic -n hand_e_kinetic_real_hw -e enp0s25 -b shadowrobot_demo_hand -r true -g false -l false
+bash <(curl -Ls http://bit.do/launch-sh) -i shadowrobot/dexterous-hand:kinetic-release -n hand_e_kinetic_real_hw -e enp0s25 -b shadowrobot_demo_hand -r true -g false -l false
 ```
 
 Usage example agile-grasper:
@@ -180,7 +180,7 @@ For this example, we'll start a *dexterous-hand:kinetic-release* docker:
 
 ##### Docker Hub user credentials: ```-u``` and ```-p```
 
-The Hand H software and Docker Images are private. This means that you'll need to provide the one-liner with credentials for Docker Hub to allow the correct access. If you need credentials/have difficulty connecting, contact the [Shadow Software Team](mailto:software@shadowrobot.co)m
+The Hand H software and Docker Images are private. This means that you'll need to provide the one-liner with credentials for Docker Hub to allow the correct access. If you need credentials/have difficulty connecting, contact the [software team](mailto:software@shadowrobot.com)
 
 As the example we're constructing is for Hand E, these options are not required as the image is public.
 
@@ -192,23 +192,22 @@ The ```-sn``` flag gives the name of the desktop link that will be created for s
 
 For example. let's say you want a docker to test a kinetic Hand E, you could use the name "hand_e_kinetic":
 
-```bash <(curl -Ls http://bit.do/launch-sh) -r true -i shadowrobot/dexterous-hand:kinetic -n hand_e_kinetic -sn hand_e_kinetic```
+```bash <(curl -Ls http://bit.do/launch-sh) -r true -i shadowrobot/dexterous-hand:kinetic-release -n hand_e_kinetic -sn hand_e_kinetic```
 
 ### Setting port and config branch: ```-e``` and ```-b```
 #### Ethernet port
 To select the correct ethernet port when starting a docker, use the one-liner option  ```-e ETH_PORT``` where *ETH_PORT* is the name of the port to which the robot is connected. If you don't know which port to type```dmesg``` into a terminal after you connect the hand to your computer. Near the end of the output, there will be a line like this:
-```bash
-[490.757853] IPv6: ADDRCONF(NETDEV_CHANGE): enp30s0: link becomes ready```
+```bash [490.757853] IPv6: ADDRCONF(NETDEV_CHANGE): enp30s0: link becomes ready```
 
 In this case, ```enp3s0``` is the correct port, so the one-liner command becomes:
 
-```bash <(curl -Ls http://bit.do/launch-sh) -r true -i shadowrobot/dexterous-hand:kinetic -n hand_e_kinetic -sn hand_e_kinetic -e enp3s0```
+```bash <(curl -Ls http://bit.do/launch-sh) -r true -i shadowrobot/dexterous-hand:kinetic-release -n hand_e_kinetic -sn hand_e_kinetic -e enp3s0```
 
 #### Config branch
 For Hand E, the correct config branch for the hand being tested must be specified when the Docker is first started. To do this, use ```-b CONFIG_BRANCH```. For instance to use the Demo hand, you would start the docker with ```-b demohand_E_v1```.
 
 
-```bash <(curl -Ls http://bit.do/launch-sh) -r true -i shadowrobot/dexterous-hand:kinetic -n hand_e_kinetic -sn hand_e_kinetic -e enp3s0 -b demohand_E_v1```
+```bash <(curl -Ls http://bit.do/launch-sh) -r true -i shadowrobot/dexterous-hand:kinetic-release -n hand_e_kinetic -sn hand_e_kinetic -e enp3s0 -b demohand_E_v1```
 
 Hand H dockers do not need a specific config branch.
 
@@ -218,4 +217,4 @@ When starting a new Docker, by default it's configured to run the driver automat
 
 Presuming we do not want the driver to auto-launch for our example, the final command would be:
 
-```bash <(curl -Ls http://bit.do/launch-sh) -r true -i shadowrobot/dexterous-hand:kinetic -n hand_e_kinetic -sn hand_e_kinetic -e enp3s0 -b demohand_E_v1 -l false```
+```bash <(curl -Ls http://bit.do/launch-sh) -r true -i shadowrobot/dexterous-hand:kinetic-release -n hand_e_kinetic -sn hand_e_kinetic -e enp3s0 -b demohand_E_v1 -l false```
