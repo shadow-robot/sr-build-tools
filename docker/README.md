@@ -198,7 +198,9 @@ For example. let's say you want a docker to test a kinetic Hand E, you could use
 #### Ethernet port
 To select the correct ethernet port when starting a docker, use the one-liner option  ```-e ETH_PORT``` where *ETH_PORT* is the name of the port to which the robot is connected. If you don't know which port to type```dmesg``` into a terminal after you connect the hand to your computer. Near the end of the output, there will be a line like this:
 
-```bash [490.757853] IPv6: ADDRCONF(NETDEV_CHANGE): enp30s0: link becomes ready```
+```bash
+[490.757853] IPv6: ADDRCONF(NETDEV_CHANGE): enp30s0: link becomes ready
+```
 
 In this case, ```enp3s0``` is the correct port, so the one-liner command becomes:
 
