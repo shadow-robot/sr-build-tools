@@ -166,21 +166,21 @@ As shown [above](#images) there are many different Docker images available for d
 #### Hand E
 
 The *shadowrobot/dexterous-hand* images contain the Hand E software. Unless there is a specific reason to use something else, the correct images to use are simply:
-* *shadowrobot/dexterous-hand:indigo*
-* *shadowrobot/dexterous-hand:kinetic*
+* *shadowrobot/dexterous-hand:indigo-release*
+* *shadowrobot/dexterous-hand:kinetic-release*
 
 #### Hand H/Agile Grasper
 
 The *shadowrobot/agile-grasper* images contain the Hand H software. Hand H is only supported on ```kinetic```. In general, the correct image to use is the latest release version:
 * *shadowrobot/agile-grasper:kinetic-release*
 
-For this example, we'll start an *dexterous-hand:kinetic* docker:
+For this example, we'll start a *dexterous-hand:kinetic-release* docker:
 
-```bash <(curl -Ls http://bit.do/launch-sh) -r true -i shadowrobot/dexterous-hand:kinetic```
+```bash <(curl -Ls http://bit.do/launch-sh) -r true -i shadowrobot/dexterous-hand:kinetic-release```
 
 ##### Docker Hub user credentials: ```-u``` and ```-p```
 
-The Hand H software and Docker Images are private. This means that you'll need to provide the one-liner with credentials for Docker Hub to allow the correct access. If you need credentials/have difficulty connecting, contact [mailto:software@shadowrobot.com]
+The Hand H software and Docker Images are private. This means that you'll need to provide the one-liner with credentials for Docker Hub to allow the correct access. If you need credentials/have difficulty connecting, contact the [Shadow Software Team](mailto:software@shadowrobot.co)m
 
 As the example we're constructing is for Hand E, these options are not required as the image is public.
 
@@ -196,10 +196,11 @@ For example. let's say you want a docker to test a kinetic Hand E, you could use
 
 ### Setting port and config branch: ```-e``` and ```-b```
 #### Ethernet port
-To select the correct ethernet port when starting a docker, use the one-liner option  ```-e ETH_PORT``` where *ETH_PORT* is the name of the port to which the robot is connected. If you don't know which port to use, typing ```sudo eepromtool``` in any running docker will give you the name of any port with Shadow hardware connected:
-![Eepromtool](readme_images/eepromtool.png)
+To select the correct ethernet port when starting a docker, use the one-liner option  ```-e ETH_PORT``` where *ETH_PORT* is the name of the port to which the robot is connected. If you don't know which port to type```dmesg``` into a terminal after you connect the hand to your computer. Near the end of the output, there will be a line like this:
+```bash
+[490.757853] IPv6: ADDRCONF(NETDEV_CHANGE): enp30s0: link becomes ready```
 
-In this case, ```enp3s0``` is the correct port:
+In this case, ```enp3s0``` is the correct port, so the one-liner command becomes:
 
 ```bash <(curl -Ls http://bit.do/launch-sh) -r true -i shadowrobot/dexterous-hand:kinetic -n hand_e_kinetic -sn hand_e_kinetic -e enp3s0```
 
