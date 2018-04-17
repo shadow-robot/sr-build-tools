@@ -157,7 +157,9 @@ It's important to make sure that you're always working with the latest version o
 
 To start the command, enter the oneliner command, with ```-r true``` to pull the latest image.
 
-```bash <(curl -Ls http://bit.do/launch-sh) -r true```
+```bash
+bash <(curl -Ls http://bit.do/launch-sh) -r true
+```
 
 ### Which image should I use: ```-i```
 
@@ -176,7 +178,9 @@ The *shadowrobot/agile-grasper* images contain the Hand H software. Hand H is on
 
 For this example, we'll start a *dexterous-hand:kinetic-release* docker:
 
-```bash <(curl -Ls http://bit.do/launch-sh) -r true -i shadowrobot/dexterous-hand:kinetic-release```
+```bash
+bash <(curl -Ls http://bit.do/launch-sh) -r true -i shadowrobot/dexterous-hand:kinetic-release
+```
 
 ##### Docker Hub user credentials: ```-u``` and ```-p```
 
@@ -192,7 +196,9 @@ The ```-sn``` flag gives the name of the desktop link that will be created for s
 
 For example. let's say you want a docker to test a kinetic Hand E, you could use the name "hand_e_kinetic":
 
-```bash <(curl -Ls http://bit.do/launch-sh) -r true -i shadowrobot/dexterous-hand:kinetic-release -n hand_e_kinetic -sn hand_e_kinetic```
+```bash
+bash <(curl -Ls http://bit.do/launch-sh) -r true -i shadowrobot/dexterous-hand:kinetic-release -n hand_e_kinetic -sn hand_e_kinetic
+```
 
 ### Setting port and config branch: ```-e``` and ```-b```
 #### Ethernet port
@@ -204,13 +210,17 @@ To select the correct ethernet port when starting a docker, use the one-liner op
 
 In this case, ```enp3s0``` is the correct port, so the one-liner command becomes:
 
-```bash <(curl -Ls http://bit.do/launch-sh) -r true -i shadowrobot/dexterous-hand:kinetic-release -n hand_e_kinetic -sn hand_e_kinetic -e enp3s0```
+```bash
+bash <(curl -Ls http://bit.do/launch-sh) -r true -i shadowrobot/dexterous-hand:kinetic-release -n hand_e_kinetic -sn hand_e_kinetic -e enp3s0
+```
 
 #### Config branch
 For Hand E, the correct config branch for the hand being tested must be specified when the Docker is first started. To do this, use ```-b CONFIG_BRANCH```. For instance to use the Demo hand, you would start the docker with ```-b demohand_E_v1```.
 
 
-```bash <(curl -Ls http://bit.do/launch-sh) -r true -i shadowrobot/dexterous-hand:kinetic-release -n hand_e_kinetic -sn hand_e_kinetic -e enp3s0 -b demohand_E_v1```
+```bash
+bash <(curl -Ls http://bit.do/launch-sh) -r true -i shadowrobot/dexterous-hand:kinetic-release -n hand_e_kinetic -sn hand_e_kinetic -e enp3s0 -b demohand_E_v1
+```
 
 Hand H dockers do not need a specific config branch.
 
@@ -220,4 +230,6 @@ When starting a new Docker, by default it's configured to run the driver automat
 
 Presuming we do not want the driver to auto-launch for our example, the final command would be:
 
-```bash <(curl -Ls http://bit.do/launch-sh) -r true -i shadowrobot/dexterous-hand:kinetic-release -n hand_e_kinetic -sn hand_e_kinetic -e enp3s0 -b demohand_E_v1 -l false```
+```bash
+bash <(curl -Ls http://bit.do/launch-sh) -r true -i shadowrobot/dexterous-hand:kinetic-release -n hand_e_kinetic -sn hand_e_kinetic -e enp3s0 -b demohand_E_v1 -l false
+```
