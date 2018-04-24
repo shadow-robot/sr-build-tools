@@ -57,4 +57,4 @@ The results are written to *&lt;workspace&gt;/build/test_results/&lt;package_nam
 In order to be able to change between kernels at the system startup, go to `/etc/default/grub` file and make sure that `GRUB_HIDDEN_TIMEOUT` value is higher then zero or comment it out completely. If you made any changes to the file, before rebooting run `sudo update-grub`.
 
 ## Chose the kernel at the system startup
-At the system startup, in the GRUB menu, select `Advanced options for UBUNTU` and chose the rt kernel that you installed.
+At the system startup, in the GRUB menu select `Advanced options for UBUNTU` and chose the rt kernel that you installed.
