@@ -42,12 +42,12 @@ The results are written to *&lt;workspace&gt;/build/test_results/&lt;package_nam
 - Run `prepare_rt_kernel.sh`. It will open menuconfig, where you have to configure the preemption model.
 - `Processor type and features` -> `Preemption Model`  set to Fully Preemptible Kernel (RT)
 
-## Create deb
+## Compile and create deb
 
 - Edit `create_rt_kernel_deb.sh` variable to fit the chosen version
 - Run `create_rt_kernel_deb.sh` in the same directory where `prepare_rt_kernel.sh` was run
 
-## Compile and install the kernel
+## Install kernel
 
 - Run `dpkg -i linux-*.deb` to install the deb packages
 
