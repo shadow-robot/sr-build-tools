@@ -49,7 +49,6 @@ The results are written to *&lt;workspace&gt;/build/test_results/&lt;package_nam
 
 ## Compile and install the kernel
 
-- Run `make deb-pkg` to create needed deb packages
 - Run `dpkg -i linux-*.deb` to install the deb packages
 
 ## Grub configuration
