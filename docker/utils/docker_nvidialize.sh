@@ -5,8 +5,8 @@ set -e # fail on errors
 
 docker_image=$1
 
-mkdir -p /tmp/docker_nvidia_tmp
-cd /tmp/docker_nvidia_tmp
+nvidia_dir=`mktemp -d`
+cd $nvidia_dir
 touch Dockerfile
 
 echo "FROM $docker_image" >> Dockerfile
