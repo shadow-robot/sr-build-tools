@@ -213,7 +213,7 @@ else
             sudo groupadd docker
         fi
 
-        sudo usermod -aG docker $USER
+        sudo gpasswd -a $USER docker
         newgrp docker
     elif [[ $(cat /etc/*release | grep VERSION_CODENAMEe) = *"trusty"* ]]; then
         echo "Ubuntu version: Trusty"

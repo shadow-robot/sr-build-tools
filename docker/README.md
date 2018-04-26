@@ -134,15 +134,102 @@ the hand.
 
 Usage example hand E:
 ```
-bash <(curl -Ls http://bit.do/launch-sh) -i shadowrobot/dexterous-hand:kinetic -n hand_e_kinetic_real_hw -e enp0s25 -b shadowrobot_demo_hand -r true -g false
+bash <(curl -Ls http://bit.do/launch-sh) -i shadowrobot/dexterous-hand:kinetic-release -n hand_e_kinetic_real_hw -e enp0s25 -b shadowrobot_demo_hand -r true -g false
 ```
 
 Usage example hand E for production:
 ```
-bash <(curl -Ls http://bit.do/launch-sh) -i shadowrobot/dexterous-hand:kinetic -n hand_e_kinetic_real_hw -e enp0s25 -b shadowrobot_demo_hand -r true -g false -l false
+bash <(curl -Ls http://bit.do/launch-sh) -i shadowrobot/dexterous-hand:kinetic-release -n hand_e_kinetic_real_hw -e enp0s25 -b shadowrobot_demo_hand -r true -g false -l false
 ```
 
 Usage example agile-grasper:
 ```
 bash <(curl -Ls http://bit.do/launch-sh) -i shadowrobot/agile-grasper:kinetic-release -n agile_grasper_kinetic_real_hw -e enp0s25 -r true -g false
+```
+
+# Using Docker for Production
+
+The process for using Docker to enable production tasks should be fairly simple. The one-liner can be used to configure one ore more container on a computer for carrying out whatever tasks are required. To demonstrate the process of doing this, here is an example with the different parts of the command explained as the command is built up.
+
+## Starting a new container
+
+It's important to make sure that you're always working with the latest version of which ever software you're using. To ensure this, for each new task or hand, you should start a new container, using the ```-r true``` flag ensures that the container will be running the latest version. This container should be used until the task is complete. Unused/abandoned containers will eat up disk space quickly, so make sure to clean up when you're done.
+
+To start the command, enter the oneliner command, with ```-r true``` to pull the latest image.
+
+```bash
+bash <(curl -Ls http://bit.do/launch-sh) -r true
+```
+
+### Which image should I use: ```-i```
+
+As shown [above](#images) there are many different Docker images available for different tasks. In general, there are only a few that will be relevant for production use. The image that will be used is set using the ``` -i ``` flag when running the oneliner, as explained in the [previous section](#one-liner).
+
+#### Hand E
+
+The *shadowrobot/dexterous-hand* images contain the Hand E software. Unless there is a specific reason to use something else, the correct images to use are simply:
+* *shadowrobot/dexterous-hand:indigo-release*
+* *shadowrobot/dexterous-hand:kinetic-release*
+
+#### Hand H/Agile Grasper
+
+The *shadowrobot/agile-grasper* images contain the Hand H software. Hand H is only supported on ```kinetic```. In general, the correct image to use is the latest release version:
+* *shadowrobot/agile-grasper:kinetic-release*
+
+For this example, we'll start a *dexterous-hand:kinetic-release* docker:
+
+```bash
+bash <(curl -Ls http://bit.do/launch-sh) -r true -i shadowrobot/dexterous-hand:kinetic-release
+```
+
+##### Docker Hub user credentials: ```-u``` and ```-p```
+
+The Hand H software and Docker Images are private. This means that you'll need to provide the one-liner with credentials for Docker Hub to allow the correct access. If you need credentials/have difficulty connecting, contact the [software team](mailto:software@shadowrobot.com)
+
+As the example we're constructing is for Hand E, these options are not required as the image is public.
+
+### Naming your image: ```-n``` and ```-sn```
+
+The name that you give your container should be descriptive of the task for which you wish to it. This will make it easier to keep your containers organised and also to select the correct one if you have multiple on a machine. The container name, specified by the ```-n``` flag should be unique, as **it will be overwritten if you run the one-liner with the same value again**.
+
+The ```-sn``` flag gives the name of the desktop link that will be created for starting the driver. Keeping the container name and shortcut name the same will reduce the chance of confusion.
+
+For example. let's say you want a docker to test a kinetic Hand E, you could use the name "hand_e_kinetic":
+
+```bash
+bash <(curl -Ls http://bit.do/launch-sh) -r true -i shadowrobot/dexterous-hand:kinetic-release -n hand_e_kinetic -sn hand_e_kinetic
+```
+
+### Setting port and config branch: ```-e``` and ```-b```
+#### Ethernet port
+To select the correct ethernet port when starting a docker, use the one-liner option  ```-e ETH_PORT``` where *ETH_PORT* is the name of the port to which the robot is connected. If you don't know which port to type```dmesg``` into a terminal after you connect the hand to your computer. Near the end of the output, there will be a line like this:
+
+```bash
+[490.757853] IPv6: ADDRCONF(NETDEV_CHANGE): enp30s0: link becomes ready
+```
+
+In this case, ```enp3s0``` is the correct port, so the one-liner command becomes:
+
+```bash
+bash <(curl -Ls http://bit.do/launch-sh) -r true -i shadowrobot/dexterous-hand:kinetic-release -n hand_e_kinetic -sn hand_e_kinetic -e enp3s0
+```
+
+#### Config branch
+For Hand E, the correct config branch for the hand being tested must be specified when the Docker is first started. To do this, use ```-b CONFIG_BRANCH```. For instance to use the Demo hand, you would start the docker with ```-b demohand_E_v1```.
+
+
+```bash
+bash <(curl -Ls http://bit.do/launch-sh) -r true -i shadowrobot/dexterous-hand:kinetic-release -n hand_e_kinetic -sn hand_e_kinetic -e enp3s0 -b demohand_E_v1
+```
+
+Hand H dockers do not need a specific config branch.
+
+### Starting the driver ```-l```
+
+When starting a new Docker, by default it's configured to run the driver automatically on startup. This is fine if you have simple tests to run or are configuring a customer machine for delivery. However, for other tasks, it can be very useful to just get a ```terminator``` on startup, from where you can start the driver/other programs (e.g. calibration/test etc.) by hand.  Adding ```-l false``` to the oneliner command will do this.
+
+Presuming we do not want the driver to auto-launch for our example, the final command would be:
+
+```bash
+bash <(curl -Ls http://bit.do/launch-sh) -r true -i shadowrobot/dexterous-hand:kinetic-release -n hand_e_kinetic -sn hand_e_kinetic -e enp3s0 -b demohand_E_v1 -l false
 ```
