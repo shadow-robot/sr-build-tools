@@ -9,11 +9,17 @@
   sudo: yes
   sudo_user: "{{ros_user}}"
 
-- name: Fix desktop icon paths
+- name: Fix desktop icon path
   replace:
     dest: "~{{ros_user}}/Desktop/Start Hand.desktop"
     regexp: '/home/hand_demo/hydro_ws'
     replace: "{{ros_workspace}}"
+
+- name: Make desktop icon path absolute
+  replace:
+    dest: "~{{ros_user}}/Desktop/Start Hand.desktop"
+    regexp: "~{{ros_user}}"
+    replace: "/home/{{ros_user}}"
   
 - name: Set executable bit for icons
   shell: "find ~{{ros_user}}/Desktop/*.desktop -exec chmod +x {} +"
