@@ -1,0 +1,2 @@
+ros_user: "handuser"
+ros_group: "{{ros_user}}"
