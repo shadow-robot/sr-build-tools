@@ -288,6 +288,7 @@ function optoforce_setup
 
 # If running for the first time create desktop shortcut
 APP_FOLDER=/home/$USER/.shadow_launcher_app
+SAVE_LOGS_APP_FOLDER=/home/$USER/.shadow_save_log_app
 BUILD_TOOLS_BRANCH=master
 if [ ${DESKTOP_ICON} = true ] ; then
     echo ""
@@ -297,7 +298,7 @@ if [ ${DESKTOP_ICON} = true ] ; then
     echo ""
 
     echo "Creating launcher folder"
-    if [ ! -d "${APP_FOLDER}" ]; then
+    if [ ! -d "${APP_FOLDER}"]; then
       mkdir ${APP_FOLDER}
     fi
 
@@ -308,6 +309,17 @@ if [ ${DESKTOP_ICON} = true ] ; then
     fi
 
     cd ..
+
+    echo "Creating save logs folder"
+    if [ ! -d "${SAVE_LOGS_APP_FOLDER}"]; then
+      mkdir ${SAVE_LOGS_APP_FOLDER}
+    fi
+    
+    cd ${SAVE_LOGS_APP_FOLDER}
+
+    if [ ! -d "save_latest_ros_logs"]; then
+      mkdir "save_latest_ros_logs"
+    fi
 
     # Create a initial script for dexterous hand
     if [ ${HAND_H} = false ]; then
@@ -345,17 +357,24 @@ if [ ${DESKTOP_ICON} = true ] ; then
     if [ -e ${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/launch.sh ]; then
         rm ${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/launch.sh
     fi
-    echo "Downloading the script"
+    echo "Downloading the launch script"
     curl "https://raw.githubusercontent.com/shadow-robot/sr-build-tools/${BUILD_TOOLS_BRANCH}/docker/launch.sh" >> ${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/launch.sh
+
+    echo "Downloading the save_ros_logs script"
+    curl "https://raw.githubusercontent.com/shadow-robot/sr-build-tools/${BUILD_TOOLS_BRANCH}/docker/utils/save_latest_ros_logs.sh" >> ${SAVE_LOGS_APP_FOLDER}/save_latest_ros_logs.sh
     
-    echo "Creating executable file"
+    echo "Creating launch executable file"
     printf "#! /bin/bash
     exec -a shadow_launcher_app_xterm xterm -e \"cd ${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}; ./launch.sh -i ${DOCKER_IMAGE_NAME} -n ${DOCKER_CONTAINER_NAME} -e ${ETHERCAT_INTERFACE} -r false -d false -s true\"" > ${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/shadow_launcher_exec.sh
 
-    echo "Downloading icon"
+    echo "Creating save_ros_logs executable file"
+    printf "#! /bin/bash
+    exec -a shadow_save_log_app_xterm xterm -e \"cd ${SAVE_LOGS_APP_FOLDER}/save_latest_ros_logs; ./save_latest_ros_logs.sh" > ${SAVE_LOGS_APP_FOLDER}/save_latest_ros_logs/shadow_save_log_exec.sh
+
+    echo "Downloading launch icon"
     wget --no-check-certificate https://raw.githubusercontent.com/shadow-robot/sr-build-tools/${BUILD_TOOLS_BRANCH}/docker/${HAND_ICON} -O ${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/${HAND_ICON}
 
-    echo "Creating desktop file"
+    echo "Creating launch desktop file"
     printf "[Desktop Entry]
     Version=1.0
     Name=${DESKTOP_SHORTCUT_NAME}
@@ -366,9 +385,23 @@ if [ ${DESKTOP_ICON} = true ] ; then
     Type=Application
     Categories=Utility;Application;" > /home/$USER/Desktop/${DESKTOP_SHORTCUT_NAME}.desktop
 
+    echo "Creating save_ros_logs desktop file"
+    printf "[Desktop Entry]
+    Version=1.0
+    Name=save_latest_ros_logs
+    Comment=This application saves latest ros logs file from running docker container
+    Exec=/home/${USER}/.shadow_save_log_app/save_latest_ros_logs/shadow_save_log_exec.sh
+    Icon=/home/${USER}/.shadow_save_log_app/save_latest_ros_logs/${HAND_ICON}
+    Terminal=false
+    Type=Application
+    Categories=Utility;Application;" > /home/$USER/Desktop/save_latest_ros_logs.desktop
+
     echo "Allowing files to be executable"
     chmod +x ${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/shadow_launcher_exec.sh
     chmod +x ${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/launch.sh
+    chmod +x /home/$USER/Desktop/${DESKTOP_SHORTCUT_NAME}.desktop
+    chmod +x ${SAVE_LOGS_APP_FOLDER}/save_latest_ros_logs/shadow_save_log_exec.sh
+    chmod +x ${SAVE_LOGS_APP_FOLDER}/save_latest_ros_logs/save_latest_ros_logs.sh
     chmod +x /home/$USER/Desktop/${DESKTOP_SHORTCUT_NAME}.desktop
 fi
 
