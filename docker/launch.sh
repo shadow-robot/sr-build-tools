@@ -312,13 +312,13 @@ if [ ${DESKTOP_ICON} = true ] ; then
     cd ..
 
     echo "Creating save logs folder"
-    if [ ! -d "${SAVE_LOGS_APP_FOLDER}"]; then
+    if [ ! -d "${SAVE_LOGS_APP_FOLDER}" ]; then
       mkdir ${SAVE_LOGS_APP_FOLDER}
     fi
-    
+
     cd ${SAVE_LOGS_APP_FOLDER}
 
-    if [ ! -d "save_latest_ros_logs"]; then
+    if [ ! -d "save_latest_ros_logs" ]; then
       mkdir "save_latest_ros_logs"
     fi
 
