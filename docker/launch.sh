@@ -400,7 +400,7 @@ if [ ${DESKTOP_ICON} = true ] ; then
     Comment=This application saves latest ros logs file from running docker container
     Exec=/home/${USER}/.shadow_save_log_app/save_latest_ros_logs/shadow_save_log_exec.sh
     Icon=/home/${USER}/.shadow_save_log_app/save_latest_ros_logs/${HAND_ICON}
-    Terminal=true
+    Terminal=false
     Type=Application
     Categories=Utility;Application;" > /home/$USER/Desktop/Save_latest_ROS_logs.desktop
 
