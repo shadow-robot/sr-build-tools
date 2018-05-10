@@ -361,8 +361,8 @@ if [ ${DESKTOP_ICON} = true ] ; then
         rm ${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/launch.sh
     fi
 
-    if [ -e ${SAVE_LOGS_APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/save_latest_ros_logs.sh ]; then
-        rm ${SAVE_LOGS_APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/save_latest_ros_logs.sh
+    if [ -e ${SAVE_LOGS_APP_FOLDER}/save_latest_ros_logs/save_latest_ros_logs.sh ]; then
+        rm ${SAVE_LOGS_APP_FOLDER}/save_latest_ros_logs/save_latest_ros_logs.sh
     fi
 
     echo "Downloading the launch script"
