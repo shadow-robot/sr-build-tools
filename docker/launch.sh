@@ -396,13 +396,13 @@ if [ ${DESKTOP_ICON} = true ] ; then
     echo "Creating save_ros_logs desktop file"
     printf "[Desktop Entry]
     Version=1.0
-    Name=save_latest_ros_logs
+    Name=Save_latest_ROS_logs
     Comment=This application saves latest ros logs file from running docker container
     Exec=/home/${USER}/.shadow_save_log_app/save_latest_ros_logs/shadow_save_log_exec.sh
     Icon=/home/${USER}/.shadow_save_log_app/save_latest_ros_logs/${HAND_ICON}
     Terminal=false
     Type=Application
-    Categories=Utility;Application;" > /home/$USER/Desktop/save_latest_ros_logs.desktop
+    Categories=Utility;Application;" > /home/$USER/Desktop/Save_latest_ROS_logs.desktop
 
     echo "Allowing files to be executable"
     chmod +x ${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/shadow_launcher_exec.sh
@@ -410,7 +410,7 @@ if [ ${DESKTOP_ICON} = true ] ; then
     chmod +x /home/$USER/Desktop/${DESKTOP_SHORTCUT_NAME}.desktop
     chmod +x ${SAVE_LOGS_APP_FOLDER}/save_latest_ros_logs/shadow_save_log_exec.sh
     chmod +x ${SAVE_LOGS_APP_FOLDER}/save_latest_ros_logs/save_latest_ros_logs.sh
-    chmod +x /home/$USER/Desktop/save_latest_ros_logs.desktop
+    chmod +x /home/$USER/Desktop/Save_latest_ROS_logs.desktop
 fi
 
 if [ ${REINSTALL_DOCKER_CONTAINER} = false ] ; then
