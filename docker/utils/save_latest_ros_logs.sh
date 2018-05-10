@@ -22,6 +22,7 @@ if [ ! -z "$container_name" ]; then
     echo $notes_from_user > ~/$dir/ros_log_$timestamp/notes_from_user.txt
 
     echo -e "${GREEN} Latest ROS Logs Saved in $dir! ${NC}"
+    sleep 3
 else
     echo -e "${RED}There is no docker container running, please start a container to save logs${NC}"
     exit 1
