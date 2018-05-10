@@ -377,7 +377,7 @@ if [ ${DESKTOP_ICON} = true ] ; then
 
     echo "Creating save_ros_logs executable file"
     printf "#! /bin/bash
-    exec -a shadow_save_log_app_xterm xterm -e \"cd ${SAVE_LOGS_APP_FOLDER}/save_latest_ros_logs; ./save_latest_ros_logs.sh" > ${SAVE_LOGS_APP_FOLDER}/save_latest_ros_logs/shadow_save_log_exec.sh
+    exec -a shadow_save_log_app_xterm xterm -e \"cd ${SAVE_LOGS_APP_FOLDER}/save_latest_ros_logs; ./save_latest_ros_logs.sh\"" > ${SAVE_LOGS_APP_FOLDER}/save_latest_ros_logs/shadow_save_log_exec.sh
 
     echo "Downloading launch icon"
     wget --no-check-certificate https://raw.githubusercontent.com/shadow-robot/sr-build-tools/${BUILD_TOOLS_BRANCH}/docker/${HAND_ICON} -O ${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/${HAND_ICON}
