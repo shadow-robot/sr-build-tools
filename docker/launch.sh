@@ -290,7 +290,7 @@ function optoforce_setup
 # If running for the first time create desktop shortcut
 APP_FOLDER=/home/$USER/.shadow_launcher_app
 SAVE_LOGS_APP_FOLDER=/home/$USER/.shadow_save_log_app
-BUILD_TOOLS_BRANCH=F#SRC-1632_add_script_save_last_ros_logs
+BUILD_TOOLS_BRANCH=F%23SRC-1632_add_script_save_last_ros_logs
 if [ ${DESKTOP_ICON} = true ] ; then
     echo ""
     echo " -------------------------------"
@@ -380,7 +380,7 @@ if [ ${DESKTOP_ICON} = true ] ; then
     exec -a shadow_save_log_app_xterm xterm -e \"cd ${SAVE_LOGS_APP_FOLDER}/save_latest_ros_logs; ./save_latest_ros_logs.sh" > ${SAVE_LOGS_APP_FOLDER}/save_latest_ros_logs/shadow_save_log_exec.sh
 
     echo "Downloading launch icon"
-    wget --no-check-certificate https://raw.githubusercontent.com/shadow-robot/sr-build-tools/master/docker/${HAND_ICON} -O ${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/${HAND_ICON}
+    wget --no-check-certificate https://raw.githubusercontent.com/shadow-robot/sr-build-tools/${BUILD_TOOLS_BRANCH}/docker/${HAND_ICON} -O ${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/${HAND_ICON}
 
     echo "Creating launch desktop file"
     printf "[Desktop Entry]
