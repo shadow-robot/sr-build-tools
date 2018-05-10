@@ -338,8 +338,8 @@ if [ ${DESKTOP_ICON} = true ] ; then
             source /home/user/projects/shadow_robot/base/devel/setup.bash
             sed -i 's|ethercat_port: .*|ethercat_port: ${ETHERCAT_INTERFACE}|' \$(rospack find fh_config)/hardware/hand_H_hardware.yaml
             " > ${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/setup_agile_grasper.sh
+            chmod +x ${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/setup_agile_grasper.sh
         fi
-        chmod +x ${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/setup_agile_grasper.sh
     fi
 
     if [ -e ${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/launch.sh ]; then
