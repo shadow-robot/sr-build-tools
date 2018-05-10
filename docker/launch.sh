@@ -382,6 +382,8 @@ if [ ${DESKTOP_ICON} = true ] ; then
     echo "Downloading launch icon"
     wget --no-check-certificate https://raw.githubusercontent.com/shadow-robot/sr-build-tools/${BUILD_TOOLS_BRANCH}/docker/${HAND_ICON} -O ${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/${HAND_ICON}
 
+    echo "Downloading save_ros_logs icon"
+    wget --no-check-certificate https://raw.githubusercontent.com/shadow-robot/sr-build-tools/${BUILD_TOOLS_BRANCH}/docker/log_icon.png -O ${SAVE_LOGS_APP_FOLDER}/save_latest_ros_logs/log_icon.png
     echo "Creating launch desktop file"
     printf "[Desktop Entry]
     Version=1.0
@@ -399,7 +401,7 @@ if [ ${DESKTOP_ICON} = true ] ; then
     Name=Save_latest_ROS_logs
     Comment=This application saves latest ros logs file from running docker container
     Exec=/home/${USER}/.shadow_save_log_app/save_latest_ros_logs/shadow_save_log_exec.sh
-    Icon=/home/${USER}/.shadow_save_log_app/save_latest_ros_logs/${HAND_ICON}
+    Icon=/home/${USER}/.shadow_save_log_app/save_latest_ros_logs/log_icon.png
     Terminal=false
     Type=Application
     Categories=Utility;Application;" > /home/$USER/Desktop/Save_latest_ROS_logs.desktop
