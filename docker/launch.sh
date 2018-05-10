@@ -298,7 +298,7 @@ if [ ${DESKTOP_ICON} = true ] ; then
     echo ""
 
     echo "Creating launcher folder"
-    if [ ! -d "${APP_FOLDER}"]; then
+    if [ ! -d "${APP_FOLDER}" ]; then
       mkdir ${APP_FOLDER}
     fi
 
@@ -320,6 +320,8 @@ if [ ${DESKTOP_ICON} = true ] ; then
     if [ ! -d "save_latest_ros_logs"]; then
       mkdir "save_latest_ros_logs"
     fi
+
+    cd ..
 
     # Create a initial script for dexterous hand
     if [ ${HAND_H} = false ]; then
