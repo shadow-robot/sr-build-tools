@@ -360,6 +360,11 @@ if [ ${DESKTOP_ICON} = true ] ; then
     if [ -e ${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/launch.sh ]; then
         rm ${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/launch.sh
     fi
+
+    if [ -e ${SAVE_LOGS_APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/save_latest_ros_logs.sh ]; then
+        rm ${SAVE_LOGS_APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/save_latest_ros_logs.sh
+    fi
+
     echo "Downloading the launch script"
     curl "https://raw.githubusercontent.com/shadow-robot/sr-build-tools/${BUILD_TOOLS_BRANCH}/docker/launch.sh" >> ${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/launch.sh
 
