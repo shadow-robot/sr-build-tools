@@ -12,16 +12,18 @@ read notes_from_user
 
 container_name=$(sudo docker ps | awk '{if(NR>1) print $NF}')
 if [ ! -z "$container_name" ]; then
+    ros_log_dir=ROS_LOGS
     dir=ros_logs_$(date +%Y-%m-%d)
     timestamp=$(date +%Y-%m-%d-%T)
+    
+    mkdir -p ~/$ros_log_dir
+    mkdir -p ~/$ros_log_dir/$dir
+    docker cp -L $container_name:home/user/.ros/log/latest ~/$ros_log_dir/$dir
 
-    mkdir -p ~/$dir
-    docker cp -L $container_name:home/user/.ros/log/latest ~/$dir
+    mv ~/$ros_log_dir/$dir/latest ~/$ros_log_dir/$dir/ros_log_$timestamp
+    echo $notes_from_user > ~/$ros_log_dir/$dir/ros_log_$timestamp/notes_from_user.txt
 
-    mv ~/$dir/latest ~/$dir/ros_log_$timestamp
-    echo $notes_from_user > ~/$dir/ros_log_$timestamp/notes_from_user.txt
-
-    echo -e "${GREEN} Latest ROS Logs Saved in $dir! ${NC}"
+    echo -e "${GREEN} Latest ROS Logs Saved! ${NC}"
     sleep 3
 else
     echo -e "${RED}There is no docker container running, please start a container to save logs${NC}"
