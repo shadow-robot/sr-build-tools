@@ -369,7 +369,7 @@ if [ ${DESKTOP_ICON} = true ] ; then
     curl "https://raw.githubusercontent.com/shadow-robot/sr-build-tools/${BUILD_TOOLS_BRANCH}/docker/launch.sh" >> ${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/launch.sh
 
     echo "Downloading the save_ros_logs script"
-    curl "https://raw.githubusercontent.com/shadow-robot/sr-build-tools/${BUILD_TOOLS_BRANCH}/docker/utils/save_latest_ros_logs.sh" >> ${SAVE_LOGS_APP_FOLDER}/save_latest_ros_logs.sh
+    curl "https://raw.githubusercontent.com/shadow-robot/sr-build-tools/${BUILD_TOOLS_BRANCH}/docker/utils/save_latest_ros_logs.sh" >> ${SAVE_LOGS_APP_FOLDER}/save_latest_ros_logs/save_latest_ros_logs.sh
     
     echo "Creating launch executable file"
     printf "#! /bin/bash
