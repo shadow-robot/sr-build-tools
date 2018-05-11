@@ -4,31 +4,41 @@ set -e # fails on errors
 #set -x # echo commands run
 
 GREEN='\033[0;32m'
+YELLOW='\033[0;33m'
 RED='\033[0;31m'
 NC='\033[0m' # No Color
+bold=$(tput bold)
+normal=$(tput sgr0)
 
-echo You are about to save latest ros logs, please add a note with reasons
+echo -e "${YELLOW} ${bold}You are about to save latest ros logs, please add a note with reasons ${normal}${NC}"
 read notes_from_user
 
-container_name=$(sudo docker ps | awk '{if(NR>1) print $NF}')
+container_name=$(docker ps | awk '{if(NR>1) print $NF}')
+
 if [ ! -z "$container_name" ]; then
-    ros_log_dir=~/Desktop/ROS_LOGS
-    dir=ros_logs_$(date +%Y-%m-%d)
-    timestamp=$(date +%Y-%m-%d-%T)
+        container_array=($container_name)
+        for container in ${!container_array[@]}; do
+            current_container_name=${container_array[$container]}
+            echo "Copying logs from $current_container_name.."
+            ros_log_dir=~/Desktop/ROS_LOGS/$current_container_name
+            dir=ros_logs_$(date +%Y-%m-%d)
+            timestamp=$(date +%Y-%m-%d-%T)
 
-    mkdir -p ${ros_log_dir}
-    mkdir -p ${ros_log_dir}/$dir
-    docker cp -L $container_name:home/user/.ros/log/latest ${ros_log_dir}/$dir
+            mkdir -p ${ros_log_dir}
+            mkdir -p ${ros_log_dir}/$dir
+            docker cp -L $current_container_name:home/user/.ros/log/latest ${ros_log_dir}/$dir
 
-    mv ${ros_log_dir}/$dir/latest ${ros_log_dir}/$dir/ros_log_$timestamp
-    echo $notes_from_user > ${ros_log_dir}/$dir/ros_log_$timestamp/notes_from_user.txt
+            mv ${ros_log_dir}/$dir/latest ${ros_log_dir}/$dir/ros_log_$timestamp
+            echo $notes_from_user > ${ros_log_dir}/$dir/ros_log_$timestamp/notes_from_user.txt
 
-    echo -e "${GREEN} Latest ROS Logs Saved! ${NC}"
-    sleep 5
+            echo -e "${GREEN} Latest ROS Logs Saved for $current_container_name! ${NC}"
+            sleep 1
+        done
 else
     echo -e "${RED}There is no docker container running, please start a container to save logs${NC}"
-    sleep 5
+    sleep 1
     exit 1
 fi
 
-sleep infinity
+echo -e "${GREEN}${bold}All ROS logs have been successfully saved!${normal}${NC}"
+sleep 2
