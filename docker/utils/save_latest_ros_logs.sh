@@ -30,3 +30,5 @@ else
     sleep 5
     exit 1
 fi
+
+sleep infinity
