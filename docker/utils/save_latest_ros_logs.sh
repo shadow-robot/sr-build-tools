@@ -23,9 +23,9 @@ if [ ! -z "$container_name" ]; then
             ros_log_dir=~/Desktop/ROS_LOGS/$current_container_name
             dir=ros_logs_$(date +%Y-%m-%d)
             timestamp=$(date +%Y-%m-%d-%T)
-            latestws=$(docker exec $current_container_name bash -c 'ls -dtr /home/user/.ros/wsdiff_ws_diff* | tail -1')
-            latestparam=$(docker exec $current_container_name bash -c 'ls -dtr /home/user/.ros/run_params* | tail -1')
-            latestbag=$(docker exec $current_container_name bash -c 'ls -dtr /home/user/.ros/*.bag | tail -1')
+            latestws=$(docker exec $current_container_name bash -c 'ls -dtr /home/user/wsdiff_ws_diff* | tail -1')
+            latestparam=$(docker exec $current_container_name bash -c 'ls -dtr /home/user/run_params* | tail -1')
+            latestbag=$(docker exec $current_container_name bash -c 'ls -dtr /home/user/*.bag | tail -1')
 
             mkdir -p ${ros_log_dir}
             mkdir -p ${ros_log_dir}/$dir
