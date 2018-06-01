@@ -1,2 +1,2 @@
 - name: Install basic gazebo models necessary for successful first run
-  copy: src="files/gazebo/models" dest="~{{ros_user}}/.gazebo" owner={{ros_user}} group={{ros_group}}
+  script: ../docker/utils/load_gazebo_models.sh {{ models | join(' ') }}
