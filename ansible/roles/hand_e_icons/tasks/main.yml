@@ -25,4 +25,3 @@
   shell: "find ~{{ros_user}}/Desktop/*.desktop -exec chmod +x {} +"
   become: yes
   become_user: "{{ros_user}}"
-  
