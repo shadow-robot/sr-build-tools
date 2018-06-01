@@ -182,3 +182,4 @@
     - {role: dev_machine, tags: ["default","mongodb"]}
     - {role: mongo_database, tags: ["mongodb"]}
     - {role: pyassimp, tags: ["pyassimp"]}
+    - {role: hand_e_icons, tags: ["hand_e_icons"]}

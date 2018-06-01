@@ -1,0 +1,7 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Terminal=false
+Exec=xterm -title "Hand Demo" -e bash -i -c 'roslaunch sr_robot_launch srhand.launch sim:=true'
+Name=Start Hand
+Icon=/home/hand_demo/hydro_ws/src/sr_visualization/sr_visualization_icons/icons/iconHand.png

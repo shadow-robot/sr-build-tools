@@ -1,0 +1,8 @@
+
+[Desktop Entry]
+Version=1.0
+Type=Application
+Terminal=false
+Exec=xterm -hold -title "rviz" -e "bash -i -c 'rosrun rviz rviz'"
+Name=Rviz
+Icon=/opt/ros/kinetic/share/rviz/icons/package.png
