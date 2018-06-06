@@ -36,3 +36,7 @@
 - name: Build the workspace
   shell: bash -c "source /opt/ros/{{ros_release}}/setup.bash && catkin_make"
     chdir={{workspace_path}}
+    
+- name: Creating /tmp/db folder
+  shell: bash -c "mkdir /tmp/db"
+    chdir={{workspace_path}}
