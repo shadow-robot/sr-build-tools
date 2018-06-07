@@ -1,0 +1,2 @@
+- name: Install basic gazebo models necessary for successful first run
+  script: ../docker/utils/load_gazebo_models.sh {{ models | join(' ') }}
