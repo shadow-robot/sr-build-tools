@@ -142,9 +142,9 @@ Usage example hand E for production:
 bash <(curl -Ls http://bit.do/launch-sh) -i shadowrobot/dexterous-hand:kinetic-release -n hand_e_kinetic_real_hw -e enp0s25 -b shadowrobot_demo_hand -r true -g false -l false
 ```
 
-Usage example agile-grasper:
+Usage example modular-grasper:
 ```
-bash <(curl -Ls http://bit.do/launch-sh) -i shadowrobot/agile-grasper:kinetic-release -n agile_grasper_kinetic_real_hw -e enp0s25 -r true -g false
+bash <(curl -Ls http://bit.do/launch-sh) -i shadowrobot/flexible-hand:kinetic-release -n modular_grasper -e enp0s25 -r true -g false
 ```
 
 # Using Docker for Production
@@ -171,10 +171,10 @@ The *shadowrobot/dexterous-hand* images contain the Hand E software. Unless ther
 * *shadowrobot/dexterous-hand:indigo-release*
 * *shadowrobot/dexterous-hand:kinetic-release*
 
-#### Hand H/Agile Grasper
+#### Hand H (Modular Grasper)
 
-The *shadowrobot/agile-grasper* images contain the Hand H software. Hand H is only supported on ```kinetic```. In general, the correct image to use is the latest release version:
-* *shadowrobot/agile-grasper:kinetic-release*
+The *shadowrobot/flexible-hand* images contain the Hand H software. Hand H is only supported on ```kinetic```. In general, the correct image to use is the latest release version:
+* *shadowrobot/flexible-hand:kinetic-release*
 
 For this example, we'll start a *dexterous-hand:kinetic-release* docker:
 
