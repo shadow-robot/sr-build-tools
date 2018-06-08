@@ -1,0 +1,4 @@
+ros_user: "handuser"
+ros_group: "{{ros_user}}"
+ros_user_home_files: "files/home/icons_kinetic"
+ros_workspace: "/home/{{ros_user}}/workspace/shadow_robot-kinetic/base"
