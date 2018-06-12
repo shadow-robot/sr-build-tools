@@ -2,6 +2,6 @@
 Version=1.0
 Type=Application
 Terminal=false
-Exec=xterm -title "Shadow Hand" -e bash -i -c 'roslaunch sr_robot_launch srhand.launch sim:=false'
+Exec=xterm -title "Shadow Hand" -e bash -i -c 'roslaunch sr_ethercat_hand_config sr_rhand.launch sim:=false'
 Name=Start Hand
 Icon=/home/hand_demo/hydro_ws/src/sr_visualization/sr_visualization_icons/icons/iconHand.png
