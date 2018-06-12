@@ -27,15 +27,15 @@ if [ ! -z "$container_name" ]; then
             latestparam=$(docker exec $current_container_name bash -c 'ls -dtr /home/user/run_params* | tail -1')
             latestbag=$(docker exec $current_container_name bash -c 'ls -dtr /home/user/*.bag | tail -1')
 
+            echo "Killing container $current_container_name.."
+            docker kill $current_container_name
+
             mkdir -p ${ros_log_dir}
             mkdir -p ${ros_log_dir}/$dir
             docker cp -L $current_container_name:home/user/.ros/log/latest ${ros_log_dir}/$dir
 
             mv ${ros_log_dir}/$dir/latest ${ros_log_dir}/$dir/ros_log_$timestamp
  
-            echo "Stopping container $current_container_name.."
-            docker stop $current_container_name
-
             docker cp  -L $current_container_name:$latestws ${ros_log_dir}/$dir/ros_log_$timestamp
             docker cp  -L $current_container_name:$latestparam ${ros_log_dir}/$dir/ros_log_$timestamp
             docker cp  -L $current_container_name:$latestbag ${ros_log_dir}/$dir/ros_log_$timestamp
