@@ -9,13 +9,13 @@
 
 - name: Fix desktop icon path
   replace:
-    dest: "~{{ros_user}}/Desktop/Start Hand.desktop"
+    dest: "~{{ros_user}}/Desktop/start_hand.desktop"
     regexp: '/home/hand_demo/hydro_ws'
     replace: "{{ros_workspace}}"
 
 - name: Make desktop icon path absolute
   replace:
-    dest: "~{{ros_user}}/Desktop/Start Hand.desktop"
+    dest: "~{{ros_user}}/Desktop/start_hand.desktop"
     regexp: "~{{ros_user}}"
     replace: "/home/{{ros_user}}"
   
