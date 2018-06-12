@@ -1,13 +1,11 @@
 - name: Copy icons to /usr/local/share/icons
   copy: src="files/icons" dest="/usr/local/share"
   become: yes
-  become_user: "{{ros_user}}"
 
 - name: Install home directory files from {{ros_user_home_files}}
   copy: src="{{ros_user_home_files}}/" dest="~{{ros_user}}/" owner={{ros_user}} group={{ros_group}}
   when: ros_user_home_files|default("") != ""
   become: yes
-  become_user: "{{ros_user}}"
 
 - name: Fix desktop icon path
   replace:
@@ -24,4 +22,4 @@
 - name: Set executable bit for icons
   shell: "find ~{{ros_user}}/Desktop/*.desktop -exec chmod +x {} +"
   become: yes
-  become_user: "{{ros_user}}"
+
