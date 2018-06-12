@@ -32,6 +32,9 @@ if [ ! -z "$container_name" ]; then
             docker cp -L $current_container_name:home/user/.ros/log/latest ${ros_log_dir}/$dir
 
             mv ${ros_log_dir}/$dir/latest ${ros_log_dir}/$dir/ros_log_$timestamp
+ 
+            echo "Stopping container $current_container_name.."
+            docker stop $current_container_name
 
             docker cp  -L $current_container_name:$latestws ${ros_log_dir}/$dir/ros_log_$timestamp
             docker cp  -L $current_container_name:$latestparam ${ros_log_dir}/$dir/ros_log_$timestamp
