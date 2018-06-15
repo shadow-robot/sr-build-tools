@@ -15,7 +15,7 @@ echo -e "${NC}${normal}You are about to save latest ros logs ${normal}${NC}"
 echo -e "${RED}${bold}WARNING! This closes all running docker containers. Do you wish to continue? (y/n) ${normal}${NC}"
 read prompt
 
-if [[ $prompt == "n" || $prompt == "N" || $prompt == "no" || $prompt == "No" || $prompt == "NO" ]]; then
+if [[ $prompt == "" || $prompt == "n" || $prompt == "N" || $prompt == "no" || $prompt == "No" || $prompt == "NO" ]]; then
     exit 1
 fi
 
