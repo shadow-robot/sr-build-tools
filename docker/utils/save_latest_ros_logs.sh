@@ -10,7 +10,16 @@ NC='\033[0m' # No Color
 bold=$(tput bold)
 normal=$(tput sgr0)
 
-echo -e "${YELLOW} ${bold}You are about to save latest ros logs, please add a note with reasons ${normal}${NC}"
+echo -e "${NC}${normal}You are about to save latest ros logs ${normal}${NC}"
+
+echo -e "${RED}${bold}WARNING! This closes all running docker containers. Do you wish to continue? (y/n) ${normal}${NC}"
+read prompt
+
+if [[ $prompt == "n" || $prompt == "N" || $prompt == "no" || $prompt == "No" || $prompt == "NO" ]]; then
+    exit 1
+fi
+
+echo -e "${NC} ${normal}Please add a note for logging with reasons... ${normal}${NC}"
 read notes_from_user
 
 container_name=$(docker ps | awk '{if(NR>1) print $NF}')
