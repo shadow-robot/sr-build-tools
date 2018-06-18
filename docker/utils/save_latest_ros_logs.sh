@@ -34,10 +34,15 @@ if [ ! -z "$container_name" ]; then
             timestamp=$(date +%Y-%m-%d-%T)
             latestws=$(docker exec $current_container_name bash -c 'ls -dtr /home/user/wsdiff_ws_diff* | tail -1')
             latestparam=$(docker exec $current_container_name bash -c 'ls -dtr /home/user/run_params* | tail -1')
+	    #gently killing rosmaster to make .bag.active file into .bag file
+            docker exec $current_container_name bash -c "kill -SIGINT $(ps aux | grep 'rosmaster' | grep -v grep| awk '{print $2}')"
+	    #if rosmaster is not dead yet, kill -9 will kill it, otherwise it's a NoOp
+            docker exec $current_container_name bash -c "kill -9 $(ps aux | grep 'rosmaster' | grep -v grep| awk '{print $2}')" 
             latestbag=$(docker exec $current_container_name bash -c 'ls -dtr /home/user/*.bag | tail -1')
 
             echo "Killing container $current_container_name.."
             docker kill $current_container_name
+
 
             mkdir -p ${ros_log_dir}
             mkdir -p ${ros_log_dir}/$dir
