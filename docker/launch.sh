@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 
+#set -x # debug
 set -e # fail on errors
 
 while [[ $# > 1 ]]
@@ -288,7 +289,8 @@ function optoforce_setup
 
 # If running for the first time create desktop shortcut
 APP_FOLDER=/home/$USER/.shadow_launcher_app
-BUILD_TOOLS_BRANCH=master
+SAVE_LOGS_APP_FOLDER=/home/$USER/.shadow_save_log_app
+BUILD_TOOLS_BRANCH=F%23SRC-1632_add_script_save_last_ros_logs
 if [ ${DESKTOP_ICON} = true ] ; then
     echo ""
     echo " -------------------------------"
@@ -305,6 +307,19 @@ if [ ${DESKTOP_ICON} = true ] ; then
 
     if [ ! -d "${DESKTOP_SHORTCUT_NAME}" ]; then
       mkdir ${DESKTOP_SHORTCUT_NAME}
+    fi
+
+    cd ..
+
+    echo "Creating save logs folder"
+    if [ ! -d "${SAVE_LOGS_APP_FOLDER}" ]; then
+      mkdir ${SAVE_LOGS_APP_FOLDER}
+    fi
+
+    cd ${SAVE_LOGS_APP_FOLDER}
+
+    if [ ! -d "save_latest_ros_logs" ]; then
+      mkdir "save_latest_ros_logs"
     fi
 
     cd ..
@@ -345,17 +360,31 @@ if [ ${DESKTOP_ICON} = true ] ; then
     if [ -e ${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/launch.sh ]; then
         rm ${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/launch.sh
     fi
-    echo "Downloading the script"
+
+    if [ -e ${SAVE_LOGS_APP_FOLDER}/save_latest_ros_logs/save_latest_ros_logs.sh ]; then
+        rm ${SAVE_LOGS_APP_FOLDER}/save_latest_ros_logs/save_latest_ros_logs.sh
+    fi
+
+    echo "Downloading the launch script"
     curl "https://raw.githubusercontent.com/shadow-robot/sr-build-tools/${BUILD_TOOLS_BRANCH}/docker/launch.sh" >> ${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/launch.sh
+
+    echo "Downloading the save_ros_logs script"
+    curl "https://raw.githubusercontent.com/shadow-robot/sr-build-tools/${BUILD_TOOLS_BRANCH}/docker/utils/save_latest_ros_logs.sh" >> ${SAVE_LOGS_APP_FOLDER}/save_latest_ros_logs/save_latest_ros_logs.sh
     
-    echo "Creating executable file"
+    echo "Creating launch executable file"
     printf "#! /bin/bash
     exec -a shadow_launcher_app_xterm xterm -e \"cd ${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}; ./launch.sh -i ${DOCKER_IMAGE_NAME} -n ${DOCKER_CONTAINER_NAME} -e ${ETHERCAT_INTERFACE} -r false -d false -s true\"" > ${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/shadow_launcher_exec.sh
 
-    echo "Downloading icon"
+    echo "Creating save_ros_logs executable file"
+    printf "#! /bin/bash
+    exec -a shadow_save_log_app_xterm xterm -e \"cd ${SAVE_LOGS_APP_FOLDER}/save_latest_ros_logs; ./save_latest_ros_logs.sh\"" > ${SAVE_LOGS_APP_FOLDER}/save_latest_ros_logs/shadow_save_log_exec.sh
+
+    echo "Downloading launch icon"
     wget --no-check-certificate https://raw.githubusercontent.com/shadow-robot/sr-build-tools/${BUILD_TOOLS_BRANCH}/docker/${HAND_ICON} -O ${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/${HAND_ICON}
 
-    echo "Creating desktop file"
+    echo "Downloading save_ros_logs icon"
+    wget --no-check-certificate https://raw.githubusercontent.com/shadow-robot/sr-build-tools/${BUILD_TOOLS_BRANCH}/docker/log_icon.png -O ${SAVE_LOGS_APP_FOLDER}/save_latest_ros_logs/log_icon.png
+    echo "Creating launch desktop file"
     printf "[Desktop Entry]
     Version=1.0
     Name=${DESKTOP_SHORTCUT_NAME}
@@ -366,10 +395,24 @@ if [ ${DESKTOP_ICON} = true ] ; then
     Type=Application
     Categories=Utility;Application;" > /home/$USER/Desktop/${DESKTOP_SHORTCUT_NAME}.desktop
 
+    echo "Creating save_ros_logs desktop file"
+    printf "[Desktop Entry]
+    Version=1.0
+    Name=ROS_Logs_Saver
+    Comment=This application saves latest ros logs file from running docker container
+    Exec=/home/${USER}/.shadow_save_log_app/save_latest_ros_logs/shadow_save_log_exec.sh
+    Icon=/home/${USER}/.shadow_save_log_app/save_latest_ros_logs/log_icon.png
+    Terminal=false
+    Type=Application
+    Categories=Utility;Application;" > /home/$USER/Desktop/ROS_Logs_Saver.desktop
+
     echo "Allowing files to be executable"
     chmod +x ${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/shadow_launcher_exec.sh
     chmod +x ${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/launch.sh
     chmod +x /home/$USER/Desktop/${DESKTOP_SHORTCUT_NAME}.desktop
+    chmod +x ${SAVE_LOGS_APP_FOLDER}/save_latest_ros_logs/shadow_save_log_exec.sh
+    chmod +x ${SAVE_LOGS_APP_FOLDER}/save_latest_ros_logs/save_latest_ros_logs.sh
+    chmod +x /home/$USER/Desktop/ROS_Logs_Saver.desktop
 fi
 
 if [ ${REINSTALL_DOCKER_CONTAINER} = false ] ; then
