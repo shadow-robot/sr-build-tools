@@ -60,6 +60,14 @@ case $key in
     LAUNCH_HAND="$2"
     shift
     ;;
+    -t|--terminal)
+    TERMINAL="$2"
+    shift
+    ;;   
+    -bt|--buildtoolsbranch)
+    BUILD_TOOLS_BRANCH="$2"
+    shift
+    ;;   
     *)
     # ignore unknown option
     ;;
@@ -110,6 +118,16 @@ else
     OPTOFORCE_PATH=""
 fi
 
+if [ -z "${TERMINAL}" ];
+then
+    TERMINAL=false
+fi
+
+if [ -z "${BUILD_TOOLS_BRANCH}" ];
+then
+    BUILD_TOOLS_BRANCH="master"
+fi
+
 echo "================================================================="
 echo "|                                                               |"
 echo "|             Shadow default docker deployment                  |"
@@ -129,9 +147,11 @@ echo "  * -b or --configbranch        Specify the branch for the specific hand (
 echo "  * -sn or --shortcutname       Specify the name for the desktop icon (default: Shadow_Hand_Launcher)"
 echo "  * -o or --optoforce           Specify if optoforce sensors are going to be used (default: false)"
 echo "  * -l or --launchhand          Specify if hand driver should start when double clicking desktop icon (default: true)"
+echo "  * -t or --terminal            Specify if the user is forced to use terminal (rather than terminator) when the Desktop shortcut is clicked (default: false)"
+echo "  * -bt or --buildtooldbranch   Specify the Build Tools Branch to be used (default: master)"
 echo ""
-echo "example hand E: ./launch.sh -i shadowrobot/dexterous-hand:kinetic -n hand_e_kinetic_real_hw -e enp0s25 -b shadowrobot_demo_hand -r true -g false"
-echo "example hand H: ./launch.sh -i shadowrobot/flexible-hand:kinetic-release -n modular_grasper -e enp0s25 -r true -g false"
+echo "example hand E: ./launch.sh -i shadowrobot/dexterous-hand:kinetic -n hand_e_kinetic_real_hw -e enp0s25 -b shadowrobot_demo_hand -r true -g false -l false -bt master"
+echo "example hand H: ./launch.sh -i shadowrobot/flexible-hand:kinetic-release -n modular_grasper -e enp0s25 -r true -g false -l false"
 
 echo ""
 echo "image name        = ${DOCKER_IMAGE_NAME}"
@@ -290,7 +310,6 @@ function optoforce_setup
 # If running for the first time create desktop shortcut
 APP_FOLDER=/home/$USER/.shadow_launcher_app
 SAVE_LOGS_APP_FOLDER=/home/$USER/.shadow_save_log_app
-BUILD_TOOLS_BRANCH=F%23SRC-1632_add_script_save_last_ros_logs
 if [ ${DESKTOP_ICON} = true ] ; then
     echo ""
     echo " -------------------------------"
