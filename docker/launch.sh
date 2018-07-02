@@ -138,7 +138,7 @@ echo "  * -b or --configbranch        Specify the branch for the specific hand (
 echo "  * -sn or --shortcutname       Specify the name for the desktop icon (default: Shadow_Hand_Launcher)"
 echo "  * -o or --optoforce           Specify if optoforce sensors are going to be used (default: false)"
 echo "  * -l or --launchhand          Specify if hand driver should start when double clicking desktop icon (default: true)"
-echo "  * -bt or --buildtoolsbranch   Specify the Git branch for sr-build-tools (remember to replace # with %23) (default: true)"
+echo "  * -bt or --buildtoolsbranch   Specify the Git branch for sr-build-tools (remember to replace # with %23) (default: master)"
 echo ""
 echo "example hand E: ./launch.sh -i shadowrobot/dexterous-hand:kinetic -n hand_e_kinetic_real_hw -e enp0s25 -b shadowrobot_demo_hand -r true -g false"
 echo "example hand H: ./launch.sh -i shadowrobot/flexible-hand:kinetic-release -n modular_grasper -e enp0s25 -r true -g false"
