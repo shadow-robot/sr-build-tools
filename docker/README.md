@@ -243,5 +243,5 @@ By default, build tools branch is master. For example, adding ```-bt F%23SRC-181
 Presuming we do not want the driver to auto-launch for our example, the final command would be:
 
 ```bash
-bash <(curl -Ls http://bit.do/launch-sh) -r true -i shadowrobot/dexterous-hand:kinetic-release -n hand_e_kinetic -sn hand_e_kinetic -e enp3s0 -b demohand_E_v1 -l false -bt F%23SRC-1815-Toivo-Launch-File
+bash <(curl -Ls https://raw.githubusercontent.com/shadow-robot/sr-build-tools/F%23SRC-1815-Toivo-Launch-File/docker/launch.sh) -i shadowrobot/flexible-hand:kinetic-v0.2.28 -n flexible_hand_real_hw -e enp0s25 -r true -g false -bt F%23SRC-1815-Toivo-Launch-File -l false
 ```
