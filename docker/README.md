@@ -124,8 +124,9 @@ Posible options for the oneliner are:
 * -d or --desktopicon       Generates a desktop icon to launch the hand (default: true)
 * -b or --configbranch      Specify the branch for the specific hand (Only for dexterous hand)
 * -sn or --shortcutname     Specify the name for the desktop icon (default: Shadow_Hand_Launcher)
-* -o or --optoforce           Specify if optoforce sensors are going to be used (default: false)
-* -l or --launchhand          Specify if hand driver should start when double clicking desktop icon (default: true)
+* -o or --optoforce         Specify if optoforce sensors are going to be used (default: false)
+* -l or --launchhand        Specify if hand driver should start when double clicking desktop icon (default: true)
+* -bt or --buildtoolsbranch Specify the Git branch for sr-build-tools (remember to replace # with %23) (default: master)
 
 To begin with, the one-liner checks the installation status of docker. If docker is not installed then a new clean installation is performed. If the required image is private, 
 then a valid Docker Hub account with pull credentials from Shadow Robot's Docker Hub is required. Then, the specified docker image is pulled and a docker 
@@ -232,4 +233,15 @@ Presuming we do not want the driver to auto-launch for our example, the final co
 
 ```bash
 bash <(curl -Ls http://bit.do/launch-sh) -r true -i shadowrobot/dexterous-hand:kinetic-release -n hand_e_kinetic -sn hand_e_kinetic -e enp3s0 -b demohand_E_v1 -l false
+```
+
+### Build tools branch ```-bt```
+
+For testing any changes to sr-build-tools, it is useful to be able to specify the Git branch for sr-build-tools.
+By default, build tools branch is master. For example, adding ```-bt F%23SRC-1815-Toivo-Launch-File``` to the oneliner command will make it use code from F#SRC-1815-Toivo-Launch-File branch of sr-build-tools.
+
+Presuming we do not want the driver to auto-launch for our example, the final command would be:
+
+```bash
+bash <(curl -Ls http://bit.do/launch-sh) -r true -i shadowrobot/dexterous-hand:kinetic-release -n hand_e_kinetic -sn hand_e_kinetic -e enp3s0 -b demohand_E_v1 -l false -bt F%23SRC-1815-Toivo-Launch-File
 ```
