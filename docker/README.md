@@ -124,9 +124,10 @@ Posible options for the oneliner are:
 * -d or --desktopicon       Generates a desktop icon to launch the hand (default: true)
 * -b or --configbranch      Specify the branch for the specific hand (Only for dexterous hand)
 * -sn or --shortcutname     Specify the name for the desktop icon (default: Shadow_Hand_Launcher)
-* -o or --optoforce         Specify if optoforce sensors are going to be used (default: false)
-* -l or --launchhand        Specify if hand driver should start when double clicking desktop icon (default: true)
-* -bt or --buildtoolsbranch Specify the Git branch for sr-build-tools (remember to replace # with %23) (default: master)
+* -o or --optoforce           Specify if optoforce sensors are going to be used (default: false)
+* -l or --launchhand          Specify if hand driver should start when double clicking desktop icon (default: true)
+* -t or --terminal            Specify the terminal emulator application, e.g. terminator (default: terminal)
+* -bt or --buildtoolsbranch   Specify the Build Tools Branch to be used (default: master)
 
 To begin with, the one-liner checks the installation status of docker. If docker is not installed then a new clean installation is performed. If the required image is private, 
 then a valid Docker Hub account with pull credentials from Shadow Robot's Docker Hub is required. Then, the specified docker image is pulled and a docker 
@@ -145,7 +146,7 @@ bash <(curl -Ls http://bit.do/launch-sh) -i shadowrobot/dexterous-hand:kinetic-r
 
 Usage example modular-grasper:
 ```
-bash <(curl -Ls http://bit.do/launch-sh) -i shadowrobot/flexible-hand:kinetic-release -n modular_grasper -e enp0s25 -r true -g false
+bash <(curl -Ls http://bit.do/launch-sh) -i shadowrobot/flexible-hand:kinetic-release -n modular_grasper -e enp0s25 -r true -g false -l false -t terminator -bt master
 ```
 
 # Using Docker for Production
@@ -235,13 +236,24 @@ Presuming we do not want the driver to auto-launch for our example, the final co
 bash <(curl -Ls http://bit.do/launch-sh) -r true -i shadowrobot/dexterous-hand:kinetic-release -n hand_e_kinetic -sn hand_e_kinetic -e enp3s0 -b demohand_E_v1 -l false
 ```
 
-### Build tools branch ```-bt```
+### Selecting the terminal emulator ```-t```
 
-For testing any changes to sr-build-tools, it is useful to be able to specify the Git branch for sr-build-tools.
-By default, build tools branch is master. For example, adding ```-bt F%23SRC-1815-Toivo-Launch-File``` to the oneliner command will make it use code from F#SRC-1815-Toivo-Launch-File branch of sr-build-tools.
+When starting a new Docker, the Docker runs inside a terminal emulator. By default this is: terminal.
+You can change this to terminator, or any other installed terminal emulator
+
+This is fine if you have simple tests to run or are configuring a customer machine for delivery. However, for other tasks, it can be very useful to just get a ```terminator``` on startup, from where you can start the driver/other programs (e.g. calibration/test etc.) by hand.  Adding ```-l false``` to the oneliner command will do this.
 
 Presuming we do not want the driver to auto-launch for our example, the final command would be:
 
 ```bash
-bash <(curl -Ls http://bit.do/launch-sh) -r true -i shadowrobot/dexterous-hand:kinetic-release -n hand_e_kinetic -sn hand_e_kinetic -e enp3s0 -b demohand_E_v1 -l false -bt F%23SRC-1815-Toivo-Launch-File
+bash <(curl -Ls http://bit.do/launch-sh) -r true -i shadowrobot/dexterous-hand:kinetic-release -n hand_e_kinetic -sn hand_e_kinetic -e enp3s0 -b demohand_E_v1 -l false
+
+### Starting the driver ```-l```
+
+When starting a new Docker, by default it's configured to run the driver automatically on startup. This is fine if you have simple tests to run or are configuring a customer machine for delivery. However, for other tasks, it can be very useful to just get a ```terminator``` on startup, from where you can start the driver/other programs (e.g. calibration/test etc.) by hand.  Adding ```-l false``` to the oneliner command will do this.
+
+Presuming we do not want the driver to auto-launch for our example, the final command would be:
+
+```bash <(curl -Ls https://raw.githubusercontent.com/shadow-robot/sr-build-tools/F%23SRC-1815-Toivo-Launch-File/docker/launch.sh) -i shadowrobot/flexible-hand:kinetic-v0.2.28 -n flexible_hand_real_hw -e enp0s25 -r true -g false -l false -bt F%23SRC-1815-Toivo-Launch-File
+
 ```
