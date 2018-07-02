@@ -255,5 +255,4 @@ When starting a new Docker, by default it's configured to run the driver automat
 Presuming we do not want the driver to auto-launch for our example, the final command would be:
 
 ```bash <(curl -Ls https://raw.githubusercontent.com/shadow-robot/sr-build-tools/F%23SRC-1815-Toivo-Launch-File/docker/launch.sh) -i shadowrobot/flexible-hand:kinetic-v0.2.28 -n flexible_hand_real_hw -e enp0s25 -r true -g false -l false -bt F%23SRC-1815-Toivo-Launch-File
-
 ```
