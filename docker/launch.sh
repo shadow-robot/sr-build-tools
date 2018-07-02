@@ -120,7 +120,7 @@ fi
 
 if [ -z "${TERMINAL}" ];
 then
-    TERMINAL=terminator
+    TERMINAL="terminator"
 fi
 
 if [ -z "${BUILD_TOOLS_BRANCH}" ];
@@ -147,11 +147,11 @@ echo "  * -b or --configbranch        Specify the branch for the specific hand (
 echo "  * -sn or --shortcutname       Specify the name for the desktop icon (default: Shadow_Hand_Launcher)"
 echo "  * -o or --optoforce           Specify if optoforce sensors are going to be used (default: false)"
 echo "  * -l or --launchhand          Specify if hand driver should start when double clicking desktop icon (default: true)"
-echo "  * -t or --terminal            Specify if the user is forced to use terminal (rather than terminator) when the Desktop shortcut is clicked (default: false)"
+echo "  * -t or --terminal            Specify the terminal emulator application, e.g. terminator (default: terminal)"
 echo "  * -bt or --buildtoolsbranch   Specify the Build Tools Branch to be used (default: master)"
 echo ""
 echo "example hand E: ./launch.sh -i shadowrobot/dexterous-hand:kinetic -n hand_e_kinetic_real_hw -e enp0s25 -b shadowrobot_demo_hand -r true -g false -l false -bt master"
-echo "example hand H: ./launch.sh -i shadowrobot/flexible-hand:kinetic-release -n modular_grasper -e enp0s25 -r true -g false -l false"
+echo "example hand H: ./launch.sh -i shadowrobot/flexible-hand:kinetic-release -n modular_grasper -e enp0s25 -r true -g false -l false -t terminator"
 
 echo ""
 echo "image name        = ${DOCKER_IMAGE_NAME}"
