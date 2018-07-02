@@ -238,7 +238,7 @@ bash <(curl -Ls http://bit.do/launch-sh) -r true -i shadowrobot/dexterous-hand:k
 ### Build tools branch ```-bt```
 
 For testing any changes to sr-build-tools, it is useful to be able to specify the Git branch for sr-build-tools.
-By default, build tools branch is master. For example, adding ```-bt F%23SRC-1815-Toivo-Launch-File``` to the oneliner command will make it use code from F#SRC-1815-Toivo-Launch-File branch of sr-build-tools.
+By default, build tools branch is master. For example, adding ```-bt F%23SRC-1815-Toivo-Launch-File``` to the oneliner command and changing the URL after curl -Ls to the raw version of the launch.sh file in the desired Git branch will make the oneliner use code from F#SRC-1815-Toivo-Launch-File branch of sr-build-tools.
 
 Presuming we do not want the driver to auto-launch for our example, the final command would be:
 
