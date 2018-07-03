@@ -126,7 +126,7 @@ Posible options for the oneliner are:
 * -sn or --shortcutname     Specify the name for the desktop icon (default: Shadow_Hand_Launcher)
 * -o or --optoforce         Specify if optoforce sensors are going to be used (default: false)
 * -l or --launchhand        Specify if hand driver should start when double clicking desktop icon (default: true)
-* -bt or --buildtoolsbranch Specify the Git branch for sr-build-tools (remember to replace # with %23) (default: master)
+* -bt or --buildtoolsbranch Specify the Git branch for sr-build-tools (default: master)
 
 To begin with, the one-liner checks the installation status of docker. If docker is not installed then a new clean installation is performed. If the required image is private, 
 then a valid Docker Hub account with pull credentials from Shadow Robot's Docker Hub is required. Then, the specified docker image is pulled and a docker 
@@ -238,10 +238,10 @@ bash <(curl -Ls http://bit.do/launch-sh) -r true -i shadowrobot/dexterous-hand:k
 ### Build tools branch ```-bt```
 
 For testing any changes to sr-build-tools, it is useful to be able to specify the Git branch for sr-build-tools.
-By default, build tools branch is master. For example, adding ```-bt F%23SRC-1815-Toivo-Launch-File``` to the oneliner command and changing the URL after curl -Ls to the raw version of the launch.sh file in the desired Git branch will make the oneliner use code from F#SRC-1815-Toivo-Launch-File branch of sr-build-tools.
+By default, build tools branch is master. For example, adding ```-bt F#SRC-1815-Toivo-Launch-File``` to the oneliner command and changing the URL after curl -Ls to the raw version of the launch.sh file in the desired Git branch will make the oneliner use code from F#SRC-1815-Toivo-Launch-File branch of sr-build-tools.
 
 Presuming we do not want the driver to auto-launch for our example, the final command would be:
 
 ```bash
-bash <(curl -Ls https://raw.githubusercontent.com/shadow-robot/sr-build-tools/F%23SRC-1815-Toivo-Launch-File/docker/launch.sh) -i shadowrobot/flexible-hand:kinetic-v0.2.28 -n flexible_hand_real_hw -e enp0s25 -r true -g false -bt F%23SRC-1815-Toivo-Launch-File -l false
+bash <(curl -Ls https://raw.githubusercontent.com/shadow-robot/sr-build-tools/F%23SRC-1815-Toivo-Launch-File/docker/launch.sh) -i shadowrobot/flexible-hand:kinetic-v0.2.28 -n flexible_hand_real_hw -e enp0s25 -r true -g false -bt F#SRC-1815-Toivo-Launch-File -l false
 ```
