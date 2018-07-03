@@ -61,7 +61,7 @@ case $key in
     shift
     ;;
     -bt|--buildtoolsbranch)
-    BUILD_TOOLS_BRANCH="$2" | sed 's/#/%23/g'
+    BUILD_TOOLS_BRANCH=$(echo "$2" | sed 's/#/%23/g')
     shift
     ;;
     *)
