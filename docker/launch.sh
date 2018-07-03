@@ -453,6 +453,7 @@ if [ ${REINSTALL_DOCKER_CONTAINER} = false ] ; then
                     docker cp ${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/setup_modular_grasper.sh ${DOCKER_CONTAINER_NAME}:/usr/local/bin/setup_modular_grasper.sh
                 else
                     ${DOCKER} create -it --privileged --name ${DOCKER_CONTAINER_NAME} ${OPTOFORCE_PATH} -e verbose=true -e interface=${ETHERCAT_INTERFACE} --network=host --pid=host -e DISPLAY -e QT_X11_NO_MITSHM=1 -e LOCAL_USER_ID=$(id -u) -v /tmp/.X11-unix:/tmp/.X11-unix:rw ${DOCKER_IMAGE_NAME} xterm -x bash -c "pkill -f \"^\"shadow_launcher_app_xterm && /usr/local/bin/setup.sh && bash || bash"
+                    echo "    ${DOCKER} create -it --privileged --name ${DOCKER_CONTAINER_NAME} ${OPTOFORCE_PATH} -e verbose=true -e interface=${ETHERCAT_INTERFACE} --network=host --pid=host -e DISPLAY -e QT_X11_NO_MITSHM=1 -e LOCAL_USER_ID=$(id -u) -v /tmp/.X11-unix:/tmp/.X11-unix:rw ${DOCKER_IMAGE_NAME} xterm -x bash -c 'pkill -f \'^\"shadow_launcher_app_xterm && /usr/local/bin/setup.sh && bash || bash'"
                 fi
             else
                 if [ ${LAUNCH_HAND} = false ]; then
@@ -499,6 +500,8 @@ else
             docker cp ${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/setup_modular_grasper.sh ${DOCKER_CONTAINER_NAME}:/usr/local/bin/setup_modular_grasper.sh
         else
             ${DOCKER} create -it --privileged --name ${DOCKER_CONTAINER_NAME} ${OPTOFORCE_PATH} -e verbose=true -e interface=${ETHERCAT_INTERFACE} --network=host --pid=host -e DISPLAY -e QT_X11_NO_MITSHM=1 -e LOCAL_USER_ID=$(id -u) -v /tmp/.X11-unix:/tmp/.X11-unix:rw ${DOCKER_IMAGE_NAME} xterm -x bash -c "pkill -f \"^\"shadow_launcher_app_xterm && /usr/local/bin/setup.sh && bash || bash"
+  echo "    ${DOCKER} create -it --privileged --name ${DOCKER_CONTAINER_NAME} ${OPTOFORCE_PATH} -e verbose=true -e interface=${ETHERCAT_INTERFACE} --network=host --pid=host -e DISPLAY -e QT_X11_NO_MITSHM=1 -e LOCAL_USER_ID=$(id -u) -v /tmp/.X11-unix:/tmp/.X11-unix:rw ${DOCKER_IMAGE_NAME} xterm -x bash -c 'pkill -f \'^\"shadow_launcher_app_xterm && /usr/local/bin/setup.sh && bash || bash'"
+               
         fi
     else
         if [ ${LAUNCH_HAND} = false ]; then
