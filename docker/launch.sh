@@ -61,7 +61,7 @@ case $key in
     shift
     ;;
     -bt|--buildtoolsbranch)
-    BUILD_TOOLS_BRANCH="$2"
+    BUILD_TOOLS_BRANCH="$2" | sed 's/#/%23/g'
     shift
     ;;
     *)
@@ -138,7 +138,7 @@ echo "  * -b or --configbranch        Specify the branch for the specific hand (
 echo "  * -sn or --shortcutname       Specify the name for the desktop icon (default: Shadow_Hand_Launcher)"
 echo "  * -o or --optoforce           Specify if optoforce sensors are going to be used (default: false)"
 echo "  * -l or --launchhand          Specify if hand driver should start when double clicking desktop icon (default: true)"
-echo "  * -bt or --buildtoolsbranch   Specify the Git branch for sr-build-tools (remember to replace # with %23) (default: master)"
+echo "  * -bt or --buildtoolsbranch   Specify the Git branch for sr-build-tools (default: master)"
 echo ""
 echo "example hand E: ./launch.sh -i shadowrobot/dexterous-hand:kinetic -n hand_e_kinetic_real_hw -e enp0s25 -b shadowrobot_demo_hand -r true -g false"
 echo "example hand H: ./launch.sh -i shadowrobot/flexible-hand:kinetic-release -n modular_grasper -e enp0s25 -r true -g false"
@@ -147,6 +147,7 @@ echo ""
 echo "image name        = ${DOCKER_IMAGE_NAME}"
 echo "container name    = ${DOCKER_CONTAINER_NAME}"
 echo "reinstall flag    = ${REINSTALL_DOCKER_CONTAINER}"
+echo "build tools branch = ${BUILD_TOOLS_BRANCH}"
 
 # From ANSI escape codes we have the following colours
 RED='\033[0;31m'
