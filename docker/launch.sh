@@ -60,6 +60,10 @@ case $key in
     LAUNCH_HAND="$2"
     shift
     ;;
+    -bt|--buildtoolsbranch)
+    BUILD_TOOLS_BRANCH=$(echo "$2" | sed 's/#/%23/g')
+    shift
+    ;;
     *)
     # ignore unknown option
     ;;
@@ -110,6 +114,11 @@ else
     OPTOFORCE_PATH=""
 fi
 
+if [ -z "${BUILD_TOOLS_BRANCH}" ];
+then
+    BUILD_TOOLS_BRANCH="master"
+fi
+
 echo "================================================================="
 echo "|                                                               |"
 echo "|             Shadow default docker deployment                  |"
@@ -129,6 +138,7 @@ echo "  * -b or --configbranch        Specify the branch for the specific hand (
 echo "  * -sn or --shortcutname       Specify the name for the desktop icon (default: Shadow_Hand_Launcher)"
 echo "  * -o or --optoforce           Specify if optoforce sensors are going to be used (default: false)"
 echo "  * -l or --launchhand          Specify if hand driver should start when double clicking desktop icon (default: true)"
+echo "  * -bt or --buildtoolsbranch   Specify the Git branch for sr-build-tools (default: master)"
 echo ""
 echo "example hand E: ./launch.sh -i shadowrobot/dexterous-hand:kinetic -n hand_e_kinetic_real_hw -e enp0s25 -b shadowrobot_demo_hand -r true -g false"
 echo "example hand H: ./launch.sh -i shadowrobot/flexible-hand:kinetic-release -n modular_grasper -e enp0s25 -r true -g false"
@@ -137,6 +147,7 @@ echo ""
 echo "image name        = ${DOCKER_IMAGE_NAME}"
 echo "container name    = ${DOCKER_CONTAINER_NAME}"
 echo "reinstall flag    = ${REINSTALL_DOCKER_CONTAINER}"
+echo "build tools branch = ${BUILD_TOOLS_BRANCH}"
 
 # From ANSI escape codes we have the following colours
 RED='\033[0;31m'
@@ -216,7 +227,7 @@ else
 
         sudo gpasswd -a $USER docker
         newgrp docker
-    elif [[ $(cat /etc/*release | grep VERSION_CODENAMEe) = *"trusty"* ]]; then
+    elif [[ $(cat /etc/*release | grep VERSION_CODENAME) = *"trusty"* ]]; then
         echo "Ubuntu version: Trusty"
         sudo apt-get update
         sudo apt-get -y install docker.io
@@ -290,7 +301,7 @@ function optoforce_setup
 # If running for the first time create desktop shortcut
 APP_FOLDER=/home/$USER/.shadow_launcher_app
 SAVE_LOGS_APP_FOLDER=/home/$USER/.shadow_save_log_app
-BUILD_TOOLS_BRANCH=master
+
 if [ ${DESKTOP_ICON} = true ] ; then
     echo ""
     echo " -------------------------------"
@@ -443,7 +454,7 @@ if [ ${REINSTALL_DOCKER_CONTAINER} = false ] ; then
                     ${DOCKER} create -it --privileged --name ${DOCKER_CONTAINER_NAME} ${OPTOFORCE_PATH} -e verbose=true -e interface=${ETHERCAT_INTERFACE} --network=host --pid=host -e DISPLAY -e QT_X11_NO_MITSHM=1 -e LOCAL_USER_ID=$(id -u) -v /tmp/.X11-unix:/tmp/.X11-unix:rw ${DOCKER_IMAGE_NAME} terminator -x bash -c "pkill -f \"^\"shadow_launcher_app_xterm && /usr/local/bin/setup_modular_grasper.sh && bash || bash"
                     docker cp ${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/setup_modular_grasper.sh ${DOCKER_CONTAINER_NAME}:/usr/local/bin/setup_modular_grasper.sh
                 else
-                    ${DOCKER} create -it --privileged --name ${DOCKER_CONTAINER_NAME} ${OPTOFORCE_PATH} -e verbose=true -e interface=${ETHERCAT_INTERFACE} --network=host --pid=host -e DISPLAY -e QT_X11_NO_MITSHM=1 -e LOCAL_USER_ID=$(id -u) -v /tmp/.X11-unix:/tmp/.X11-unix:rw ${DOCKER_IMAGE_NAME} terminator -x bash -c "pkill -f \"^\"shadow_launcher_app_xterm && /usr/local/bin/setup.sh && bash || bash"
+                    ${DOCKER} create -it --privileged --name ${DOCKER_CONTAINER_NAME} ${OPTOFORCE_PATH} -e verbose=true -e interface=${ETHERCAT_INTERFACE} --network=host --pid=host -e DISPLAY -e QT_X11_NO_MITSHM=1 -e LOCAL_USER_ID=$(id -u) -v /tmp/.X11-unix:/tmp/.X11-unix:rw ${DOCKER_IMAGE_NAME} bash -c "pkill -f \"^\"shadow_launcher_app_xterm && xterm -e /usr/local/bin/setup.sh || bash"
                 fi
             else
                 ${DOCKER} create -it --privileged --name ${DOCKER_CONTAINER_NAME} ${OPTOFORCE_PATH} --network=host --pid=host -e DISPLAY -e QT_X11_NO_MITSHM=1 -e LOCAL_USER_ID=$(id -u) -v /tmp/.X11-unix:/tmp/.X11-unix:rw ${DOCKER_IMAGE_NAME} terminator -x bash -c "pkill -f \"^\"shadow_launcher_app_xterm && /usr/local/bin/setup_dexterous_hand.sh && bash || bash"
@@ -485,7 +496,7 @@ else
             ${DOCKER} create -it --privileged --name ${DOCKER_CONTAINER_NAME} ${OPTOFORCE_PATH} -e verbose=true -e interface=${ETHERCAT_INTERFACE} --network=host --pid=host -e DISPLAY -e QT_X11_NO_MITSHM=1 -e LOCAL_USER_ID=$(id -u) -v /tmp/.X11-unix:/tmp/.X11-unix:rw ${DOCKER_IMAGE_NAME} terminator -x bash -c "pkill -f \"^\"shadow_launcher_app_xterm && /usr/local/bin/setup_modular_grasper.sh && bash || bash"
             docker cp ${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/setup_modular_grasper.sh ${DOCKER_CONTAINER_NAME}:/usr/local/bin/setup_modular_grasper.sh
         else
-            ${DOCKER} create -it --privileged --name ${DOCKER_CONTAINER_NAME} ${OPTOFORCE_PATH} -e verbose=true -e interface=${ETHERCAT_INTERFACE} --network=host --pid=host -e DISPLAY -e QT_X11_NO_MITSHM=1 -e LOCAL_USER_ID=$(id -u) -v /tmp/.X11-unix:/tmp/.X11-unix:rw ${DOCKER_IMAGE_NAME} terminator -x bash -c "pkill -f \"^\"shadow_launcher_app_xterm && /usr/local/bin/setup.sh && bash || bash"
+            ${DOCKER} create -it --privileged --name ${DOCKER_CONTAINER_NAME} ${OPTOFORCE_PATH} -e verbose=true -e interface=${ETHERCAT_INTERFACE} --network=host --pid=host -e DISPLAY -e QT_X11_NO_MITSHM=1 -e LOCAL_USER_ID=$(id -u) -v /tmp/.X11-unix:/tmp/.X11-unix:rw ${DOCKER_IMAGE_NAME} bash -c "pkill -f \"^\"shadow_launcher_app_xterm && xterm -e /usr/local/bin/setup.sh || bash"
         fi
     else
         ${DOCKER} create -it --privileged --name ${DOCKER_CONTAINER_NAME} ${OPTOFORCE_PATH} --network=host --pid=host -e DISPLAY -e QT_X11_NO_MITSHM=1 -e LOCAL_USER_ID=$(id -u) -v /tmp/.X11-unix:/tmp/.X11-unix:rw ${DOCKER_IMAGE_NAME} terminator -x bash -c "pkill -f \"^\"shadow_launcher_app_xterm && /usr/local/bin/setup_dexterous_hand.sh && bash || bash"
