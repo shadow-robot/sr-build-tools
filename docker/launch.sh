@@ -300,6 +300,7 @@ function optoforce_setup
 # If running for the first time create desktop shortcut
 APP_FOLDER=/home/$USER/.shadow_launcher_app
 SAVE_LOGS_APP_FOLDER=/home/$USER/.shadow_save_log_app
+
 if [ ${DESKTOP_ICON} = true ] ; then
     echo ""
     echo " -------------------------------"
