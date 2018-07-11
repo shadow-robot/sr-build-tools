@@ -48,12 +48,12 @@ if [ ! -z "$container_name" ]; then
             docker cp -L $current_container_name:home/user/.ros/log/latest ${ros_log_dir}/$dir
 
             mv ${ros_log_dir}/$dir/latest ${ros_log_dir}/$dir/ros_log_$timestamp
+		
+	    echo $notes_from_user > ${ros_log_dir}/$dir/ros_log_$timestamp/notes_from_user.txt
  
             docker cp  -L $current_container_name:$latestws ${ros_log_dir}/$dir/ros_log_$timestamp
             docker cp  -L $current_container_name:$latestparam ${ros_log_dir}/$dir/ros_log_$timestamp
             docker cp  -L $current_container_name:$latestbag ${ros_log_dir}/$dir/ros_log_$timestamp
-
-            echo $notes_from_user > ${ros_log_dir}/$dir/ros_log_$timestamp/notes_from_user.txt
 
             echo -e "${GREEN} Latest ROS Logs Saved for $current_container_name! ${NC}"
             sleep 1
