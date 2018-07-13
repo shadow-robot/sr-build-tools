@@ -1,0 +1,28 @@
+# Install Mujoco Simulator
+
+- name: Download Mujoco software in home
+  shell: bash -c "wget "https://www.roboti.us/download/mjpro150_linux.zip""
+    chdir={/home/{ros_user}}
+
+- name: Install libglfw3-dev
+  sudo: yes
+  apt:
+    name: libglfw3-dev
+
+- name: Install libdglfw
+  sudo: yes
+  apt:
+    name: libglfw
+
+- name: Clone mujoco_ros_pkgs in {{workspace_path}}
+  git:
+    repo: 'https://github.com/shadow-robot/mujoco_ros_pkgs.git'
+    version: kinetic-devel
+    dest: "{{workspace_path}}/src/mujoco_ros_pkgs"
+    clone: yes
+    depth: 1
+    update: yes
+
+- name: Build the workspace
+  shell: bash -c "source /opt/ros/{{ros_release}}/setup.bash && catkin_make"
+    chdir={{workspace_path}}
