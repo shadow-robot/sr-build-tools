@@ -8,10 +8,10 @@
   apt:
     name: libglfw3-dev
 
-- name: Install libdglfw
+- name: Install libglfw3
   sudo: yes
   apt:
-    name: libglfw
+    name: libglfw3
 
 - name: Clone mujoco_ros_pkgs in {{workspace_path}}
   git:
