@@ -18,7 +18,7 @@
 
 - name: Clone mujoco_ros_pkgs in {{workspace_path}}
   git:
-    repo: 'https://github.com/shadow-robot/mujoco_ros_pkgs.git'
+    repo: 'git@github.com:shadow-robot/mujoco_ros_pkgs.git'
     version: kinetic-devel
     dest: "{{workspace_path}}/src/mujoco_ros_pkgs"
     clone: yes
