@@ -2,7 +2,6 @@
 
 - name: Download Mujoco software in home
   shell: bash -c "wget "https://www.roboti.us/download/mjpro150_linux.zip""
-    chdir={/home/{ros_user}}
 
 - name: Install libglfw3-dev
   sudo: yes
