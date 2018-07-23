@@ -6,6 +6,7 @@
 
 - name: Unzip Mujoco software
   shell: bash -c "unzip mjpro150_linux.zip"
+  become: yes
 
 - name: Install libglfw3-dev
   sudo: yes
