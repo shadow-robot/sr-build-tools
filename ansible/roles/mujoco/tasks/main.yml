@@ -5,7 +5,7 @@
   become: yes
 
 - name: Unzip Mujoco software
-  shell: bash -c "unzip /home/{{ros_user}}/mjpro150_linux.zip"
+  shell: bash -c "unzip /home/{{ros_user}}/mjpro150_linux.zip -d /home/{{ros_user}}"
   become: yes
 
 - name: Install libglfw3-dev
