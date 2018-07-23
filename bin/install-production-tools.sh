@@ -34,3 +34,8 @@ apt-get -y install ros-${VERSION}-rqt-multiplot
 echo "Installing Multiplot Configs"
 git clone https://github.com/shadow-robot/sr_multiplot_config.git --depth 1 /home/user/sr_multiplot_config
 chown -R $MY_USERNAME:$MY_USERNAME /home/user/sr_multiplot_config
+
+echo "Installing AWS CLI"
+curl "https://s3.amazonaws.com/aws-cli/awscli-bundle.zip" -o "awscli-bundle.zip"
+unzip awscli-bundle.zip
+./awscli-bundle/install -b ~/bin/aws
