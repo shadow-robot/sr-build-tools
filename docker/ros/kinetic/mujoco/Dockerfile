@@ -17,8 +17,9 @@ RUN set +x && \
     chmod 755 /tmp/oneliner && \
     echo "Removing cache" && \
     apt-get clean && \
-    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* && \
-    echo "Removing base_deps ws" && \
+    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /home/$MY_USERNAME/.ansible /home/$MY_USERNAME/.gitconfig /home/$MY_USERNAME/.cache
+&& \
+    echo "Removing ws" && \
     rm -rf $PROJECTS_WS/
 
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
