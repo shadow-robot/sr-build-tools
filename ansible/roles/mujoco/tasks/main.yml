@@ -1,7 +1,7 @@
 # Install Mujoco Simulator
 
 - name: Download Mujoco software in home
-  shell: bash -c "wget -O /home/{{ros_user}} "https://www.roboti.us/download/mjpro150_linux.zip""
+  shell: bash -c "wget "https://www.roboti.us/download/mjpro150_linux.zip" -P /home/{{ros_user}}"
   become: yes
 
 - name: Unzip Mujoco software
