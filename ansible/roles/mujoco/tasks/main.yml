@@ -17,20 +17,3 @@
   sudo: yes
   apt:
     name: libglew-dev
-
-- name: Clone mujoco_ros_pkgs in {{workspace_path}}
-  git:
-    repo: 'https://{{github_login}}:{{github_password}}@github.com/shadow-robot/mujoco_ros_pkgs.git'
-    version: kinetic-devel
-    dest: "{{workspace_path}}/src/mujoco_ros_pkgs"
-    clone: yes
-    depth: 1
-    update: yes
-
-- name: Install required rosdeps
-  shell: bash -c "rosdep install --from-paths . --ignore-src --rosdistro kinetic -y"
-    chdir={{workspace_path}}
-
-- name: Build the workspace
-  shell: bash -c "source /opt/ros/{{ros_release}}/setup.bash && catkin_make"
-    chdir={{workspace_path}}
