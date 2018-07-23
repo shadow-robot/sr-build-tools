@@ -1,2 +1,2 @@
 
-workspace_path: '{{ros_workspace}}_deps' 
+workspace_path: '{{ros_workspace}}' 
