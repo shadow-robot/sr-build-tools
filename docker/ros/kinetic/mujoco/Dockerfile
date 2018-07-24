@@ -18,8 +18,12 @@ RUN set +x && \
     echo "Removing cache" && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* && \
-    echo "Removing base_deps ws" && \
-    rm -rf $PROJECTS_WS/
+    echo "Removing ws" && \
+    rm -rf $PROJECTS_WS/ && \
+    echo "Changing ros source" && \ 
+    sed -i '/source \/home\/user\/projects\/base\/devel\/setup.bash/d' /home/user/.bashrc && \
+    echo 'source /opt/ros/kinetic/setup.bash' >> /home/user/.bashrc
+        
 
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
 CMD ["/usr/bin/terminator"]
