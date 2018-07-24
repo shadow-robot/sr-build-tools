@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -e # fails on errors
+#set -e # fails on errors
 #set -x # echo commands run
 
 GREEN='\033[0;32m'
@@ -39,18 +39,20 @@ if [ ! -z "$container_name" ]; then
 	    #if rosmaster is still running, use kill -9 to kill it
 	    docker exec $current_container_name bash -c "kill -9 $(ps aux | grep 'rosmaster' | grep -v grep| awk '{print $2}') || echo 'rosmaster killed silently'"
 	    latestbag=$(docker exec $current_container_name bash -c 'ls -dtr /home/user/*.bag | tail -1')
-
+            
+            mkdir -p ${ros_log_dir}
+            mkdir -p ${ros_log_dir}/$dir
+            docker cp  -L $current_container_name:/home/user/core_dumps ${ros_log_dir}/$dir/ros_log_$timestamp
+            docker exec $current_container_name bash -c "rm /home/user/core_dumps/core.*"
             echo "Killing container $current_container_name..."
             docker kill $current_container_name
 
-            mkdir -p ${ros_log_dir}
-            mkdir -p ${ros_log_dir}/$dir
             docker cp -L $current_container_name:home/user/.ros/log/latest ${ros_log_dir}/$dir
 
-            mv ${ros_log_dir}/$dir/latest ${ros_log_dir}/$dir/ros_log_$timestamp
-		
-	    echo $notes_from_user > ${ros_log_dir}/$dir/ros_log_$timestamp/notes_from_user.txt
- 
+            mv ${ros_log_dir}/$dir/latest/*.* ${ros_log_dir}/$dir/ros_log_$timestamp
+            rm -rf ${ros_log_dir}/$dir/latest
+	        echo $notes_from_user > ${ros_log_dir}/$dir/ros_log_$timestamp/notes_from_user.txt
+
             docker cp  -L $current_container_name:$latestws ${ros_log_dir}/$dir/ros_log_$timestamp
             docker cp  -L $current_container_name:$latestparam ${ros_log_dir}/$dir/ros_log_$timestamp
             docker cp  -L $current_container_name:$latestbag ${ros_log_dir}/$dir/ros_log_$timestamp
