@@ -20,8 +20,8 @@ find $HOME -group $OLD_GROUP_ID -exec chgrp -h $GROUP_ID {} \;
 usermod -g $GROUP_ID $MY_USERNAME
 
 sudo bash -c 'echo 1 > /proc/sys/kernel/core_uses_pid'
-sudo bash -c 'ulimit -c unlimited'
+sudo bash -c 'ulimit -c 10000'
 sudo bash -c 'echo 1 > /proc/sys/fs/suid_dumpable'
-sudo bash -c 'echo "/home/user/core.%e.%p.%h.%t" > /proc/sys/kernel/core_pattern'
+sudo bash -c 'echo /home/user/core.%e.%p.%h.%t > /proc/sys/kernel/core_pattern'
 
 exec /usr/local/bin/gosu $MY_USERNAME "$@"
