@@ -418,8 +418,7 @@ if [ ${DESKTOP_ICON} = true ] ; then
         echo "Downloading the shadow_upload script"
         curl "https://raw.githubusercontent.com/shadow-robot/sr-build-tools/${BUILD_TOOLS_BRANCH}/docker/utils/shadow_upload.sh" >> ${SAVE_LOGS_APP_FOLDER}/save_latest_ros_logs/shadow_upload.sh
         echo "Creating customer key file"
-        printf "#! /bin/bash
-        exec -a shadow_save_log_app_xterm xterm -e \"cd ${SAVE_LOGS_APP_FOLDER}/save_latest_ros_logs; ./shadow_upload.sh\"" > ${SAVE_LOGS_APP_FOLDER}/save_latest_ros_logs/shadow_upload.sh
+        echo "${CUSTOMER_KEY}" > ${SAVE_LOGS_APP_FOLDER}/save_latest_ros_logs/customer.key
     fi
 
     echo "Creating launch executable file"
