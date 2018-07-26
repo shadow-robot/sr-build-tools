@@ -46,10 +46,10 @@ if [ ! -z "$container_name" ]; then
                 core_array=($core_name)
                 for core in ${!core_array[@]}; do
                     current_core=${core_array[$core]}
-                    current_runtime=$(docker exec $current_container_name bash -c "echo 'Executable: $current_core' | grep -o -P '(?<=core_BOF_).*(?=_EOF_)'")
+                    current_runtime=$(docker exec $current_container_name bash -c "echo $current_core | grep -o -P '(?<=core_BOF_).*(?=_EOF_)'")
                     runtime_name=$(docker exec $current_container_name bash -c "strings $current_core | grep $current_runtime | tail -1")
                     #use runtime name in the log file to use later
-                    docker exec $current_container_name bash -c "echo $runtime_name > $current_core.log"
+                    docker exec $current_container_name bash -c "echo 'Executable:' $runtime_name > $current_core.log"
                     #extract readable info to log file
                     docker exec $current_container_name bash -c "gdb --core=$current_core $runtime_name -ex 'bt full' -ex 'quit' | tee -a $current_core.log"
                 done
