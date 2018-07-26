@@ -47,7 +47,6 @@ RUN set -x && \
     \
     echo "Setting default terminator config" && \
     mkdir -p /home/$MY_USERNAME/.config/terminator/ && \
-    mkdir -p /home/$MY_USERNAME/core_dumps && \
     mv /tmp/terminator_config /home/$MY_USERNAME/.config/terminator/config && \
     chown -R $MY_USERNAME:$MY_USERNAME /home/$MY_USERNAME/.config &&\
     \

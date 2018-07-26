@@ -19,9 +19,13 @@ find $HOME -user $OLD_USER_ID -exec chown -h $USER_ID {} \;
 find $HOME -group $OLD_GROUP_ID -exec chgrp -h $GROUP_ID {} \;
 usermod -g $GROUP_ID $MY_USERNAME
 
+if mkdir -p /home/$MY_USERNAME/.ros/log/core_dumps ; then
+    chown -R $MY_USERNAME:$MY_USERNAME /home/$MY_USERNAME/.ros/log/core_dumps
+    chown -R $MY_USERNAME:$MY_USERNAME /home/$MY_USERNAME/.ros/log
+fi
 echo 1 > /proc/sys/kernel/core_uses_pid
-ulimit -c 10000
+ulimit -c unlimited
 echo 1 > /proc/sys/fs/suid_dumpable
-echo /home/user/core_dumps/core.%e.%p.%h.%t > /proc/sys/kernel/core_pattern
+echo /home/$MY_USERNAME/.ros/log/core_dumps/core_BOF_%e_EOF_%p.%h.%t > /proc/sys/kernel/core_pattern
 
 exec /usr/local/bin/gosu $MY_USERNAME "$@"
