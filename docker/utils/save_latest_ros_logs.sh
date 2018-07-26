@@ -72,6 +72,8 @@ if [ ! -z "$container_name" ]; then
 	    else
 	    	printf "#! /bin/bash
             	source /home/$USER/.shadow_save_log_app/save_latest_ros_logs/shadow_upload.sh ${customerkey} ${ros_log_dir}/$dir/ros_log_$timestamp"
+	    	echo -e "${GREEN} Latest ROS Logs Saved and Uploaded to AWS for $current_container_name! ${NC}"
+		sleep 1
 	    fi
         done
 else
