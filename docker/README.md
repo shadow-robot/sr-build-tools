@@ -127,6 +127,7 @@ Posible options for the oneliner are:
 * -o or --optoforce         Specify if optoforce sensors are going to be used (default: false)
 * -l or --launchhand        Specify if hand driver should start when double clicking desktop icon (default: true)
 * -bt or --buildtoolsbranch Specify the Git branch for sr-build-tools (default: master)
+* -ck or --customerkey      Specify the customer key for uploading files to AWS (default: false (disabling AWS upload))"
 
 To begin with, the one-liner checks the installation status of docker. If docker is not installed then a new clean installation is performed. If the required image is private, 
 then a valid Docker Hub account with pull credentials from Shadow Robot's Docker Hub is required. Then, the specified docker image is pulled and a docker 
@@ -244,4 +245,14 @@ Presuming we do not want the driver to auto-launch for our example, the final co
 
 ```bash
 bash <(curl -Ls https://raw.githubusercontent.com/shadow-robot/sr-build-tools/F%23SRC-1815-Toivo-Launch-File/docker/launch.sh) -i shadowrobot/flexible-hand:kinetic-v0.2.28 -n flexible_hand_real_hw -e enp0s25 -r true -g false -bt F#SRC-1815-Toivo-Launch-File -l false
+```
+
+### Customer Key ```-ck```
+
+For uploading ROS_LOGS folder (including .bag file and core dump) to AWS, the user running the oneliner needs to provide a customer key using the -ck flag in the oneliner. To get a customer key, please contact devops@shadowrobot.com. To set an AWS customer key, go to: https://eu-west-2.console.aws.amazon.com/apigateway/home?region=eu-west-2#/api-keys/sf0rfsfv38 (Shadow AWS account needed). By default, -ck will be false, which means AWS client will not be installed and ROS LOGS will not be uploaded to AWS. For example, adding ```-ck 12345-test-key-not-valid``` to the oneliner command will make the oneliner install AWS client, save the customer key in the user's machine (not inside Docker) and enable ROS_Logs_Saver to upload the whole folder of saved logs to AWS
+ 
+Presuming we do not want the driver to auto-launch for our example, the final command would be:
+
+```bash
+bash <(curl -Ls http://bit.do/launch-sh) -i shadowrobot/flexible-hand:kinetic-v0.2.28 -n flexible_hand_real_hw -e enp0s25 -r true -g false -l false -ck 12345-test-key-not-valid
 ```
