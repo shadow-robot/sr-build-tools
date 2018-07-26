@@ -10,7 +10,18 @@ NC='\033[0m' # No Color
 bold=$(tput bold)
 normal=$(tput sgr0)
 
-echo -e "${NC}${normal}You are about to save latest ros logs ${normal}${NC}"
+customerkey=false
+if [ -f /home/$USER/.shadow_save_log_app/save_latest_ros_logs/customer.key ]; then
+    customerkey=$(head -n 1 /home/$USER/.shadow_save_log_app/save_latest_ros_logs/customer.key)
+else
+    customerkey=false
+fi
+
+if [ ${customerkey} = false]; then
+    echo -e "${NC}${normal}You are about to save latest ros logs ${normal}${NC}"
+else
+    echo -e "${NC}${normal}You are about to save and upload the latest ros logs to AWS (up to 200 MB) ${normal}${NC}"
+fi
 
 echo -e "${RED}${bold}WARNING! This closes all running docker containers. Do you wish to continue? (y/n) ${normal}${NC}"
 read prompt
@@ -54,9 +65,14 @@ if [ ! -z "$container_name" ]; then
             docker cp  -L $current_container_name:$latestws ${ros_log_dir}/$dir/ros_log_$timestamp
             docker cp  -L $current_container_name:$latestparam ${ros_log_dir}/$dir/ros_log_$timestamp
             docker cp  -L $current_container_name:$latestbag ${ros_log_dir}/$dir/ros_log_$timestamp
-
-            echo -e "${GREEN} Latest ROS Logs Saved for $current_container_name! ${NC}"
-            sleep 1
+     
+	    if [ ${customerkey} = false]; then
+	    	echo -e "${GREEN} Latest ROS Logs Saved for $current_container_name! ${NC}"
+            	sleep 1
+	    else
+	    	printf "#! /bin/bash
+            	source /home/$USER/.shadow_save_log_app/save_latest_ros_logs/shadow_upload.sh ${customerkey} ${ros_log_dir}/$dir/ros_log_$timestamp"
+	    fi
         done
 else
     echo -e "${RED}There is no docker container running, please start a container to save logs${NC}"
@@ -65,4 +81,4 @@ else
 fi
 
 echo -e "${GREEN}${bold}All ROS logs have been successfully saved!${normal}${NC}"
-sleep 2
+sleep 5
