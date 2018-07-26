@@ -254,7 +254,7 @@ if [ ${NVIDIA} = true ]; then
     sudo apt-get install -y nvidia-docker
 fi
 
-if [ ${CUSTOMER_KEY} = false]; then
+if [ ${CUSTOMER_KEY} = false ]; then
     echo "No customer key provided, logs will not be uploaded to AWS"
     echo "If you need to upload logs to AWS, please re-run this script with a valid customer key from Shadow Robot"
     sleep 2
