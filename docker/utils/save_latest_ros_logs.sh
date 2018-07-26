@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #set -e # fails on errors
-set -x # echo commands run
+#set -x # echo commands run
 
 GREEN='\033[0;32m'
 YELLOW='\033[0;33m'
@@ -34,9 +34,9 @@ if [ ! -z "$container_name" ]; then
             latestws=$(docker exec $current_container_name bash -c 'ls -dtr /home/user/wsdiff_ws_diff* | tail -1')
             latestparam=$(docker exec $current_container_name bash -c 'ls -dtr /home/user/run_params* | tail -1')
 	        echo "Killing rosmaster to make .bag.active file into .bag file"
-	        docker exec $current_container_name bash -c "kill -SIGINT $(ps aux | grep 'rosmaster' | grep -v grep| awk '{print $2}')"
+	        docker exec $current_container_name bash -c "kill -SIGINT $(ps aux | grep 'rosmaster' | grep -v grep| awk '{print $2}')" || true
 	        #if rosmaster is still running, use kill -9 to kill it
-	        docker exec $current_container_name bash -c "kill -9 $(ps aux | grep 'rosmaster' | grep -v grep| awk '{print $2}') || echo 'rosmaster killed silently'"
+	        docker exec $current_container_name bash -c "kill -9 $(ps aux | grep 'rosmaster' | grep -v grep| awk '{print $2}') || echo 'rosmaster killed silently'" || true
 	        latestbag=$(docker exec $current_container_name bash -c 'ls -dtr /home/user/*.bag | tail -1')
             echo "Copying logs from $current_container_name.."
             mkdir -p ${ros_log_dir}
@@ -46,7 +46,7 @@ if [ ! -z "$container_name" ]; then
                 core_array=($core_name)
                 for core in ${!core_array[@]}; do
                     current_core=${core_array[$core]}
-                    current_runtime=$(docker exec $current_container_name bash -c "echo Executable: $current_core | grep -o -P '(?<=core_BOF_).*(?=_EOF_)'")
+                    current_runtime=$(docker exec $current_container_name bash -c "echo 'Executable: $current_core' | grep -o -P '(?<=core_BOF_).*(?=_EOF_)'")
                     runtime_name=$(docker exec $current_container_name bash -c "strings $current_core | grep $current_runtime | tail -1")
                     #use runtime name in the log file to use later
                     docker exec $current_container_name bash -c "echo $runtime_name > $current_core.log"
