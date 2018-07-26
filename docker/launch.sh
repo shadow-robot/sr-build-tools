@@ -123,9 +123,9 @@ then
     BUILD_TOOLS_BRANCH="master"
 fi
 
-if [-z "${CUSTOMER_KEY}" ];
+if [ -z "${CUSTOMER_KEY}" ];
 then
-    CUSTOMER_KEY="false"
+    CUSTOMER_KEY=false
 fi
 
 echo "================================================================="
