@@ -445,24 +445,37 @@ if [ ${DESKTOP_ICON} = true ] ; then
     Type=Application
     Categories=Utility;Application;" > /home/$USER/Desktop/${DESKTOP_SHORTCUT_NAME}.desktop
 
-    echo "Creating save_ros_logs desktop file"
-    printf "[Desktop Entry]
-    Version=1.0
-    Name=ROS_Logs_Saver
-    Comment=This application saves latest ros logs file from running docker container
-    Exec=/home/${USER}/.shadow_save_log_app/save_latest_ros_logs/shadow_save_log_exec.sh
-    Icon=/home/${USER}/.shadow_save_log_app/save_latest_ros_logs/log_icon.png
-    Terminal=false
-    Type=Application
-    Categories=Utility;Application;" > /home/$USER/Desktop/ROS_Logs_Saver.desktop
-
+    if [ ${CUSTOMER_KEY} = false]; then
+        echo "Creating save_ros_logs desktop file"
+        printf "[Desktop Entry]
+        Version=1.0
+        Name=ROS_Logs_Saver
+        Comment=This application saves latest ros logs file from running docker container
+        Exec=/home/${USER}/.shadow_save_log_app/save_latest_ros_logs/shadow_save_log_exec.sh
+        Icon=/home/${USER}/.shadow_save_log_app/save_latest_ros_logs/log_icon.png
+        Terminal=false
+        Type=Application
+        Categories=Utility;Application;" > /home/$USER/Desktop/ROS_Logs_Saver.desktop
+        chmod +x /home/$USER/Desktop/ROS_Logs_Saver.desktop
+    else
+        echo "Creating save_and_upload_ros_logs desktop file"
+        printf "[Desktop Entry]
+        Version=1.0
+        Name=ROS_Logs_Saver_And_Uploader
+        Comment=This application saves and uploads to AWS latest ros logs file from running docker container
+        Exec=/home/${USER}/.shadow_save_log_app/save_latest_ros_logs/shadow_save_log_exec.sh
+        Icon=/home/${USER}/.shadow_save_log_app/save_latest_ros_logs/log_icon.png
+        Terminal=false
+        Type=Application
+        Categories=Utility;Application;" > /home/$USER/Desktop/ROS_Logs_Saver_And_Uploader.desktop
+        chmod +x /home/$USER/Desktop/ROS_Logs_Saver_And_Uploader.desktop
+    fi
     echo "Allowing files to be executable"
     chmod +x ${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/shadow_launcher_exec.sh
     chmod +x ${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/launch.sh
     chmod +x /home/$USER/Desktop/${DESKTOP_SHORTCUT_NAME}.desktop
     chmod +x ${SAVE_LOGS_APP_FOLDER}/save_latest_ros_logs/shadow_save_log_exec.sh
     chmod +x ${SAVE_LOGS_APP_FOLDER}/save_latest_ros_logs/save_latest_ros_logs.sh
-    chmod +x /home/$USER/Desktop/ROS_Logs_Saver.desktop
     chmod +x ${SAVE_LOGS_APP_FOLDER}/save_latest_ros_logs/shadow_upload.sh
 fi
 
