@@ -66,7 +66,7 @@ if [ ! -z "$container_name" ]; then
             docker cp  -L $current_container_name:$latestparam ${ros_log_dir}/$dir/ros_log_$timestamp
             docker cp  -L $current_container_name:$latestbag ${ros_log_dir}/$dir/ros_log_$timestamp
      
-	    if [ ${customerkey} = false]; then
+	    if [ ${customerkey} = false ]; then
 	    	echo -e "${GREEN} Latest ROS Logs Saved for $current_container_name! ${NC}"
             	sleep 1
 	    else
