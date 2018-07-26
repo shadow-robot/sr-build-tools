@@ -64,6 +64,10 @@ case $key in
     BUILD_TOOLS_BRANCH=$(echo "$2" | sed 's/#/%23/g')
     shift
     ;;
+    -ck|--customerkey)
+    CUSTOMER_KEY="$2"
+    shift
+    ;;
     *)
     # ignore unknown option
     ;;
@@ -119,6 +123,11 @@ then
     BUILD_TOOLS_BRANCH="master"
 fi
 
+if [-z "${CUSTOMER_KEY}" ];
+then
+    CUSTOMER_KEY="false"
+fi
+
 echo "================================================================="
 echo "|                                                               |"
 echo "|             Shadow default docker deployment                  |"
@@ -139,6 +148,7 @@ echo "  * -sn or --shortcutname       Specify the name for the desktop icon (def
 echo "  * -o or --optoforce           Specify if optoforce sensors are going to be used (default: false)"
 echo "  * -l or --launchhand          Specify if hand driver should start when double clicking desktop icon (default: true)"
 echo "  * -bt or --buildtoolsbranch   Specify the Git branch for sr-build-tools (default: master)"
+echo "  * -ck or --customerkey        Specify the customer key for uploading files to AWS (default: false (disabling AWS upload))"
 echo ""
 echo "example hand E: ./launch.sh -i shadowrobot/dexterous-hand:kinetic -n hand_e_kinetic_real_hw -e enp0s25 -b shadowrobot_demo_hand -r true -g false"
 echo "example hand H: ./launch.sh -i shadowrobot/flexible-hand:kinetic-release -n modular_grasper -e enp0s25 -r true -g false"
@@ -242,6 +252,26 @@ fi
 
 if [ ${NVIDIA} = true ]; then
     sudo apt-get install -y nvidia-docker
+fi
+
+if [ ${CUSTOMER_KEY} = false]; then
+    echo "No customer key provided, logs will not be uploaded to AWS"
+    echo "If you need to upload logs to AWS, please re-run this script with a valid customer key from Shadow Robot"
+    sleep 2
+else    
+    echo ""
+    echo " -----------------------------------"
+    echo " |   Checking AWS installation     |"
+    echo " -----------------------------------"
+    echo ""
+    if [ -x "$(command -v aws)" ]; then
+        echo "aws installed"
+    else
+        echo "Installing AWS CLI"
+        curl "https://s3.amazonaws.com/aws-cli/awscli-bundle.zip" -o "awscli-bundle.zip"
+        unzip awscli-bundle.zip
+        ./awscli-bundle/install -b ~/bin/aws
+    fi
 fi
 
 # Log in to docker only for hand h images
@@ -382,6 +412,16 @@ if [ ${DESKTOP_ICON} = true ] ; then
     echo "Downloading the save_ros_logs script"
     curl "https://raw.githubusercontent.com/shadow-robot/sr-build-tools/${BUILD_TOOLS_BRANCH}/docker/utils/save_latest_ros_logs.sh" >> ${SAVE_LOGS_APP_FOLDER}/save_latest_ros_logs/save_latest_ros_logs.sh
     
+    if [ ${CUSTOMER_KEY} = false]; then
+        echo "Skipping shadow_upload script because no customer key set"
+    else
+        echo "Downloading the shadow_upload script"
+        curl "https://raw.githubusercontent.com/shadow-robot/sr-build-tools/${BUILD_TOOLS_BRANCH}/docker/utils/shadow_upload.sh" >> ${SAVE_LOGS_APP_FOLDER}/save_latest_ros_logs/shadow_upload.sh
+        echo "Creating customer key file"
+        printf "#! /bin/bash
+        exec -a shadow_save_log_app_xterm xterm -e \"cd ${SAVE_LOGS_APP_FOLDER}/save_latest_ros_logs; ./shadow_upload.sh\"" > ${SAVE_LOGS_APP_FOLDER}/save_latest_ros_logs/shadow_upload.sh
+    fi
+
     echo "Creating launch executable file"
     printf "#! /bin/bash
     exec -a shadow_launcher_app_xterm xterm -e \"cd ${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}; ./launch.sh -i ${DOCKER_IMAGE_NAME} -n ${DOCKER_CONTAINER_NAME} -e ${ETHERCAT_INTERFACE} -r false -d false -s true\"" > ${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/shadow_launcher_exec.sh
@@ -389,7 +429,7 @@ if [ ${DESKTOP_ICON} = true ] ; then
     echo "Creating save_ros_logs executable file"
     printf "#! /bin/bash
     exec -a shadow_save_log_app_xterm xterm -e \"cd ${SAVE_LOGS_APP_FOLDER}/save_latest_ros_logs; ./save_latest_ros_logs.sh\"" > ${SAVE_LOGS_APP_FOLDER}/save_latest_ros_logs/shadow_save_log_exec.sh
-
+    
     echo "Downloading launch icon"
     wget --no-check-certificate https://raw.githubusercontent.com/shadow-robot/sr-build-tools/${BUILD_TOOLS_BRANCH}/docker/${HAND_ICON} -O ${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/${HAND_ICON}
 
@@ -424,6 +464,7 @@ if [ ${DESKTOP_ICON} = true ] ; then
     chmod +x ${SAVE_LOGS_APP_FOLDER}/save_latest_ros_logs/shadow_save_log_exec.sh
     chmod +x ${SAVE_LOGS_APP_FOLDER}/save_latest_ros_logs/save_latest_ros_logs.sh
     chmod +x /home/$USER/Desktop/ROS_Logs_Saver.desktop
+    chmod +x ${SAVE_LOGS_APP_FOLDER}/save_latest_ros_logs/shadow_upload.sh
 fi
 
 if [ ${REINSTALL_DOCKER_CONTAINER} = false ] ; then
