@@ -412,7 +412,7 @@ if [ ${DESKTOP_ICON} = true ] ; then
     echo "Downloading the save_ros_logs script"
     curl "https://raw.githubusercontent.com/shadow-robot/sr-build-tools/${BUILD_TOOLS_BRANCH}/docker/utils/save_latest_ros_logs.sh" >> ${SAVE_LOGS_APP_FOLDER}/save_latest_ros_logs/save_latest_ros_logs.sh
     
-    if [ ${CUSTOMER_KEY} = false]; then
+    if [ ${CUSTOMER_KEY} = false ]; then
         echo "Skipping shadow_upload script because no customer key set"
     else
         echo "Downloading the shadow_upload script"
@@ -445,7 +445,7 @@ if [ ${DESKTOP_ICON} = true ] ; then
     Type=Application
     Categories=Utility;Application;" > /home/$USER/Desktop/${DESKTOP_SHORTCUT_NAME}.desktop
 
-    if [ ${CUSTOMER_KEY} = false]; then
+    if [ ${CUSTOMER_KEY} = false ]; then
         echo "Creating save_ros_logs desktop file"
         printf "[Desktop Entry]
         Version=1.0
