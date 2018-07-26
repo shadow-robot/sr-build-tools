@@ -17,7 +17,7 @@ else
     customerkey=false
 fi
 
-if [ ${customerkey} = false]; then
+if [ ${customerkey} = false ]; then
     echo -e "${NC}${normal}You are about to save latest ros logs ${normal}${NC}"
 else
     echo -e "${NC}${normal}You are about to save and upload the latest ros logs to AWS (up to 200 MB) ${normal}${NC}"
