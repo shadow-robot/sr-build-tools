@@ -51,7 +51,7 @@ if [ ! -z "$container_name" ]; then
                     #use runtime name in the log file to use later
                     docker exec $current_container_name bash -c "echo 'Executable:' $runtime_name > $current_core.log"
                     #extract readable info to log file
-                    docker exec $current_container_name bash -c "gdb --core=$current_core $runtime_name -ex 'bt full' -ex 'quit' | tee -a $current_core.log"
+                    docker exec $current_container_name bash -c "gdb --core=$current_core $runtime_name -ex 'bt full' -ex 'quit' >> $current_core.log"
                 done
             fi
             docker cp  -L $current_container_name:/home/user/.ros/log/core_dumps ${ros_log_dir}/$dir/ros_log_$timestamp
@@ -64,7 +64,9 @@ if [ ! -z "$container_name" ]; then
             mv ${ros_log_dir}/$dir/latest/*.* ${ros_log_dir}/$dir/ros_log_$timestamp
             rm -rf ${ros_log_dir}/$dir/latest
 	        echo $notes_from_user > ${ros_log_dir}/$dir/ros_log_$timestamp/notes_from_user.txt
-
+            docker container inspect $current_container_name > ${ros_log_dir}/$dir/ros_log_$timestamp/container_info.txt
+            container_image=$(docker ps -a | grep $current_container_name| awk '{print $2}')
+            docker images $container_image > ${ros_log_dir}/$dir/ros_log_$timestamp/image_info.txt
             docker cp  -L $current_container_name:$latestws ${ros_log_dir}/$dir/ros_log_$timestamp
             docker cp  -L $current_container_name:$latestparam ${ros_log_dir}/$dir/ros_log_$timestamp
             docker cp  -L $current_container_name:$latestbag ${ros_log_dir}/$dir/ros_log_$timestamp
