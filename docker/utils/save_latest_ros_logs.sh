@@ -1,6 +1,6 @@
 #!/bin/bash
 
-#set -e # fails on errors
+set -e # fails on errors
 #set -x # echo commands run
 
 GREEN='\033[0;32m'
