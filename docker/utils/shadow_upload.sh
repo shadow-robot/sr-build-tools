@@ -2,8 +2,10 @@
 
 # set -o xtrace
 
+#this zips the contents of the given folder and uploads it to AWS, using the customerkey installed by oneliner inside the docker container
+
 print_usage(){
-  echo "Usage: shadow_upload.sh <SECRET_KEY> <FOLDER_PATH>"
+  echo "Usage: shadow_upload.sh <SECRET_KEY> <INPUT_FOLDER_PATH> <OUTPUT_FILE_NAME>"
 }
 
 if [[ "$1" == "--help" ]] || [[ "$1" == "-h" ]];then
@@ -14,8 +16,9 @@ fi
 CREDENTIALS_URL=https://5vv2z6j3a7.execute-api.eu-west-2.amazonaws.com/prod
 KEY=$1
 FOLDER=$2
+OUTPUTFILE=$3
 
-if [[ -z "$KEY" ]] || [[ -z "$FOLDER" ]]; then
+if [[ -z "$KEY" ]] || [[ -z "$FOLDER" ]] || [[ -z "$OUTPUTFILE" ]]; then
   print_usage
   exit 1;
 fi
@@ -27,12 +30,12 @@ fi
 
 response=`$MY_CURL --silent -H "x-api-key: $KEY" $CREDENTIALS_URL`
 if [[ $response = *"forbidden"* ]];then
-  echo "Access if forbidden. Check the correctness of the secret key or contact support."
+  echo "Access is forbidden. Check the correctness of the secret key or contact Shadow Robot support."
   print_usage
   exit 1;
 fi
 if [[ $response != *"SESSION_TOKEN"* ]];then
-  echo "Unable to get temporary credentials. Read the following message to figure out the root cause or contact support."
+  echo "Unable to get temporary credentials. Read the following message to figure out the root cause or contact Shadow Robot support."
   $MY_CURL -verbose -H "x-api-key: $KEY" $CREDENTIALS_URL
   print_usage
   exit 1;
@@ -46,4 +49,8 @@ UPLOAD_URL=`echo -e "$response" | grep URL | sed 's/URL=//'`
 export AWS_ACCESS_KEY_ID=$ACCESS_KEY_ID; \
 export AWS_SECRET_ACCESS_KEY=$SECRET_ACCESS_KEY; \
 export AWS_SESSION_TOKEN=$SESSION_TOKEN; \
-aws s3 cp --recursive $FOLDER $UPLOAD_URL
+
+#max compression
+
+env GZIP=-9 tar cvzf $OUTPUTFILE.tar.gz $FOLDER
+aws s3 cp $OUTPUTFILE $UPLOAD_URL
