@@ -82,3 +82,8 @@
     local-name: sr_visualization_common
     uri: https://github.com/shadow-robot/sr_visualization_common
     version: kinetic-devel
+
+- git:  # Required until https://github.com/ros-planning/moveit/pull/1008 is merged
+    local-name: moveit
+    uri: https://github.com/shadow-robot/moveit
+    version: F#SRC-1610_wait_for_db
