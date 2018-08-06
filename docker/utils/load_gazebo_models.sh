@@ -19,12 +19,17 @@ function cleanup {
 
 trap cleanup EXIT
 
-GAZEBO_FOLDER_PATH="$HOME/.gazebo/models/"
+GAZEBO_PATH="$HOME/.gazebo"
 
 while getopts ':u:m:' opt; do
   case $opt in
-    u) GAZEBO_FOLDER_PATH="/home/${OPTARG}/.gazebo/models"
-      [[ ${OPTARG} == -* ]] && { echo "Missing argument for -${opt}" ; exit 1 ; }
+    u) 
+      if [[ ${OPTARG} == -* ]]; then
+        echo "Missing argument for -${opt}"
+        exit 1
+      fi
+      GAZEBO_USER_NAME="${OPTARG}"
+      GAZEBO_PATH="/home/${GAZEBO_USER_NAME}/.gazebo"
       ;;
     m) MODEL_NAMES=("$OPTARG")
       until [[ $(eval "echo \${$OPTIND}") =~ ^-.* ]] || [ -z $(eval "echo \${$OPTIND}") ]; do
@@ -43,7 +48,8 @@ while getopts ':u:m:' opt; do
   esac
 done
 
-echo "Gazebo models will be downloaded to ${GAZEBO_FOLDER_PATH}."
+GAZEBO_MODELS_PATH="${GAZEBO_PATH}/models"
+echo "Gazebo models will be downloaded to ${GAZEBO_MODELS_PATH}."
 
 shift $(($OPTIND - 1))
 
@@ -65,7 +71,7 @@ if [ -z ${MODEL_NAMES+x} ]; then
   requested_models=${model_names[*]}
   echo "Downloading all models..."
 else
-  requested_models=$MODEL_NAMES
+  requested_models=${MODEL_NAMES[*]}
   echo "The following models were requested: $requested_models"
 fi
 
@@ -90,13 +96,21 @@ do
   tar -zvxf "$i/model.tar.gz" >/dev/null 2>&1
 done
 
-mkdir -p "$GAZEBO_FOLDER_PATH"
+mkdir -p "$GAZEBO_MODELS_PATH"
 if [ $? != 0 ]; then
-  echo "Failed to create directory $GAZEBO_FOLDER_PATH."
+  echo "Failed to create directory $GAZEBO_MODELS_PATH."
   exit 1
 fi
-cp -fR * "$GAZEBO_FOLDER_PATH"
+cp -fR * "$GAZEBO_MODELS_PATH"
 if [ $? != 0 ]; then
-  echo "Failed to copy models to $GAZEBO_FOLDER_PATH."
+  echo "Failed to copy models to $GAZEBO_MODELS_PATH."
   exit 1
+fi
+
+if [ -n "${GAZEBO_USER_NAME+x}" ]; then
+  chown -R ${GAZEBO_USER_NAME}:${GAZEBO_USER_NAME} ${GAZEBO_PATH}
+  if [ $? != 0 ]; then
+    echo "Failed to make ${GAZEBO_USER_NAME} the owner of $GAZEBO_PATH."
+    exit 1
+  fi
 fi
