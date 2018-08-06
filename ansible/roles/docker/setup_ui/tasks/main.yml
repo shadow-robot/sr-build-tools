@@ -72,3 +72,5 @@
     name: gazebo_models
   become: yes
   become_user: "{{new_docker_user}}"
+  vars:
+    gazebo_user: "{{new_docker_user}}"
