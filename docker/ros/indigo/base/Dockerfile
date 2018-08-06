@@ -37,7 +37,7 @@ RUN set -x && \
     echo "Running one-liner" && \
     wget -O /tmp/oneliner "$( echo "$remote_shell_script" | sed 's/#/%23/g' )" && \
     chmod 755 /tmp/oneliner && \
-    /tmp/oneliner "$toolset_branch" $server_type 'setup_docker_user,gazebo_models' && \
+    /tmp/oneliner "$toolset_branch" $server_type 'setup_docker_user' && \
     gosu $MY_USERNAME /tmp/oneliner "$toolset_branch" $server_type $used_modules && \
 
     echo "Updating bash commands" && \

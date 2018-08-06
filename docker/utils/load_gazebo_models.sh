@@ -19,6 +19,34 @@ function cleanup {
 
 trap cleanup EXIT
 
+GAZEBO_FOLDER_PATH="$HOME/.gazebo/models/"
+
+while getopts ':u:m:' opt; do
+  case $opt in
+    u) GAZEBO_FOLDER_PATH="/home/${OPTARG}/.gazebo/models"
+      [[ ${OPTARG} == -* ]] && { echo "Missing argument for -${opt}" ; exit 1 ; }
+      ;;
+    m) MODEL_NAMES=("$OPTARG")
+      until [[ $(eval "echo \${$OPTIND}") =~ ^-.* ]] || [ -z $(eval "echo \${$OPTIND}") ]; do
+        MODEL_NAMES+=($(eval "echo \${$OPTIND}"))
+        OPTIND=$((OPTIND + 1))
+      done
+      ;;
+    \?)
+      echo "Invalid option: -${OPTARG}"
+      exit 1
+      ;;
+    :)
+      echo "Option -$OPTARG requires an argument." >&2
+      exit 1
+      ;;
+  esac
+done
+
+echo "Gazebo models will be downloaded to ${GAZEBO_FOLDER_PATH}."
+
+shift $(($OPTIND - 1))
+
 echo "Fetching gazebo model list..."
 model_list_url="http://models.gazebosim.org/manifest.xml"
 model_list_xml=$(curl --retry 4 -s -f ${model_list_url})
@@ -33,12 +61,12 @@ while read -r line; do
 done <<< "$model_list_xml"
 echo "${#model_names[*]} models on gazebo server."
 
-if [ $# -gt 0 ]; then
-  requested_models=$@
-  echo "The following models were requested: $requested_models"
-else
+if [ -z ${MODEL_NAMES+x} ]; then
   requested_models=${model_names[*]}
   echo "Downloading all models..."
+else
+  requested_models=$MODEL_NAMES
+  echo "The following models were requested: $requested_models"
 fi
 
 mkdir models.gazebosim.org
@@ -62,5 +90,13 @@ do
   tar -zvxf "$i/model.tar.gz" >/dev/null 2>&1
 done
 
-mkdir -p "$HOME/.gazebo/models/"
-cp -fR * "$HOME/.gazebo/models/"
+mkdir -p "$GAZEBO_FOLDER_PATH"
+if [ $? != 0 ]; then
+  echo "Failed to create directory $GAZEBO_FOLDER_PATH."
+  exit 1
+fi
+cp -fR * "$GAZEBO_FOLDER_PATH"
+if [ $? != 0 ]; then
+  echo "Failed to copy models to $GAZEBO_FOLDER_PATH."
+  exit 1
+fi
