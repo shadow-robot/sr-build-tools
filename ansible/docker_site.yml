@@ -9,6 +9,7 @@
     - {role: docker/ide/pycharm, tags: ["setup_docker_pycharm", "setup_docker_ide"]}
     - {role: docker/ide/qtcreator, tags: ["setup_docker_qtcreator", "setup_docker_ide"]}
     - {role: docker/ide/vscode, tags: ["setup_docker_vscode", "setup_docker_ide"]}
+    - {role: gazebo_models, tags: ["gazebo_models"]}
     - {role: ci/servers/travis/init, tags: ["travis"]}
     - {role: ci/servers/shippable/init, tags: ["shippable"]}
     - {role: ci/servers/semaphore/init, tags: ["semaphore"]}

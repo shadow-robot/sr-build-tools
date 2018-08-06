@@ -16,7 +16,7 @@ ENV PULSE_SERVER /run/pulse/native
 ENV GOSU_VERSION 1.10
 ENV MY_USERNAME user
 
-ENV toolset_branch="master"
+ENV toolset_branch="F_#SRC-1940_gazebo_models_in_base_images"
 ENV server_type="docker_hub"
 ENV used_modules="check_cache,create_workspace"
 ENV ros_release_name=indigo
@@ -37,7 +37,7 @@ RUN set -x && \
     echo "Running one-liner" && \
     wget -O /tmp/oneliner "$( echo "$remote_shell_script" | sed 's/#/%23/g' )" && \
     chmod 755 /tmp/oneliner && \
-    /tmp/oneliner "$toolset_branch" $server_type 'setup_docker_user' && \
+    /tmp/oneliner "$toolset_branch" $server_type 'setup_docker_user,gazebo_models' && \
     gosu $MY_USERNAME /tmp/oneliner "$toolset_branch" $server_type $used_modules && \
 
     echo "Updating bash commands" && \
