@@ -2,8 +2,8 @@
 
 # Script is based on http://machineawakening.blogspot.com/2015/05/how-to-download-all-gazebo-models.html. It is improved
 # in several ways. It avoids downloading all files and discarding unwanted ones by parsing the gazebo model manifest.
-# It allows the specification of models to fetch, e.g.:
-# ./load_gazebo_modles.sh ground_plane sun ambulance
+# It allows the specification of the user to set up, and models to fetch, e.g.:
+# ./load_gazebo_modles.sh -u handuser -m ground_plane sun ambulance
 # These two changes make it much faster and less of a load on the server. For backwards compatibility, no arguments
 # results in all models being fetched.
 
