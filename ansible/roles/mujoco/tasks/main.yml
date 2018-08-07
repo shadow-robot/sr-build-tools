@@ -1,0 +1,19 @@
+# Install Mujoco Simulator
+
+- name: Download Mujoco software in home
+  shell: bash -c "wget "https://www.roboti.us/download/mjpro150_linux.zip" -P /home/{{ros_user}}"
+  become: yes
+
+- name: Unzip Mujoco software
+  shell: bash -c "unzip /home/{{ros_user}}/mjpro150_linux.zip -d /home/{{ros_user}}"
+  become: yes
+
+- name: Install libglfw3-dev
+  sudo: yes
+  apt:
+    name: libglfw3-dev
+
+- name: Install libglew
+  sudo: yes
+  apt:
+    name: libglew-dev

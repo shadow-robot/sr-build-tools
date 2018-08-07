@@ -183,3 +183,4 @@
     - {role: mongo_database, tags: ["mongodb"]}
     - {role: pyassimp, tags: ["pyassimp"]}
     - {role: hand_e_icons, tags: ["hand_e_icons"]}
+    - {role: mujoco, tags: ["mujoco"]}
