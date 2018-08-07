@@ -67,8 +67,6 @@
 - name: Install user
   script: ../files/create_user.sh {{new_docker_user}} {{new_docker_user_password}} {{ros_release}}
 
-- name: Add gazebo models
-  include_role:
-    name: gazebo_models
-  vars:
+- name: Pass new user name to gazebo models role
+  set_fact:
     gazebo_user: "{{new_docker_user}}"
