@@ -39,9 +39,8 @@ if [ ! -z "$container_name" ]; then
 	        docker exec $current_container_name bash -c "kill -9 $(ps aux | grep 'rosmaster' | grep -v grep| awk '{print $2}') || echo 'rosmaster killed silently'" || true
 	        latestbag=$(docker exec $current_container_name bash -c 'ls -dtr /home/user/*.bag | tail -1')
             echo "Copying logs from $current_container_name.."
-            mkdir -p ${ros_log_dir}
-            mkdir -p ${ros_log_dir}/$dir
-            core_name=$(docker exec $current_container_name bash -c "ls /home/user/.ros/log/core_dumps/core* | awk '{if(NR>0) print $NF}'")
+            mkdir -p ${ros_log_dir}/$dir/ros_log_$timestamp
+            core_name=$(docker exec $current_container_name bash -c "ls -I '*.log' /home/user/.ros/log/core_dumps/core* | awk '{if(NR>0) print $NF}'")
             if [ ! -z "$core_name" ]; then
                 core_array=($core_name)
                 for core in ${!core_array[@]}; do
@@ -54,13 +53,14 @@ if [ ! -z "$container_name" ]; then
                     docker exec $current_container_name bash -c "gdb --core=$current_core $runtime_name -ex 'bt full' -ex 'quit' >> $current_core.log"
                 done
             fi
-            docker cp  -L $current_container_name:/home/user/.ros/log/core_dumps ${ros_log_dir}/$dir/ros_log_$timestamp
-            docker exec $current_container_name bash -c "rm /home/user/.ros/log/core_dumps/core_*"
+            docker cp  -L $current_container_name:/home/user/.ros/log/stderr.log ${ros_log_dir}/$dir/ros_log_$timestamp || true
+            docker cp  -L $current_container_name:/home/user/.ros/log/stdout.log ${ros_log_dir}/$dir/ros_log_$timestamp || true
+            docker exec $current_container_name bash -c "rm /home/user/.ros/log/std*.log" || true
+            docker cp  -L $current_container_name:/home/user/.ros/log/core_dumps ${ros_log_dir}/$dir/ros_log_$timestamp  || true
+            docker exec $current_container_name bash -c "rm /home/user/.ros/log/core_dumps/core_*" || true
             echo "Killing container $current_container_name..."
             docker kill $current_container_name
-
             docker cp -L $current_container_name:home/user/.ros/log/latest ${ros_log_dir}/$dir
-
             mv ${ros_log_dir}/$dir/latest/*.* ${ros_log_dir}/$dir/ros_log_$timestamp
             rm -rf ${ros_log_dir}/$dir/latest
 	        echo $notes_from_user > ${ros_log_dir}/$dir/ros_log_$timestamp/notes_from_user.txt
