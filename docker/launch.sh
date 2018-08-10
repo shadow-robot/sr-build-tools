@@ -126,6 +126,9 @@ fi
 if [ -z "${CUSTOMER_KEY}" ];
 then
     CUSTOMER_KEY=false
+else
+    echo "Please enter your key for uploading logs to AWS:"
+    read CUSTOMER_KEY
 fi
 
 echo "================================================================="
@@ -252,26 +255,6 @@ fi
 
 if [ ${NVIDIA} = true ]; then
     sudo apt-get install -y nvidia-docker
-fi
-
-if [ ${CUSTOMER_KEY} = false ]; then
-    echo "No customer key provided, logs will not be uploaded to AWS"
-    echo "If you need to upload logs to AWS, please re-run this script with a valid customer key from Shadow Robot"
-    sleep 2
-else    
-    echo ""
-    echo " -----------------------------------"
-    echo " |   Checking AWS installation     |"
-    echo " -----------------------------------"
-    echo ""
-    if [ -x "$(command -v aws)" ]; then
-        echo "aws installed"
-    else
-        echo "Installing AWS CLI"
-        curl "https://s3.amazonaws.com/aws-cli/awscli-bundle.zip" -o "awscli-bundle.zip"
-        unzip awscli-bundle.zip
-        ./awscli-bundle/install -b ~/bin/aws
-    fi
 fi
 
 # Log in to docker only for hand h images
@@ -411,15 +394,6 @@ if [ ${DESKTOP_ICON} = true ] ; then
 
     echo "Downloading the save_ros_logs script"
     curl "https://raw.githubusercontent.com/shadow-robot/sr-build-tools/${BUILD_TOOLS_BRANCH}/docker/utils/save_latest_ros_logs.sh" >> ${SAVE_LOGS_APP_FOLDER}/save_latest_ros_logs/save_latest_ros_logs.sh
-    
-    if [ ${CUSTOMER_KEY} = false ]; then
-        echo "Skipping shadow_upload script because no customer key set"
-    else
-        echo "Downloading the shadow_upload script"
-        curl "https://raw.githubusercontent.com/shadow-robot/sr-build-tools/${BUILD_TOOLS_BRANCH}/docker/utils/shadow_upload.sh" >> ${SAVE_LOGS_APP_FOLDER}/save_latest_ros_logs/shadow_upload.sh
-        echo "Creating customer key file"
-        echo "${CUSTOMER_KEY}" > ${SAVE_LOGS_APP_FOLDER}/save_latest_ros_logs/customer.key
-    fi
 
     echo "Creating launch executable file"
     printf "#! /bin/bash
@@ -555,6 +529,34 @@ else
         ${DOCKER} create -it --privileged --name ${DOCKER_CONTAINER_NAME} ${OPTOFORCE_PATH} --ulimit core=-1 --security-opt seccomp=unconfined --network=host --pid=host -e DISPLAY -e QT_X11_NO_MITSHM=1 -e LOCAL_USER_ID=$(id -u) -v /tmp/.X11-unix:/tmp/.X11-unix:rw ${DOCKER_IMAGE_NAME} terminator -x bash -c "pkill -f \"^\"shadow_launcher_app_xterm && /usr/local/bin/setup_dexterous_hand.sh && bash || bash"
         docker cp ${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/setup_dexterous_hand.sh ${DOCKER_CONTAINER_NAME}:/usr/local/bin/setup_dexterous_hand.sh
     fi
+fi
+
+if [ ${CUSTOMER_KEY} = false ]; then
+    echo "No customer key provided, logs will not be uploaded to AWS"
+    echo "If you need to upload logs to AWS, please re-run this script with a valid customer key from Shadow Robot"
+    sleep 2
+else    
+    echo ""
+    echo " -----------------------------------"
+    echo " |   Checking AWS installation     |"
+    echo " -----------------------------------"
+    echo ""
+    if [ -z "$(docker exec ${container_name} bash -c 'command -v ~/bin/aws')" ]; then
+        echo "Installing AWS CLI"
+        docker exec ${container_name} bash -c 'curl "https://s3.amazonaws.com/aws-cli/awscli-bundle.zip" -o "/tmp/awscli-bundle.zip"'
+        docker exec ${container_name} bash -c "unzip -o /tmp/awscli-bundle.zip -d /tmp/"
+        docker exec ${container_name} bash -c "/tmp/awscli-bundle/install -b ~/bin/aws"
+    else
+        echo "aws installed"    
+    fi
+fi
+if [ ${CUSTOMER_KEY} = false ]; then
+    echo "Skipping shadow_upload script because no customer key set"
+else
+    echo "Downloading the shadow_upload script"
+    docker exec ${container_name} bash -c "curl https://raw.githubusercontent.com/shadow-robot/sr-build-tools/${BUILD_TOOLS_BRANCH}/docker/utils/shadow_upload.sh > /usr/local/bin/shadow_upload.sh"
+    echo "Creating customer key file"
+    docker exec ${container_name} bash -c "echo ${CUSTOMER_KEY} > /usr/local/bin/customer.key"
 fi
 
 echo ""

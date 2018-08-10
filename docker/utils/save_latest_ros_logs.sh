@@ -10,12 +10,7 @@ NC='\033[0m' # No Color
 bold=$(tput bold)
 normal=$(tput sgr0)
 
-customerkey=false
-if [ -f /home/$USER/.shadow_save_log_app/save_latest_ros_logs/customer.key ]; then
-    customerkey=$(head -n 1 /home/$USER/.shadow_save_log_app/save_latest_ros_logs/customer.key)
-else
-    customerkey=false
-fi
+
 
 if [ ${customerkey} = false ]; then
     echo -e "${NC}${normal}You are about to save latest ros logs ${normal}${NC}"
@@ -38,6 +33,12 @@ container_name=$(docker ps | awk '{if(NR>1) print $NF}')
 if [ ! -z "$container_name" ]; then
         container_array=($container_name)
         for container in ${!container_array[@]}; do
+            customerkey=false
+            if [ "$(docker exec ${container_name} bash -c 'ls /usr/local/bin/customer.key')" ]; then
+                customerkey=$(docker exec ${container_name} bash -c "head -n 1 /usr/local/bin/customer.key")
+            else
+                customerkey=false
+            fi
             current_container_name=${container_array[$container]}
             ros_log_dir=~/Desktop/ROS_LOGS/$current_container_name
             dir=ros_logs_$(date +%Y-%m-%d)
@@ -63,6 +64,18 @@ if [ ! -z "$container_name" ]; then
                     #extract readable info to log file
                     docker exec $current_container_name bash -c "gdb --core=$current_core $runtime_name -ex 'bt full' -ex 'quit' >> $current_core.log"
                 done
+            fi
+            #copy all logs to logs_temp folder for cloud
+            if [ ${customerkey} ]; then
+            # check if the folder is empty. if not then ask the user if he wants to upload the files. If not then delete them and start fresh and copy the new files. If yes then upload first and then copy the new files
+                docker exec $current_container_name bash -c "mkdir /home/user/logs_temp/"
+                docker exec $current_container_name bash -c "cp /home/user/.ros/log/stderr.log /home/user/logs_temp/"
+                docker exec $current_container_name bash -c "cp /home/user/.ros/log/stdout.log /home/user/logs_temp/"
+                docker exec $current_container_name bash -c "/home/user/.ros/log/core_dumps/* /home/user/logs_temp/"
+                docker exec $current_container_name bash -c "/home/user/.ros/log/latest /home/user/logs_temp/"
+                docker exec $current_container_name bash -c "mv /home/user/.ros/log/latest/*.* /home/user/logs_temp/ros_log_$timestamp"
+                docker exec $current_container_name bash -c "rm -rf /home/user/.ros/log/latest"
+
             fi
             docker cp  -L $current_container_name:/home/user/.ros/log/stderr.log ${ros_log_dir}/$dir/ros_log_$timestamp || true
             docker cp  -L $current_container_name:/home/user/.ros/log/stdout.log ${ros_log_dir}/$dir/ros_log_$timestamp || true
