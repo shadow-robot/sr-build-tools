@@ -1,2 +1,7 @@
 - name: Install basic gazebo models necessary for successful first run
-  script: ../docker/utils/load_gazebo_models.sh {{ models | join(' ') }}
+  script: ../docker/utils/load_gazebo_models.sh -m {{ models | join(' ') }}
+  when: gazebo_user is not defined
+
+- name: Install basic gazebo models necessary for successful first run
+  script: ../docker/utils/load_gazebo_models.sh -u {{gazebo_user}} -m {{ models | join(' ') }}
+  when: gazebo_user is defined
