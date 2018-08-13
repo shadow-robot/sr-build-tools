@@ -50,7 +50,30 @@ export AWS_ACCESS_KEY_ID=$ACCESS_KEY_ID; \
 export AWS_SECRET_ACCESS_KEY=$SECRET_ACCESS_KEY; \
 export AWS_SESSION_TOKEN=$SESSION_TOKEN; \
 
+function fail {
+  echo $1 >&2
+  exit 1
+}
+
+function retry {
+  local n=1
+  local max=5
+  local delay=15
+  while true; do
+    "$@" && break || {
+      if [[ $n -lt $max ]]; then
+        ((n++))
+        echo "Upload failed. Attempt $n/$max:"
+        sleep $delay;
+      else
+        fail "AWS failed to upload the logs after $n attempts."
+      fi
+    }
+  done
+}
+
 #max compression
 
 env GZIP=-9 tar cvzf $OUTPUTFILE.tar.gz $FOLDER
-aws s3 cp $OUTPUTFILE.tar.gz $UPLOAD_URL
+retry aws s3 cp $OUTPUTFILE.tar.gz $UPLOAD_URL
+exit 0

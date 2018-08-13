@@ -10,28 +10,25 @@ NC='\033[0m' # No Color
 bold=$(tput bold)
 normal=$(tput sgr0)
 
-            function copy_logs
-            {
-                # copy logs to temp folder
-                docker exec $current_container_name bash -c "mkdir /home/user/logs_temp/" || true
-                docker exec $current_container_name bash -c "cp /home/user/.ros/log/stderr.log /home/user/logs_temp/" || true
-                docker exec $current_container_name bash -c "cp /home/user/.ros/log/stdout.log /home/user/logs_temp/" || true
-                docker exec $current_container_name bash -c "rm /home/user/.ros/log/std*.log" || true
-                docker exec $current_container_name bash -c "cp /home/user/.ros/log/core_dumps/* /home/user/logs_temp/" || true
-                docker exec $current_container_name bash -c "rm /home/user/.ros/log/core_dumps/core_*" || true
-                docker exec $current_container_name bash -c "cp /home/user/.ros/log/latest/*.* /home/user/logs_temp/"
-                docker exec $current_container_name bash -c "cp $latestbag /home/user/logs_temp/"
-                docker exec $current_container_name bash -c "cp $latestparam /home/user/logs_temp/"
-                docker exec $current_container_name bash -c "cp $latestws /home/user/logs_temp/"
-                docker cp  -L ${ros_log_dir}/$dir/ros_log_$timestamp/notes_from_user.txt $current_container_name:/home/user/logs_temp/
-            }
+function copy_logs
+{
+    # copy logs to temp folder
+    docker exec $current_container_name bash -c "mkdir /home/user/logs_temp/" || true
+    docker exec $current_container_name bash -c "cp /home/user/.ros/log/stderr.log /home/user/logs_temp/" || true
+    docker exec $current_container_name bash -c "cp /home/user/.ros/log/stdout.log /home/user/logs_temp/" || true
+    docker exec $current_container_name bash -c "rm /home/user/.ros/log/std*.log" || true
+    docker exec $current_container_name bash -c "cp /home/user/.ros/log/core_dumps/* /home/user/logs_temp/" || true
+    docker exec $current_container_name bash -c "rm /home/user/.ros/log/core_dumps/core_*" || true
+    docker exec $current_container_name bash -c "cp /home/user/.ros/log/latest/*.* /home/user/logs_temp/"
+    docker exec $current_container_name bash -c "cp $latestbag /home/user/logs_temp/"
+    docker exec $current_container_name bash -c "cp $latestparam /home/user/logs_temp/"
+    docker exec $current_container_name bash -c "cp $latestws /home/user/logs_temp/"
+    docker cp  -L ${ros_log_dir}/$dir/ros_log_$timestamp/notes_from_user.txt $current_container_name:/home/user/logs_temp/
+    docker cp -L ${ros_log_dir}/$dir/ros_log_$timestamp/container_info.txt $current_container_name:/home/user/logs_temp/
+    docker cp -L ${ros_log_dir}/$dir/ros_log_$timestamp/image_info.txt $current_container_name:/home/user/logs_temp/
+}
 
-if [ ${customerkey} = false ]; then
-    echo -e "${NC}${normal}You are about to save latest ros logs ${normal}${NC}"
-else
-    echo -e "${NC}${normal}You are about to save and upload the latest ros logs to AWS (up to 200 MB) ${normal}${NC}"
-fi
-
+echo -e "${NC}${normal}You are about to save latest ros logs ${normal}${NC}"
 echo -e "${RED}${bold}WARNING! This closes all running docker containers. Do you wish to continue? (y/n) ${normal}${NC}"
 read prompt
 
@@ -81,49 +78,42 @@ if [ ! -z "$container_name" ]; then
                 done
             fi
             
-            # check if the folder is empty. if not then ask the user if he wants to upload the files. If not then delete them and start fresh and copy the new files. If yes then upload first and then copy the new files
-            if [ ${customerkey} ]; then
-             # check if the folder is empty.
-                if [ -n "$(docker exec ${container_name} bash -c 'find /home/user/logs_temp -maxdepth 0 -type d -empty 2>/dev/null')" ]; then
-                    echo "There are previous logs that havent been sent yet. Would you like to send them now? Type 'y' to send or 'n' to ignore and overwrite them"
-                    read old_logs
-                    if [[ $old_logs == "y" || $old_logs == "Y" || $old_logs == "yes" ]]; then
-                        docker exec $current_container_name bash -c "source /usr/local/bin/shadow_upload.sh ${customerkey} /home/user/logs_temp /home/user/$timestamp"
-                        
-                    fi
-                copy_logs
-                echo "Empty directory"
-            else
-
-                copy_logs
-                echo "Not empty or NOT a directory"
-            fi
-            fi
-
-            
-            
-            
             # get container and image info
             container_image=$(docker ps -a | grep $current_container_name| awk '{print $2}')
             docker container inspect $current_container_name > ${ros_log_dir}/$dir/ros_log_$timestamp/container_info.txt
             docker images $container_image > ${ros_log_dir}/$dir/ros_log_$timestamp/image_info.txt
-            # copy these files to container temp folder
-            docker cp  -L ${ros_log_dir}/$dir/ros_log_$timestamp/container_info.txt $current_container_name:/home/user/logs_temp/
-            docker cp  -L ${ros_log_dir}/$dir/ros_log_$timestamp/image_info.txt $current_container_name:/home/user/logs_temp/
 
-
-	        if [ ${customerkey} = false ]; then
-            # copy files from temp folder to host and empty the folder
-                docker cp  -L $current_container_name:/home/user/logs_temp/*.* ${ros_log_dir}/$dir/ros_log_$timestamp/
-                docker exec $current_container_name bash -c "rm /home/user/.ros/log/*.*"
-	    	    echo -e "${GREEN} Latest ROS Logs Saved for $current_container_name! ${NC}"
-                sleep 1
-	        else
-	    	    printf "#! /bin/bash
-            	source /home/$USER/.shadow_save_log_app/save_latest_ros_logs/shadow_upload.sh ${customerkey} ${ros_log_dir}/$dir/ros_log_$timestamp"
-	    	    echo -e "${GREEN} Latest ROS Logs Saved and Uploaded to AWS for $current_container_name! ${NC}"
+            if [ ${customerkey} ]; then
+             # check if the folder is empty.
+                if [ ! -z "$(docker exec ${container_name} bash -c 'find /home/user/logs_temp -maxdepth 0 -type d 2>/dev/null')" ]; then
+                    echo "There are previous logs that havent been sent yet. Would you like to send them now? Type 'y' to send or 'n' to ignore and overwrite them"
+                    read old_logs
+                    if [[ $old_logs == "y" || $old_logs == "Y" || $old_logs == "yes" ]]; then
+                        # upload new logs (it will break the script if upload fails)
+                        docker exec $current_container_name bash -c "source /usr/local/bin/shadow_upload.sh ${customerkey} /home/user/logs_temp /home/user/$timestamp"
+                        echo -e "${GREEN} Previous logs Uploaded to AWS for $current_container_name! ${NC}"
+		                sleep 1
+                    fi
+                    # delete temp folder
+                    docker exec $current_container_name bash -c "rm -rf /home/user/logs_temp"
+                fi
+                # copy new logs to temp folder
+                copy_logs
+                # copy to host
+                docker cp -L $current_container_name:/home/user/logs_temp/*.* ${ros_log_dir}/$dir/ros_log_$timestamp/
+                # upload new logs (it will break the script if upload fails)
+                docker exec $current_container_name bash -c "source /usr/local/bin/shadow_upload.sh ${customerkey} /home/user/logs_temp /home/user/$timestamp"
+                # delete temp folder
+                docker exec $current_container_name bash -c "rm -rf /home/user/logs_temp"
+                echo -e "${GREEN} Latest ROS Logs Saved and Uploaded to AWS for $current_container_name! ${NC}"
 		        sleep 1
-	        fi
+            else
+                copy_logs
+                docker cp -L $current_container_name:/home/user/logs_temp/*.* ${ros_log_dir}/$dir/ros_log_$timestamp/
+                docker exec $current_container_name bash -c "rm -rf /home/user/logs_temp"
+                echo -e "${GREEN} Latest ROS Logs Saved for $current_container_name! ${NC}"
+                sleep 1
+            fi
             
             echo "Killing container $current_container_name..."
             docker kill $current_container_name
