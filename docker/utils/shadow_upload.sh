@@ -75,5 +75,5 @@ function retry {
 #max compression
 
 env GZIP=-9 tar cvzf $OUTPUTFILE.tar.gz $FOLDER
-retry aws s3 cp $OUTPUTFILE.tar.gz $UPLOAD_URL
+retry /root/bin/aws s3 cp $OUTPUTFILE.tar.gz $UPLOAD_URL
 exit 0
