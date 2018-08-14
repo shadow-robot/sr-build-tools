@@ -97,7 +97,12 @@ if [ ! -z "$container_name" ]; then
                     if [[ $old_logs == "y" || $old_logs == "Y" || $old_logs == "yes" ]]; then
                         # upload new logs (it will break the script if upload fails)
                         docker exec $current_container_name bash -c "source /usr/local/bin/shadow_upload.sh ${customerkey} /home/user/logs_temp /home/user/$timestamp"
-                        echo -e "${GREEN} Previous logs Uploaded to AWS for $current_container_name! ${NC}"
+                        if [ $? -eq 0 ]; then
+                            echo -e "${GREEN} Previous logs Uploaded to AWS for $current_container_name! ${NC}"
+                        else
+                            echo -e "${RED}${bold} Failed to upload previous logs to AWS for $current_container_name! Check your internet connection and try again. Exiting... ${normal}${NC}"
+                            exit 1
+                        fi
 		                sleep 1
                     fi
                     # delete temp folder
@@ -108,10 +113,14 @@ if [ ! -z "$container_name" ]; then
                 copy_to_host
                 # upload new logs (it will break the script if upload fails)
                 docker exec $current_container_name bash -c "source /usr/local/bin/shadow_upload.sh ${customerkey} /home/user/logs_temp /home/user/$timestamp"
-                # delete temp folder
-                docker exec $current_container_name bash -c "rm -rf /home/user/logs_temp"
-                echo -e "${GREEN} Latest ROS Logs Saved and Uploaded to AWS for $current_container_name! ${NC}"
-		        sleep 1
+                if [ $? -eq 0 ]; then
+                    # delete temp folder
+                    docker exec $current_container_name bash -c "rm -rf /home/user/logs_temp"
+                    echo -e "${GREEN} Latest ROS Logs Saved and Uploaded to AWS for $current_container_name! ${NC}"
+		        else
+                    echo -e "${RED}${bold} Failed to upload logs to AWS for $current_container_name! Check your internet connection and try again.${normal}${NC}"
+                fi
+                sleep 1
             else
                 copy_logs
                 copy_to_host
@@ -121,7 +130,7 @@ if [ ! -z "$container_name" ]; then
             fi
             
             echo "Killing container $current_container_name..."
-            docker kill $current_container_name
+            # docker kill $current_container_name
         done
 else
     echo -e "${RED}There is no docker container running, please start a container to save logs${NC}"

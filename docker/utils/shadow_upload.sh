@@ -3,6 +3,27 @@
 # set -o xtrace
 
 #this zips the contents of the given folder and uploads it to AWS, using the customerkey installed by oneliner inside the docker container
+function fail {
+  echo $1 >&2
+  exit 1
+}
+
+function retry {
+  local n=1
+  local max=5
+  local delay=15
+  while true; do
+    "$@" && break || {
+      if [[ $n -lt $max ]]; then
+        ((n++))
+        echo "Upload failed. Attempt $n/$max:"
+        sleep $delay;
+      else
+        fail "AWS failed to upload the logs after $n attempts."
+      fi
+    }
+  done
+}
 
 print_usage(){
   echo "Usage: shadow_upload.sh <SECRET_KEY> <INPUT_FOLDER_PATH> <OUTPUT_FILE_NAME>"
@@ -49,28 +70,6 @@ UPLOAD_URL=`echo -e "$response" | grep URL | sed 's/URL=//'`
 export AWS_ACCESS_KEY_ID=$ACCESS_KEY_ID; \
 export AWS_SECRET_ACCESS_KEY=$SECRET_ACCESS_KEY; \
 export AWS_SESSION_TOKEN=$SESSION_TOKEN; \
-
-function fail {
-  echo $1 >&2
-  exit 1
-}
-
-function retry {
-  local n=1
-  local max=5
-  local delay=15
-  while true; do
-    "$@" && break || {
-      if [[ $n -lt $max ]]; then
-        ((n++))
-        echo "Upload failed. Attempt $n/$max:"
-        sleep $delay;
-      else
-        fail "AWS failed to upload the logs after $n attempts."
-      fi
-    }
-  done
-}
 
 #max compression
 
