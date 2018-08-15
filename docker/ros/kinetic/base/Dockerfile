@@ -34,12 +34,6 @@ RUN set -x && \
     apt-get upgrade -y && \
     apt-get install -y --no-install-recommends ca-certificates wget sudo && \
     apt-get install -y bash-completion && \
-    apt-get install -y unzip && \
-    \
-    echo "Installing AWS CLI" && \
-    curl "https://s3.amazonaws.com/aws-cli/awscli-bundle.zip" -o "/tmp/awscli-bundle.zip" && \
-    unzip -o /tmp/awscli-bundle.zip -d /tmp/ && \
-    /tmp/awscli-bundle/install -b /usr/local/bin/aws && \
     \
     echo "Running one-liner" && \
     wget -O /tmp/oneliner "$( echo "$remote_shell_script" | sed 's/#/%23/g' )" && \

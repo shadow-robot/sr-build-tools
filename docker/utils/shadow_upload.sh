@@ -11,7 +11,7 @@ function fail {
 function retry {
   local n=1
   local max=5
-  local delay=1
+  local delay=15
   while true; do
     "$@" && break || {
       if [[ $n -lt $max ]]; then
