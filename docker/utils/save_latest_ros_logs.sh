@@ -61,11 +61,11 @@ if [ ! -z "$container_name" ]; then
             docker cp  -L $current_container_name:/home/user/.ros/log/core_dumps ${ros_log_dir}/$dir/ros_log_$timestamp  || true
             docker exec $current_container_name bash -c "rm /home/user/.ros/log/core_dumps/core_*" || true
             echo "Killing container $current_container_name..."
-            # docker kill $current_container_name
+            docker kill $current_container_name
             docker cp -L $current_container_name:home/user/.ros/log/latest ${ros_log_dir}/$dir
             mv ${ros_log_dir}/$dir/latest/*.* ${ros_log_dir}/$dir/ros_log_$timestamp
             rm -rf ${ros_log_dir}/$dir/latest
-	        echo $notes_from_user > ${ros_log_dir}/$dir/ros_log_$timestamp/notes_from_user.txt
+	    echo $notes_from_user > ${ros_log_dir}/$dir/ros_log_$timestamp/notes_from_user.txt
             docker container inspect $current_container_name > ${ros_log_dir}/$dir/ros_log_$timestamp/container_info.txt
             container_image=$(docker ps -a | grep $current_container_name| awk '{print $2}')
             docker images $container_image > ${ros_log_dir}/$dir/ros_log_$timestamp/image_info.txt
