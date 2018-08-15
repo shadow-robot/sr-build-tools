@@ -30,6 +30,7 @@ function copy_logs
 }
 function copy_to_host
 {
+    echo "Copying logs to host..."
     docker cp -L $current_container_name:/home/user/logs_temp ${ros_log_dir}/$dir/ros_log_$timestamp/
     mv ${ros_log_dir}/$dir/ros_log_$timestamp/logs_temp/*.* ${ros_log_dir}/$dir/ros_log_$timestamp/
     rm -rf ${ros_log_dir}/$dir/ros_log_$timestamp/logs_temp
@@ -63,11 +64,11 @@ if [ ! -z "$container_name" ]; then
             latestws=$(docker exec $current_container_name bash -c 'ls -dtr /home/user/wsdiff_ws_diff* | tail -1')
             latestparam=$(docker exec $current_container_name bash -c 'ls -dtr /home/user/run_params* | tail -1')
 	        echo "Killing rosmaster to make .bag.active file into .bag file"
-	        docker exec $current_container_name bash -c "kill -SIGINT $(ps aux | grep 'rosmaster' | grep -v grep| awk '{print $2}')" || true
+	        docker exec $current_container_name bash -c 'kill -SIGINT $(ps aux | grep "rosmaster" | grep -v grep| awk "{print $2}")' || true
 	        #if rosmaster is still running, use kill -9 to kill it
-	        docker exec $current_container_name bash -c "kill -9 $(ps aux | grep 'rosmaster' | grep -v grep| awk '{print $2}') || echo 'rosmaster killed silently'" || true
+	        docker exec $current_container_name bash -c 'kill -9 $(ps aux | grep "rosmaster" | grep -v grep| awk "{print $2}") || echo "rosmaster killed silently"' || true
 	        latestbag=$(docker exec $current_container_name bash -c 'ls -dtr /home/user/*.bag | tail -1')
-            echo "Copying logs from $current_container_name.."
+            echo "Copying logs from $current_container_name..."
             mkdir -p ${ros_log_dir}/$dir/ros_log_$timestamp
             echo $notes_from_user > ${ros_log_dir}/$dir/ros_log_$timestamp/notes_from_user.txt
             core_name=$(docker exec $current_container_name bash -c "ls /home/user/.ros/log/core_dumps/core* | grep -v '\.log' | awk '{if(NR>0) print $NF}'")
@@ -95,9 +96,9 @@ if [ ! -z "$container_name" ]; then
                     echo "There are previous logs that havent been sent yet. Would you like to send them now? Type 'y' to send or 'n' to ignore and overwrite them"
                     read old_logs
                     if [[ $old_logs == "y" || $old_logs == "Y" || $old_logs == "yes" ]]; then
-                        # upload new logs (it will break the script if upload fails)
-                        docker exec $current_container_name bash -c "source /usr/local/bin/shadow_upload.sh ${customerkey} /home/user/logs_temp /home/user/$timestamp"
-                        if [ $? -eq 0 ]; then
+                        echo "Uploading to AWS - Please wait..."
+                        upload_command=$(docker exec $current_container_name bash -c "source /usr/local/bin/shadow_upload.sh ${customerkey} /home/user/logs_temp /home/user/$timestamp" || true) 
+                        if [ $upload_command == "ok" ]; then
                             echo -e "${GREEN} Previous logs Uploaded to AWS for $current_container_name! ${NC}"
                         else
                             echo -e "${RED}${bold} Failed to upload previous logs to AWS for $current_container_name! Check your internet connection and try again. Exiting... ${normal}${NC}"
@@ -111,9 +112,9 @@ if [ ! -z "$container_name" ]; then
                 # copy new logs to temp folder
                 copy_logs
                 copy_to_host
-                # upload new logs (it will break the script if upload fails)
-                docker exec $current_container_name bash -c "source /usr/local/bin/shadow_upload.sh ${customerkey} /home/user/logs_temp /home/user/$timestamp"
-                if [ $? -eq 0 ]; then
+                echo "Uploading to AWS - Please wait..."
+                upload_command=$(docker exec $current_container_name bash -c "source /usr/local/bin/shadow_upload.sh ${customerkey} /home/user/logs_temp /home/user/$timestamp" || true)
+                if [ $upload_command == "ok" ]; then
                     # delete temp folder
                     docker exec $current_container_name bash -c "rm -rf /home/user/logs_temp"
                     echo -e "${GREEN} Latest ROS Logs Saved and Uploaded to AWS for $current_container_name! ${NC}"
@@ -128,9 +129,8 @@ if [ ! -z "$container_name" ]; then
                 echo -e "${GREEN} Latest ROS Logs Saved for $current_container_name! ${NC}"
                 sleep 1
             fi
-            
             echo "Killing container $current_container_name..."
-            # docker kill $current_container_name
+            docker kill $current_container_name
         done
 else
     echo -e "${RED}There is no docker container running, please start a container to save logs${NC}"

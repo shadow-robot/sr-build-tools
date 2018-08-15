@@ -11,7 +11,7 @@ function fail {
 function retry {
   local n=1
   local max=5
-  local delay=15
+  local delay=1
   while true; do
     "$@" && break || {
       if [[ $n -lt $max ]]; then
@@ -53,13 +53,13 @@ response=`$MY_CURL --silent -H "x-api-key: $KEY" $CREDENTIALS_URL`
 if [[ $response = *"forbidden"* ]];then
   echo "Access is forbidden. Check the correctness of the secret key or contact Shadow Robot support."
   print_usage
-  exit 1;
+  return 1;
 fi
 if [[ $response != *"SESSION_TOKEN"* ]];then
   echo "Unable to get temporary credentials. Read the following message to figure out the root cause or contact Shadow Robot support."
-  $MY_CURL -verbose -H "x-api-key: $KEY" $CREDENTIALS_URL
+  retry $MY_CURL -verbose -H "x-api-key: $KEY" $CREDENTIALS_URL
   print_usage
-  exit 1;
+  return 1;
 fi
 
 ACCESS_KEY_ID=`echo -e "$response" | grep ACCESS_KEY_ID | sed 's/ACCESS_KEY_ID=//'`
@@ -73,6 +73,7 @@ export AWS_SESSION_TOKEN=$SESSION_TOKEN; \
 
 #max compression
 
-env GZIP=-9 tar cvzf $OUTPUTFILE.tar.gz $FOLDER
-retry /root/bin/aws s3 cp $OUTPUTFILE.tar.gz $UPLOAD_URL
+env GZIP=-9 tar cvzf $OUTPUTFILE.tar.gz $FOLDER > /dev/null 2>&1
+retry /root/bin/aws s3 cp $OUTPUTFILE.tar.gz $UPLOAD_URL > /dev/null 2>&1
+echo "ok"
 exit 0

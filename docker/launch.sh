@@ -532,25 +532,6 @@ else
 fi
 
 if [ ${CUSTOMER_KEY} = false ]; then
-    echo "No customer key provided, logs will not be uploaded to AWS"
-    echo "If you need to upload logs to AWS, please re-run this script with a valid customer key from Shadow Robot"
-    sleep 2
-else    
-    echo ""
-    echo " -----------------------------------"
-    echo " |   Checking AWS installation     |"
-    echo " -----------------------------------"
-    echo ""
-    if [ -z "$(docker exec ${container_name} bash -c 'command -v ~/bin/aws')" ]; then
-        echo "Installing AWS CLI"
-        docker exec ${container_name} bash -c 'curl "https://s3.amazonaws.com/aws-cli/awscli-bundle.zip" -o "/tmp/awscli-bundle.zip"'
-        docker exec ${container_name} bash -c "unzip -o /tmp/awscli-bundle.zip -d /tmp/"
-        docker exec ${container_name} bash -c "/tmp/awscli-bundle/install -b ~/bin/aws"
-    else
-        echo "aws installed"    
-    fi
-fi
-if [ ${CUSTOMER_KEY} = false ]; then
     echo "Skipping shadow_upload script because no customer key set"
 else
     echo "Downloading the shadow_upload script"
