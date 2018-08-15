@@ -63,11 +63,13 @@ if [ ! -z "$container_name" ]; then
             timestamp=$(date +%Y-%m-%d-%T)
             latestws=$(docker exec $current_container_name bash -c 'ls -dtr /home/user/wsdiff_ws_diff* | tail -1')
             latestparam=$(docker exec $current_container_name bash -c 'ls -dtr /home/user/run_params* | tail -1')
-	        echo "Killing rosmaster to make .bag.active file into .bag file"
-	        docker exec $current_container_name bash -c 'kill -SIGINT $(ps aux | grep "rosmaster" | grep -v grep| awk "{print $2}")' || true
-	        #if rosmaster is still running, use kill -9 to kill it
-	        docker exec $current_container_name bash -c 'kill -9 $(ps aux | grep "rosmaster" | grep -v grep| awk "{print $2}") || echo "rosmaster killed silently"' || true
-	        latestbag=$(docker exec $current_container_name bash -c 'ls -dtr /home/user/*.bag | tail -1')
+	          echo "Killing rosmaster to make .bag.active file into .bag file"
+	          docker exec $current_container_name bash -c 'kill -SIGINT $(ps aux | grep "rosmaster" | grep -v grep| awk "{print $2}")' || true
+	          #if rosmaster is still running, use kill -9 to kill it
+	          docker exec $current_container_name bash -c 'kill -9 $(ps aux | grep "rosmaster" | grep -v grep| awk "{print $2}") || echo "rosmaster killed silently"' || true
+            echo "Waiting for roscore to exit"
+            sleep 10
+            latestbag=$(docker exec $current_container_name bash -c 'ls -dtr /home/user/*.bag | tail -1')
             echo "Copying logs from $current_container_name..."
             mkdir -p ${ros_log_dir}/$dir/ros_log_$timestamp
             echo $notes_from_user > ${ros_log_dir}/$dir/ros_log_$timestamp/notes_from_user.txt
@@ -84,7 +86,7 @@ if [ ! -z "$container_name" ]; then
                     docker exec $current_container_name bash -c "gdb --core=$current_core $runtime_name -ex 'bt full' -ex 'quit' >> $current_core.log"
                 done
             fi
-            
+
             # get container and image info
             container_image=$(docker ps -a | grep $current_container_name| awk '{print $2}')
             docker container inspect $current_container_name > ${ros_log_dir}/$dir/ros_log_$timestamp/container_info.txt
