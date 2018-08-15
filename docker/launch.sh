@@ -535,9 +535,13 @@ if [ ${CUSTOMER_KEY} = false ]; then
     echo "Skipping shadow_upload script because no customer key set"
 else
     echo "Downloading the shadow_upload script"
-    docker exec ${container_name} bash -c "curl https://raw.githubusercontent.com/shadow-robot/sr-build-tools/${BUILD_TOOLS_BRANCH}/docker/utils/shadow_upload.sh > /usr/local/bin/shadow_upload.sh"
+    curl https://raw.githubusercontent.com/shadow-robot/sr-build-tools/${BUILD_TOOLS_BRANCH}/docker/utils/shadow_upload.sh > ${SAVE_LOGS_APP_FOLDER}/save_latest_ros_logs/shadow_upload.sh
+    docker cp ${SAVE_LOGS_APP_FOLDER}/save_latest_ros_logs/shadow_upload.sh ${DOCKER_CONTAINER_NAME}:/usr/local/bin/shadow_upload.sh
+    rm ${SAVE_LOGS_APP_FOLDER}/save_latest_ros_logs/shadow_upload.sh
     echo "Creating customer key file"
-    docker exec ${container_name} bash -c "echo ${CUSTOMER_KEY} > /usr/local/bin/customer.key"
+    echo ${CUSTOMER_KEY} > ${SAVE_LOGS_APP_FOLDER}/save_latest_ros_logs/customer.key
+    docker cp ${SAVE_LOGS_APP_FOLDER}/save_latest_ros_logs/customer.key ${DOCKER_CONTAINER_NAME}:/usr/local/bin/customer.key
+    rm ${SAVE_LOGS_APP_FOLDER}/save_latest_ros_logs/customer.key
 fi
 
 echo ""
