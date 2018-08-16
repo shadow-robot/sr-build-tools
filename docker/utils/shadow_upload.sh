@@ -74,6 +74,6 @@ export AWS_SESSION_TOKEN=$SESSION_TOKEN; \
 #max compression
 
 env GZIP=-9 tar cvzf $OUTPUTFILE.tar.gz $FOLDER > /dev/null 2>&1
-retry /root/bin/aws s3 cp $OUTPUTFILE.tar.gz $UPLOAD_URL > /dev/null 2>&1
+retry /usr/local/bin/aws s3 cp $OUTPUTFILE.tar.gz $UPLOAD_URL > /dev/null 2>&1
 echo "ok"
 exit 0
