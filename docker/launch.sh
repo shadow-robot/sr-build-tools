@@ -450,7 +450,6 @@ if [ ${DESKTOP_ICON} = true ] ; then
     chmod +x /home/$USER/Desktop/${DESKTOP_SHORTCUT_NAME}.desktop
     chmod +x ${SAVE_LOGS_APP_FOLDER}/save_latest_ros_logs/shadow_save_log_exec.sh
     chmod +x ${SAVE_LOGS_APP_FOLDER}/save_latest_ros_logs/save_latest_ros_logs.sh
-    chmod +x ${SAVE_LOGS_APP_FOLDER}/save_latest_ros_logs/shadow_upload.sh
 fi
 
 if [ ${REINSTALL_DOCKER_CONTAINER} = false ] ; then
@@ -536,6 +535,7 @@ if [ ${CUSTOMER_KEY} = false ]; then
 else
     echo "Downloading the shadow_upload script"
     curl https://raw.githubusercontent.com/shadow-robot/sr-build-tools/${BUILD_TOOLS_BRANCH}/docker/utils/shadow_upload.sh > ${SAVE_LOGS_APP_FOLDER}/save_latest_ros_logs/shadow_upload.sh
+    chmod +x ${SAVE_LOGS_APP_FOLDER}/save_latest_ros_logs/shadow_upload.sh
     docker cp ${SAVE_LOGS_APP_FOLDER}/save_latest_ros_logs/shadow_upload.sh ${DOCKER_CONTAINER_NAME}:/usr/local/bin/shadow_upload.sh
     rm ${SAVE_LOGS_APP_FOLDER}/save_latest_ros_logs/shadow_upload.sh
     echo "Creating customer key file"
