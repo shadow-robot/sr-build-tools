@@ -83,7 +83,13 @@ case $server_type in
   ;;
 
 "circle2") echo "Circle CI 2.0 server"
-  export extra_variables="$extra_variables circle_repo_dir=$CIRCLE_WORKING_DIRECTORY circle_is_pull_request=$CIRCLE_PULL_REQUEST"
+  export test_results=$docker_user_home/test_results
+  mkdir -p $test_results
+
+  export code_coverage_results=$docker_user_home/coverage_results
+  mkdir -p $code_coverage_results
+
+  export extra_variables="$extra_variables circle_repo_dir=$CIRCLE_WORKING_DIRECTORY circle_is_pull_request=$CIRCLE_PULL_REQUEST circle_test_dir=$test_results circle_code_coverage_dir=$code_coverage_results"
   sudo PYTHONUNBUFFERED=1 ansible-playbook -v -i "localhost," -c local docker_site.yml --tags "circle,$tags_list" -e "$extra_variables"
   ;;
 
