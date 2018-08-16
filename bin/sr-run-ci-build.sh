@@ -74,11 +74,16 @@ case $server_type in
   sudo docker run -w "$docker_user_home/sr-build-tools/ansible" -v /:/host:rw $docker_image  bash -c "git pull && git checkout $toolset_branch && sudo PYTHONUNBUFFERED=1 ansible-playbook -v -i \"localhost,\" -c local docker_site.yml --tags \"semaphore,$tags_list\" -e \"$extra_variables\" "
   ;;
 
-"circle") echo "Circle CI server"
+"circle") echo "Circle CI 1.0 server"
   export CIRCLE_REPO_DIR=$HOME/$CIRCLE_PROJECT_REPONAME
   sudo docker pull $docker_image
   export extra_variables="$extra_variables circle_repo_dir=/host$CIRCLE_REPO_DIR  circle_is_pull_request=$CI_PULL_REQUEST circle_test_dir=/host$CI_REPORTS circle_code_coverage_dir=/host$CIRCLE_ARTIFACTS"
   sudo docker run -w "$docker_user_home/sr-build-tools/ansible" -v $CIRCLE_REPO_DIR:/host$CIRCLE_REPO_DIR -v $CI_REPORTS:/host$CI_REPORTS:rw -v $CIRCLE_ARTIFACTS:/host$CIRCLE_ARTIFACTS:rw $docker_image  bash -c "git pull && git checkout $toolset_branch && sudo PYTHONUNBUFFERED=1 ansible-playbook -v -i \"localhost,\" -c local docker_site.yml --tags \"circle,$tags_list\" -e \"$extra_variables\" "
+  ;;
+
+"circle2") echo "Circle CI 2.0 server"
+  export extra_variables="$extra_variables circle_repo_dir=$SHIPPABLE_BUILD_DIR  circle_is_pull_request=$PULL_REQUEST"
+  sudo PYTHONUNBUFFERED=1 ansible-playbook -v -i "localhost," -c local docker_site.yml --tags "circle,$tags_list" -e "$extra_variables"
   ;;
 
 "docker_hub") echo "Docker Hub"
