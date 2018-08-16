@@ -76,8 +76,8 @@ case $server_type in
 
 "circle") echo "Circle CI server"
 
-  export circle_test_dir=${CIRCLE_CI_TESTS_DIR:-"/tmp/test_results"}
-  export circle_code_coverage_dir=${CIRCLE_CI_CODE_COVERAGE_DIR:-"/tmp/code_coverage_results"}
+  export circle_test_dir=$CIRCLE_WORKING_DIRECTORY/test_results
+  export circle_code_coverage_dir=$CIRCLE_WORKING_DIRECTORY/code_coverage_results
 
   mkdir -p $circle_test_dir
   mkdir -p $circle_code_coverage_dir
