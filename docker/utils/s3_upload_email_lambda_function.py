@@ -15,15 +15,20 @@ def lambda_handler(event, context):
     eventname = event['Records'][0]['eventName']
     eventtime = event['Records'][0]['eventTime']
     objectname = event['Records'][0]['s3']['object']['key']
-    size =  event['Records'][0]['s3']['object']['size']
+    customername = objectname.split("/")[1].split("_")[0]
+    timestamp = objectname.split("/")[1].split("_")[1].split(".")[0]
+    filename = objectname.split("/")[1]
+    size =  str(event['Records'][0]['s3']['object']['size']/1024.0/1024.0)
     
     email_text = (
         f"New S3 upload for Shadow Robot\n"
-        f"Date and time: "+eventtime+"\n"
+        f"Customer: "+customername+"\n"
+        f"File timestamp: "+timestamp+"\n"
+        f"Upload timestamp: "+eventtime+"\n"
         f"Bucket: "+bucket+"\n"
         f"Event: "+eventname+"\n"
-        f"Object: "+objectname+"\n"
-        f"Size (in MB): "+str(size/1024/1024)+"\n"
+        f"Filename: "+filename+"\n"
+        f"Size (in MB): "+size+"\n"
         f"Link to tar.gz: https://s3.eu-west-2.amazonaws.com/com.shadowrobot.eu-west-2.clients.fileupload/"+objectname+"\n"
         )
                  
