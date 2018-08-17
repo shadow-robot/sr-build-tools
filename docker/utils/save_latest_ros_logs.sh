@@ -1,7 +1,7 @@
 #!/bin/bash
 
 set -e # fails on errors
-#set -x # echo commands run
+set -x # echo commands run
 
 GREEN='\033[0;32m'
 YELLOW='\033[0;33m'
@@ -89,7 +89,7 @@ if [ ! -z "$container_name" ]; then
             fi
 
             # get container and image info
-            container_image=$(docker ps -a | grep $current_container_name| awk '{print $2}')
+            container_image=$(docker ps -a | grep $current_container_name | awk '{print $2}' | tail -1)
             docker container inspect $current_container_name > ${ros_log_dir}/$dir/ros_log_$timestamp/container_info.txt
             docker images $container_image > ${ros_log_dir}/$dir/ros_log_$timestamp/image_info.txt
 
