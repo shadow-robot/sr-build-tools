@@ -57,6 +57,11 @@ if [ ! -z "$container_name" ]; then
             else
                 customerkey=false
             fi
+	    if [ "$(docker exec ${container_name} bash -c 'ls /usr/local/bin/customer.name')" ]; then
+                customername=$(docker exec ${container_name} bash -c "head -n 1 /usr/local/bin/customer.name")
+            else
+                customername="Shadow customer"
+            fi
             current_container_name=${container_array[$container]}
             ros_log_dir=~/Desktop/ROS_LOGS/$current_container_name
             dir=ros_logs_$(date +%Y-%m-%d)
@@ -99,7 +104,7 @@ if [ ! -z "$container_name" ]; then
                     read old_logs
                     if [[ $old_logs == "y" || $old_logs == "Y" || $old_logs == "yes" ]]; then
                         echo "Uploading to AWS - Please wait..."
-                        upload_command=$(docker exec $current_container_name bash -c "source /usr/local/bin/shadow_upload.sh ${customerkey} /home/user/logs_temp /home/user/$timestamp" || true) 
+                        upload_command=$(docker exec $current_container_name bash -c "source /usr/local/bin/shadow_upload.sh ${customerkey} ${customername} /home/user/logs_temp /home/user/$timestamp" || true) 
                         if [[ $upload_command == "ok" ]]; then
                             echo -e "${GREEN} Previous logs Uploaded to AWS for $current_container_name! ${NC}"
                         else
@@ -115,7 +120,7 @@ if [ ! -z "$container_name" ]; then
                 copy_logs
                 copy_to_host
                 echo "Uploading to AWS - Please wait..."
-                upload_command=$(docker exec $current_container_name bash -c "source /usr/local/bin/shadow_upload.sh ${customerkey} /home/user/logs_temp /home/user/$timestamp" || true)
+                upload_command=$(docker exec $current_container_name bash -c "source /usr/local/bin/shadow_upload.sh ${customerkey} ${customername} /home/user/logs_temp /home/user/$timestamp" || true)
                 if [[ $upload_command == "ok" ]]; then
                     # delete temp folder
                     docker exec $current_container_name bash -c "rm -rf /home/user/logs_temp"
