@@ -19,9 +19,10 @@ def lambda_handler(event, context):
     timestamp = objectname.split("/")[1].split("_")[1].split(".")[0]
     filename = objectname.split("/")[1]
     size =  str(event['Records'][0]['s3']['object']['size']/1024.0/1024.0)
+    subjectline = "New ROS Logs upload for Shadow from "+customername
     
     email_text = (
-        f"New S3 upload for Shadow Robot\n"
+        f"New ROS Logs upload for Shadow\n"
         f"Customer: "+customername+"\n"
         f"File timestamp: "+timestamp+"\n"
         f"Upload timestamp: "+eventtime+"\n"
@@ -32,4 +33,4 @@ def lambda_handler(event, context):
         f"Link to tar.gz: https://s3.eu-west-2.amazonaws.com/com.shadowrobot.eu-west-2.clients.fileupload/"+objectname+"\n"
         )
                  
-    snsclient.publish(TopicArn=topic_arn, Message=email_text, Subject='New S3 upload for Shadow Robot')
+    snsclient.publish(TopicArn=topic_arn, Message=email_text, Subject=subjectline)
