@@ -68,6 +68,10 @@ case $key in
     CUSTOMER_KEY="$2"
     shift
     ;;
+    -cn|--customername)
+    CUSTOMER_NAME="$2"
+    shift
+    ;;
     *)
     # ignore unknown option
     ;;
@@ -131,6 +135,11 @@ else
     read CUSTOMER_KEY
 fi
 
+if [ -z "${CUSTOMER_NAME}" ];
+then
+    CUSTOMER_NAME="Shadow customer"
+fi
+
 echo "================================================================="
 echo "|                                                               |"
 echo "|             Shadow default docker deployment                  |"
@@ -152,6 +161,7 @@ echo "  * -o or --optoforce           Specify if optoforce sensors are going to 
 echo "  * -l or --launchhand          Specify if hand driver should start when double clicking desktop icon (default: true)"
 echo "  * -bt or --buildtoolsbranch   Specify the Git branch for sr-build-tools (default: master)"
 echo "  * -ck or --customerkey        Specify the customer key for uploading files to AWS (default: false (disabling AWS upload))"
+echo "  * -cn or --customername       Specify the customer name for uploading files to AWS (default: Shadow customer))"
 echo ""
 echo "example hand E: ./launch.sh -i shadowrobot/dexterous-hand:kinetic -n hand_e_kinetic_real_hw -e enp0s25 -b shadowrobot_demo_hand -r true -g false"
 echo "example hand H: ./launch.sh -i shadowrobot/flexible-hand:kinetic-release -n modular_grasper -e enp0s25 -r true -g false"
@@ -542,6 +552,10 @@ else
     echo ${CUSTOMER_KEY} > ${SAVE_LOGS_APP_FOLDER}/save_latest_ros_logs/customer.key
     docker cp ${SAVE_LOGS_APP_FOLDER}/save_latest_ros_logs/customer.key ${DOCKER_CONTAINER_NAME}:/usr/local/bin/customer.key
     rm ${SAVE_LOGS_APP_FOLDER}/save_latest_ros_logs/customer.key
+    echo "Saving customer name to Docker container"
+    echo ${CUSTOMER_NAME} > ${SAVE_LOGS_APP_FOLDER}/save_latest_ros_logs/customer.name
+    docker cp ${SAVE_LOGS_APP_FOLDER}/save_latest_ros_logs/customer.name ${DOCKER_CONTAINER_NAME}:/usr/local/bin/customer.name
+    rm ${SAVE_LOGS_APP_FOLDER}/save_latest_ros_logs/customer.name    
 fi
 
 echo ""
