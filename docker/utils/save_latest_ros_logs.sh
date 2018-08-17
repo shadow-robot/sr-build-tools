@@ -33,7 +33,7 @@ if [ ! -z "$container_name" ]; then
             timestamp=$(date +%Y-%m-%d-%T)
             latestws=$(docker exec $current_container_name bash -c 'ls -dtr /home/user/wsdiff_ws_diff* | tail -1')
             latestparam=$(docker exec $current_container_name bash -c 'ls -dtr /home/user/run_params* | tail -1')
-	        docker exec $current_container_name bash -c "rosnode kill /record" || true
+	        docker exec $current_container_name /ros_entrypoint.sh bash -c "rosnode kill /record" || true
             sleep 1
 	        latestbag=$(docker exec $current_container_name bash -c 'ls -dtr /home/user/*.bag | tail -1') || true
             echo "Copying logs from $current_container_name..."
@@ -63,7 +63,7 @@ if [ ! -z "$container_name" ]; then
             rm -rf ${ros_log_dir}/$dir/latest
 	        echo $notes_from_user > ${ros_log_dir}/$dir/ros_log_$timestamp/notes_from_user.txt
             docker container inspect $current_container_name > ${ros_log_dir}/$dir/ros_log_$timestamp/container_info.txt
-            container_image=$(docker ps -a | grep $current_container_name| awk '{print $2}')
+            container_image=$(docker ps -a | grep $current_container_name | awk '{print $2}' | tail -1)
             docker images $container_image > ${ros_log_dir}/$dir/ros_log_$timestamp/image_info.txt
             docker cp -L $current_container_name:$latestws ${ros_log_dir}/$dir/ros_log_$timestamp || true
             docker cp -L $current_container_name:$latestparam ${ros_log_dir}/$dir/ros_log_$timestamp || true
