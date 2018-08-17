@@ -68,13 +68,9 @@ if [ ! -z "$container_name" ]; then
             timestamp=$(date +%Y-%m-%d-%T)
             latestws=$(docker exec $current_container_name bash -c 'ls -dtr /home/user/wsdiff_ws_diff* | tail -1')
             latestparam=$(docker exec $current_container_name bash -c 'ls -dtr /home/user/run_params* | tail -1')
-	          echo "Killing rosmaster to make .bag.active file into .bag file"
-	          docker exec $current_container_name bash -c 'kill -SIGINT $(ps aux | grep "rosmaster" | grep -v grep| awk "{print $2}")' || true
-	          #if rosmaster is still running, use kill -9 to kill it
-	          docker exec $current_container_name bash -c 'kill -9 $(ps aux | grep "rosmaster" | grep -v grep| awk "{print $2}") || echo "rosmaster killed silently"' || true
-            echo "Waiting for roscore to exit"
-            sleep 10
-            latestbag=$(docker exec $current_container_name bash -c 'ls -dtr /home/user/*.bag | tail -1')
+	          docker exec $current_container_name /ros_entrypoint.sh bash -c "rosnode kill /record" || true
+            sleep 1
+	          latestbag=$(docker exec $current_container_name bash -c 'ls -dtr /home/user/*.bag | tail -1') || true
             echo "Copying logs from $current_container_name..."
             mkdir -p ${ros_log_dir}/$dir/ros_log_$timestamp
             echo $notes_from_user > ${ros_log_dir}/$dir/ros_log_$timestamp/notes_from_user.txt
@@ -86,9 +82,9 @@ if [ ! -z "$container_name" ]; then
                     current_runtime=$(docker exec $current_container_name bash -c "echo $current_core | grep -o -P '(?<=core_BOF_).*(?=_EOF_)'")
                     runtime_name=$(docker exec $current_container_name bash -c "strings $current_core | grep $current_runtime | tail -1")
                     #use runtime name in the log file to use later
-                    docker exec $current_container_name bash -c "echo 'Executable:' $runtime_name > $current_core.log"
+                    docker exec $current_container_name bash -c "echo 'Executable:' $runtime_name > $current_core.log" || true
                     #extract readable info to log file
-                    docker exec $current_container_name bash -c "gdb --core=$current_core $runtime_name -ex 'bt full' -ex 'quit' >> $current_core.log"
+                    docker exec $current_container_name bash -c "gdb --core=$current_core $runtime_name -ex 'bt full' -ex 'quit' >> $current_core.log" || true
                 done
             fi
 
