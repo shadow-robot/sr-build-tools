@@ -95,7 +95,7 @@ if [ ! -z "$container_name" ]; then
             if [ ${customerkey} ]; then
              # check if the folder is empty.
                 if [ ! -z "$(docker exec ${container_name} bash -c 'find /home/user/logs_temp -maxdepth 0 -type d 2>/dev/null')" ]; then
-                    echo "${RED}${bold}There are previous logs that havent been sent yet. Would you like to send them now? Type 'y' to send or 'n' to ignore and overwrite them ${normal}${NC}"
+                    echo -e "${RED}${bold}There are previous logs that havent been sent yet. Would you like to send them now? Type 'y' to send or 'n' to ignore and overwrite them ${normal}${NC}"
                     read old_logs
                     if [[ $old_logs == "y" || $old_logs == "Y" || $old_logs == "yes" ]]; then
                         echo "Uploading to AWS - Please wait..."
@@ -119,7 +119,7 @@ if [ ! -z "$container_name" ]; then
                 if [[ $upload_command == "ok" ]]; then
                     # delete temp folder
                     docker exec $current_container_name bash -c "rm -rf /home/user/logs_temp"
-                    echo -e "${GREEN} Latest ROS Logs Saved and Uploaded to AWS for $current_container_name! ${NC}"
+                    echo -e "${GREEN} Latest Logs Saved and Uploaded to AWS for $current_container_name! ${NC}"
 		        else
                     echo -e "${RED}${bold} Failed to upload logs to AWS for $current_container_name! Check your internet connection and try again.${normal}${NC}"
                 fi
@@ -128,7 +128,7 @@ if [ ! -z "$container_name" ]; then
                 copy_logs
                 copy_to_host
                 docker exec $current_container_name bash -c "rm -rf /home/user/logs_temp"
-                echo -e "${GREEN} Latest ROS Logs Saved for $current_container_name! ${NC}"
+                echo -e "${GREEN} Latest Logs Saved for $current_container_name! ${NC}"
                 sleep 1
             fi
             echo "Killing container $current_container_name..."
