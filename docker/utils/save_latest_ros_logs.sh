@@ -33,14 +33,9 @@ if [ ! -z "$container_name" ]; then
             timestamp=$(date +%Y-%m-%d-%T)
             latestws=$(docker exec $current_container_name bash -c 'ls -dtr /home/user/wsdiff_ws_diff* | tail -1')
             latestparam=$(docker exec $current_container_name bash -c 'ls -dtr /home/user/run_params* | tail -1')
-	        echo "Killing rosmaster to make .bag.active file into .bag file"
-	        docker exec $current_container_name bash -c 'kill -SIGINT $(ps aux | grep "rosmaster" | grep -v grep| awk "{print $2}")' || true
-	        #if rosmaster is still running, use kill -9 to kill it
-	        docker exec $current_container_name bash -c 'kill -9 $(ps aux | grep "rosmaster" | grep -v grep| awk "{print $2}") || echo "rosmaster killed silently"' || true
-            echo "Waiting for roscore to exit"
-            sleep 10
-	        latestbag=$(docker exec $current_container_name bash -c 'ls -dtr /home/user/*.bag | tail -1')
-            echo "Copying logs from $current_container_name.."
+	        docker exec $current_container_name bash -c "rosnode kill /record" || true
+	        latestbag=$(docker exec $current_container_name bash -c 'ls -dtr /home/user/*.bag | tail -1') || true
+            echo "Copying logs from $current_container_name..."
             mkdir -p ${ros_log_dir}/$dir/ros_log_$timestamp
             core_name=$(docker exec $current_container_name bash -c "ls -I '*.log' /home/user/.ros/log/core_dumps/core* | awk '{if(NR>0) print $NF}'")
             if [ ! -z "$core_name" ]; then
