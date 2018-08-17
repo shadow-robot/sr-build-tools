@@ -26,7 +26,7 @@ function retry {
 }
 
 print_usage(){
-  echo "Usage: shadow_upload.sh <SECRET_KEY> <INPUT_FOLDER_PATH> <OUTPUT_FILE_NAME>"
+  echo "Usage: shadow_upload.sh <CUSTOMER_KEY> <CUSTOMER_NAME> <INPUT_FOLDER_PATH> <TIMESTAMP>"
 }
 
 if [[ "$1" == "--help" ]] || [[ "$1" == "-h" ]];then
@@ -35,11 +35,12 @@ if [[ "$1" == "--help" ]] || [[ "$1" == "-h" ]];then
 fi
 
 CREDENTIALS_URL=https://5vv2z6j3a7.execute-api.eu-west-2.amazonaws.com/prod
-KEY=$1
-FOLDER=$2
-OUTPUTFILE=$3
+CUSTOMERKEY=$1
+CUSTOMERNAME=$2
+INPUTFOLDERPATH=$3
+TIMESTAMP=$4
 
-if [[ -z "$KEY" ]] || [[ -z "$FOLDER" ]] || [[ -z "$OUTPUTFILE" ]]; then
+if [[ -z "$CUSTOMERKEY" ]] || [[ -z "$CUSTOMERNAME" ]] || [[ -z "$INPUTFOLDERPATH" ]]|| [[ -z "$TIMESTAMP" ]]; then
   print_usage
   exit 1;
 fi
@@ -49,15 +50,15 @@ if [[ -z "$MY_CURL" ]]; then
   exit 1;
 fi
 
-response=`$MY_CURL --silent -H "x-api-key: $KEY" $CREDENTIALS_URL`
+response=`$MY_CURL --silent -H "x-api-key: $CUSTOMERKEY" $CREDENTIALS_URL`
 if [[ $response = *"forbidden"* ]];then
-  echo "Access is forbidden. Check the correctness of the secret key or contact Shadow Robot support."
+  echo "Access is forbidden. Check the correctness of the customer key or contact Shadow Robot Company support."
   print_usage
   return 1;
 fi
 if [[ $response != *"SESSION_TOKEN"* ]];then
-  echo "Unable to get temporary credentials. Read the following message to figure out the root cause or contact Shadow Robot support."
-  retry $MY_CURL -verbose -H "x-api-key: $KEY" $CREDENTIALS_URL
+  echo "Unable to get temporary credentials. Read the following message to figure out the root cause or contact Shadow Robot Company support."
+  retry $MY_CURL -verbose -H "x-api-key: $CUSTOMERKEY" $CREDENTIALS_URL
   print_usage
   return 1;
 fi
@@ -73,7 +74,7 @@ export AWS_SESSION_TOKEN=$SESSION_TOKEN; \
 
 #max compression
 
-env GZIP=-9 tar cvzf $OUTPUTFILE.tar.gz $FOLDER > /dev/null 2>&1
-retry /usr/local/bin/aws s3 cp $OUTPUTFILE.tar.gz $UPLOAD_URL > /dev/null 2>&1
+env GZIP=-9 tar cvzf $CUSTOMERNAME_$TIMESTAMP.tar.gz $INPUTFOLDERPATH > /dev/null 2>&1
+retry /usr/local/bin/aws s3 cp $CUSTOMERNAME_$TIMESTAMP.tar.gz $UPLOAD_URL > /dev/null 2>&1
 echo "ok"
 exit 0
