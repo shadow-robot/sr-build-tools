@@ -260,7 +260,7 @@ bash <(curl -Ls http://bit.do/launch-sh) -i shadowrobot/flexible-hand:kinetic-v0
 
 ### Customer Name (in quotes) ```-cn```
 
-This allows the Docker container to store the name of the customer/company/organisation using the hand so that when ROS LOGS are uploaded to AWS, the email that is sent automatically to Shadow contains the name of the customer. This makes it easier for Shadow staff to figure out which customer is sending ROS LOGS. The user running the oneliner needs to enter a customer name in quotes using the -cn flag in the oneliner. For example, adding ```-cn "Some Company or Organisation"``` to the oneliner command will save the customer name inside the user's Docker container and enable ROS_Logs_Saver to email Shadow with the customer name: Some Company or Organisation
+This allows the Docker container to store the name of the customer/company/organisation using the hand so that when ROS LOGS are uploaded to AWS, the email that is sent automatically to Shadow contains the name of the customer. This makes it easier for Shadow staff to figure out which customer is sending ROS LOGS. The user running the oneliner needs to enter a customer name with no spaces using the -cn flag in the oneliner. For example, adding ```-cn Some_Company or Organisation``` to the oneliner command will save the customer name inside the user's Docker container and enable ROS_Logs_Saver to email Shadow with the customer name: Some_Company or Organisation
  
 Presuming we do not want the driver to auto-launch for our example, the final command would be:
 

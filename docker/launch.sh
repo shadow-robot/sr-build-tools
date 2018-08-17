@@ -137,7 +137,7 @@ fi
 
 if [ -z "${CUSTOMER_NAME}" ];
 then
-    CUSTOMER_NAME="Shadow customer"
+    CUSTOMER_NAME="Shadow_customer"
 fi
 
 echo "================================================================="
