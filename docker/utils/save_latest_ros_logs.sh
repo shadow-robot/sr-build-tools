@@ -1,7 +1,7 @@
 #!/bin/bash
 
 set -e # fails on errors
-#set -x # echo commands run
+set -x # echo commands run
 
 GREEN='\033[0;32m'
 YELLOW='\033[0;33m'
@@ -34,6 +34,7 @@ if [ ! -z "$container_name" ]; then
             latestws=$(docker exec $current_container_name bash -c 'ls -dtr /home/user/wsdiff_ws_diff* | tail -1')
             latestparam=$(docker exec $current_container_name bash -c 'ls -dtr /home/user/run_params* | tail -1')
 	        docker exec $current_container_name bash -c "rosnode kill /record" || true
+            sleep 1
 	        latestbag=$(docker exec $current_container_name bash -c 'ls -dtr /home/user/*.bag | tail -1') || true
             echo "Copying logs from $current_container_name..."
             mkdir -p ${ros_log_dir}/$dir/ros_log_$timestamp
@@ -45,9 +46,9 @@ if [ ! -z "$container_name" ]; then
                     current_runtime=$(docker exec $current_container_name bash -c "echo $current_core | grep -o -P '(?<=core_BOF_).*(?=_EOF_)'")
                     runtime_name=$(docker exec $current_container_name bash -c "strings $current_core | grep $current_runtime | tail -1")
                     #use runtime name in the log file to use later
-                    docker exec $current_container_name bash -c "echo 'Executable:' $runtime_name > $current_core.log"
+                    docker exec $current_container_name bash -c "echo 'Executable:' $runtime_name > $current_core.log" || true
                     #extract readable info to log file
-                    docker exec $current_container_name bash -c "gdb --core=$current_core $runtime_name -ex 'bt full' -ex 'quit' >> $current_core.log"
+                    docker exec $current_container_name bash -c "gdb --core=$current_core $runtime_name -ex 'bt full' -ex 'quit' >> $current_core.log" || true
                 done
             fi
             docker cp  -L $current_container_name:/home/user/.ros/log/stderr.log ${ros_log_dir}/$dir/ros_log_$timestamp || true
@@ -60,7 +61,7 @@ if [ ! -z "$container_name" ]; then
             docker cp -L $current_container_name:home/user/.ros/log/latest ${ros_log_dir}/$dir
             mv ${ros_log_dir}/$dir/latest/*.* ${ros_log_dir}/$dir/ros_log_$timestamp
             rm -rf ${ros_log_dir}/$dir/latest
-	    echo $notes_from_user > ${ros_log_dir}/$dir/ros_log_$timestamp/notes_from_user.txt
+	        echo $notes_from_user > ${ros_log_dir}/$dir/ros_log_$timestamp/notes_from_user.txt
             docker container inspect $current_container_name > ${ros_log_dir}/$dir/ros_log_$timestamp/container_info.txt
             container_image=$(docker ps -a | grep $current_container_name| awk '{print $2}')
             docker images $container_image > ${ros_log_dir}/$dir/ros_log_$timestamp/image_info.txt
