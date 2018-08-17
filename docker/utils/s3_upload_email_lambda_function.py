@@ -16,7 +16,7 @@ def lambda_handler(event, context):
     eventtime = event['Records'][0]['eventTime']
     objectname = event['Records'][0]['s3']['object']['key']
     customername = objectname.split("/")[1].split("_")[0]
-    timestamp = objectname.split("/")[1].split("_")[1].split(".")[0]
+    timestamp = objectname.split("/")[1].split("_")[1].split(".")[0].replace("%3A ",":")
     filename = objectname.split("/")[1]
     size =  str(event['Records'][0]['s3']['object']['size']/1024.0/1024.0)
     subjectline = "New ROS Logs upload for Shadow from "+customername
