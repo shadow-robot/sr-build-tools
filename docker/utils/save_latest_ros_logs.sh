@@ -1,7 +1,7 @@
 #!/bin/bash
 
 set -e # fails on errors
-set -x # echo commands run
+#set -x # echo commands run
 
 GREEN='\033[0;32m'
 YELLOW='\033[0;33m'
