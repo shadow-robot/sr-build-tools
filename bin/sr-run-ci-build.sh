@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 set -e # fail on errors
-#set -x # echo commands run
+set -x # echo commands run
 
 export toolset_branch=$1
 export server_type=$2
@@ -16,7 +16,7 @@ export docker_user=${docker_user_name:-"user"}
 export docker_user_home=${docker_user_home_dir:-"/home/user"}
 
 # Do not install all libraries for docker container CI servers
-if  [ "circle" != $server_type ] && [ "semaphore_docker" != $server_type ] && [ "local" != $server_type ] && [ "travis" != $server_type ]; then
+if  [ "semaphore_docker" != $server_type ] && [ "local" != $server_type ] && [ "travis" != $server_type ]; then
 
   export build_tools_folder="$HOME/sr-build-tools"
 
@@ -75,10 +75,15 @@ case $server_type in
   ;;
 
 "circle") echo "Circle CI server"
-  export CIRCLE_REPO_DIR=$HOME/$CIRCLE_PROJECT_REPONAME
-  sudo docker pull $docker_image
-  export extra_variables="$extra_variables circle_repo_dir=/host$CIRCLE_REPO_DIR  circle_is_pull_request=$CI_PULL_REQUEST circle_test_dir=/host$CI_REPORTS circle_code_coverage_dir=/host$CIRCLE_ARTIFACTS"
-  sudo docker run -w "$docker_user_home/sr-build-tools/ansible" -v $CIRCLE_REPO_DIR:/host$CIRCLE_REPO_DIR -v $CI_REPORTS:/host$CI_REPORTS:rw -v $CIRCLE_ARTIFACTS:/host$CIRCLE_ARTIFACTS:rw $docker_image  bash -c "git pull && git checkout $toolset_branch && sudo PYTHONUNBUFFERED=1 ansible-playbook -v -i \"localhost,\" -c local docker_site.yml --tags \"circle,$tags_list\" -e \"$extra_variables\" "
+
+  export circle_test_dir=$CIRCLE_WORKING_DIRECTORY/test_results
+  export circle_code_coverage_dir=$CIRCLE_WORKING_DIRECTORY/code_coverage_results
+
+  mkdir -p $circle_test_dir
+  mkdir -p $circle_code_coverage_dir
+
+  export extra_variables="$extra_variables circle_repo_dir=$CIRCLE_WORKING_DIRECTORY circle_is_pull_request=$CIRCLE_PULL_REQUEST circle_test_dir=$circle_test_dir circle_code_coverage_dir=$circle_code_coverage_dir"
+  sudo PYTHONUNBUFFERED=1 ansible-playbook -v -i "localhost," -c local docker_site.yml --tags "circle,$tags_list" -e "$extra_variables"
   ;;
 
 "docker_hub") echo "Docker Hub"
