@@ -161,7 +161,7 @@ echo "  * -o or --optoforce           Specify if optoforce sensors are going to 
 echo "  * -l or --launchhand          Specify if hand driver should start when double clicking desktop icon (default: true)"
 echo "  * -bt or --buildtoolsbranch   Specify the Git branch for sr-build-tools (default: master)"
 echo "  * -ck or --customerkey        Flag to prompt for customer key for uploading files to AWS"
-echo "  * -cn or --customername       Specify the name in quotes of the customer/company/organisation for uploading files to AWS (default: "Shadow customer")"
+echo "  * -cn or --customername       Specify the name of the customer/company/organisation (no spaces) for uploading files to AWS (default: "Shadow_customer")"
 echo ""
 echo "example hand E: ./launch.sh -i shadowrobot/dexterous-hand:kinetic -n hand_e_kinetic_real_hw -e enp0s25 -b shadowrobot_demo_hand -r true -g false"
 echo "example hand H: ./launch.sh -i shadowrobot/flexible-hand:kinetic-release -n modular_grasper -e enp0s25 -r true -g false"
