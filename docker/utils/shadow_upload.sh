@@ -36,11 +36,10 @@ fi
 
 CREDENTIALS_URL=https://5vv2z6j3a7.execute-api.eu-west-2.amazonaws.com/prod
 CUSTOMERKEY=$1
-CUSTOMERNAME=$2
-INPUTFOLDERPATH=$3
-TIMESTAMP=$4
+INPUTFOLDERPATH=$2
+TIMESTAMP=$3
 
-if [[ -z "$CUSTOMERKEY" ]] || [[ -z "$CUSTOMERNAME" ]] || [[ -z "$INPUTFOLDERPATH" ]]|| [[ -z "$TIMESTAMP" ]]; then
+if [[ -z "$CUSTOMERKEY" ]] || [[ -z "$INPUTFOLDERPATH" ]] || [[ -z "$TIMESTAMP" ]]; then
   print_usage
   exit 1;
 fi
@@ -74,7 +73,7 @@ export AWS_SESSION_TOKEN=$SESSION_TOKEN; \
 
 #max compression
 
-env GZIP=-9 tar cvzf $INPUTFOLDERPATH/../${CUSTOMERNAME}_${TIMESTAMP}.tar.gz $INPUTFOLDERPATH > /dev/null 2>&1
-retry /usr/local/bin/aws s3 cp $INPUTFOLDERPATH/../${CUSTOMERNAME}_${TIMESTAMP}.tar.gz $UPLOAD_URL > /dev/null 2>&1
+env GZIP=-9 tar cvzf $INPUTFOLDERPATH/../${TIMESTAMP}.tar.gz $INPUTFOLDERPATH > /dev/null 2>&1
+retry /usr/local/bin/aws s3 cp $INPUTFOLDERPATH/../${TIMESTAMP}.tar.gz $UPLOAD_URL > /dev/null 2>&1
 echo "ok"
 exit 0

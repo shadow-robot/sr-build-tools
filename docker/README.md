@@ -128,7 +128,6 @@ Posible options for the oneliner are:
 * -l or --launchhand        Specify if hand driver should start when double clicking desktop icon (default: true)
 * -bt or --buildtoolsbranch Specify the Git branch for sr-build-tools (default: master)
 * -ck or --customerkey      Flag to prompt for customer key for uploading files to AWS
-* -cn or --customername     Specify the name of the customer/company/organisation (no spaces) for AWS upload emails (default: "Shadow_customer")
 
 To begin with, the one-liner checks the installation status of docker. If docker is not installed then a new clean installation is performed. If the required image is private, 
 then a valid Docker Hub account with pull credentials from Shadow Robot's Docker Hub is required. Then, the specified docker image is pulled and a docker 
@@ -258,12 +257,3 @@ Presuming we do not want the driver to auto-launch for our example, the final co
 bash <(curl -Ls http://bit.do/launch-sh) -i shadowrobot/flexible-hand:kinetic-v0.2.28 -n flexible_hand_real_hw -e enp0s25 -r true -g false -l false -ck
 ```
 
-### Customer Name (in quotes) ```-cn```
-
-This allows the Docker container to store the name of the customer/company/organisation using the hand so that when ROS LOGS are uploaded to AWS, the email that is sent automatically to Shadow contains the name of the customer. This makes it easier for Shadow staff to figure out which customer is sending ROS LOGS. The user running the oneliner needs to enter a customer name with no spaces using the -cn flag in the oneliner. For example, adding ```-cn Some_Company or Organisation``` to the oneliner command will save the customer name inside the user's Docker container and enable ROS_Logs_Saver to email Shadow with the customer name: Some_Company or Organisation
- 
-Presuming we do not want the driver to auto-launch for our example, the final command would be:
-
-```bash
-bash <(curl -Ls http://bit.do/launch-sh) -i shadowrobot/flexible-hand:kinetic-v0.2.28 -n flexible_hand_real_hw -e enp0s25 -r true -g false -l false -ck -cn "Some Company or Organisation"
-```

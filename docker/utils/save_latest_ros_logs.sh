@@ -57,20 +57,15 @@ if [ ! -z "$container_name" ]; then
             else
                 customerkey=false
             fi
-	    if [ "$(docker exec ${container_name} bash -c 'ls /usr/local/bin/customer.name')" ]; then
-                customername=$(docker exec ${container_name} bash -c "head -n 1 /usr/local/bin/customer.name")
-            else
-                customername="Shadow_customer"
-            fi
             current_container_name=${container_array[$container]}
             ros_log_dir=~/Desktop/ROS_LOGS/$current_container_name
             dir=ros_logs_$(date +%Y-%m-%d)
             timestamp=$(date +%Y-%m-%d-%T)
             latestws=$(docker exec $current_container_name bash -c 'ls -dtr /home/user/wsdiff_ws_diff* | tail -1')
             latestparam=$(docker exec $current_container_name bash -c 'ls -dtr /home/user/run_params* | tail -1')
-	          docker exec $current_container_name /ros_entrypoint.sh bash -c "rosnode kill /record" || true
+	        docker exec $current_container_name /ros_entrypoint.sh bash -c "rosnode kill /record" || true
             sleep 1
-	          latestbag=$(docker exec $current_container_name bash -c 'ls -dtr /home/user/*.bag | tail -1') || true
+	        latestbag=$(docker exec $current_container_name bash -c 'ls -dtr /home/user/*.bag | tail -1') || true
             echo "Copying logs from $current_container_name..."
             mkdir -p ${ros_log_dir}/$dir/ros_log_$timestamp
             echo $notes_from_user > ${ros_log_dir}/$dir/ros_log_$timestamp/notes_from_user.txt
@@ -100,7 +95,7 @@ if [ ! -z "$container_name" ]; then
                     read old_logs
                     if [[ $old_logs == "y" || $old_logs == "Y" || $old_logs == "yes" ]]; then
                         echo "Uploading to AWS - Please wait..."
-                        upload_command=$(docker exec $current_container_name bash -c "source /usr/local/bin/shadow_upload.sh ${customerkey} ${customername} /home/user/logs_temp $timestamp" || true) 
+                        upload_command=$(docker exec $current_container_name bash -c "source /usr/local/bin/shadow_upload.sh ${customerkey} /home/user/logs_temp $timestamp" || true) 
                         if [[ $upload_command == "ok" ]]; then
                             echo -e "${GREEN} Previous logs Uploaded to AWS for $current_container_name! ${NC}"
                         else
@@ -116,7 +111,7 @@ if [ ! -z "$container_name" ]; then
                 copy_logs
                 copy_to_host
                 echo "Uploading to AWS - Please wait..."
-                upload_command=$(docker exec $current_container_name bash -c "source /usr/local/bin/shadow_upload.sh ${customerkey} ${customername} /home/user/logs_temp $timestamp" || true)
+                upload_command=$(docker exec $current_container_name bash -c "source /usr/local/bin/shadow_upload.sh ${customerkey} /home/user/logs_temp $timestamp" || true)
                 if [[ $upload_command == "ok" ]]; then
                     # delete temp folder
                     docker exec $current_container_name bash -c "rm -rf /home/user/logs_temp"
