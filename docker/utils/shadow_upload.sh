@@ -26,7 +26,7 @@ function retry {
 }
 
 print_usage(){
-  echo "Usage: shadow_upload.sh <CUSTOMER_KEY> <CUSTOMER_NAME> <INPUT_FOLDER_PATH> <TIMESTAMP>"
+  echo "Usage: shadow_upload.sh <CUSTOMER_KEY> <INPUT_FOLDER_PATH> <TIMESTAMP>"
 }
 
 if [[ "$1" == "--help" ]] || [[ "$1" == "-h" ]];then
@@ -38,6 +38,7 @@ CREDENTIALS_URL=https://5vv2z6j3a7.execute-api.eu-west-2.amazonaws.com/prod
 CUSTOMERKEY=$1
 INPUTFOLDERPATH=$2
 TIMESTAMP=$3
+CUSTOMERNAME="Unknown customer"
 
 if [[ -z "$CUSTOMERKEY" ]] || [[ -z "$INPUTFOLDERPATH" ]] || [[ -z "$TIMESTAMP" ]]; then
   print_usage
@@ -66,6 +67,7 @@ ACCESS_KEY_ID=`echo -e "$response" | grep ACCESS_KEY_ID | sed 's/ACCESS_KEY_ID=/
 SECRET_ACCESS_KEY=`echo -e "$response" | grep SECRET_ACCESS_KEY | sed 's/SECRET_ACCESS_KEY=//'`
 SESSION_TOKEN=`echo -e "$response" | grep SESSION_TOKEN | sed 's/SESSION_TOKEN=//'`
 UPLOAD_URL=`echo -e "$response" | grep URL | sed 's/URL=//'`
+CUSTOMERNAME=`echo -e "$response" | grep CUSTOMER_NAME | sed 's/CUSTOMER_NAME=//'`
 
 export AWS_ACCESS_KEY_ID=$ACCESS_KEY_ID; \
 export AWS_SECRET_ACCESS_KEY=$SECRET_ACCESS_KEY; \
@@ -73,7 +75,7 @@ export AWS_SESSION_TOKEN=$SESSION_TOKEN; \
 
 #max compression
 
-env GZIP=-9 tar cvzf $INPUTFOLDERPATH/../${TIMESTAMP}.tar.gz $INPUTFOLDERPATH > /dev/null 2>&1
-retry /usr/local/bin/aws s3 cp $INPUTFOLDERPATH/../${TIMESTAMP}.tar.gz $UPLOAD_URL > /dev/null 2>&1
+env GZIP=-9 tar cvzf "$INPUTFOLDERPATH/../${CUSTOMERNAME}_${TIMESTAMP}.tar.gz" $INPUTFOLDERPATH > /dev/null 2>&1
+retry /usr/local/bin/aws s3 cp "$INPUTFOLDERPATH/../${CUSTOMERNAME}_${TIMESTAMP}.tar.gz" $UPLOAD_URL > /dev/null 2>&1
 echo "ok"
 exit 0
