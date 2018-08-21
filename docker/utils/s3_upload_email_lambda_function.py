@@ -23,7 +23,7 @@ def lambda_handler(event, context):
     day = timestamp.split("-")[2]
     hour = timestamp.split("-")[3]
     minute = timestamp.split("-")[4]
-    second = timestamp.split("-")[6]
+    second = timestamp.split("-")[5]
     timestamp = year+"-"month+"-"+day+"-"+hour+":"+minute+":"+second
     filename = objectname.split("/")[1]
     size =  str(event['Records'][0]['s3']['object']['size']/1024.0/1024.0)
