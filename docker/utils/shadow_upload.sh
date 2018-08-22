@@ -69,7 +69,7 @@ SESSION_TOKEN=`echo -e "$response" | grep SESSION_TOKEN | sed 's/SESSION_TOKEN=/
 UPLOAD_URL=`echo -e "$response" | grep URL | sed 's/URL=//'`
 CUSTOMERNAME=`echo -e "$response" | grep CUSTOMER_NAME | sed 's/CUSTOMER_NAME=//'`
 
-CUSTOMERNAME=`echo -e "$CUSTOMERNAME" | sed 's/ /_/g'`
+CUSTOMERNAME=`echo -e "$CUSTOMERNAME" | sed 's/ /-/g'`
 TIMESTAMP=`echo -e "$TIMESTAMP" | sed 's/:/-/g'`
 
 export AWS_ACCESS_KEY_ID=$ACCESS_KEY_ID; \
