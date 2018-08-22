@@ -25,7 +25,7 @@ def lambda_handler(event, context):
     hour = timestamp.split("-")[3]
     minute = timestamp.split("-")[4]
     second = timestamp.split("-")[5]
-    timestamp = year+"-"month+"-"+day+"T"+hour+":"+minute+":"+second
+    timestamp = year+"-"+month+"-"+day+"T"+hour+":"+minute+":"+second
     
     size =  str(event['Records'][0]['s3']['object']['size']/1024.0/1024.0)
     subjectline = "New ROS Logs upload for Shadow from "+customername
