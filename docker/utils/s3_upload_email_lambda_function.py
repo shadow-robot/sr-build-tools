@@ -27,6 +27,9 @@ def lambda_handler(event, context):
     second = timestamp.split("-")[5]
     timestamp = year+"-"+month+"-"+day+"T"+hour+":"+minute+":"+second
     
+    corrected_object_name = objectname.replace("%3A",":")
+    presigned_url=s3.generate_presigned_url('get_object', Params = {'Bucket': bucket, 'Key': corrected_object_name}, ExpiresIn = 604800)
+    
     size =  str(event['Records'][0]['s3']['object']['size']/1024.0/1024.0)
     subjectline = "New ROS Logs upload for Shadow from "+customername
     email_text = (
@@ -38,7 +41,7 @@ def lambda_handler(event, context):
         f"Event: "+eventname+"\n"
         f"Filename: "+filename+"\n"
         f"Size (in MB): "+size+"\n"
-        f"Link to tar.gz: https://s3.eu-west-2.amazonaws.com/com.shadowrobot.eu-west-2.clients.fileupload/"+objectname+"\n"
+        f"Link to tar.gz (valid for 1 week): "+presigned_url+"\n"
         )
                  
     snsclient.publish(TopicArn=topic_arn, Message=email_text, Subject=subjectline)
