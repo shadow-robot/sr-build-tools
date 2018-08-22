@@ -1,4 +1,3 @@
-
 import json
 import urllib.parse
 import boto3
@@ -15,17 +14,19 @@ def lambda_handler(event, context):
     eventname = event['Records'][0]['eventName']
     eventtime = event['Records'][0]['eventTime']
     objectname = event['Records'][0]['s3']['object']['key']
-    customername = objectname.split("/")[1].split("_")[0]
-    customername = customername.replace("_"," ")
-    timestamp = objectname.split("/")[1].split("_")[1].split(".")[0]
+    filename = objectname.split("/")[1]
+    
+    customername = filename.split("_")[0]
+    customername = customername.replace("-"," ")
+    timestamp = filename.split("_")[1].split(".")[0]
     year = timestamp.split("-")[0]
     month = timestamp.split("-")[1]
     day = timestamp.split("-")[2]
     hour = timestamp.split("-")[3]
     minute = timestamp.split("-")[4]
     second = timestamp.split("-")[5]
-    timestamp = year+"-"month+"-"+day+"-"+hour+":"+minute+":"+second
-    filename = objectname.split("/")[1]
+    timestamp = year+"-"month+"-"+day+"T"+hour+":"+minute+":"+second
+    
     size =  str(event['Records'][0]['s3']['object']['size']/1024.0/1024.0)
     subjectline = "New ROS Logs upload for Shadow from "+customername
     email_text = (
