@@ -24,7 +24,7 @@ function copy_logs
     docker exec $current_container_name bash -c "cp $latestbag /home/user/logs_temp/"  || true
     docker exec $current_container_name bash -c "cp $latestparam /home/user/logs_temp/"  || true
     docker exec $current_container_name bash -c "cp $latestws /home/user/logs_temp/"  || true
-    docker cp  -L ${ros_log_dir}/$dir/ros_log_$timestamp/notes_from_user.txt $current_container_name:/home/user/logs_temp/
+    docker cp -L ${ros_log_dir}/$dir/ros_log_$timestamp/notes_from_user.txt $current_container_name:/home/user/logs_temp/
     docker cp -L ${ros_log_dir}/$dir/ros_log_$timestamp/container_info.txt $current_container_name:/home/user/logs_temp/
     docker cp -L ${ros_log_dir}/$dir/ros_log_$timestamp/image_info.txt $current_container_name:/home/user/logs_temp/
 }
@@ -32,7 +32,7 @@ function copy_to_host
 {
     echo "Copying logs to host..."
     docker cp -L $current_container_name:/home/user/logs_temp ${ros_log_dir}/$dir/ros_log_$timestamp/
-    mv ${ros_log_dir}/$dir/ros_log_$timestamp/logs_temp/*.* ${ros_log_dir}/$dir/ros_log_$timestamp/
+    mv ${ros_log_dir}/$dir/ros_log_$timestamp/logs_temp/* ${ros_log_dir}/$dir/ros_log_$timestamp/
     rm -rf ${ros_log_dir}/$dir/ros_log_$timestamp/logs_temp
 }
 
