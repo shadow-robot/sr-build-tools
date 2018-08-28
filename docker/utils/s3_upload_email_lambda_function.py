@@ -1,4 +1,3 @@
-
 #!/usr/bin/env python
 #
 # Copyright (C) 2018 Shadow Robot Company Ltd - All Rights Reserved.
@@ -7,10 +6,11 @@
 import json
 import urllib.parse
 import boto3
+from botocore.client import Config
 
 print('Loading s3_upload_email_lambda_function')
 
-s3 = boto3.client('s3')
+s3 = boto3.client('s3', config=Config(signature_version='s3v4'))
 
 snsclient = boto3.client('sns')
 topic_arn = 'arn:aws:sns:eu-west-2:080653068785:S3UploadTopic'
@@ -47,7 +47,7 @@ def lambda_handler(event, context):
         f"Event: "+eventname+"\n"
         f"Filename: "+filename+"\n"
         f"Size (in MB): "+size+"\n"
-        f"Link to tar.gz (valid for 1 week): "+presigned_url+"\n"
+        f"Link to tar.gz (valid for 6 hours): "+presigned_url+"\n"
         )
                  
     snsclient.publish(TopicArn=topic_arn, Message=email_text, Subject=subjectline)
