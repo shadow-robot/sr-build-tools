@@ -127,7 +127,7 @@ Posible options for the oneliner are:
 * -o or --optoforce         Specify if optoforce sensors are going to be used (default: false)
 * -l or --launchhand        Specify if hand driver should start when double clicking desktop icon (default: true)
 * -bt or --buildtoolsbranch Specify the Git branch for sr-build-tools (default: master)
-* -ck or --customerkey      Flag to prompt for customer key for uploading files to AWS (can be true or false)
+* -ck or --customerkey      Flag to prompt for customer key for uploading files to AWS (can be skipped or be set to true)
 
 To begin with, the one-liner checks the installation status of docker. If docker is not installed then a new clean installation is performed. If the required image is private, 
 then a valid Docker Hub account with pull credentials from Shadow Robot's Docker Hub is required. Then, the specified docker image is pulled and a docker 
