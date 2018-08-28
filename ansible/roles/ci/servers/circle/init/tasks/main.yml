@@ -50,6 +50,9 @@
   set_fact:
     code_coverage_results_dir: "{{circle_code_coverage_dir}}"
 
+- name: Create tests directory
+  file: state=directory path={{test_results_dir}}
+
 - name: Clean tests results directory in case of failure during cache build
   shell: bash -c "rm -rf {{test_results_dir}}/*"
 
