@@ -247,9 +247,15 @@ Presuming we do not want the driver to auto-launch for our example, the final co
 bash <(curl -Ls https://raw.githubusercontent.com/shadow-robot/sr-build-tools/F%23SRC-1815-Toivo-Launch-File/docker/launch.sh) -i shadowrobot/flexible-hand:kinetic-v0.2.28 -n flexible_hand_real_hw -e enp0s25 -r true -g false -bt F#SRC-1815-Toivo-Launch-File -l false
 ```
 
-### Customer Key ```-ck```
+### Enable Customer Key ```-ck```
 
-For uploading ROS_LOGS folder (including .bag file and core dump) to AWS, the user running the oneliner needs to enter a customer key using the -ck flag in the oneliner. To get a customer key, please contact devops@shadowrobot.com. To set an AWS customer key, go to: https://eu-west-2.console.aws.amazon.com/apigateway/home?region=eu-west-2#/api-keys/sf0rfsfv38 (Shadow AWS account needed). By default, -ck flag wont be used, which means ROS LOGS will not be uploaded to AWS. For example, adding ```-ck true``` to the oneliner command will prompt you for the customer key, save the customer key inside the user's Docker container and enable ROS_Logs_Saver to upload the whole folder of saved logs to AWS
+Enable Customer Key should be set to true (```-ck true```) if the user wants to be able to upload ROS logs and core dumps to AWS. Every time an upload is done, an email is sent to devops@shadowrobot.com by AWS. If you are internal Shadow staff and want to be added to the devops@shadowrobot.com email distribution list, email: sysadmin@shadowrobot.com.
+
+NOTE: If the user doesn't want to upload anything to AWS, they can just skip setting the -ck flag altogether, because even setting it to false will ask the user to enter a customer key.
+
+Internal Shadow staff can see the existing customer keys here: http://zeus/mediawiki/index.php/Customer_Keys_for_uploading_ROS_Logs. If a new customer key needs to be added, email sysadmin@shadowrobot.com. 
+
+For example, adding ```-ck true``` to the oneliner command will prompt you for the customer key, save the customer key inside the user's Docker container and enable ROS_Logs_Saver_And_Uploader to upload the whole folder of saved logs to AWS
  
 Presuming we do not want the driver to auto-launch for our example, the final command would be:
 
