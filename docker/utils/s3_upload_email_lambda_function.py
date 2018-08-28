@@ -36,7 +36,9 @@ def lambda_handler(event, context):
     corrected_object_name = objectname.replace("%3A",":")
     presigned_url=s3.generate_presigned_url('get_object', Params = {'Bucket': bucket, 'Key': corrected_object_name}, ExpiresIn = 604800)
     
-    size =  str(event['Records'][0]['s3']['object']['size']/1024.0/1024.0)
+    
+    size = "{:.2f}".format(event['Records'][0]['s3']['object']['size']/1024.0/1024.0)
+    
     subjectline = "New ROS Logs upload for Shadow from "+customername
     email_text = (
         f"New ROS Logs upload for Shadow\n"
