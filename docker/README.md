@@ -109,7 +109,7 @@ In the above example, ‘enp0s25’ is the interface id that is needed.
 
 With this information you can run the one-liner using the following command
 ```shell
-bash <(curl -Ls http://bit.do/launch-sh) -i [image_name] -n [container_name] -e [interface] -b [git_branch] -r [true/false] -g [true/false] -b [sr_config_branch for dexterous hand]
+bash <(curl -Ls bit.ly/launch-sh) -i [image_name] -n [container_name] -e [interface] -b [git_branch] -r [true/false] -g [true/false] -b [sr_config_branch for dexterous hand]
 ```
 
 Posible options for the oneliner are:
@@ -135,17 +135,17 @@ the hand.
 
 Usage example hand E:
 ```
-bash <(curl -Ls http://bit.do/launch-sh) -i shadowrobot/dexterous-hand:kinetic-release -n hand_e_kinetic_real_hw -e enp0s25 -b shadowrobot_demo_hand -r true -g false
+bash <(curl -Ls bit.ly/launch-sh) -i shadowrobot/dexterous-hand:kinetic-release -n hand_e_kinetic_real_hw -e enp0s25 -b shadowrobot_demo_hand -r true -g false
 ```
 
 Usage example hand E for production:
 ```
-bash <(curl -Ls http://bit.do/launch-sh) -i shadowrobot/dexterous-hand:kinetic-release -n hand_e_kinetic_real_hw -e enp0s25 -b shadowrobot_demo_hand -r true -g false -l false
+bash <(curl -Ls bit.ly/launch-sh) -i shadowrobot/dexterous-hand:kinetic-release -n hand_e_kinetic_real_hw -e enp0s25 -b shadowrobot_demo_hand -r true -g false -l false
 ```
 
 Usage example modular-grasper:
 ```
-bash <(curl -Ls http://bit.do/launch-sh) -i shadowrobot/flexible-hand:kinetic-release -n modular_grasper -e enp0s25 -r true -g false
+bash <(curl -Ls bit.ly/launch-sh) -i shadowrobot/flexible-hand:kinetic-release -n modular_grasper -e enp0s25 -r true -g false
 ```
 
 # Using Docker for Production
@@ -159,7 +159,7 @@ It's important to make sure that you're always working with the latest version o
 To start the command, enter the oneliner command, with ```-r true``` to pull the latest image.
 
 ```bash
-bash <(curl -Ls http://bit.do/launch-sh) -r true
+bash <(curl -Ls bit.ly/launch-sh) -r true
 ```
 
 ### Which image should I use: ```-i```
@@ -180,7 +180,7 @@ The *shadowrobot/flexible-hand* images contain the Hand H software. Hand H is on
 For this example, we'll start a *dexterous-hand:kinetic-release* docker:
 
 ```bash
-bash <(curl -Ls http://bit.do/launch-sh) -r true -i shadowrobot/dexterous-hand:kinetic-release
+bash <(curl -Ls bit.ly/launch-sh) -r true -i shadowrobot/dexterous-hand:kinetic-release
 ```
 
 ##### Docker Hub user credentials: ```-u``` and ```-p```
@@ -198,7 +198,7 @@ The ```-sn``` flag gives the name of the desktop link that will be created for s
 For example. let's say you want a docker to test a kinetic Hand E, you could use the name "hand_e_kinetic":
 
 ```bash
-bash <(curl -Ls http://bit.do/launch-sh) -r true -i shadowrobot/dexterous-hand:kinetic-release -n hand_e_kinetic -sn hand_e_kinetic
+bash <(curl -Ls bit.ly/launch-sh) -r true -i shadowrobot/dexterous-hand:kinetic-release -n hand_e_kinetic -sn hand_e_kinetic
 ```
 
 ### Setting port and config branch: ```-e``` and ```-b```
@@ -212,7 +212,7 @@ To select the correct ethernet port when starting a docker, use the one-liner op
 In this case, ```enp3s0``` is the correct port, so the one-liner command becomes:
 
 ```bash
-bash <(curl -Ls http://bit.do/launch-sh) -r true -i shadowrobot/dexterous-hand:kinetic-release -n hand_e_kinetic -sn hand_e_kinetic -e enp3s0
+bash <(curl -Ls bit.ly/launch-sh) -r true -i shadowrobot/dexterous-hand:kinetic-release -n hand_e_kinetic -sn hand_e_kinetic -e enp3s0
 ```
 
 #### Config branch
@@ -220,7 +220,7 @@ For Hand E, the correct config branch for the hand being tested must be specifie
 
 
 ```bash
-bash <(curl -Ls http://bit.do/launch-sh) -r true -i shadowrobot/dexterous-hand:kinetic-release -n hand_e_kinetic -sn hand_e_kinetic -e enp3s0 -b demohand_E_v1
+bash <(curl -Ls bit.ly/launch-sh) -r true -i shadowrobot/dexterous-hand:kinetic-release -n hand_e_kinetic -sn hand_e_kinetic -e enp3s0 -b demohand_E_v1
 ```
 
 Hand H dockers do not need a specific config branch.
@@ -232,7 +232,7 @@ When starting a new Docker, by default it's configured to run the driver automat
 Presuming we do not want the driver to auto-launch for our example, the final command would be:
 
 ```bash
-bash <(curl -Ls http://bit.do/launch-sh) -r true -i shadowrobot/dexterous-hand:kinetic-release -n hand_e_kinetic -sn hand_e_kinetic -e enp3s0 -b demohand_E_v1 -l false
+bash <(curl -Ls bit.ly/launch-sh) -r true -i shadowrobot/dexterous-hand:kinetic-release -n hand_e_kinetic -sn hand_e_kinetic -e enp3s0 -b demohand_E_v1 -l false
 ```
 
 ### Build tools branch ```-bt```
