@@ -59,7 +59,7 @@ def lambda_handler(event, context):
         f"Event: "+eventname+"\n"
         f"Filename: "+filename+"\n"
         f"Size (in MB): "+size+"\n"
-        f"Link to tar.gz (valid for 7 days (test)): "+presigned_url+"\n"
+        f"Link to tar.gz (valid for 7 days): "+presigned_url+"\n"
         )
                  
     snsclient.publish(TopicArn=topic_arn, Message=email_text, Subject=subjectline)
