@@ -7,10 +7,20 @@ import json
 import urllib.parse
 import boto3
 from botocore.client import Config
+from base64 import b64decode
+import os
 
 print('Loading s3_upload_email_lambda_function')
 
-s3 = boto3.client('s3', config=Config(signature_version='s3v4'))
+access_key_id_enc = os.environ['access_key_id']
+access_key_id_dec = boto3.client('kms').decrypt(CiphertextBlob=b64decode(access_key_id_enc))['Plaintext']
+access_key_id_dec=access_key_id_dec.decode('utf-8')
+
+secret_access_key_enc = os.environ['secret_access_key']
+secret_access_key_dec = boto3.client('kms').decrypt(CiphertextBlob=b64decode(secret_access_key_enc))['Plaintext']
+secret_access_key_dec=secret_access_key_dec.decode('utf-8')
+
+s3 = boto3.client('s3', aws_access_key_id=access_key_id_dec,aws_secret_access_key=secret_access_key_dec,config=Config(signature_version='s3v4'))
 
 snsclient = boto3.client('sns')
 topic_arn = 'arn:aws:sns:eu-west-2:080653068785:S3UploadTopic'
@@ -49,7 +59,7 @@ def lambda_handler(event, context):
         f"Event: "+eventname+"\n"
         f"Filename: "+filename+"\n"
         f"Size (in MB): "+size+"\n"
-        f"Link to tar.gz (valid for 6 hours): "+presigned_url+"\n"
+        f"Link to tar.gz (valid for 7 days (test)): "+presigned_url+"\n"
         )
                  
     snsclient.publish(TopicArn=topic_arn, Message=email_text, Subject=subjectline)
