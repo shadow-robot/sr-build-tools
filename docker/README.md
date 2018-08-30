@@ -127,6 +127,7 @@ Posible options for the oneliner are:
 * -o or --optoforce         Specify if optoforce sensors are going to be used (default: false)
 * -l or --launchhand        Specify if hand driver should start when double clicking desktop icon (default: true)
 * -bt or --buildtoolsbranch Specify the Git branch for sr-build-tools (default: master)
+* -ck or --customerkey      Flag to prompt for customer key for uploading files to AWS (can be skipped or be set to true)
 
 To begin with, the one-liner checks the installation status of docker. If docker is not installed then a new clean installation is performed. If the required image is private, 
 then a valid Docker Hub account with pull credentials from Shadow Robot's Docker Hub is required. Then, the specified docker image is pulled and a docker 
@@ -245,3 +246,20 @@ Presuming we do not want the driver to auto-launch for our example, the final co
 ```bash
 bash <(curl -Ls https://raw.githubusercontent.com/shadow-robot/sr-build-tools/F%23SRC-1815-Toivo-Launch-File/docker/launch.sh) -i shadowrobot/flexible-hand:kinetic-v0.2.28 -n flexible_hand_real_hw -e enp0s25 -r true -g false -bt F#SRC-1815-Toivo-Launch-File -l false
 ```
+
+### Enable Customer Key ```-ck```
+
+Enable Customer Key should be set to true (```-ck true```) if the user wants to be able to upload ROS logs and core dumps to AWS. Every time an upload is done, an email is sent to devops@shadowrobot.com by AWS. If you are internal Shadow staff and want to be added to the devops@shadowrobot.com email distribution list, email: sysadmin@shadowrobot.com.
+
+NOTE: If the user doesn't want to upload anything to AWS, they can just skip setting the -ck flag altogether, because even setting it to false will ask the user to enter a customer key.
+
+Internal Shadow staff can see the existing customer keys here: http://zeus/mediawiki/index.php/Customer_Keys_for_uploading_ROS_Logs. If a new customer key needs to be added, email sysadmin@shadowrobot.com. 
+
+For example, adding ```-ck true``` to the oneliner command will prompt you for the customer key, save the customer key inside the user's Docker container and enable ROS_Logs_Saver_And_Uploader to upload the whole folder of saved logs to AWS
+ 
+Presuming we do not want the driver to auto-launch for our example, the final command would be:
+
+```bash
+bash <(curl -Ls http://bit.do/launch-sh) -i shadowrobot/flexible-hand:kinetic-v0.2.28 -n flexible_hand_real_hw -e enp0s25 -r true -g false -l false -ck true
+```
+

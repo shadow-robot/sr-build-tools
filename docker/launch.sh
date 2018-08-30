@@ -64,6 +64,10 @@ case $key in
     BUILD_TOOLS_BRANCH=$(echo "$2" | sed 's/#/%23/g')
     shift
     ;;
+    -ck|--customerkey)
+    CUSTOMER_KEY="$2"
+    shift
+    ;;
     *)
     # ignore unknown option
     ;;
@@ -119,6 +123,14 @@ then
     BUILD_TOOLS_BRANCH="master"
 fi
 
+if [ -z "${CUSTOMER_KEY}" ];
+then
+    CUSTOMER_KEY=false
+else
+    echo "Please enter your key for uploading logs to AWS:"
+    read CUSTOMER_KEY
+fi
+
 echo "================================================================="
 echo "|                                                               |"
 echo "|             Shadow default docker deployment                  |"
@@ -139,6 +151,7 @@ echo "  * -sn or --shortcutname       Specify the name for the desktop icon (def
 echo "  * -o or --optoforce           Specify if optoforce sensors are going to be used (default: false)"
 echo "  * -l or --launchhand          Specify if hand driver should start when double clicking desktop icon (default: true)"
 echo "  * -bt or --buildtoolsbranch   Specify the Git branch for sr-build-tools (default: master)"
+echo "  * -ck or --customerkey        Flag to prompt for customer key for uploading files to AWS"
 echo ""
 echo "example hand E: ./launch.sh -i shadowrobot/dexterous-hand:kinetic -n hand_e_kinetic_real_hw -e enp0s25 -b shadowrobot_demo_hand -r true -g false"
 echo "example hand H: ./launch.sh -i shadowrobot/flexible-hand:kinetic-release -n modular_grasper -e enp0s25 -r true -g false"
@@ -381,7 +394,7 @@ if [ ${DESKTOP_ICON} = true ] ; then
 
     echo "Downloading the save_ros_logs script"
     curl "https://raw.githubusercontent.com/shadow-robot/sr-build-tools/${BUILD_TOOLS_BRANCH}/docker/utils/save_latest_ros_logs.sh" >> ${SAVE_LOGS_APP_FOLDER}/save_latest_ros_logs/save_latest_ros_logs.sh
-    
+
     echo "Creating launch executable file"
     printf "#! /bin/bash
     exec -a shadow_launcher_app_xterm xterm -e \"cd ${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}; ./launch.sh -i ${DOCKER_IMAGE_NAME} -n ${DOCKER_CONTAINER_NAME} -e ${ETHERCAT_INTERFACE} -r false -d false -s true\"" > ${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/shadow_launcher_exec.sh
@@ -389,7 +402,7 @@ if [ ${DESKTOP_ICON} = true ] ; then
     echo "Creating save_ros_logs executable file"
     printf "#! /bin/bash
     exec -a shadow_save_log_app_xterm xterm -e \"cd ${SAVE_LOGS_APP_FOLDER}/save_latest_ros_logs; ./save_latest_ros_logs.sh\"" > ${SAVE_LOGS_APP_FOLDER}/save_latest_ros_logs/shadow_save_log_exec.sh
-
+    
     echo "Downloading launch icon"
     wget --no-check-certificate https://raw.githubusercontent.com/shadow-robot/sr-build-tools/${BUILD_TOOLS_BRANCH}/docker/${HAND_ICON} -O ${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/${HAND_ICON}
 
@@ -406,24 +419,37 @@ if [ ${DESKTOP_ICON} = true ] ; then
     Type=Application
     Categories=Utility;Application;" > /home/$USER/Desktop/${DESKTOP_SHORTCUT_NAME}.desktop
 
-    echo "Creating save_ros_logs desktop file"
-    printf "[Desktop Entry]
-    Version=1.0
-    Name=ROS_Logs_Saver
-    Comment=This application saves latest ros logs file from running docker container
-    Exec=/home/${USER}/.shadow_save_log_app/save_latest_ros_logs/shadow_save_log_exec.sh
-    Icon=/home/${USER}/.shadow_save_log_app/save_latest_ros_logs/log_icon.png
-    Terminal=false
-    Type=Application
-    Categories=Utility;Application;" > /home/$USER/Desktop/ROS_Logs_Saver.desktop
-
+    if [ ${CUSTOMER_KEY} = false ]; then
+        echo "Creating save_ros_logs desktop file"
+        printf "[Desktop Entry]
+        Version=1.0
+        Name=ROS_Logs_Saver
+        Comment=This application saves latest ros logs file from running docker container
+        Exec=/home/${USER}/.shadow_save_log_app/save_latest_ros_logs/shadow_save_log_exec.sh
+        Icon=/home/${USER}/.shadow_save_log_app/save_latest_ros_logs/log_icon.png
+        Terminal=false
+        Type=Application
+        Categories=Utility;Application;" > /home/$USER/Desktop/ROS_Logs_Saver.desktop
+        chmod +x /home/$USER/Desktop/ROS_Logs_Saver.desktop
+    else
+        echo "Creating save_and_upload_ros_logs desktop file"
+        printf "[Desktop Entry]
+        Version=1.0
+        Name=ROS_Logs_Saver_And_Uploader
+        Comment=This application saves and uploads to AWS latest ros logs file from running docker container
+        Exec=/home/${USER}/.shadow_save_log_app/save_latest_ros_logs/shadow_save_log_exec.sh
+        Icon=/home/${USER}/.shadow_save_log_app/save_latest_ros_logs/log_icon.png
+        Terminal=false
+        Type=Application
+        Categories=Utility;Application;" > /home/$USER/Desktop/ROS_Logs_Saver_And_Uploader.desktop
+        chmod +x /home/$USER/Desktop/ROS_Logs_Saver_And_Uploader.desktop
+    fi
     echo "Allowing files to be executable"
     chmod +x ${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/shadow_launcher_exec.sh
     chmod +x ${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/launch.sh
     chmod +x /home/$USER/Desktop/${DESKTOP_SHORTCUT_NAME}.desktop
     chmod +x ${SAVE_LOGS_APP_FOLDER}/save_latest_ros_logs/shadow_save_log_exec.sh
     chmod +x ${SAVE_LOGS_APP_FOLDER}/save_latest_ros_logs/save_latest_ros_logs.sh
-    chmod +x /home/$USER/Desktop/ROS_Logs_Saver.desktop
 fi
 
 if [ ${REINSTALL_DOCKER_CONTAINER} = false ] ; then
@@ -502,6 +528,20 @@ else
         ${DOCKER} create -it --privileged --name ${DOCKER_CONTAINER_NAME} ${OPTOFORCE_PATH} --ulimit core=-1 --security-opt seccomp=unconfined --network=host --pid=host -e DISPLAY -e QT_X11_NO_MITSHM=1 -e LOCAL_USER_ID=$(id -u) -v /tmp/.X11-unix:/tmp/.X11-unix:rw ${DOCKER_IMAGE_NAME} terminator -x bash -c "pkill -f \"^\"shadow_launcher_app_xterm && /usr/local/bin/setup_dexterous_hand.sh && bash || bash"
         docker cp ${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/setup_dexterous_hand.sh ${DOCKER_CONTAINER_NAME}:/usr/local/bin/setup_dexterous_hand.sh
     fi
+fi
+
+if [ ${CUSTOMER_KEY} = false ]; then
+    echo "Skipping shadow_upload script because no customer key set"
+else
+    echo "Downloading the shadow_upload script"
+    curl https://raw.githubusercontent.com/shadow-robot/sr-build-tools/${BUILD_TOOLS_BRANCH}/docker/utils/shadow_upload.sh > ${SAVE_LOGS_APP_FOLDER}/save_latest_ros_logs/shadow_upload.sh
+    chmod +x ${SAVE_LOGS_APP_FOLDER}/save_latest_ros_logs/shadow_upload.sh
+    docker cp ${SAVE_LOGS_APP_FOLDER}/save_latest_ros_logs/shadow_upload.sh ${DOCKER_CONTAINER_NAME}:/usr/local/bin/shadow_upload.sh
+    rm ${SAVE_LOGS_APP_FOLDER}/save_latest_ros_logs/shadow_upload.sh
+    echo "Creating customer key file"
+    echo ${CUSTOMER_KEY} > ${SAVE_LOGS_APP_FOLDER}/save_latest_ros_logs/customer.key
+    docker cp ${SAVE_LOGS_APP_FOLDER}/save_latest_ros_logs/customer.key ${DOCKER_CONTAINER_NAME}:/usr/local/bin/customer.key
+    rm ${SAVE_LOGS_APP_FOLDER}/save_latest_ros_logs/customer.key   
 fi
 
 echo ""
