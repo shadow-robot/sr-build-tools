@@ -15,7 +15,6 @@ function copy_logs
     # copy logs to temp folder
     docker exec $current_container_name bash -c "mkdir /home/user/logs_temp/" || true
     docker exec $current_container_name bash -c "cp /home/user/.ros/log/stderr.log /home/user/logs_temp/" || true
-    docker exec $current_container_name bash -c "cp /home/user/.ros/log/stdout.log /home/user/logs_temp/" || true
     docker exec $current_container_name bash -c "rm /home/user/.ros/log/std*.log" || true
     docker exec $current_container_name bash -c "cp /home/user/.ros/log/core_dumps/* /home/user/logs_temp/" || true
     docker exec $current_container_name bash -c "rm /home/user/.ros/log/core_dumps/core_*" || true
