@@ -234,11 +234,11 @@ else
         sudo apt-get update
         sudo apt-get install -y docker-ce
         
-        if ! grep -q docker /etc/group ; then
+        if [ ! $(getent group docker) ]; then
             sudo groupadd docker
         fi
 
-        sudo gpasswd -a $USER docker
+        sudo usermod -aG docker $USER
         newgrp docker
     elif [[ $(cat /etc/*release | grep VERSION_CODENAME) = *"trusty"* ]]; then
         echo "Ubuntu version: Trusty"
