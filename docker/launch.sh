@@ -219,8 +219,30 @@ if [ -x "$(command -v docker)" ]; then
     echo "Docker installed"
 else
     echo "Installing docker"
-    if [[ $(cat /etc/*release | grep VERSION_CODENAME) = *"xenial"* ]]; then
-        echo "Ubuntu version: Xenial"
+    if [[ $(cat /etc/*release | grep VERSION_CODENAME) = *"bionic"* ]]; then
+        echo "Ubuntu version: Bionic (18.04)"
+        sudo apt update
+        sudo apt install  -y \
+        apt-transport-https \
+        ca-certificates \
+        software-properties-common
+        curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+        sudo add-apt-repository \
+             "deb [arch=amd64] https://download.docker.com/linux/ubuntu \
+             bionic \
+             stable"
+        sudo apt update
+        sudo apt install -y docker-ce
+
+        if ! grep -q docker /etc/group ; then
+            sudo groupadd docker
+        fi
+
+        sudo gpasswd -a $USER docker
+        newgrp docker
+
+    elif [[ $(cat /etc/*release | grep VERSION_CODENAME) = *"xenial"* ]]; then
+        echo "Ubuntu version: Xenial (16.04)"
         sudo apt-get update
         sudo apt-get install  -y \
         apt-transport-https \
@@ -241,7 +263,7 @@ else
         sudo gpasswd -a $USER docker
         newgrp docker
     elif [[ $(cat /etc/*release | grep VERSION_CODENAME) = *"trusty"* ]]; then
-        echo "Ubuntu version: Trusty"
+        echo "Ubuntu version: Trusty (12.04)"
         sudo apt-get update
         sudo apt-get -y install docker.io
         ln -sf /usr/bin/docker.io /usr/local/bin/docker
