@@ -3,5 +3,5 @@
 - name: Installing PyQtGraph package
   pip:
     name: pyqtgraph
-    umask: 0022
+    umask: "0022"
   become: True
