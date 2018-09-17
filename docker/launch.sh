@@ -370,7 +370,7 @@ if [ ${DESKTOP_ICON} = true ] ; then
             " > ${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/setup_dexterous_hand.sh
 
             if [ ${LAUNCH_HAND} = true ]; then
-                printf "roslaunch sr_ethercat_hand_config sr_rhand.launch" >> ${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/setup_dexterous_hand.sh
+                printf "roslaunch sr_ethercat_hand_config sr_rhand.launch 2> >(tee -a ~/.ros/log/stderr.log >&2)" >> ${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/setup_dexterous_hand.sh
             fi
             chmod +x ${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/setup_dexterous_hand.sh
         fi
