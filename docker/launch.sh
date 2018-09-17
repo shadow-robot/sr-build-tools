@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-set -x # debug
+#set -x # debug
 set -e # fail on errors
 
 while [[ $# > 1 ]]
