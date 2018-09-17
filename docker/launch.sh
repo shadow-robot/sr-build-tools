@@ -219,8 +219,13 @@ if [ -x "$(command -v docker)" ]; then
     echo "Docker installed"
 else
     echo "Installing docker"
-    if [[ $(cat /etc/*release | grep VERSION_CODENAME) = *"xenial"* ]]; then
-        echo "Ubuntu version: Xenial"
+    if [[ $(cat /etc/*release | grep VERSION_CODENAME) = *"xenial"* ]] || \
+       [[ $(cat /etc/*release | grep VERSION_CODENAME) = *"bionic"* ]]; then
+        if [[ $(cat /etc/*release | grep VERSION_CODENAME) = *"bionic"* ]]; then
+          echo "Ubuntu version: Bionic (18.04)"
+        else
+          echo "Ubuntu version: Xenial (16.04)"
+        fi
         sudo apt-get update
         sudo apt-get install  -y \
         apt-transport-https \
@@ -245,7 +250,7 @@ else
         echo ""
         exit 0
     elif [[ $(cat /etc/*release | grep VERSION_CODENAME) = *"trusty"* ]]; then
-        echo "Ubuntu version: Trusty"
+        echo "Ubuntu version: Trusty (12.04)"
         sudo apt-get update
         sudo apt-get -y install docker.io
         ln -sf /usr/bin/docker.io /usr/local/bin/docker
