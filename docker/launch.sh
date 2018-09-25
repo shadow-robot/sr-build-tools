@@ -418,7 +418,6 @@ if [ ${DESKTOP_ICON} = true ] ; then
     echo "Downloading save_ros_logs icon"
     wget --no-check-certificate https://raw.githubusercontent.com/shadow-robot/sr-build-tools/${BUILD_TOOLS_BRANCH}/docker/log_icon.png -O ${SAVE_LOGS_APP_FOLDER}/save_latest_ros_logs/log_icon.png
     
-    echo "Creating Desktop folder only if it doesn't exist"
     mkdir -p /home/$USER/Desktop
     
     echo "Creating launch desktop file"
