@@ -46,8 +46,8 @@ fi
 echo -e "${NC} ${normal}Please add a note for logging with reasons... ${normal}${NC}"
 read notes_from_user
 
-save_log_msg_config_file="/home/$USER/.save_sr_log_msg_config.cfg"
-tmp_save_log_msg_config_file="/home/$USER/.tmp_save_sr_log_msg_config.cfg"
+save_log_msg_config_file="/home/$USER/.shadow_save_log_app/save_sr_log_msg_config.cfg"
+tmp_save_log_msg_config_file="/home/$USER/.shadow_save_log_app/tmp_save_sr_log_msg_config.cfg"
 
 if [ -f $save_log_msg_config_file ]; then
     # check if the file contains something we don't want
