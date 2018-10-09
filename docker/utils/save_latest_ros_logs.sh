@@ -66,14 +66,21 @@ fi
 source $save_log_msg_config_file
 
 if [ ! $do_not_show_upload_log_message == "true" ]; then
+    counter = 0
     while ! [[ $upload_to_server == "Y" || $upload_to_server == "y" || $upload_to_server == "yes" || $upload_to_server == "YES" || $upload_to_server == "N" || $upload_to_server == "n" || $upload_to_server == "no" || $upload_to_server == "NO" ]]; do
-        echo -e "${YELLOW}${normal}We are going to upload logs to Shadow servers so we can diagnose problems. Do you want to do this? (Y/N) ${normal}${NC}"
-        read $upload_to_server
+        echo -e "${YELLOW}We are going to upload logs to Shadow servers so we can diagnose problems. Do you want to do this? (Y/N) ${normal}${NC}"
+        read upload_to_server
         if ! [[ $upload_to_server == "Y" || $upload_to_server == "y" || $upload_to_server == "yes" || $upload_to_server == "YES" || $upload_to_server == "N" || $upload_to_server == "n" || $upload_to_server == "no" || $upload_to_server == "NO" ]]; then
             echo "Please type 'Y' or 'N'"
         fi
+        if [ $counter -gt 4]; then
+            echo -e "${YELLOW}Too many invalid inputs. Exiting the program...${normal}${NC}"
+            sleep 5
+            exit 1
+        fi
+        let counter += 1
     done
-    echo -e "${YELLOW}${normal}Do you want to show the previous message again and not remember last option? (Y/N) ${normal}${NC}"
+    echo -e "${YELLOW}Do you want to show the previous message again and not remember last option? (Y/N) ${normal}${NC}"
     read show_upload_log_message
 
     if [[ $show_upload_log_message == "N" || $show_upload_log_message == "No" || $show_upload_log_message == "n" || $show_upload_log_message == "no" || $show_upload_log_message == "NO" ]]; then
