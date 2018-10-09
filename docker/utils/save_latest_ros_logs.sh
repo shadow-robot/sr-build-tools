@@ -51,7 +51,7 @@ tmp_save_log_msg_config_file="/home/$USER/.tmp_save_sr_log_msg_config.cfg"
 
 if [ -f $save_log_msg_config_file ]; then
     # check if the file contains something we don't want
-    if egrep -q -v '^#|^[^ ]*=[^;&]*' "save_log_msg_config_file"; then
+    if egrep -q -v '^#|^[^ ]*=[^;&]*' "$save_log_msg_config_file"; then
 	  echo "Config file is unclean, cleaning it..." >&2
 	  # filter the original to a tmp file
 	  egrep '^#|^[^ ]*=[^;&]*'  "$configfile" > "$tmp_save_log_msg_config_file"
@@ -60,16 +60,16 @@ if [ -f $save_log_msg_config_file ]; then
 else
     touch $save_log_msg_config_file
     echo 'do_not_show_upload_log_message="false"' >> $save_log_msg_config_file
-	echo 'upload_sr_log_messages="true"' >> $save_log_msg_config_file
+    echo 'upload_sr_log_messages="true"' >> $save_log_msg_config_file
 fi
 
-source $configfile
+source $save_log_msg_config_file
 
 if [ ! $do_not_show_upload_log_message == "true" ]; then
-    while ! [[ $upload_sr_log_messages == "Y" || $upload_sr_log_messages == "y" || $upload_sr_log_messages == "yes" || $upload_sr_log_messages == "YES" || $upload_sr_log_messages == "N" || $upload_sr_log_messages == "n" || $upload_sr_log_messages == "no" || $upload_sr_log_messages == "NO" ]]; do
+    while ! [[ $upload_to_server == "Y" || $upload_to_server == "y" || $upload_to_server == "yes" || $upload_to_server == "YES" || $upload_to_server == "N" || $upload_to_server == "n" || $upload_to_server == "no" || $upload_to_server == "NO" ]]; do
         echo -e "${YELLOW}${normal}We are going to upload logs to Shadow servers so we can diagnose problems. Do you want to do this? (Y/N) ${normal}${NC}"
-        read upload_sr_log_messages
-        if ! [[ $upload_sr_log_messages == "Y" || $upload_sr_log_messages == "y" || $upload_sr_log_messages == "yes" || $upload_sr_log_messages == "YES" || $upload_sr_log_messages == "N" || $upload_sr_log_messages == "n" || $upload_sr_log_messages == "no" || $upload_sr_log_messages == "NO" ]]; then
+        read $upload_to_server
+        if ! [[ $upload_to_server == "Y" || $upload_to_server == "y" || $upload_to_server == "yes" || $upload_to_server == "YES" || $upload_to_server == "N" || $upload_to_server == "n" || $upload_to_server == "no" || $upload_to_server == "NO" ]]; then
             echo "Please type 'Y' or 'N'"
         fi
     done
@@ -82,7 +82,7 @@ if [ ! $do_not_show_upload_log_message == "true" ]; then
         sed -i 's/\(do_not_show_upload_log_message *= *\).*/\1"true"/' $save_log_msg_config_file
     fi
 
-    if [[ $upload_sr_log_messages == "N" || $upload_sr_log_messages == "No" || $upload_sr_log_messages == "n" || $upload_sr_log_messages == "no" || $upload_sr_log_messages == "NO" ]]; then
+    if [[ $upload_to_server == "N" || $upload_to_server == "No" || $upload_to_server == "n" || $upload_to_server == "no" || $upload_to_server == "NO" ]]; then
         sed -i 's/\(upload_sr_log_messages *= *\).*/\1"false"/' $save_log_msg_config_file
     else
         sed -i 's/\(upload_sr_log_messages *= *\).*/\1"true"/' $save_log_msg_config_file
@@ -152,7 +152,7 @@ if [ ! -z "$container_name" ]; then
                 # copy new logs to temp folder
                 copy_logs
                 copy_to_host
-                if [ $upload_sr_log_messages == true ]; then
+                if [ $upload_sr_log_messages == "true" ]; then
                     echo "Uploading to AWS - Please wait..."
                     upload_command=$(docker exec $current_container_name bash -c "source /usr/local/bin/shadow_upload.sh ${customerkey} /home/user/logs_temp $timestamp" || true)
                     if [[ $upload_command == "ok" ]]; then
