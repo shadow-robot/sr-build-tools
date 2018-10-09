@@ -91,8 +91,10 @@ if [ ! $do_not_show_upload_log_message == "true" ]; then
 
     if [[ $upload_to_server == "N" || $upload_to_server == "No" || $upload_to_server == "n" || $upload_to_server == "no" || $upload_to_server == "NO" ]]; then
         sed -i 's/\(upload_sr_log_messages *= *\).*/\1"false"/' $save_log_msg_config_file
+        upload_sr_log_messages="false"
     else
         sed -i 's/\(upload_sr_log_messages *= *\).*/\1"true"/' $save_log_msg_config_file
+        upload_sr_log_messages="true"
     fi
 fi
 
