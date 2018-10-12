@@ -36,65 +36,67 @@ function copy_to_host
 }
 
 echo -e "${NC}${normal}You are about to save latest ros logs ${normal}${NC}"
-echo -e "${RED}${bold}WARNING! This closes all running docker containers. Do you wish to continue? (y/n) ${normal}${NC}"
+echo -e "${YELLOW}${bold}WARNING! This closes all running docker containers. Do you wish to continue? (y/n) ${normal}${NC}"
 read prompt
 
 if [[ $prompt == "n" || $prompt == "N" || $prompt == "no" || $prompt == "No" || $prompt == "NO" ]]; then
     exit 1
 fi
 
-echo -e "${NC} ${normal}Please add a note for logging with reasons... ${normal}${NC}"
+echo -e "${NC}${normal}Please add a note for logging with reasons... ${normal}${NC}"
 read notes_from_user
 
-save_log_msg_config_file="/home/$USER/.shadow_save_log_app/save_sr_log_msg_config.cfg"
-tmp_save_log_msg_config_file="/home/$USER/.shadow_save_log_app/tmp_save_sr_log_msg_config.cfg"
+if [ "$(docker exec ${container_name} bash -c 'ls /usr/local/bin/customer.key')" ]; then
+    save_log_msg_config_file="/home/$USER/.shadow_save_log_app/save_sr_log_msg_config.cfg"
+    tmp_save_log_msg_config_file="/home/$USER/.shadow_save_log_app/tmp_save_sr_log_msg_config.cfg"
 
-if [ -f $save_log_msg_config_file ]; then
-    # check if the file contains something we don't want
-    if egrep -q -v '^#|^[^ ]*=[^;&]*' "$save_log_msg_config_file"; then
-	  echo "Config file is unclean, cleaning it..." >&2
-	  # filter the original to a tmp file
-	  egrep '^#|^[^ ]*=[^;&]*'  "$configfile" > "$tmp_save_log_msg_config_file"
-	  mv $tmp_save_log_msg_config_file $save_log_msg_config_file
-	fi
-else
-    touch $save_log_msg_config_file
-    echo 'do_not_show_upload_log_message="false"' >> $save_log_msg_config_file
-    echo 'upload_sr_log_messages="true"' >> $save_log_msg_config_file
-fi
-
-source $save_log_msg_config_file
-
-if [ ! $do_not_show_upload_log_message == "true" ]; then
-    counter=0
-    while ! [[ $upload_to_server == "Y" || $upload_to_server == "y" || $upload_to_server == "yes" || $upload_to_server == "YES" || $upload_to_server == "N" || $upload_to_server == "n" || $upload_to_server == "no" || $upload_to_server == "NO" ]]; do
-        if [ $counter -gt 4 ]; then
-            echo -e "${RED}Too many invalid inputs. Exiting the program...${normal}${NC}"
-            sleep 5
-            exit 1
+    if [ -f $save_log_msg_config_file ]; then
+        # check if the file contains something we don't want
+        if egrep -q -v '^#|^[^ ]*=[^;&]*' "$save_log_msg_config_file"; then
+          echo "Config file is unclean, cleaning it..." >&2
+          # filter the original to a tmp file
+          egrep '^#|^[^ ]*=[^;&]*'  "$configfile" > "$tmp_save_log_msg_config_file"
+          mv $tmp_save_log_msg_config_file $save_log_msg_config_file
         fi
-        echo -e "${YELLOW}We are going to upload logs to Shadow servers so we can diagnose problems. Do you want to do this? (Y/N) ${normal}${NC}"
-        read upload_to_server
-        if ! [[ $upload_to_server == "Y" || $upload_to_server == "y" || $upload_to_server == "yes" || $upload_to_server == "YES" || $upload_to_server == "N" || $upload_to_server == "n" || $upload_to_server == "no" || $upload_to_server == "NO" ]]; then
-            echo "Please type 'Y' or 'N'"
-        fi
-        let counter+=1
-    done
-    echo -e "${YELLOW}Do you want to show the previous message again and not remember last option? (Y/N) ${normal}${NC}"
-    read show_upload_log_message
-
-    if [[ $show_upload_log_message == "N" || $show_upload_log_message == "No" || $show_upload_log_message == "n" || $show_upload_log_message == "no" || $show_upload_log_message == "NO" ]]; then
-        sed -i 's/\(do_not_show_upload_log_message *= *\).*/\1"true"/' $save_log_msg_config_file
     else
-        sed -i 's/\(do_not_show_upload_log_message *= *\).*/\1"false"/' $save_log_msg_config_file
+        touch $save_log_msg_config_file
+        echo 'do_not_show_upload_log_message="false"' >> $save_log_msg_config_file
+        echo 'upload_sr_log_messages="true"' >> $save_log_msg_config_file
     fi
 
-    if [[ $upload_to_server == "N" || $upload_to_server == "No" || $upload_to_server == "n" || $upload_to_server == "no" || $upload_to_server == "NO" ]]; then
-        sed -i 's/\(upload_sr_log_messages *= *\).*/\1"false"/' $save_log_msg_config_file
-        upload_sr_log_messages="false"
-    else
-        sed -i 's/\(upload_sr_log_messages *= *\).*/\1"true"/' $save_log_msg_config_file
-        upload_sr_log_messages="true"
+    source $save_log_msg_config_file
+
+    if [ ! $do_not_show_upload_log_message == "true" ]; then
+        counter=0
+        while ! [[ $upload_to_server == "Y" || $upload_to_server == "y" || $upload_to_server == "yes" || $upload_to_server == "YES" || $upload_to_server == "N" || $upload_to_server == "n" || $upload_to_server == "no" || $upload_to_server == "NO" ]]; do
+            if [ $counter -gt 4 ]; then
+                echo -e "${RED}Too many invalid inputs. Exiting the program...${normal}${NC}"
+                sleep 5
+                exit 1
+            fi
+            echo -e "${YELLOW}We are going to upload logs to Shadow servers so we can diagnose problems. Do you want to do this? (Y/N) ${normal}${NC}"
+            read upload_to_server
+            if ! [[ $upload_to_server == "Y" || $upload_to_server == "y" || $upload_to_server == "yes" || $upload_to_server == "YES" || $upload_to_server == "N" || $upload_to_server == "n" || $upload_to_server == "no" || $upload_to_server == "NO" ]]; then
+                echo "Please type 'Y' or 'N'"
+            fi
+            let counter+=1
+        done
+        echo -e "${YELLOW}Do you want to show the previous message again and not remember last option? (Y/N) ${normal}${NC}"
+        read show_upload_log_message
+
+        if [[ $show_upload_log_message == "N" || $show_upload_log_message == "No" || $show_upload_log_message == "n" || $show_upload_log_message == "no" || $show_upload_log_message == "NO" ]]; then
+            sed -i 's/\(do_not_show_upload_log_message *= *\).*/\1"true"/' $save_log_msg_config_file
+        else
+            sed -i 's/\(do_not_show_upload_log_message *= *\).*/\1"false"/' $save_log_msg_config_file
+        fi
+
+        if [[ $upload_to_server == "N" || $upload_to_server == "No" || $upload_to_server == "n" || $upload_to_server == "no" || $upload_to_server == "NO" ]]; then
+            sed -i 's/\(upload_sr_log_messages *= *\).*/\1"false"/' $save_log_msg_config_file
+            upload_sr_log_messages="false"
+        else
+            sed -i 's/\(upload_sr_log_messages *= *\).*/\1"true"/' $save_log_msg_config_file
+            upload_sr_log_messages="true"
+        fi
     fi
 fi
 
@@ -142,7 +144,7 @@ if [ ! -z "$container_name" ]; then
             if [ ${customerkey} ]; then
              # check if the folder is empty.
                 if [ ! -z "$(docker exec ${container_name} bash -c 'find /home/user/logs_temp -maxdepth 0 -type d 2>/dev/null')" ]; then
-                    echo -e "${RED}${bold}There are previous logs that havent been sent yet. Would you like to send them now? Type 'y' to send or 'n' to ignore and overwrite them ${normal}${NC}"
+                    echo -e "${YELLOW}${bold}There are previous logs that havent been sent yet. Would you like to send them now? Type 'y' to send or 'n' to ignore and overwrite them ${normal}${NC}"
                     read old_logs
                     if [[ $old_logs == "y" || $old_logs == "Y" || $old_logs == "yes" || $old_logs == "Yes" || $old_logs == "YES" ]]; then
                         echo "Uploading to AWS - Please wait..."
