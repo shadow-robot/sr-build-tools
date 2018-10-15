@@ -153,6 +153,7 @@ if [ ! -z "$container_name" ]; then
                             echo -e "${GREEN} Previous logs Uploaded to AWS for $current_container_name! ${NC}"
                         else
                             echo -e "${RED}${bold} Failed to upload previous logs to AWS for $current_container_name! Check your internet connection and try again. Exiting... ${normal}${NC}"
+                            sleep 5
                             exit 1
                         fi
 		                sleep 1
@@ -172,6 +173,7 @@ if [ ! -z "$container_name" ]; then
                         echo -e "${GREEN} Latest Logs Saved and Uploaded to AWS for $current_container_name! ${NC}"
                     else
                         echo -e "${RED}${bold} Failed to upload logs to AWS for $current_container_name! Check your internet connection and try again.${normal}${NC}"
+                        sleep 5
                         exit 1
                     fi
                     sleep 1
