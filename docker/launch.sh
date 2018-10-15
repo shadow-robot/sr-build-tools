@@ -123,7 +123,7 @@ then
     BUILD_TOOLS_BRANCH="master"
 fi
 
-if [ "${CUSTOMER_KEY}" = true ];
+if [ ${CUSTOMER_KEY} = true ];
 then
     echo "Please enter your key for uploading logs to AWS:"
     read CUSTOMER_KEY
