@@ -144,7 +144,7 @@ if [ ! -z "$container_name" ]; then
             if [ ${customerkey} ]; then
              # check if the folder is empty.
                 if [ ! -z "$(docker exec ${container_name} bash -c 'find /home/user/logs_temp -maxdepth 0 -type d 2>/dev/null')" ]; then
-                    echo -e "${YELLOW}${bold}There are previous logs that havent been sent yet. Would you like to send them now? Type 'y' to send or 'n' to ignore and overwrite them ${normal}${NC}"
+                    echo -e "${YELLOW}${bold}There are previous logs that havent been sent yet. Would you like to send them now? Type 'Y' to send or 'n' to ignore and overwrite them ${normal}${NC}"
                     read old_logs
                     if [[ $old_logs == "y" || $old_logs == "Y" || $old_logs == "yes" || $old_logs == "Yes" || $old_logs == "YES" ]]; then
                         echo "Uploading to AWS - Please wait..."
