@@ -38,7 +38,7 @@ function copy_to_host
 container_name=$(docker ps | awk '{if(NR>1) print $NF}')
 
 echo -e "${NC}${normal}You are about to save latest ros logs ${normal}${NC}"
-echo -e "${YELLOW}${bold}WARNING! This closes all running docker containers. Do you wish to continue? (y/n) ${normal}${NC}"
+echo -e "${YELLOW}${bold}WARNING! This closes all running docker containers. Do you wish to continue? (Y/n) ${normal}${NC}"
 read prompt
 
 if [[ $prompt == "n" || $prompt == "N" || $prompt == "no" || $prompt == "No" || $prompt == "NO" ]]; then
@@ -76,17 +76,17 @@ if [ "$(docker exec ${container_name} bash -c 'ls /usr/local/bin/customer.key')"
                 sleep 5
                 exit 1
             fi
-            echo -e "${YELLOW}We are going to upload logs to Shadow servers so we can diagnose problems. Do you want to do this? (Y/N) ${normal}${NC}"
+            echo -e "${YELLOW}We are going to upload logs to Shadow servers so we can diagnose problems. Do you want to do this? (Y/n) ${normal}${NC}"
             read upload_to_server
             if ! [[ $upload_to_server == "Y" || $upload_to_server == "y" || $upload_to_server == "yes" || $upload_to_server == "YES" || $upload_to_server == "N" || $upload_to_server == "n" || $upload_to_server == "no" || $upload_to_server == "NO" ]]; then
-                echo "Please type 'Y' or 'N'"
+                echo "Please type 'Y' or 'n'"
             fi
             let counter+=1
         done
-        echo -e "${YELLOW}Do you want to show the previous message again and not remember last option? (Y/N) ${normal}${NC}"
-        read show_upload_log_message
+        echo -e "${YELLOW}If you don't want to see the previous message again, type 'Y'. Otherwise, type 'n' (Y/n) ${normal}${NC}"
+        read dont_show_upload_log_message
 
-        if [[ $show_upload_log_message == "N" || $show_upload_log_message == "No" || $show_upload_log_message == "n" || $show_upload_log_message == "no" || $show_upload_log_message == "NO" ]]; then
+        if [[ $dont_show_upload_log_message == "Y" || $dont_show_upload_log_message == "Yes" || $dont_show_upload_log_message == "y" || $dont_show_upload_log_message == "YES" || $show_upload_log_message == "NO" ]]; then
             sed -i 's/\(do_not_show_upload_log_message *= *\).*/\1"true"/' $save_log_msg_config_file
         else
             sed -i 's/\(do_not_show_upload_log_message *= *\).*/\1"false"/' $save_log_msg_config_file
