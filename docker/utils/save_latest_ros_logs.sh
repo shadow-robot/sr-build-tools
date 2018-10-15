@@ -35,6 +35,8 @@ function copy_to_host
     rm -rf ${ros_log_dir}/$dir/ros_log_$timestamp/logs_temp
 }
 
+container_name=$(docker ps | awk '{if(NR>1) print $NF}')
+
 echo -e "${NC}${normal}You are about to save latest ros logs ${normal}${NC}"
 echo -e "${YELLOW}${bold}WARNING! This closes all running docker containers. Do you wish to continue? (y/n) ${normal}${NC}"
 read prompt
@@ -99,8 +101,6 @@ if [ "$(docker exec ${container_name} bash -c 'ls /usr/local/bin/customer.key')"
         fi
     fi
 fi
-
-container_name=$(docker ps | awk '{if(NR>1) print $NF}')
 
 if [ ! -z "$container_name" ]; then
         container_array=($container_name)
