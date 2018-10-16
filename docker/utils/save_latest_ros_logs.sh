@@ -95,7 +95,7 @@ if [ "$(docker exec ${container_name} bash -c 'ls /usr/local/bin/customer.key')"
         if [[ $upload_to_server == "N" || $upload_to_server == "No" || $upload_to_server == "n" || $upload_to_server == "no" || $upload_to_server == "NO" ]]; then
             sed -i 's/\(upload_sr_log_messages *= *\).*/\1"false"/' $save_log_msg_config_file
             upload_sr_log_messages="false"
-            echo "Your logs will be stored locally and not uploaded to Shadow servers!"
+            echo -e "${YELLOW}Your logs will be stored locally and not uploaded to Shadow servers! ${normal}${NC}"
         else
             sed -i 's/\(upload_sr_log_messages *= *\).*/\1"true"/' $save_log_msg_config_file
             upload_sr_log_messages="true"
