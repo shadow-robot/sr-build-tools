@@ -95,6 +95,7 @@ if [ "$(docker exec ${container_name} bash -c 'ls /usr/local/bin/customer.key')"
         if [[ $upload_to_server == "N" || $upload_to_server == "No" || $upload_to_server == "n" || $upload_to_server == "no" || $upload_to_server == "NO" ]]; then
             sed -i 's/\(upload_sr_log_messages *= *\).*/\1"false"/' $save_log_msg_config_file
             upload_sr_log_messages="false"
+            echo "Your logs will be stored locally and not uploaded to Shadow servers!"
         else
             sed -i 's/\(upload_sr_log_messages *= *\).*/\1"true"/' $save_log_msg_config_file
             upload_sr_log_messages="true"
@@ -147,12 +148,12 @@ if [ ! -z "$container_name" ]; then
                     echo -e "${YELLOW}${bold}There are previous logs that havent been sent yet. Would you like to send them now? Type 'Y' to send or 'n' to ignore and overwrite them ${normal}${NC}"
                     read old_logs
                     if [[ $old_logs == "y" || $old_logs == "Y" || $old_logs == "yes" || $old_logs == "Yes" || $old_logs == "YES" ]]; then
-                        echo "Uploading to AWS - Please wait..."
+                        echo "Uploading to Shadow servers - Please wait..."
                         upload_command=$(docker exec $current_container_name bash -c "source /usr/local/bin/shadow_upload.sh ${customerkey} /home/user/logs_temp $timestamp" || true) 
                         if [[ $upload_command == "ok" ]]; then
-                            echo -e "${GREEN} Previous logs Uploaded to AWS for $current_container_name! ${NC}"
+                            echo -e "${GREEN} Previous logs Uploaded to Shadow servers for $current_container_name! ${NC}"
                         else
-                            echo -e "${RED}${bold} Failed to upload previous logs to AWS for $current_container_name! Check your internet connection and try again. Exiting... ${normal}${NC}"
+                            echo -e "${RED}${bold} Failed to upload previous logs to Shadow servers for $current_container_name! Check your internet connection and try again. Exiting... ${normal}${NC}"
                             sleep 5
                             exit 1
                         fi
@@ -165,14 +166,14 @@ if [ ! -z "$container_name" ]; then
                 copy_logs
                 copy_to_host
                 if [ $upload_sr_log_messages == "true" ]; then
-                    echo "Uploading to AWS - Please wait..."
+                    echo "Uploading to Shadow servers - Please wait..."
                     upload_command=$(docker exec $current_container_name bash -c "source /usr/local/bin/shadow_upload.sh ${customerkey} /home/user/logs_temp $timestamp" || true)
                     if [[ $upload_command == "ok" ]]; then
                         # delete temp folder
                         docker exec $current_container_name bash -c "rm -rf /home/user/logs_temp"
-                        echo -e "${GREEN} Latest Logs Saved and Uploaded to AWS for $current_container_name! ${NC}"
+                        echo -e "${GREEN} Latest Logs Saved and Uploaded to Shadow servers for $current_container_name! ${NC}"
                     else
-                        echo -e "${RED}${bold} Failed to upload logs to AWS for $current_container_name! Check your internet connection and try again.${normal}${NC}"
+                        echo -e "${RED}${bold} Failed to upload logs to Shadow servers for $current_container_name! Check your internet connection and try again.${normal}${NC}"
                         sleep 5
                         exit 1
                     fi
