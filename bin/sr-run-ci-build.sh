@@ -150,7 +150,7 @@ case $server_type in
   fi
   export extra_variables="$extra_variables local_repo_dir=$local_repo_dir local_test_dir=$unit_tests_dir local_code_coverage_dir=$coverage_tests_dir"
   export extra_variables="$extra_variables local_benchmarking_dir=$benchmarking_dir"
-  git pull && git checkout $toolset_branch && git pull && sudo PYTHONUNBUFFERED=1 ansible-playbook -vvv -i "localhost," -c local docker_site.yml --tags "local,check_cache,code_coverage,$tags_list" -e "$extra_variables"
+  git pull && git checkout $toolset_branch && git pull && sudo PYTHONUNBUFFERED=1 ansible-playbook -vvv -i "localhost," -c local docker_site.yml --tags "check_cache,code_coverage,$tags_list" -e "$extra_variables"
   ;;
 
 *) echo "Not supported server type $server_type"
