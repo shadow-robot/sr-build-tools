@@ -128,7 +128,7 @@ case $server_type in
   docker run -w "$docker_user_home/sr-build-tools/ansible" -e LOCAL_USER_ID=$(id -u) $docker_flags --rm -v $HOME:/host:rw $docker_image  bash -c "git pull && git checkout $toolset_branch && git pull && PYTHONUNBUFFERED=1 ansible-playbook -v -i \"localhost,\" -c local docker_site.yml --tags \"local,$tags_list\" -e \"$extra_variables\" "
   ;;
   
-"aws") echo "AWS CodeBuild using Docker Image from Docker Hub"
+"local-docker") echo "Using Docker Image from Docker Hub"
   git pull && git checkout $toolset_branch && git pull && sudo PYTHONUNBUFFERED=1 ansible-playbook -vvv -i "localhost," -c local docker_site.yml --tags "local,check_cache,code_coverage,$tags_list" -e "$extra_variables"
   ;;
 
