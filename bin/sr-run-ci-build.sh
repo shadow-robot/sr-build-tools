@@ -129,22 +129,22 @@ case $server_type in
   ;;
   
 "local-docker") echo "Using Docker Image from Docker Hub"
-  export local_repo_dir=$4
+  export relative_job_path=$4
   if [ -z "$unit_tests_result_dir" ]
   then
-    export unit_tests_dir="$local_repo_dir/workspace/test_results"
+    export unit_tests_dir="$relative_job_path/unit_tests"
   else
     export unit_tests_dir=$unit_tests_result_dir
   fi
   if [ -z "$coverage_tests_result_dir" ]
   then
-    export coverage_tests_dir="$local_repo_dir/workspace/coverage_results"
+    export coverage_tests_dir="$relative_job_path/code_coverage"
   else
     export coverage_tests_dir=$coverage_tests_result_dir
   fi
   if [ -z "$benchmarking_result_dir" ]
   then
-    export benchmarking_dir="$local_repo_dir/workspace/benchmarking_results"
+    export benchmarking_dir="$relative_job_path/benchmarking_results"
   else
     export benchmarking_dir=$benchmarking_result_dir
   fi
