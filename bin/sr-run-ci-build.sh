@@ -129,27 +129,26 @@ case $server_type in
   ;;
   
 "local-docker") echo "Using Docker Image from Docker Hub"
-  export relative_job_path=$4
+  export local_repo_dir=$4
   if [ -z "$unit_tests_result_dir" ]
   then
-    export unit_tests_dir="$relative_job_path/unit_tests"
+    export unit_tests_dir="/home/user/unit_tests"
   else
     export unit_tests_dir=$unit_tests_result_dir
   fi
   if [ -z "$coverage_tests_result_dir" ]
   then
-    export coverage_tests_dir="$relative_job_path/code_coverage"
+    export coverage_tests_dir="/home/user/code_coverage"
   else
     export coverage_tests_dir=$coverage_tests_result_dir
   fi
   if [ -z "$benchmarking_result_dir" ]
   then
-    export benchmarking_dir="$relative_job_path/benchmarking_results"
+    export benchmarking_dir="/home/user/benchmarking_results"
   else
     export benchmarking_dir=$benchmarking_result_dir
   fi
-  export extra_variables="$extra_variables local_repo_dir=$CODEBUILD_SRC_DIR local_test_dir=$unit_tests_dir local_code_coverage_dir=$coverage_tests_dir"
-  export extra_variables="$extra_variables local_benchmarking_dir=$benchmarking_dir"
+  export extra_variables="$extra_variables local_test_dir=$unit_tests_dir local_code_coverage_dir=$coverage_tests_dir local_benchmarking_dir=$benchmarking_dir"
   git pull && git checkout $toolset_branch && git pull && sudo PYTHONUNBUFFERED=1 ansible-playbook -vvv -i "localhost," -c local docker_site.yml --tags "local,$tags_list" -e "$extra_variables"
   ;;
 
