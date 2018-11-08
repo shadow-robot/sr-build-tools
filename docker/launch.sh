@@ -68,6 +68,10 @@ case $key in
     CUSTOMER_KEY="$2"
     shift
     ;;
+    -cg|--cyberglove)
+    SR_CYBERGLOVE_BRANCH=$(echo "$2" | sed 's/#/%23/g')
+    shift
+    ;;
     *)
     # ignore unknown option
     ;;
@@ -131,6 +135,11 @@ else
     CUSTOMER_KEY=false
 fi
 
+if [ -z "${SR_CYBERGLOVE_BRANCH}" ];
+then
+    SR_CYBERGLOVE_BRANCH=false
+fi
+
 echo "================================================================="
 echo "|                                                               |"
 echo "|             Shadow default docker deployment                  |"
@@ -152,6 +161,7 @@ echo "  * -o or --optoforce           Specify if optoforce sensors are going to 
 echo "  * -l or --launchhand          Specify if hand driver should start when double clicking desktop icon (default: true)"
 echo "  * -bt or --buildtoolsbranch   Specify the Git branch for sr-build-tools (default: master)"
 echo "  * -ck or --customerkey        Flag to prompt for customer key for uploading files to AWS"
+echo "  * -cg or --cyberglove         Specify the branch of sr_cyberglove for cyberglove configuration (default: false)"
 echo ""
 echo "example hand E: ./launch.sh -i shadowrobot/dexterous-hand:kinetic -n hand_e_kinetic_real_hw -e enp0s25 -b shadowrobot_demo_hand -r true -g false"
 echo "example hand H: ./launch.sh -i shadowrobot/flexible-hand:kinetic-release -n modular_grasper -e enp0s25 -r true -g false"
@@ -161,6 +171,7 @@ echo "image name        = ${DOCKER_IMAGE_NAME}"
 echo "container name    = ${DOCKER_CONTAINER_NAME}"
 echo "reinstall flag    = ${REINSTALL_DOCKER_CONTAINER}"
 echo "build tools branch = ${BUILD_TOOLS_BRANCH}"
+echo "cyber glove branch = ${SR_CYBERGLOVE_BRANCH}"
 
 # From ANSI escape codes we have the following colours
 RED='\033[0;31m'
@@ -363,6 +374,7 @@ if [ ${DESKTOP_ICON} = true ] ; then
             echo -e "${RED}Specify a config branch for your dexterous hand ${NC}"
             exit 1
         else
+            #TODO for Toivo: put some stuff here about SR_CYBERGLOVE_BRANCH
             printf "#! /bin/bash
             source /home/user/projects/shadow_robot/base/devel/setup.bash
             roscd sr_ethercat_hand_config
