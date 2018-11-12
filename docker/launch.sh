@@ -394,7 +394,7 @@ if [ ${DESKTOP_ICON} = true ] ; then
             roscd sr_ethercat_hand_config
             git fetch
             git checkout ${CONFIG_BRANCH}  
-            roscd sr_cyberglove_config
+            cd /home/user/sr_cyberglove_config
             git fetch
             git checkout ${SR_CYBERGLOVE_CONFIG_BRANCH}
 
