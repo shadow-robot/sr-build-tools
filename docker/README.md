@@ -274,5 +274,5 @@ https://github.com/shadow-robot/sr_cyberglove_config
 Presuming we do not want the driver to auto-launch for our example, the final command would be:
 
 ```bash
-bash <(curl -Ls http://bit.do/launch-sh) -i shadowrobot/dexterous-hand:kinetic-release -n dexterous_hand_real_hw -e enp0s25 -r true -b demohand_E_v1_kinetic -g false -l false -ck true -cg A-dan
+bash <(curl -Ls http://bit.do/launch-sh) -i shadowrobot/dexterous-hand:kinetic-release -n dexterous_hand_real_hw -e enp0s25 -r true -b demohand_E_v1_kinetic -g false -l false -ck true -cg A-dg
 ```
