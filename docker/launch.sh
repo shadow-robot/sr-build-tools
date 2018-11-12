@@ -378,7 +378,7 @@ if [ ${DESKTOP_ICON} = true ] ; then
             roscd sr_ethercat_hand_config
             git fetch
             git checkout ${CONFIG_BRANCH}  
-            cd
+            cd /home/user/projects/shadow_robot/base/src
             git clone https://github.com/shadow-robot/sr_cyberglove_config.git
             cd sr_cyberglove_config
             git fetch
