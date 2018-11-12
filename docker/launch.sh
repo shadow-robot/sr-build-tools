@@ -69,7 +69,7 @@ case $key in
     shift
     ;;
     -cg|--cyberglove)
-    SR_CYBERGLOVE_BRANCH=$(echo "$2" | sed 's/#/%23/g')
+    SR_CYBERGLOVE_CONFIG_BRANCH=$(echo "$2" | sed 's/#/%23/g')
     shift
     ;;
     *)
@@ -135,9 +135,9 @@ else
     CUSTOMER_KEY=false
 fi
 
-if [ -z "${SR_CYBERGLOVE_BRANCH}" ];
+if [ -z "${SR_CYBERGLOVE_CONFIG_BRANCH}" ];
 then
-    SR_CYBERGLOVE_BRANCH=false
+    SR_CYBERGLOVE_CONFIG_BRANCH=false
 fi
 
 echo "================================================================="
@@ -161,7 +161,7 @@ echo "  * -o or --optoforce           Specify if optoforce sensors are going to 
 echo "  * -l or --launchhand          Specify if hand driver should start when double clicking desktop icon (default: true)"
 echo "  * -bt or --buildtoolsbranch   Specify the Git branch for sr-build-tools (default: master)"
 echo "  * -ck or --customerkey        Flag to prompt for customer key for uploading files to AWS"
-echo "  * -cg or --cyberglove         Specify the branch of sr_cyberglove for cyberglove configuration (default: false)"
+echo "  * -cg or --cyberglove         Specify the branch of sr_cyberglove_config for cyberglove configuration (default: false)"
 echo ""
 echo "example hand E: ./launch.sh -i shadowrobot/dexterous-hand:kinetic -n hand_e_kinetic_real_hw -e enp0s25 -b shadowrobot_demo_hand -r true -g false"
 echo "example hand H: ./launch.sh -i shadowrobot/flexible-hand:kinetic-release -n modular_grasper -e enp0s25 -r true -g false"
@@ -171,7 +171,7 @@ echo "image name        = ${DOCKER_IMAGE_NAME}"
 echo "container name    = ${DOCKER_CONTAINER_NAME}"
 echo "reinstall flag    = ${REINSTALL_DOCKER_CONTAINER}"
 echo "build tools branch = ${BUILD_TOOLS_BRANCH}"
-echo "cyber glove branch = ${SR_CYBERGLOVE_BRANCH}"
+echo "cyberglove branch = ${SR_CYBERGLOVE_CONFIG_BRANCH}"
 
 # From ANSI escape codes we have the following colours
 RED='\033[0;31m'
@@ -331,6 +331,21 @@ function optoforce_setup
     fi
 }
 
+function cyberglove_setup
+{
+    cd ${HOME}
+    if [ ! -d "sr_cyberglove_config" ]; then
+        echo ""
+        echo " ---------------------------"
+        echo " |   Setting up CyberGlove   |"
+        echo " ---------------------------"
+        echo ""
+
+        echo "Cloning sr_cyberglove_config repository..."
+        git clone https://github.com/shadow-robot/sr_cyberglove_config.git
+    fi   
+}
+
 # If running for the first time create desktop shortcut
 APP_FOLDER=/home/$USER/.shadow_launcher_app
 SAVE_LOGS_APP_FOLDER=/home/$USER/.shadow_save_log_app
@@ -374,12 +389,14 @@ if [ ${DESKTOP_ICON} = true ] ; then
             echo -e "${RED}Specify a config branch for your dexterous hand ${NC}"
             exit 1
         else
-            #TODO for Toivo: put some stuff here about SR_CYBERGLOVE_BRANCH
             printf "#! /bin/bash
             source /home/user/projects/shadow_robot/base/devel/setup.bash
             roscd sr_ethercat_hand_config
             git fetch
-            git checkout ${CONFIG_BRANCH}
+            git checkout ${CONFIG_BRANCH}  
+            roscd sr_cyberglove_config
+            git fetch
+            git checkout ${SR_CYBERGLOVE_CONFIG_BRANCH}
 
             # Changing ethernet interface
             sed -i 's|eth_port\" value=.*|eth_port\" value=\"${ETHERCAT_INTERFACE}\" />|' \$(rospack find sr_ethercat_hand_config)/launch/sr_rhand.launch
@@ -497,6 +514,10 @@ if [ ${REINSTALL_DOCKER_CONTAINER} = false ] ; then
             if [ ${OPTOFORCE} = true ]; then
                 optoforce_setup
             fi
+            
+            if [! ${SR_CYBERGLOVE_CONFIG_BRANCH} = false ]; then
+                cyberglove_setup
+            fi
 
             echo "Creating the container"
             if [ ${HAND_H} = true ]; then
@@ -538,6 +559,13 @@ else
             sudo rm /etc/udev/rules.d/optoforce.rules
         fi
         optoforce_setup
+    fi
+    
+    if [ ! ${SR_CYBERGLOVE_CONFIG_BRANCH} = false ]; then
+        if [ -d "${HOME}/sr_cyberglove_config" ]; then
+            rm -rf ${HOME}/sr_cyberglove_config
+        fi
+        cyberglove_setup
     fi
 
     echo "Creating the container"
