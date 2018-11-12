@@ -171,7 +171,6 @@ echo "image name        = ${DOCKER_IMAGE_NAME}"
 echo "container name    = ${DOCKER_CONTAINER_NAME}"
 echo "reinstall flag    = ${REINSTALL_DOCKER_CONTAINER}"
 echo "build tools branch = ${BUILD_TOOLS_BRANCH}"
-echo "cyberglove branch = ${SR_CYBERGLOVE_CONFIG_BRANCH}"
 
 # From ANSI escape codes we have the following colours
 RED='\033[0;31m'
@@ -379,7 +378,7 @@ if [ ${DESKTOP_ICON} = true ] ; then
             roscd sr_ethercat_hand_config
             git fetch
             git checkout ${CONFIG_BRANCH}  
-            cd ${HOME}
+            cd /home/user
             git clone https://github.com/shadow-robot/sr_cyberglove_config.git
             cd sr_cyberglove_config
             git fetch
