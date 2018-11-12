@@ -331,21 +331,6 @@ function optoforce_setup
     fi
 }
 
-function cyberglove_setup
-{
-    cd ${HOME}
-    if [ ! -d "sr_cyberglove_config" ]; then
-        echo ""
-        echo " ---------------------------"
-        echo " |   Setting up CyberGlove   |"
-        echo " ---------------------------"
-        echo ""
-
-        echo "Cloning sr_cyberglove_config repository..."
-        git clone https://github.com/shadow-robot/sr_cyberglove_config.git
-    fi   
-}
-
 # If running for the first time create desktop shortcut
 APP_FOLDER=/home/$USER/.shadow_launcher_app
 SAVE_LOGS_APP_FOLDER=/home/$USER/.shadow_save_log_app
@@ -388,13 +373,15 @@ if [ ${DESKTOP_ICON} = true ] ; then
         if [ -z "${CONFIG_BRANCH}" ]; then
             echo -e "${RED}Specify a config branch for your dexterous hand ${NC}"
             exit 1
-        else
+        else  
             printf "#! /bin/bash
             source /home/user/projects/shadow_robot/base/devel/setup.bash
             roscd sr_ethercat_hand_config
             git fetch
             git checkout ${CONFIG_BRANCH}  
-            cd /home/user/sr_cyberglove_config
+            cd ${HOME}
+            git clone https://github.com/shadow-robot/sr_cyberglove_config.git
+            cd sr_cyberglove_config
             git fetch
             git checkout ${SR_CYBERGLOVE_CONFIG_BRANCH}
 
@@ -514,10 +501,6 @@ if [ ${REINSTALL_DOCKER_CONTAINER} = false ] ; then
             if [ ${OPTOFORCE} = true ]; then
                 optoforce_setup
             fi
-            
-            if [! ${SR_CYBERGLOVE_CONFIG_BRANCH} = false ]; then
-                cyberglove_setup
-            fi
 
             echo "Creating the container"
             if [ ${HAND_H} = true ]; then
@@ -559,13 +542,6 @@ else
             sudo rm /etc/udev/rules.d/optoforce.rules
         fi
         optoforce_setup
-    fi
-    
-    if [ ! ${SR_CYBERGLOVE_CONFIG_BRANCH} = false ]; then
-        if [ -d "${HOME}/sr_cyberglove_config" ]; then
-            rm -rf ${HOME}/sr_cyberglove_config
-        fi
-        cyberglove_setup
     fi
 
     echo "Creating the container"
