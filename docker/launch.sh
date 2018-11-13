@@ -377,13 +377,19 @@ if [ ${DESKTOP_ICON} = true ] ; then
             source /home/user/projects/shadow_robot/base/devel/setup.bash
             roscd sr_ethercat_hand_config
             git fetch
-            git checkout ${CONFIG_BRANCH}  
-            cd /home/user/projects/shadow_robot/base/src
-            if cd sr_cyberglove_config; then git pull; else git clone https://github.com/shadow-robot/sr_cyberglove_config.git; fi
-            cd sr_cyberglove_config
-            git fetch
-            git checkout ${SR_CYBERGLOVE_CONFIG_BRANCH}
-
+            git checkout ${CONFIG_BRANCH}
+            if [ ! ${SR_CYBERGLOVE_CONFIG_BRANCH} = false ]; then
+                cd /home/user/projects/shadow_robot/base/src
+                if cd sr_cyberglove_config;
+                    then git pull;
+                else
+                    git clone https://github.com/shadow-robot/sr_cyberglove_config.git;
+                fi
+                cd sr_cyberglove_config
+                git fetch
+                git checkout ${SR_CYBERGLOVE_CONFIG_BRANCH}
+            fi
+            
             # Changing ethernet interface
             sed -i 's|eth_port\" value=.*|eth_port\" value=\"${ETHERCAT_INTERFACE}\" />|' \$(rospack find sr_ethercat_hand_config)/launch/sr_rhand.launch
 
