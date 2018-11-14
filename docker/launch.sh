@@ -379,13 +379,17 @@ if [ ${DESKTOP_ICON} = true ] ; then
             git fetch
             git checkout ${CONFIG_BRANCH}
             if [ ! ${SR_CYBERGLOVE_CONFIG_BRANCH} = false ]; then
+                if [ -d "/home/user/projects/shadow_robot/base/src/sr_config/sr_cyberglove_config" ]; then
+                    rm -r /home/user/projects/shadow_robot/base/src/sr_config/sr_cyberglove_config
+                fi
                 cd /home/user/projects/shadow_robot/base/src
-                if cd sr_cyberglove_config;
-                    then git pull;
+                if [ -d "sr_cyberglove_config" ]; then
+                   cd sr_cyberglove_config
+                   git pull;
                 else
                     git clone https://github.com/shadow-robot/sr_cyberglove_config.git;
-                fi
-                cd sr_cyberglove_config
+                    cd sr_cyberglove_config
+                fi                
                 git fetch
                 git checkout ${SR_CYBERGLOVE_CONFIG_BRANCH}
             fi
