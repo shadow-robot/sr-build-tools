@@ -128,6 +128,7 @@ Posible options for the oneliner are:
 * -l or --launchhand        Specify if hand driver should start when double clicking desktop icon (default: true)
 * -bt or --buildtoolsbranch Specify the Git branch for sr-build-tools (default: master)
 * -ck or --customerkey      Flag to prompt for customer key for uploading files to AWS (can be skipped or be set to true)
+* -cg or --cyberglove       Specify the branch of sr_cyberglove_config for cyberglove configuration (default: false)
 
 To begin with, the one-liner checks the installation status of docker. If docker is not installed then a new clean installation is performed. If the required image is private, 
 then a valid Docker Hub account with pull credentials from Shadow Robot's Docker Hub is required. Then, the specified docker image is pulled and a docker 
@@ -263,3 +264,15 @@ Presuming we do not want the driver to auto-launch for our example, the final co
 bash <(curl -Ls http://bit.do/launch-sh) -i shadowrobot/flexible-hand:kinetic-v0.2.28 -n flexible_hand_real_hw -e enp0s25 -r true -g false -l false -ck true
 ```
 
+### sr_cyberglove_config branch ```-cg```
+
+Specify the branch of the repository sr_cyberglove_branch (e.g. ```-cg A-dg```) if the user wants to use the CyberGlove.
+
+NOTE: The CyberGlove configuration is both CyberGlove and user's hand specific. Please see the list of valid branches here in the sr_cyberglove_config repo:
+https://github.com/shadow-robot/sr_cyberglove_config
+ 
+Presuming we do not want the driver to auto-launch for our example, the final command would be:
+
+```bash
+bash <(curl -Ls http://bit.do/launch-sh) -i shadowrobot/dexterous-hand:kinetic-release -n dexterous_hand_real_hw -e enp0s25 -r true -b demohand_E_v1_kinetic -g false -l false -ck true -cg A-dg
+```

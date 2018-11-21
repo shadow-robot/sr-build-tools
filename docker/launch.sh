@@ -68,6 +68,10 @@ case $key in
     CUSTOMER_KEY="$2"
     shift
     ;;
+    -cg|--cyberglove)
+    SR_CYBERGLOVE_CONFIG_BRANCH=$(echo "$2" | sed 's/#/%23/g')
+    shift
+    ;;
     *)
     # ignore unknown option
     ;;
@@ -131,6 +135,11 @@ else
     CUSTOMER_KEY=false
 fi
 
+if [ -z "${SR_CYBERGLOVE_CONFIG_BRANCH}" ];
+then
+    SR_CYBERGLOVE_CONFIG_BRANCH=false
+fi
+
 echo "================================================================="
 echo "|                                                               |"
 echo "|             Shadow default docker deployment                  |"
@@ -152,6 +161,7 @@ echo "  * -o or --optoforce           Specify if optoforce sensors are going to 
 echo "  * -l or --launchhand          Specify if hand driver should start when double clicking desktop icon (default: true)"
 echo "  * -bt or --buildtoolsbranch   Specify the Git branch for sr-build-tools (default: master)"
 echo "  * -ck or --customerkey        Flag to prompt for customer key for uploading files to AWS"
+echo "  * -cg or --cyberglove         Specify the branch of sr_cyberglove_config for cyberglove configuration (default: false)"
 echo ""
 echo "example hand E: ./launch.sh -i shadowrobot/dexterous-hand:kinetic -n hand_e_kinetic_real_hw -e enp0s25 -b shadowrobot_demo_hand -r true -g false"
 echo "example hand H: ./launch.sh -i shadowrobot/flexible-hand:kinetic-release -n modular_grasper -e enp0s25 -r true -g false"
@@ -362,13 +372,28 @@ if [ ${DESKTOP_ICON} = true ] ; then
         if [ -z "${CONFIG_BRANCH}" ]; then
             echo -e "${RED}Specify a config branch for your dexterous hand ${NC}"
             exit 1
-        else
+        else  
             printf "#! /bin/bash
             source /home/user/projects/shadow_robot/base/devel/setup.bash
             roscd sr_ethercat_hand_config
             git fetch
             git checkout ${CONFIG_BRANCH}
-
+            if [ ! ${SR_CYBERGLOVE_CONFIG_BRANCH} = false ]; then
+                if [ -d "/home/user/projects/shadow_robot/base/src/sr_config/sr_cyberglove_config" ]; then
+                    rm -r /home/user/projects/shadow_robot/base/src/sr_config/sr_cyberglove_config
+                fi
+                cd /home/user/projects/shadow_robot/base/src
+                if [ -d "sr_cyberglove_config" ]; then
+                   cd sr_cyberglove_config
+                   git pull;
+                else
+                    git clone https://github.com/shadow-robot/sr_cyberglove_config.git;
+                    cd sr_cyberglove_config
+                fi                
+                git fetch
+                git checkout ${SR_CYBERGLOVE_CONFIG_BRANCH}
+            fi
+            
             # Changing ethernet interface
             sed -i 's|eth_port\" value=.*|eth_port\" value=\"${ETHERCAT_INTERFACE}\" />|' \$(rospack find sr_ethercat_hand_config)/launch/sr_rhand.launch
 
