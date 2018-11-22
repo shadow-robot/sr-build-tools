@@ -1,4 +1,4 @@
-FROM shadowrobot/dexterous-hand:kinetic
+FROM shadowrobot/dexterous-hand:kinetic-night-build
 
 MAINTAINER "Shadow Robot's Software Team <software@shadowrobot.com>"
 
