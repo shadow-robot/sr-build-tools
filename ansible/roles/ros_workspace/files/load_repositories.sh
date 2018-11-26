@@ -5,7 +5,7 @@ recursive_rosinstall () {
     while [ $current_repo_count -ne $previous_repo_count ]; do
         find $current_folder -type f -name $rosinstall_filename -exec wstool merge -y {} \; 
         sed -i "$1" .rosinstall
-        wstool update --delete-changed-uris  -j5
+        wstool update --abort-changed-uris -j5
 
         export previous_repo_count=$current_repo_count
         export current_repo_count=$(find $destination_folder -type f -name $rosinstall_filename | wc -l)
