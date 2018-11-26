@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+set -e # fail on errors
 
 recursive_rosinstall () {
     while [ $current_repo_count -ne $previous_repo_count ]; do
