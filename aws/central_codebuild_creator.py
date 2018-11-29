@@ -8,8 +8,6 @@ from botocore.vendored import requests
 from base64 import b64decode
 import os
 
-print("start executing central_codebuild_creator.py")
-
 git_username_enc = os.environ['git_username']
 git_username_dec = boto3.client('kms').decrypt(CiphertextBlob=b64decode(git_username_enc))['Plaintext']
 git_username_dec=git_username_dec.decode('utf-8')
@@ -62,5 +60,3 @@ email_text = (
 
 if (enabled=="yes"):
     snsclient.publish(TopicArn=topic_arn, Message=email_text, Subject=subjectline)
-    
-print("end executing central_codebuild_creator.py")
