@@ -64,7 +64,7 @@ for repo_line in list_of_repos_text.splitlines():
 email_text = (
     f"1 minute has passed\n"
     f"so central_codebuild_creator has been triggered\n"
-    f"and the status text is this: "+status_text+"\n"
+    f"and the status text is this:"+"\n"+status_text+"\n"
 )
 
 if (enabled=="yes"):
