@@ -47,7 +47,7 @@ codebuildresponse = codebuildclient.list_projects(
 
 list_of_project_names = codebuildresponse['projects']
     
-for repo in list_of_repos.split(","):
+for repo in list_of_repos_text.split(","):
     build_project_name = build_project_name_start+repo
     if build_project_name in list_of_project_names:
         status_text += "project found! : "+build_project_name+"\n"
