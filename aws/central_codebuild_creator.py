@@ -58,7 +58,7 @@ for repo_line in list_of_repos_text.splitlines():
             status_text += repo_name+" does not have aws.yml in branch "+repo_aws_yml_branch +"\n"
         
             
-    build_project_name = build_project_name_start+repo
+    build_project_name = build_project_name_start+repo_name
     if build_project_name in list_of_project_names:
         status_text += "project found! : "+build_project_name+"\n"
     else:
