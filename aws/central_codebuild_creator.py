@@ -29,8 +29,6 @@ list_of_repos_url = "https://raw.githubusercontent.com/shadow-robot/sr-build-too
 
 subjectline = "Automatic trigger for central_codebuild_creator"
     
-#process repo_list one by one
-    
 status_text = ""
     
 list_of_repos_response = requests.get(list_of_repos_url, auth=(git_username_dec,git_token_dec))
