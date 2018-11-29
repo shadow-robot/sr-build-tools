@@ -63,5 +63,5 @@ def lambda_handler(event, context):
         f"so central_codebuild_creator has been triggered\n"
         f"and the status text is this: "+status_text+"\n"
         )
-    if (should_email_be_sent=="yes"):
+    if (enabled=="yes"):
         snsclient.publish(TopicArn=topic_arn, Message=email_text, Subject=subjectline)
