@@ -42,7 +42,7 @@ codebuildresponse = codebuildclient.list_projects(
 dict_repo_projects = {}
 list_of_project_names = codebuildresponse['projects']
 for project_name in list_of_project_names:
-    repo_name_in_project_name = project_name[6:-14]
+    repo_name_in_project_name = project_name[5:-15]
     dict_repo_projects[repo_name_in_project_name].append(project_name)
     
 for repo_line in list_of_repos_text.splitlines():
