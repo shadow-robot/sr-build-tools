@@ -53,9 +53,9 @@ for repo_line in list_of_repos_text.splitlines():
         repo_aws_yml_response = requests.get(repo_aws_yml_url, auth=(git_username_dec,git_token_dec))
         if (repo_aws_yml_response == '200'):
             repo_aws_yml_text = list_of_repos_response.text
-            status_text += "got this aws.yml text from "+repo_name+":" +repo_aws_yml_text+"\n"+repo_aws_yml_response+"\n"
+            status_text += "got this aws.yml text from "+repo_name+":" +repo_aws_yml_text+"\n"
         else:
-            status_text += repo_name+" does not have aws.yml in "+repo_aws_yml_master_branch+" branch" +"\n"+repo_aws_yml_response+"\n"
+            status_text += repo_name+" does not have aws.yml in "+repo_aws_yml_master_branch+" branch" +"\n"+str(repo_aws_yml_response)+"\n"
             if repo_name in dict_repo_projects:
                 project_candidates_for_deletion = dict_repo_projects[repo_name]
                 status_text += "project candidates for deletion: "+ ', '.join(project_candidates_for_deletion)+"\n"
