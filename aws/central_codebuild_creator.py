@@ -39,11 +39,15 @@ codebuildresponse = codebuildclient.list_projects(
     sortOrder='ASCENDING'
 )
 
+dict_repo_projects = {}
 list_of_project_names = codebuildresponse['projects']
+for project_name in list_of_project_names:
+    repo_name_in_project_name = project_name[6:-14]
+    dict_repo_projects[repo_name_in_project_name].append(project_name)
     
 for repo_line in list_of_repos_text.splitlines():
     if (repo_line.startswith("  - ")):
-        repo_name = repo_line.strip()[2::]
+        repo_name = repo_line.strip()[2:]
         repo_aws_yml_branch = "F%23SRC-2345_setup_aws_build_of_build-servers-check"
         repo_aws_yml_url = "https://raw.githubusercontent.com/shadow-robot/build-servers-check/"+repo_aws_yml_branch+"/aws.yml"
         repo_aws_yml_response = requests.get(repo_aws_yml_url, auth=(git_username_dec,git_token_dec))
@@ -52,6 +56,9 @@ for repo_line in list_of_repos_text.splitlines():
             status_text += "got this aws.yml text from "+repo_name+":" +repo_aws_yml_text+"\n"+repo_aws_yml_response+"\n"
         else:
             status_text += repo_name+" does not have aws.yml in branch "+repo_aws_yml_branch +"\n"
+            #delete project if exists
+            project_candidates_for_deletion = dict_repo_projects[repo_name]
+            status_text += "project candidates for deletion: "+ project_candidates_for_deletion+"\n"
         
         build_project_name = build_project_name_start+repo_name
         if build_project_name in list_of_project_names:
