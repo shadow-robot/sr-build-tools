@@ -10,11 +10,11 @@ import os
 
 git_username_enc = os.environ['git_username']
 git_username_dec = boto3.client('kms').decrypt(CiphertextBlob=b64decode(git_username_enc))['Plaintext']
-git_username_dec=git_username_dec.decode('utf-8')
+git_username_dec = git_username_dec.decode('utf-8')
 
 git_token_enc = os.environ['git_token']
 git_token_dec = boto3.client('kms').decrypt(CiphertextBlob=b64decode(git_token_enc))['Plaintext']
-git_token_dec=git_token_dec.decode('utf-8')
+git_token_dec = git_token_dec.decode('utf-8')
     
 enabled = "yes"
 
