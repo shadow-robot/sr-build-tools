@@ -47,7 +47,7 @@ list_of_project_names = codebuildresponse['projects']
     
 for repo_line in list_of_repos_text.splitlines():
     if (repo_line.startswith("  - ")):
-        repo_name = repo_line.strip()[1::]
+        repo_name = repo_line.strip()[2::]
         repo_aws_yml_branch = "F%23SRC-2345_setup_aws_build_of_build-servers-check"
         repo_aws_yml_url = "https://raw.githubusercontent.com/shadow-robot/build-servers-check/"+repo_aws_yml_branch+"/aws.yml"
         repo_aws_yml_response = requests.get(repo_aws_yml_url, auth=(git_username_dec,git_token_dec))
