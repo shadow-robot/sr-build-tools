@@ -70,5 +70,6 @@ email_text = (
     f"and the status text is this: "+status_text+"\n"
 )
 
+
 if (enabled=="yes"):
     snsclient.publish(TopicArn=topic_arn, Message=email_text, Subject=subjectline)
