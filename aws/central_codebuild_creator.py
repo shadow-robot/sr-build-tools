@@ -57,8 +57,9 @@ for repo_line in list_of_repos_text.splitlines():
         else:
             status_text += repo_name+" does not have aws.yml in branch "+repo_aws_yml_branch +"\n"
             #delete project if exists
-            project_candidates_for_deletion = dict_repo_projects[repo_name]
-            status_text += "project candidates for deletion: "+ project_candidates_for_deletion+"\n"
+            if repo_name in dict_repo_projects:
+                project_candidates_for_deletion = dict_repo_projects[repo_name]
+                status_text += "project candidates for deletion: "+ project_candidates_for_deletion+"\n"
         
         build_project_name = build_project_name_start+repo_name
         if build_project_name in list_of_project_names:
