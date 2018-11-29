@@ -8,13 +8,14 @@ import urllib.parse
 import boto3
 from botocore.client import Config
 from base64 import b64decode
+from botocore.vendored import requests
 import os
 
 enabled = "yes"
 
 git_username_enc = os.environ['git_username']
 git_username_dec = boto3.client('kms').decrypt(CiphertextBlob=b64decode(git_username_enc))['Plaintext']
-git_username_enc=git_username_enc.decode('utf-8')
+git_username_dec=git_username_dec.decode('utf-8')
 
 git_password_enc = os.environ['git_password']
 git_password_dec = boto3.client('kms').decrypt(CiphertextBlob=b64decode(git_password_enc))['Plaintext']
@@ -38,8 +39,10 @@ def lambda_handler(event, context):
     status_text = ""
     
     #get list of repos from sr-build-tools-internal
+    #get git token
     
-    list_of_repos = ""
+    list_of_repos_response = requests.get(list_of_repos_url, auth=(git_username_dec,git_token))
+    list_of_repos
     
     #get real list of CodeBuild projects
     codebuildresponse = codebuildclient.list_projects(
