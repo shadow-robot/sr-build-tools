@@ -56,7 +56,6 @@ for repo_line in list_of_repos_text.splitlines():
             status_text += "got this aws.yml text from "+repo_name+":" +repo_aws_yml_text+"\n"+repo_aws_yml_response+"\n"
         else:
             status_text += repo_name+" does not have aws.yml in branch "+repo_aws_yml_branch +"\n"
-            #delete project if exists
             if repo_name in dict_repo_projects:
                 project_candidates_for_deletion = dict_repo_projects[repo_name]
                 status_text += "project candidates for deletion: "+ ', '.join(project_candidates_for_deletion)+"\n"
