@@ -3,23 +3,7 @@
 # Copyright (C) 2018 Shadow Robot Company Ltd - All Rights Reserved.
 # Proprietary and Confidential. Unauthorized copying of the content in this file, via any medium is strictly prohibited.
 
-import json
-import urllib.parse
-import boto3
-from botocore.client import Config
-from base64 import b64decode
-from botocore.vendored import requests
-import os
-
 enabled = "yes"
-
-git_username_enc = os.environ['git_username']
-git_username_dec = boto3.client('kms').decrypt(CiphertextBlob=b64decode(git_username_enc))['Plaintext']
-git_username_dec=git_username_dec.decode('utf-8')
-
-git_token_enc = os.environ['git_token']
-git_token_dec = boto3.client('kms').decrypt(CiphertextBlob=b64decode(git_token_enc))['Plaintext']
-git_token_dec=git_token_dec.decode('utf-8')
 
 snsclient = boto3.client('sns')
 topic_arn = 'arn:aws:sns:eu-west-2:080653068785:CentralCodeBuildCreatorTopic'
