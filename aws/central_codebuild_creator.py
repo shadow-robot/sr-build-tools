@@ -17,9 +17,9 @@ git_username_enc = os.environ['git_username']
 git_username_dec = boto3.client('kms').decrypt(CiphertextBlob=b64decode(git_username_enc))['Plaintext']
 git_username_dec=git_username_dec.decode('utf-8')
 
-git_password_enc = os.environ['git_password']
-git_password_dec = boto3.client('kms').decrypt(CiphertextBlob=b64decode(git_password_enc))['Plaintext']
-git_password_dec=git_password_dec.decode('utf-8')
+git_token_enc = os.environ['git_token']
+git_token_dec = boto3.client('kms').decrypt(CiphertextBlob=b64decode(git_token_enc))['Plaintext']
+git_token_dec=git_token_dec.decode('utf-8')
 
 snsclient = boto3.client('sns')
 topic_arn = 'arn:aws:sns:eu-west-2:080653068785:CentralCodeBuildCreatorTopic'
@@ -41,8 +41,10 @@ def lambda_handler(event, context):
     #get list of repos from sr-build-tools-internal
     #get git token
     
-    list_of_repos_response = requests.get(list_of_repos_url, auth=(git_username_dec,git_token))
-    list_of_repos
+    list_of_repos_response = requests.get(list_of_repos_url, auth=(git_username_dec,git_token_dec))
+    list_of_repos_text = list_of_repos_response.text
+    
+    status_text = list_of_repos_text
     
     #get real list of CodeBuild projects
     codebuildresponse = codebuildclient.list_projects(
