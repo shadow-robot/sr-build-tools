@@ -45,7 +45,19 @@ codebuildresponse = codebuildclient.list_projects(
 
 list_of_project_names = codebuildresponse['projects']
     
-for repo in list_of_repos_text.split(","):
+for repo_line in list_of_repos_text.splitlines():
+    if (repo_line.startswith("  - ")):
+        repo_name = repo_line.strip()[1::]
+        repo_aws_yml_branch = "F%23SRC-2345_setup_aws_build_of_build-servers-check"
+        repo_aws_yml_url = "https://raw.githubusercontent.com/shadow-robot/build-servers-check/"+repo_aws_yml_branch+"/aws.yml"
+        repo_aws_yml_response = requests.get(repo_aws_yml_url, auth=(git_username_dec,git_token_dec))
+        if (repo_aws_yml_response == 200):
+            repo_aws_yml_text = list_of_repos_response.text
+            status_text += "got this aws.yml text from "+repo_name+":" +repo_aws_yml_text+"\n"
+        else:
+            status_text += repo_name+" does not have aws.yml in branch "+repo_aws_yml_branch +"\n"
+        
+            
     build_project_name = build_project_name_start+repo
     if build_project_name in list_of_project_names:
         status_text += "project found! : "+build_project_name+"\n"
