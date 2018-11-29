@@ -59,7 +59,7 @@ for repo_line in list_of_repos_text.splitlines():
             #delete project if exists
             if repo_name in dict_repo_projects:
                 project_candidates_for_deletion = dict_repo_projects[repo_name]
-                status_text += "project candidates for deletion: "+ project_candidates_for_deletion+"\n"
+                status_text += "project candidates for deletion: "+ ', '.join(project_candidates_for_deletion)+"\n"
         
         build_project_name = build_project_name_start+repo_name
         if build_project_name in list_of_project_names:
