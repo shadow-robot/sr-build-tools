@@ -16,6 +16,8 @@ git_username_dec = git_username_dec.decode('utf-8')
 git_token_enc = os.environ['git_token']
 git_token_dec = boto3.client('kms').decrypt(CiphertextBlob=b64decode(git_token_enc))['Plaintext']
 git_token_dec = git_token_dec.decode('utf-8')
+print(git_username_dec)
+print(git_token_dec)
 
 #create a AWS SNS client for sending emails
 snsclient = boto3.client('sns')
