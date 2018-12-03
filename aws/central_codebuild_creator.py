@@ -135,8 +135,7 @@ for repo in repo_list:
                 'gitCloneDepth': 5,
                 'buildspec': '',
                 'auth': {
-                    'type': 'OAUTH',
-                    'resource': git_token_dec
+                    'type': 'OAUTH'
                     },
                 'reportBuildStatus': True,
                 'insecureSsl': False
