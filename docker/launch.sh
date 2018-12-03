@@ -53,7 +53,7 @@ case $key in
     shift
     ;;
     -o|--optoforce)
-    OPTOFORCE="$2"
+    OPTOFORCE_BRANCH=$(echo "$2" | sed 's/#/%23/g')
     shift
     ;;
     -l|--launchhand)
@@ -105,9 +105,9 @@ then
     DESKTOP_SHORTCUT_NAME=Shadow_Hand_Launcher
 fi
 
-if [ -z "${OPTOFORCE}" ];
+if [ -z "${OPTOFORCE_BRANCH}" ];
 then
-    OPTOFORCE=false
+    OPTOFORCE_BRANCH=false
 fi
 
 if [ -z "${LAUNCH_HAND}" ];
@@ -115,11 +115,11 @@ then
     LAUNCH_HAND=true
 fi
 
-if [ ${OPTOFORCE} = true ];
+if [ ${OPTOFORCE_BRANCH} = false ];
 then
-    OPTOFORCE_PATH="-v=/dev/optoforce:/dev/optoforce"
-else
     OPTOFORCE_PATH=""
+else
+    OPTOFORCE_PATH="-v=/dev/optoforce:/dev/optoforce"
 fi
 
 if [ -z "${BUILD_TOOLS_BRANCH}" ];
@@ -157,7 +157,7 @@ echo "  * -g or --nvidiagraphics      Enable nvidia-docker (default: false)"
 echo "  * -d or --desktopicon         Generates a desktop icon to launch the hand"
 echo "  * -b or --configbranch        Specify the branch for the specific hand (Only for dexterous hand)"
 echo "  * -sn or --shortcutname       Specify the name for the desktop icon (default: Shadow_Hand_Launcher)"
-echo "  * -o or --optoforce           Specify if optoforce sensors are going to be used (default: false)"
+echo "  * -o or --optoforce           Specify if optoforce sensors are going to be used with a branch name (default: false)"
 echo "  * -l or --launchhand          Specify if hand driver should start when double clicking desktop icon (default: true)"
 echo "  * -bt or --buildtoolsbranch   Specify the Git branch for sr-build-tools (default: master)"
 echo "  * -ck or --customerkey        Flag to prompt for customer key for uploading files to AWS"
@@ -410,6 +410,15 @@ if [ ${DESKTOP_ICON} = true ] ; then
             printf "#! /bin/bash
             source /home/user/projects/shadow_robot/base/devel/setup.bash
             sed -i 's|ethercat_port: .*|ethercat_port: ${ETHERCAT_INTERFACE}|' \$(rospack find fh_config)/hardware/hand_H_hardware.yaml
+            if [ ! ${OPTOFORCE_BRANCH} = false ]; then
+                cd /home/user/projects/shadow_robot/base/src
+                if [ ! -d "fh_optoforce_config" ]; then
+                    echo 'Cloning optoforce config repo...'
+                    git clone https://github.com/shadow-robot/fh_optoforce_config.git
+                    cd fh_optoforce_config
+                    git checkout ${OPTOFORCE_BRANCH}
+                fi
+            fi
             " > ${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/setup_modular_grasper.sh
             chmod +x ${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/setup_modular_grasper.sh
         fi
@@ -507,7 +516,7 @@ if [ ${REINSTALL_DOCKER_CONTAINER} = false ] ; then
                 fi
             fi
 
-            if [ ${OPTOFORCE} = true ]; then
+            if [ ! ${OPTOFORCE_BRANCH} = false ]; then
                 optoforce_setup
             fi
 
@@ -545,7 +554,7 @@ else
         DOCKER_IMAGE_NAME="${DOCKER_IMAGE_NAME}-nvidia"
     fi
 
-    if [ ${OPTOFORCE} = true ]; then
+    if [ ! ${OPTOFORCE_BRANCH} = false ]; then
         if [ -d "${APP_FOLDER}/optoforce" ]; then
             rm -rf ${APP_FOLDER}/optoforce
             sudo rm /etc/udev/rules.d/optoforce.rules
