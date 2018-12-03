@@ -132,6 +132,10 @@ for repo in repo_list:
                 'location': 'https://github.com/shadow-robot/'+repo+'.git',
                 'gitCloneDepth': 5,
                 'buildspec': '',
+                'auth': {
+                    'type': 'OAUTH',
+                    'resource': git_token_dec
+                    },
                 'reportBuildStatus': True,
                 'insecureSsl': False
                 },
