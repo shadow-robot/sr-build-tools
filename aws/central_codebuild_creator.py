@@ -17,4 +17,4 @@ codebuildresponse = codebuildclient.batch_get_projects(
     names=['auto_build-servers-check_bionic-melodic','auto_build-servers-check_xenial-kinetic']
 )
 
-print (json.dumps(codebuildresponse, indent=4, sort_keys=True))
+print (json.dumps(codebuildresponse, indent=4, sort_keys=True, default=str))
