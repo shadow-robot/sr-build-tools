@@ -16,8 +16,6 @@ git_username_dec = git_username_dec.decode('utf-8')
 git_token_enc = os.environ['git_token']
 git_token_dec = boto3.client('kms').decrypt(CiphertextBlob=b64decode(git_token_enc))['Plaintext']
 git_token_dec = git_token_dec.decode('utf-8')
-print(git_username_dec)
-print(git_token_dec)
 
 #create a AWS SNS client for sending emails
 snsclient = boto3.client('sns')
@@ -166,17 +164,12 @@ for repo in repo_list:
             tags=[],
             badgeEnabled=True)
             
-        print(str(createProjectResponse))
 
             #now create the webhook
         createProjectResponse = codebuildclient.create_webhook(
             projectName=build_project_name_start+repo+'_'+trunk_name,
             branchFilter='^F#SRC-2345_setup_aws_build_of_build-servers-check$'
         )
-
-        print(str(createProjectResponse))
-
-        print('Finished creating AWS CodeBuild Project '+build_project_name_start+repo+'_'+trunk_name)
 
 email_text = (
     f"AWS Lambda central_codebuild_creator has run\n"
