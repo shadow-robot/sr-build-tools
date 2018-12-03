@@ -117,8 +117,10 @@ fi
 
 if [ ${OPTOFORCE_BRANCH} = false ];
 then
+    OPTOFORCE=true
     OPTOFORCE_PATH=""
 else
+    OPTOFORCE=false
     OPTOFORCE_PATH="-v=/dev/optoforce:/dev/optoforce"
 fi
 
