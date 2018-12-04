@@ -131,7 +131,28 @@ for repo in repo_list:
                 'type': 'GITHUB',
                 'location': 'https://github.com/shadow-robot/'+repo+'.git',
                 'gitCloneDepth': 5,
-                'buildspec': '',
+                'buildspec': """version: 0.2
+ 
+env:
+  variables:
+     toolset_branch: "master"
+     server_type: "local-docker"
+     used_modules: "check_cache,code_coverage"
+     relative_job_path: "/home/user"
+     unit_tests_result_dir: "/home/user/unit_tests"
+     coverage_tests_result_dir: "/home/user/code_coverage"
+phases:
+  build:
+    commands:
+      - chown -R $MY_USERNAME:$MY_USERNAME $CODEBUILD_SRC_DIR
+      - export remote_shell_script="https://raw.githubusercontent.com/shadow-robot/sr-build-tools/$toolset_branch/bin/sr-run-ci-build.sh"
+      - wget -O /tmp/oneliner "$( echo "$remote_shell_script" | sed 's/#/%23/g' )"
+      - chmod 755 /tmp/oneliner
+      - gosu $MY_USERNAME /tmp/oneliner $toolset_branch $server_type $used_modules $CODEBUILD_SRC_DIR
+artifacts:
+  files:
+    - '$unit_tests_result_dir/**/*'
+    - '$coverage_tests_result_dir/**/*'""",
                 'auth': {
                     'type': 'OAUTH'
                     },
