@@ -179,7 +179,7 @@ artifacts:
             cache={
                 'type':'NO_CACHE'                
             },
-            serviceRole='arn:aws:iam::080653068785:role/service-role/codebuild-auto_build-servers-check_xenial-kinetic-service-role',
+            serviceRole='arn:aws:iam::080653068785:role/service-role/RoleForCentralCodeBuildCreator',
             timeoutInMinutes=60,
             encryptionKey='arn:aws:kms:eu-west-2:080653068785:alias/aws/s3',
             tags=[],
