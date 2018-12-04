@@ -109,6 +109,9 @@ for project_name in list_of_project_names:
 parsed_json_repos = json.loads(list_of_repos_json)
 repo_list = parsed_json_repos["repositories"]
 
+list_of_repos_with_aws_json=[]
+list_of_projects_created=[]
+
 for repo in repo_list:
     repo_aws_json_url = "https://raw.githubusercontent.com/shadow-robot/"+repo+"/"+repo_aws_json_master_branch+"/aws.json"
     #access repo's aws.json file, authenticate via GitHub credentials
@@ -116,6 +119,7 @@ for repo in repo_list:
     
     if (str(repo_aws_json_response) == "<Response [200]>"):
         #if we can access repo ok and find the aws.json file inside it
+        list_of_repos_with_aws_json.append(repo)
 
         repo_aws_json_text = repo_aws_json_response.text
         parsed_json = json.loads(repo_aws_json_text)
@@ -192,8 +196,14 @@ artifacts:
             branchFilter='^F#SRC-2345_setup_aws_build_of_build-servers-check$'
         )
 
+        list_of_projects_created.append(build_project_name_start+repo+'_'+trunk_name)
+
 email_text = (
-    f"AWS Lambda central_codebuild_creator has run\n"
+    f"AWS Lambda for Central AWS CodeBuild Creator has run\n\n"
+    f"Repos detected with aws.json:\n"
+    f""+"\n".join(list_of_repos_with_aws_json)+"\n"
+    f"AWS CodeBuild projects created:\n"
+    f""+"\n".join(list_of_projects_created)+"\n"
 )
 
 snsclient.publish(TopicArn=topic_arn, Message=email_text, Subject=email_subjectline)
