@@ -28,68 +28,11 @@ codebuildclient = boto3.client('codebuild')
 build_project_name_start = "auto_script_"
 email_subjectline = "AWS Lambda for Central AWS CodeBuild Creator"
 # when repo to be built with aws.json has been merged to default branch
-# repo_aws_json_master_branch = "HEAD"
-repo_aws_json_master_branch = "F%23SRC-2345_setup_aws_build_of_build-servers-check"
+repo_aws_json_master_branch = "HEAD"
 
 #list of repos JSON
-#this will be sr-build-tools-internal in the future
-list_of_repos_json = """{
-    "repositories": [
-        "sgs_restful",
-        "isee",
-        "beko_demo",
-        "chiron",
-        "planners",
-        "ros_control_robot",
-        "sr_blockly",
-        "sr-demo",
-        "sr-visualization",
-        "sr_vision",
-        "sr_tools",
-        "sr_demos",
-        "sr_standalone",
-        "sr-ros-interface",
-        "sr-ros-interface-ethercat",
-        "sr-ronex",
-        "sr_ur_arm",
-        "ramcip",
-        "build-servers-check",
-        "sr_interface",
-        "sr_core",
-        "sr_common",
-        "autopic",
-        "fh_config",
-        "fh_core",
-        "sr_manipulation",
-        "fh_common",
-        "fh_interface",
-        "sr_vision_internal",
-        "sat",
-        "robust_grasping",
-        "shadow_flexible_hand",
-        "series_ethercat_robot",
-        "ros_ethercat",
-        "common_resources",
-        "sr_demos",
-        "sr_grasping",
-        "sr_ur_arm",
-        "sr_visualization_common",
-        "sr_object_tools",
-        "sr_benchmarking",
-        "common_resources_private",
-        "serfow",
-        "fh_tests",
-        "mujoco_ros_pkgs",
-        "sr_utl_demos",
-        "sr_duplo_demos",
-        "smart_grasping_sandbox",
-        "iplanr",
-        "fh_demos",
-        "sr_teleop_demos",
-        "sr_mujoco_demos",
-        "shadow_flexible_hand_mujoco"
-    ]
-}"""
+#this will be fetched via REST API
+list_of_repos_json = ""
 
 #build a list of all current CodeBuild projects
 codebuildresponse = codebuildclient.list_projects(
