@@ -407,20 +407,23 @@ if [ ${DESKTOP_ICON} = true ] ; then
             chmod +x ${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/setup_dexterous_hand.sh
         fi
     else
-        printf "#! /bin/bash
-        source /home/user/projects/shadow_robot/base/devel/setup.bash
-        sed -i 's|ethercat_port: .*|ethercat_port: ${ETHERCAT_INTERFACE}|' \$(rospack find fh_config)/hardware/hand_H_hardware.yaml
-        if [ ! ${OPTOFORCE_BRANCH} = false ]; then
-            cd /home/user/projects/shadow_robot/base/src
-            if [ ! -d "fh_optoforce_config" ]; then
-                echo 'Cloning optoforce config repo...'
-                git clone https://github.com/shadow-robot/fh_optoforce_config.git
-                cd fh_optoforce_config
-                git checkout ${OPTOFORCE_BRANCH}
+        # If LAUNCH_HAND = true for hand h, it uses the default script
+        if [ ${LAUNCH_HAND} = false ]; then
+            printf "#! /bin/bash
+            source /home/user/projects/shadow_robot/base/devel/setup.bash
+            sed -i 's|ethercat_port: .*|ethercat_port: ${ETHERCAT_INTERFACE}|' \$(rospack find fh_config)/hardware/hand_H_hardware.yaml
+            if [ ! ${OPTOFORCE_BRANCH} = false ]; then
+                cd /home/user/projects/shadow_robot/base/src
+                if [ ! -d "fh_optoforce_config" ]; then
+                    echo 'Cloning optoforce config repo...'
+                    git clone https://github.com/shadow-robot/fh_optoforce_config.git
+                    cd fh_optoforce_config
+                    git checkout ${OPTOFORCE_BRANCH}
+                fi
             fi
+            " > ${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/setup_modular_grasper.sh
+            chmod +x ${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/setup_modular_grasper.sh
         fi
-        " > ${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/setup_modular_grasper.sh
-        chmod +x ${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/setup_modular_grasper.sh
     fi
 
     if [ -e ${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/launch.sh ]; then
@@ -525,7 +528,7 @@ if [ ${REINSTALL_DOCKER_CONTAINER} = false ] ; then
                     ${DOCKER} create -it --privileged --name ${DOCKER_CONTAINER_NAME} ${OPTOFORCE_PATH} -e verbose=true -e interface=${ETHERCAT_INTERFACE} --ulimit core=-1 --security-opt seccomp=unconfined --network=host --pid=host -e DISPLAY -e QT_X11_NO_MITSHM=1 -e LOCAL_USER_ID=$(id -u) -v /tmp/.X11-unix:/tmp/.X11-unix:rw ${DOCKER_IMAGE_NAME} terminator -x bash -c "pkill -f \"^\"shadow_launcher_app_xterm && /usr/local/bin/setup_modular_grasper.sh && bash || bash"
                     docker cp ${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/setup_modular_grasper.sh ${DOCKER_CONTAINER_NAME}:/usr/local/bin/setup_modular_grasper.sh
                 else
-                    ${DOCKER} create -it --privileged --name ${DOCKER_CONTAINER_NAME} ${OPTOFORCE_PATH} -e verbose=true -e optoforce_launch=${OPTOFORCE} -e interface=${ETHERCAT_INTERFACE} --ulimit core=-1 --security-opt seccomp=unconfined --network=host --pid=host -e DISPLAY -e QT_X11_NO_MITSHM=1 -e LOCAL_USER_ID=$(id -u) -v /tmp/.X11-unix:/tmp/.X11-unix:rw ${DOCKER_IMAGE_NAME} bash -c "pkill -f \"^\"shadow_launcher_app_xterm && xterm -e /usr/local/bin/setup.sh || bash"
+                    ${DOCKER} create -it --privileged --name ${DOCKER_CONTAINER_NAME} ${OPTOFORCE_PATH} -e verbose=true -e optoforce_launch=${OPTOFORCE} -e optofrc_branch=${OPTOFORCE_BRANCH} -e interface=${ETHERCAT_INTERFACE} --ulimit core=-1 --security-opt seccomp=unconfined --network=host --pid=host -e DISPLAY -e QT_X11_NO_MITSHM=1 -e LOCAL_USER_ID=$(id -u) -v /tmp/.X11-unix:/tmp/.X11-unix:rw ${DOCKER_IMAGE_NAME} bash -c "pkill -f \"^\"shadow_launcher_app_xterm && xterm -e /usr/local/bin/setup.sh || bash"
                 fi
             else
                 ${DOCKER} create -it --privileged --name ${DOCKER_CONTAINER_NAME} ${OPTOFORCE_PATH} --ulimit core=-1 --security-opt seccomp=unconfined --network=host --pid=host -e DISPLAY -e QT_X11_NO_MITSHM=1 -e LOCAL_USER_ID=$(id -u) -v /tmp/.X11-unix:/tmp/.X11-unix:rw ${DOCKER_IMAGE_NAME} terminator -x bash -c "pkill -f \"^\"shadow_launcher_app_xterm && /usr/local/bin/setup_dexterous_hand.sh && bash || bash"
@@ -567,8 +570,7 @@ else
             ${DOCKER} create -it --privileged --name ${DOCKER_CONTAINER_NAME} ${OPTOFORCE_PATH} -e verbose=true -e interface=${ETHERCAT_INTERFACE} --ulimit core=-1 --security-opt seccomp=unconfined --network=host --pid=host -e DISPLAY -e QT_X11_NO_MITSHM=1 -e LOCAL_USER_ID=$(id -u) -v /tmp/.X11-unix:/tmp/.X11-unix:rw ${DOCKER_IMAGE_NAME} terminator -x bash -c "pkill -f \"^\"shadow_launcher_app_xterm && /usr/local/bin/setup_modular_grasper.sh && bash || bash"
             docker cp ${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/setup_modular_grasper.sh ${DOCKER_CONTAINER_NAME}:/usr/local/bin/setup_modular_grasper.sh
         else
-            ${DOCKER} create -it --privileged --name ${DOCKER_CONTAINER_NAME} ${OPTOFORCE_PATH} -e verbose=true -e optoforce_launch=${OPTOFORCE} -e interface=${ETHERCAT_INTERFACE} --ulimit core=-1 --security-opt seccomp=unconfined --network=host --pid=host -e DISPLAY -e QT_X11_NO_MITSHM=1 -e LOCAL_USER_ID=$(id -u) -v /tmp/.X11-unix:/tmp/.X11-unix:rw ${DOCKER_IMAGE_NAME} bash -c "pkill -f \"^\"shadow_launcher_app_xterm && xterm -e /usr/local/bin/setup.sh || bash"
-            docker cp ${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/setup_modular_grasper.sh ${DOCKER_CONTAINER_NAME}:/usr/local/bin/setup_modular_grasper.sh
+            ${DOCKER} create -it --privileged --name ${DOCKER_CONTAINER_NAME} ${OPTOFORCE_PATH} -e verbose=true -e optoforce_launch=${OPTOFORCE} -e optofrc_branch=${OPTOFORCE_BRANCH} -e interface=${ETHERCAT_INTERFACE} --ulimit core=-1 --security-opt seccomp=unconfined --network=host --pid=host -e DISPLAY -e QT_X11_NO_MITSHM=1 -e LOCAL_USER_ID=$(id -u) -v /tmp/.X11-unix:/tmp/.X11-unix:rw ${DOCKER_IMAGE_NAME} bash -c "pkill -f \"^\"shadow_launcher_app_xterm && xterm -e /usr/local/bin/setup.sh || bash"
         fi
     else
         ${DOCKER} create -it --privileged --name ${DOCKER_CONTAINER_NAME} ${OPTOFORCE_PATH} --ulimit core=-1 --security-opt seccomp=unconfined --network=host --pid=host -e DISPLAY -e QT_X11_NO_MITSHM=1 -e LOCAL_USER_ID=$(id -u) -v /tmp/.X11-unix:/tmp/.X11-unix:rw ${DOCKER_IMAGE_NAME} terminator -x bash -c "pkill -f \"^\"shadow_launcher_app_xterm && /usr/local/bin/setup_dexterous_hand.sh && bash || bash"
