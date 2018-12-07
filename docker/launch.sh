@@ -72,6 +72,10 @@ case $key in
     SR_CYBERGLOVE_CONFIG_BRANCH=$(echo "$2" | sed 's/#/%23/g')
     shift
     ;;
+    -de|--demo_icons)
+    DEMO_ICONS="$2"
+    shift
+    ;;
     *)
     # ignore unknown option
     ;;
@@ -142,6 +146,11 @@ then
     SR_CYBERGLOVE_CONFIG_BRANCH=false
 fi
 
+if [ -z "${DEMO_ICONS}" ];
+then
+    DEMO_ICONS=false
+fi
+
 echo "================================================================="
 echo "|                                                               |"
 echo "|             Shadow default docker deployment                  |"
@@ -164,6 +173,7 @@ echo "  * -l or --launchhand          Specify if hand driver should start when d
 echo "  * -bt or --buildtoolsbranch   Specify the Git branch for sr-build-tools (default: master)"
 echo "  * -ck or --customerkey        Flag to prompt for customer key for uploading files to AWS"
 echo "  * -cg or --cyberglove         Specify the branch of sr_cyberglove_config for cyberglove configuration (default: false)"
+echo "  * -de or --demo_icons         Generates desktop icons to run demos (default: false)"
 echo ""
 echo "example hand E: ./launch.sh -i shadowrobot/dexterous-hand:kinetic -n hand_e_kinetic_real_hw -e enp0s25 -b shadowrobot_demo_hand -r true -g false"
 echo "example hand H: ./launch.sh -i shadowrobot/flexible-hand:kinetic-release -n modular_grasper -e enp0s25 -r true -g false"
@@ -332,6 +342,65 @@ function optoforce_setup
     fi
 }
 
+function create_hand_e_icons
+{
+    echo "Creating Hand E/G demo icons desktop files"
+
+    printf 'docker exec -it dexterous_hand_real_hw /ros_entrypoint.sh bash -c "source /home/user/projects/shadow_robot/base_deps/devel/setup.bash;source /home/user/projects/shadow_robot/base/devel/setup.bash;roslaunch sr_cyberglove_config cyberglove.launch"' > ${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/cyberglove_demo.sh
+
+    printf "[Desktop Entry]
+            Version=1.0
+            Name=Cyberglove Demo
+            Comment=This runs the cyber glove demo
+            Exec=/home/${USER}/${DESKTOP_SHORTCUT_NAME}/cyberglove_demo.sh
+            Icon=/home/${USER}/${DESKTOP_SHORTCUT_NAME}/cyberglove_demo.png
+            Terminal=false
+            Type=Application
+            Categories=Utility;Application;" > /home/$USER/Desktop/Cyberglove_demo.desktop
+            chmod +x /home/$USER/Desktop/Cyberglove_demo.desktop
+
+    printf 'docker exec -it dexterous_hand_real_hw /ros_entrypoint.sh bash -c "source /home/user/projects/shadow_robot/base_deps/devel/setup.bash;source /home/user/projects/shadow_robot/base/devel/setup.bash;rosrun sr_ethercat_hand_config demo_rs.py"' > ${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/close_hand.sh
+
+    printf "[Desktop Entry]
+            Version=1.0
+            Name=Close Hand
+            Comment=This runs closes the hand for transportation
+            Exec=/home/${USER}/${DESKTOP_SHORTCUT_NAME}/close_hand.sh
+            Icon=/home/${USER}/${DESKTOP_SHORTCUT_NAME}/close_hand.png
+            Terminal=false
+            Type=Application
+            Categories=Utility;Application;" > /home/$USER/Desktop/Close_hand.desktop
+            chmod +x /home/$USER/Desktop/Close_hand.desktop
+
+    printf 'docker exec -it dexterous_hand_real_hw /ros_entrypoint.sh bash -c "source /home/user/projects/shadow_robot/base_deps/devel/setup.bash;source /home/user/projects/shadow_robot/base/devel/setup.bash;rosrun sr_ethercat_hand_config demo_r.py"' > ${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/demo_hand.sh
+
+    printf "[Desktop Entry]
+            Version=1.0
+            Name=Demo Hand
+            Comment=This runs the basic demo for the hand
+            Exec=/home/${USER}/${DESKTOP_SHORTCUT_NAME}/demo.sh
+            Icon=/home/${USER}/${DESKTOP_SHORTCUT_NAME}/demo_hand.png
+            Terminal=false
+            Type=Application
+            Categories=Utility;Application;" > /home/$USER/Desktop/Demo_hand.desktop
+            chmod +x /home/$USER/Desktop/Demo_hand.desktop
+}
+
+function create_hand_h_icons
+{
+    echo "Creating Hand H demo icons desktop files"
+
+    printf "[Desktop Entry]
+            Encoding=UTF-8
+            Name=Grasp looping demo
+            Comment=This runs the Grasp looping demo
+            Type=Link
+            Icon=/home/${USER}/${DESKTOP_SHORTCUT_NAME}/grasp_loop.png
+            URL=http://127.0.0.1:8080/demos" > /home/$USER/Desktop/Grasp_loop_demo.desktop
+            chmod +x /home/$USER/Desktop/Grasp_loop_demo.desktop
+}
+
+
 # If running for the first time create desktop shortcut
 APP_FOLDER=/home/$USER/.shadow_launcher_app
 SAVE_LOGS_APP_FOLDER=/home/$USER/.shadow_save_log_app
@@ -466,6 +535,14 @@ if [ ${DESKTOP_ICON} = true ] ; then
     Terminal=false
     Type=Application
     Categories=Utility;Application;" > /home/$USER/Desktop/${DESKTOP_SHORTCUT_NAME}.desktop
+
+    if [ ${DEMO_ICONS} = true ]; then
+        if [ ${HAND_H} = false ]; then
+            create_hand_e_icons
+        else
+            create_hand_h_icons
+        fi
+    fi
 
     if [ ${CUSTOMER_KEY} = false ]; then
         echo "Creating save_ros_logs desktop file"
