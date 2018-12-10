@@ -3,12 +3,6 @@
 # Copyright (C) 2018 Shadow Robot Company Ltd - All Rights Reserved.
 # Proprietary and Confidential. Unauthorized copying of the content in this file, via any medium is strictly prohibited.
 
-import boto3
-from botocore.vendored import requests
-from base64 import b64decode
-import os
-import json
-
 #get git credentials
 git_username_enc = os.environ['git_username']
 git_username_dec = boto3.client('kms').decrypt(CiphertextBlob=b64decode(git_username_enc))['Plaintext']
