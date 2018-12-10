@@ -353,7 +353,7 @@ function create_hand_e_icons
             Name=Cyberglove Demo
             Comment=This runs the cyber glove demo
             Exec=/home/${USER}/${DESKTOP_SHORTCUT_NAME}/cyberglove_demo.sh
-            Icon=/home/${USER}/${DESKTOP_SHORTCUT_NAME}/cyberglove_demo.png
+            Icon=${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/demo_icon.png
             Terminal=false
             Type=Application
             Categories=Utility;Application;" > /home/$USER/Desktop/Cyberglove_demo.desktop
@@ -366,7 +366,7 @@ function create_hand_e_icons
             Name=Close Hand
             Comment=This runs closes the hand for transportation
             Exec=/home/${USER}/${DESKTOP_SHORTCUT_NAME}/close_hand.sh
-            Icon=/home/${USER}/${DESKTOP_SHORTCUT_NAME}/close_hand.png
+            Icon=${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/demo_icon.png
             Terminal=false
             Type=Application
             Categories=Utility;Application;" > /home/$USER/Desktop/Close_hand.desktop
@@ -379,11 +379,24 @@ function create_hand_e_icons
             Name=Demo Hand
             Comment=This runs the basic demo for the hand
             Exec=/home/${USER}/${DESKTOP_SHORTCUT_NAME}/demo.sh
-            Icon=/home/${USER}/${DESKTOP_SHORTCUT_NAME}/demo_hand.png
+            Icon=${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/demo_icon.png
             Terminal=false
             Type=Application
             Categories=Utility;Application;" > /home/$USER/Desktop/Demo_hand.desktop
             chmod +x /home/$USER/Desktop/Demo_hand.desktop
+
+    printf 'docker exec -it dexterous_hand_real_hw /ros_entrypoint.sh bash -c "source /home/user/projects/shadow_robot/base_deps/devel/setup.bash;source /home/user/projects/shadow_robot/base/devel/setup.bash;rosrun sr_ethercat_hand_config demo_ro.py"' > ${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/open_hand.sh
+
+    printf "[Desktop Entry]
+            Version=1.0
+            Name=Open Hand
+            Comment=This open the hand
+            Exec=/home/${USER}/${DESKTOP_SHORTCUT_NAME}/open_hand.sh
+            Icon=${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/demo_icon.png
+            Terminal=false
+            Type=Application
+            Categories=Utility;Application;" > /home/$USER/Desktop/Open_hand.desktop
+            chmod +x /home/$USER/Desktop/Open_hand.desktop
 }
 
 function create_hand_h_icons
@@ -395,7 +408,7 @@ function create_hand_h_icons
             Name=Grasp looping demo
             Comment=This runs the Grasp looping demo
             Type=Link
-            Icon=/home/${USER}/${DESKTOP_SHORTCUT_NAME}/grasp_loop.png
+            Icon=${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/demo_icon.png
             URL=http://127.0.0.1:8080/demos" > /home/$USER/Desktop/Grasp_loop_demo.desktop
             chmod +x /home/$USER/Desktop/Grasp_loop_demo.desktop
 }
@@ -522,6 +535,9 @@ if [ ${DESKTOP_ICON} = true ] ; then
 
     echo "Downloading save_ros_logs icon"
     wget --no-check-certificate https://raw.githubusercontent.com/shadow-robot/sr-build-tools/${BUILD_TOOLS_BRANCH}/docker/log_icon.png -O ${SAVE_LOGS_APP_FOLDER}/save_latest_ros_logs/log_icon.png
+    
+    echo "Downloading demo icon"
+    wget --no-check-certificate https://raw.githubusercontent.com/shadow-robot/sr-build-tools/${BUILD_TOOLS_BRANCH}/docker/demo_icon.png -O ${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/demo_icon.png
     
     mkdir -p /home/$USER/Desktop
     
