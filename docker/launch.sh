@@ -380,7 +380,7 @@ function create_hand_e_icons
             Version=1.0
             Name=Demo Hand
             Comment=This runs the basic demo for the hand
-            Exec=xterm -hold -title 'demo' -e '${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/demo.sh'
+            Exec=xterm -hold -title 'demo' -e '${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/demo_hand.sh'
             Icon=${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/demo_icon.png
             Terminal=false
             Type=Application
