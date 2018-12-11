@@ -5,6 +5,7 @@
 import github_api
 import aws_api
 
+
 class BuildJobManager(object):
 
     aws_sns_topic = 'arn:aws:sns:eu-west-2:080653068785:CentralCodeBuildCreatorTopic'
