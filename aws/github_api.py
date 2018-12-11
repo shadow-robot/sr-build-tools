@@ -6,9 +6,11 @@
 
 class GitHubApi(object):
 
-    def __init__(self, git_username, git_token):
-        self.git_username = git_username
-        self.git_token = git_token
+    def __init__(self):
+        self.git_username = git_username_dec = boto3.client('kms').decrypt(CiphertextBlob=b64decode(
+            os.environ['git_username']))['Plaintext'].decode('utf-8')
+        self.git_token = git_token_dec = boto3.client('kms').decrypt(CiphertextBlob=b64decode(
+            os.environ['git_token']))['Plaintext'].decode('utf-8')
 
     def get_file(self, url):
         response = requests.get(url, auth=(self.git_username, self.git_token))
