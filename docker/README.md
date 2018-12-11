@@ -129,6 +129,7 @@ Posible options for the oneliner are:
 * -bt or --buildtoolsbranch Specify the Git branch for sr-build-tools (default: master)
 * -ck or --customerkey      Flag to prompt for customer key for uploading files to AWS (can be skipped or be set to true)
 * -cg or --cyberglove       Specify the branch of sr_cyberglove_config for cyberglove configuration (default: false)
+* -de or --demo_icons       Generates desktop icons to run demos (default: false)"
 
 To begin with, the one-liner checks the installation status of docker. If docker is not installed then a new clean installation is performed. If the required image is private, 
 then a valid Docker Hub account with pull credentials from Shadow Robot's Docker Hub is required. Then, the specified docker image is pulled and a docker 
