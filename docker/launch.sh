@@ -352,7 +352,7 @@ function create_hand_e_icons
             Version=1.0
             Name=Cyberglove Demo
             Comment=This runs the cyber glove demo
-            Exec=/home/${USER}/${DESKTOP_SHORTCUT_NAME}/cyberglove_demo.sh
+            Exec=${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/cyberglove_demo.sh
             Icon=${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/demo_icon.png
             Terminal=false
             Type=Application
@@ -365,7 +365,7 @@ function create_hand_e_icons
             Version=1.0
             Name=Close Hand
             Comment=This runs closes the hand for transportation
-            Exec=/home/${USER}/${DESKTOP_SHORTCUT_NAME}/close_hand.sh
+            Exec=${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/close_hand.sh
             Icon=${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/demo_icon.png
             Terminal=false
             Type=Application
@@ -378,7 +378,7 @@ function create_hand_e_icons
             Version=1.0
             Name=Demo Hand
             Comment=This runs the basic demo for the hand
-            Exec=/home/${USER}/${DESKTOP_SHORTCUT_NAME}/demo.sh
+            Exec=${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/demo.sh
             Icon=${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/demo_icon.png
             Terminal=false
             Type=Application
@@ -391,7 +391,7 @@ function create_hand_e_icons
             Version=1.0
             Name=Open Hand
             Comment=This open the hand
-            Exec=/home/${USER}/${DESKTOP_SHORTCUT_NAME}/open_hand.sh
+            Exec=${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/open_hand.sh
             Icon=${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/demo_icon.png
             Terminal=false
             Type=Application
