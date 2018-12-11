@@ -410,7 +410,7 @@ function create_hand_h_icons
             Name=Grasp looping demo
             Comment=This runs the Grasp looping demo
             Type=Link
-            Icon=text-html
+            Icon=${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/demo_icon.png
             URL=http://127.0.0.1:8080/demos" > /home/$USER/Desktop/Grasp_loop_demo.desktop
             chmod +x /home/$USER/Desktop/Grasp_loop_demo.desktop
 }
@@ -547,6 +547,11 @@ if [ ${DESKTOP_ICON} = true ] ; then
     echo "Downloading save_ros_logs icon"
     wget --no-check-certificate https://raw.githubusercontent.com/shadow-robot/sr-build-tools/${BUILD_TOOLS_BRANCH}/docker/log_icon.png -O ${SAVE_LOGS_APP_FOLDER}/save_latest_ros_logs/log_icon.png
     
+    if [[ ${DEMO_ICONS} = true ]]; then
+        echo "Downloading demo icon"
+        wget --no-check-certificate https://raw.githubusercontent.com/shadow-robot/sr-build-tools/${BUILD_TOOLS_BRANCH}/docker/demo_icon.png -O ${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/demo_icon.png
+    fi
+
     mkdir -p /home/$USER/Desktop
     
     echo "Creating launch desktop file"
