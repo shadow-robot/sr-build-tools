@@ -6,9 +6,8 @@
 
 class AwsApi(object):
 
-    def __init__(self, git_username, git_token):
-        self.git_username = git_username
-        self.git_token = git_token
+    def __init__(self):
+        print('hello')
 
     def main(self):
         #get git credentials
