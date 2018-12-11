@@ -10,6 +10,10 @@ class GitHubApi(object):
         self.git_username = git_username
         self.git_token = git_token
 
-    def main(self):
-        #get git credentials
-        print('hello')
+    def get_file(self, url):
+        response = requests.get(url, auth=(self.git_username, self.git_token))
+        if (str(response) == "<Response [200]>"):
+            return response.text
+        else:
+            return response
+        
