@@ -346,18 +346,20 @@ function create_hand_e_icons
 {
     echo "Creating Hand E/G demo icons desktop files"
 
-    printf "docker exec -it ${DOCKER_CONTAINER_NAME} /ros_entrypoint.sh bash -c 'source /home/user/projects/shadow_robot/base_deps/devel/setup.bash;source /home/user/projects/shadow_robot/base/devel/setup.bash;roslaunch sr_cyberglove_config cyberglove.launch'" > ${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/cyberglove_demo.sh
-    chmod +x ${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/cyberglove_demo.sh
-    printf "[Desktop Entry]
-            Version=1.0
-            Name=Cyberglove Demo
-            Comment=This runs the cyber glove demo
-            Exec=${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/cyberglove_demo.sh
-            Icon=${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/demo_icon.png
-            Terminal=false
-            Type=Application
-            Categories=Utility;Application;" > /home/$USER/Desktop/Cyberglove_demo.desktop
-            chmod +x /home/$USER/Desktop/Cyberglove_demo.desktop
+    if [ ! ${SR_CYBERGLOVE_CONFIG_BRANCH} = false ]; then
+        printf "docker exec -it ${DOCKER_CONTAINER_NAME} /ros_entrypoint.sh bash -c 'source /home/user/projects/shadow_robot/base_deps/devel/setup.bash;source /home/user/projects/shadow_robot/base/devel/setup.bash;roslaunch sr_cyberglove_config cyberglove.launch'" > ${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/cyberglove_demo.sh
+        chmod +x ${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/cyberglove_demo.sh
+        printf "[Desktop Entry]
+                Version=1.0
+                Name=Cyberglove Demo
+                Comment=This runs the cyber glove demo
+                Exec=xterm -title 'demo' -e '${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/cyberglove_demo.sh'
+                Icon=${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/demo_icon.png
+                Terminal=false
+                Type=Application
+                Categories=Utility;Application;" > /home/$USER/Desktop/Cyberglove_demo.desktop
+                chmod +x /home/$USER/Desktop/Cyberglove_demo.desktop
+    fi
 
     printf "docker exec -it ${DOCKER_CONTAINER_NAME} /ros_entrypoint.sh bash -c 'source /home/user/projects/shadow_robot/base_deps/devel/setup.bash;source /home/user/projects/shadow_robot/base/devel/setup.bash;rosrun sr_ethercat_hand_config demo_rs.py'" > ${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/close_hand.sh
     chmod +x ${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/close_hand.sh
@@ -365,7 +367,7 @@ function create_hand_e_icons
             Version=1.0
             Name=Close Hand
             Comment=This runs closes the hand for transportation
-            Exec=${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/close_hand.sh
+            Exec=xterm -title 'demo' -e '${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/close_hand.sh'
             Icon=${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/demo_icon.png
             Terminal=false
             Type=Application
@@ -378,7 +380,7 @@ function create_hand_e_icons
             Version=1.0
             Name=Demo Hand
             Comment=This runs the basic demo for the hand
-            Exec=${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/demo.sh
+            Exec=xterm -hold -title 'demo' -e '${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/demo.sh'
             Icon=${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/demo_icon.png
             Terminal=false
             Type=Application
@@ -391,7 +393,7 @@ function create_hand_e_icons
             Version=1.0
             Name=Open Hand
             Comment=This open the hand
-            Exec=${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/open_hand.sh
+            Exec=xterm -title 'demo' -e '${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/open_hand.sh'
             Icon=${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/demo_icon.png
             Terminal=false
             Type=Application
