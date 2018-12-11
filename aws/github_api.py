@@ -13,7 +13,6 @@ class GitHubApi(object):
     def get_file(self, url):
         response = requests.get(url, auth=(self.git_username, self.git_token))
         if (str(response) == "<Response [200]>"):
-            return response.text
+            return (response.text, True)
         else:
-            return response
-        
+            return (response, False)
