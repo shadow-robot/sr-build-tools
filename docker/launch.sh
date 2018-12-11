@@ -456,7 +456,7 @@ if [ ${DESKTOP_ICON} = true ] ; then
     # Create a initial script for dexterous hand
     if [ ${HAND_H} = false ]; then
         if [ -z "${CONFIG_BRANCH}" ]; then
-            echo -e "${RED}Specify a coDEMO_ICONSnfig branch for your dexterous hand ${NC}"
+            echo -e "${RED}Specify a config branch for your dexterous hand ${NC}"
             exit 1
         else  
             printf "#! /bin/bash
