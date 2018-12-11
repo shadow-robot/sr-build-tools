@@ -119,7 +119,7 @@ then
     LAUNCH_HAND=true
 fi
 
-if [ ${OPTOFORCE_BRANCH} = false ];
+if [[ ${OPTOFORCE_BRANCH} = false ]];
 then
     OPTOFORCE=false
     OPTOFORCE_PATH=""
@@ -133,7 +133,7 @@ then
     BUILD_TOOLS_BRANCH="master"
 fi
 
-if [ ${CUSTOMER_KEY} = true ];
+if [[ ${CUSTOMER_KEY} = true ]];
 then
     echo "Please enter your key for uploading logs to AWS:"
     read CUSTOMER_KEY
@@ -346,8 +346,8 @@ function create_hand_e_icons
 {
     echo "Creating Hand E/G demo icons desktop files"
 
-    printf 'docker exec -it dexterous_hand_real_hw /ros_entrypoint.sh bash -c "source /home/user/projects/shadow_robot/base_deps/devel/setup.bash;source /home/user/projects/shadow_robot/base/devel/setup.bash;roslaunch sr_cyberglove_config cyberglove.launch"' > ${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/cyberglove_demo.sh
-
+    printf "docker exec -it ${DOCKER_CONTAINER_NAME} /ros_entrypoint.sh bash -c 'source /home/user/projects/shadow_robot/base_deps/devel/setup.bash;source /home/user/projects/shadow_robot/base/devel/setup.bash;roslaunch sr_cyberglove_config cyberglove.launch'" > ${APP_FOLDER}/cyberglove_demo.sh
+    chmod +x ${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/cyberglove_demo.sh
     printf "[Desktop Entry]
             Version=1.0
             Name=Cyberglove Demo
@@ -359,8 +359,8 @@ function create_hand_e_icons
             Categories=Utility;Application;" > /home/$USER/Desktop/Cyberglove_demo.desktop
             chmod +x /home/$USER/Desktop/Cyberglove_demo.desktop
 
-    printf 'docker exec -it dexterous_hand_real_hw /ros_entrypoint.sh bash -c "source /home/user/projects/shadow_robot/base_deps/devel/setup.bash;source /home/user/projects/shadow_robot/base/devel/setup.bash;rosrun sr_ethercat_hand_config demo_rs.py"' > ${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/close_hand.sh
-
+    printf "docker exec -it ${DOCKER_CONTAINER_NAME} /ros_entrypoint.sh bash -c 'source /home/user/projects/shadow_robot/base_deps/devel/setup.bash;source /home/user/projects/shadow_robot/base/devel/setup.bash;rosrun sr_ethercat_hand_config demo_rs.py'" > ${APP_FOLDER}/close_hand.sh
+    chmod +x ${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/close_hand.sh
     printf "[Desktop Entry]
             Version=1.0
             Name=Close Hand
@@ -372,8 +372,8 @@ function create_hand_e_icons
             Categories=Utility;Application;" > /home/$USER/Desktop/Close_hand.desktop
             chmod +x /home/$USER/Desktop/Close_hand.desktop
 
-    printf 'docker exec -it dexterous_hand_real_hw /ros_entrypoint.sh bash -c "source /home/user/projects/shadow_robot/base_deps/devel/setup.bash;source /home/user/projects/shadow_robot/base/devel/setup.bash;rosrun sr_ethercat_hand_config demo_r.py"' > ${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/demo_hand.sh
-
+    printf "docker exec -it ${DOCKER_CONTAINER_NAME} /ros_entrypoint.sh bash -c 'source /home/user/projects/shadow_robot/base_deps/devel/setup.bash;source /home/user/projects/shadow_robot/base/devel/setup.bash;rosrun sr_ethercat_hand_config demo_r.py'" > ${APP_FOLDER}/demo_hand.sh
+    chmod +x ${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/demo_hand.sh
     printf "[Desktop Entry]
             Version=1.0
             Name=Demo Hand
@@ -385,8 +385,8 @@ function create_hand_e_icons
             Categories=Utility;Application;" > /home/$USER/Desktop/Demo_hand.desktop
             chmod +x /home/$USER/Desktop/Demo_hand.desktop
 
-    printf 'docker exec -it dexterous_hand_real_hw /ros_entrypoint.sh bash -c "source /home/user/projects/shadow_robot/base_deps/devel/setup.bash;source /home/user/projects/shadow_robot/base/devel/setup.bash;rosrun sr_ethercat_hand_config demo_ro.py"' > ${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/open_hand.sh
-
+    printf "docker exec -it ${DOCKER_CONTAINER_NAME} /ros_entrypoint.sh bash -c 'source /home/user/projects/shadow_robot/base_deps/devel/setup.bash;source /home/user/projects/shadow_robot/base/devel/setup.bash;rosrun sr_ethercat_hand_config demo_ro.py'" > ${APP_FOLDER}/open_hand.sh
+    chmod +x ${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/open_hand.sh
     printf "[Desktop Entry]
             Version=1.0
             Name=Open Hand
@@ -454,7 +454,7 @@ if [ ${DESKTOP_ICON} = true ] ; then
     # Create a initial script for dexterous hand
     if [ ${HAND_H} = false ]; then
         if [ -z "${CONFIG_BRANCH}" ]; then
-            echo -e "${RED}Specify a config branch for your dexterous hand ${NC}"
+            echo -e "${RED}Specify a coDEMO_ICONSnfig branch for your dexterous hand ${NC}"
             exit 1
         else  
             printf "#! /bin/bash
@@ -488,6 +488,10 @@ if [ ${DESKTOP_ICON} = true ] ; then
             fi
             chmod +x ${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/setup_dexterous_hand.sh
         fi
+
+        if [[ ${DEMO_ICONS} = true ]]; then
+            create_hand_e_icons
+        fi
     else
         # If LAUNCH_HAND = true for hand h, it uses the default script
         if [ ${LAUNCH_HAND} = false ]; then
@@ -505,6 +509,9 @@ if [ ${DESKTOP_ICON} = true ] ; then
             fi
             " > ${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/setup_modular_grasper.sh
             chmod +x ${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/setup_modular_grasper.sh
+        fi
+        if [ ${DEMO_ICONS} = true ]; then
+            create_hand_h_icons
         fi
     fi
 
@@ -551,14 +558,6 @@ if [ ${DESKTOP_ICON} = true ] ; then
     Terminal=false
     Type=Application
     Categories=Utility;Application;" > /home/$USER/Desktop/${DESKTOP_SHORTCUT_NAME}.desktop
-
-    if [ ${DEMO_ICONS} = true ]; then
-        if [ ${HAND_H} = false ]; then
-            create_hand_e_icons
-        else
-            create_hand_h_icons
-        fi
-    fi
 
     if [ ${CUSTOMER_KEY} = false ]; then
         echo "Creating save_ros_logs desktop file"
