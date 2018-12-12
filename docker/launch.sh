@@ -361,6 +361,7 @@ function create_hand_e_icons
                 chmod +x /home/$USER/Desktop/Cyberglove_demo.desktop
     fi
 
+    wget --no-check-certificate https://raw.githubusercontent.com/shadow-robot/sr-build-tools/${BUILD_TOOLS_BRANCH}/docker/close_hand_icon.png -O ${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/close_hand_icon.png
     printf "docker exec -it ${DOCKER_CONTAINER_NAME} /ros_entrypoint.sh bash -c 'source /home/user/projects/shadow_robot/base_deps/devel/setup.bash;source /home/user/projects/shadow_robot/base/devel/setup.bash;rosrun sr_ethercat_hand_config demo_rs.py'" > ${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/close_hand.sh
     chmod +x ${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/close_hand.sh
     printf "[Desktop Entry]
@@ -368,12 +369,13 @@ function create_hand_e_icons
             Name=Close Hand
             Comment=This runs closes the hand for transportation
             Exec=xterm -title 'close_hand' -e '${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/close_hand.sh'
-            Icon=${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/demo_icon.png
+            Icon=${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/close_hand_icon.png
             Terminal=false
             Type=Application
             Categories=Utility;Application;" > /home/$USER/Desktop/Close_hand.desktop
             chmod +x /home/$USER/Desktop/Close_hand.desktop
-
+        
+    wget --no-check-certificate https://raw.githubusercontent.com/shadow-robot/sr-build-tools/${BUILD_TOOLS_BRANCH}/docker/demo_hand_icon.png -O ${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/demo_hand_icon.png
     printf "docker exec -it ${DOCKER_CONTAINER_NAME} /ros_entrypoint.sh bash -c 'source /home/user/projects/shadow_robot/base_deps/devel/setup.bash;source /home/user/projects/shadow_robot/base/devel/setup.bash;rosrun sr_ethercat_hand_config demo_r.py'" > ${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/demo_hand.sh
     chmod +x ${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/demo_hand.sh
     printf "[Desktop Entry]
@@ -381,12 +383,13 @@ function create_hand_e_icons
             Name=Demo Hand
             Comment=This runs the basic demo for the hand
             Exec=xterm -hold -title 'demo_hand' -e '${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/demo_hand.sh'
-            Icon=${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/demo_icon.png
+            Icon=${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/demo_hand_icon.png
             Terminal=false
             Type=Application
             Categories=Utility;Application;" > /home/$USER/Desktop/Demo_hand.desktop
             chmod +x /home/$USER/Desktop/Demo_hand.desktop
 
+    wget --no-check-certificate https://raw.githubusercontent.com/shadow-robot/sr-build-tools/${BUILD_TOOLS_BRANCH}/docker/open_hand_icon.png -O ${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/open_hand_icon.png
     printf "docker exec -it ${DOCKER_CONTAINER_NAME} /ros_entrypoint.sh bash -c 'source /home/user/projects/shadow_robot/base_deps/devel/setup.bash;source /home/user/projects/shadow_robot/base/devel/setup.bash;rosrun sr_ethercat_hand_config demo_ro.py'" > ${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/open_hand.sh
     chmod +x ${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/open_hand.sh
     printf "[Desktop Entry]
@@ -394,7 +397,7 @@ function create_hand_e_icons
             Name=Open Hand
             Comment=This open the hand
             Exec=xterm -title 'open_hand' -e '${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/open_hand.sh'
-            Icon=${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/demo_icon.png
+            Icon=${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/open_hand_icon.png
             Terminal=false
             Type=Application
             Categories=Utility;Application;" > /home/$USER/Desktop/Open_hand.desktop
@@ -404,7 +407,7 @@ function create_hand_e_icons
 function create_hand_h_icons
 {
     echo "Creating Hand H demo icons desktop files"
-
+    wget --no-check-certificate https://raw.githubusercontent.com/shadow-robot/sr-build-tools/${BUILD_TOOLS_BRANCH}/docker/demo_icon.png -O ${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/demo_icon.png
     printf "[Desktop Entry]
             Encoding=UTF-8
             Name=Grasp looping demo
@@ -546,11 +549,6 @@ if [ ${DESKTOP_ICON} = true ] ; then
 
     echo "Downloading save_ros_logs icon"
     wget --no-check-certificate https://raw.githubusercontent.com/shadow-robot/sr-build-tools/${BUILD_TOOLS_BRANCH}/docker/log_icon.png -O ${SAVE_LOGS_APP_FOLDER}/save_latest_ros_logs/log_icon.png
-    
-    if [[ ${DEMO_ICONS} = true ]]; then
-        echo "Downloading demo icon"
-        wget --no-check-certificate https://raw.githubusercontent.com/shadow-robot/sr-build-tools/${BUILD_TOOLS_BRANCH}/docker/demo_icon.png -O ${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/demo_icon.png
-    fi
 
     mkdir -p /home/$USER/Desktop
     
