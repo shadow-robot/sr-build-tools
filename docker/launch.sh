@@ -347,6 +347,7 @@ function create_hand_e_icons
     echo "Creating Hand E/G demo icons desktop files"
 
     if [ ! ${SR_CYBERGLOVE_CONFIG_BRANCH} = false ]; then
+        wget --no-check-certificate https://raw.githubusercontent.com/shadow-robot/sr-build-tools/${BUILD_TOOLS_BRANCH}/docker/cyberglove.png -O ${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/cyberglove.png
         printf "docker exec -it ${DOCKER_CONTAINER_NAME} /ros_entrypoint.sh bash -c 'source /home/user/projects/shadow_robot/base_deps/devel/setup.bash;source /home/user/projects/shadow_robot/base/devel/setup.bash;roslaunch sr_cyberglove_config cyberglove.launch'" > ${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/cyberglove_demo.sh
         chmod +x ${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/cyberglove_demo.sh
         printf "[Desktop Entry]
@@ -354,7 +355,7 @@ function create_hand_e_icons
                 Name=Cyberglove Demo
                 Comment=This runs the cyber glove demo
                 Exec=xterm -title 'cyberglove_demo' -e '${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/cyberglove_demo.sh'
-                Icon=${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/demo_icon.png
+                Icon=${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/cyberglove.png
                 Terminal=false
                 Type=Application
                 Categories=Utility;Application;" > /home/$USER/Desktop/Cyberglove_demo.desktop
