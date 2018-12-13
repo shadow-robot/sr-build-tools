@@ -10,9 +10,11 @@ class GitHubApi(object):
         self.git_token = git_token_dec = boto3.client('kms').decrypt(CiphertextBlob=b64decode(
             os.environ['git_token']))['Plaintext'].decode('utf-8')
 
-    def get_file(self, url):
+    def get_file(self, organisation, repo, branch, filepath):
+        url = 'https://raw.githubusercontent.com/'+organisation+'/'+repo+'/'+branch+'/'+filepath
+        url = url.replace('#', '%23')
         response = requests.get(url, auth=(self.git_username, self.git_token))
         if (str(response) == "<Response [200]>"):
-            return (response.text, True)
+            return response.text
         else:
-            return (response, False)
+            return response
