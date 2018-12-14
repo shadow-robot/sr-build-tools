@@ -87,8 +87,3 @@
     local-name: moveit
     uri: https://github.com/shadow-robot/moveit
     version: F#SRC-1610_wait_for_db
-
-- git:
-    local-name: sr_cyberglove_config
-    uri: https://github.com/shadow-robot/sr_cyberglove_config.git
-    version: master
