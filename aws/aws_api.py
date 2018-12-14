@@ -18,16 +18,56 @@ class AwsApi(object):
         return project_names
 
     def update_project(self, project_name, job_config):
-        pass
+        createProjectResponse = self.codebuildclient.update_project(
+            name=project_name,
+            description=job_config.description,
+            source=job_config['source'],
+            artifacts=job_config['artifacts'],
+            environment=job_config['environment'],
+            cache=job_config['cache'],
+            serviceRole=job_config['serviceRole'],
+            timeoutInMinutes=job_config['timeoutInMinutes'],
+            encryptionKey=job_config['encryptionKey'],
+            tags=job_config['tags'],
+            badgeEnabled=job_config['badgeEnabled'])
+
+        createProjectResponse = self.codebuildclient.update_webhook(
+            projectName=project_name,
+            branchFilter=job_config['webhook_branchFilter']
+        )
 
     def create_project(self, project_name, job_config):
-        pass
+        createProjectResponse = self.codebuildclient.create_project(
+            name=project_name,
+            description=job_config.description,
+            source=job_config['source'],
+            artifacts=job_config['artifacts'],
+            environment=job_config['environment'],
+            cache=job_config['cache'],
+            serviceRole=job_config['serviceRole'],
+            timeoutInMinutes=job_config['timeoutInMinutes'],
+            encryptionKey=job_config['encryptionKey'],
+            tags=job_config['tags'],
+            badgeEnabled=job_config['badgeEnabled'])
 
-    def project_exists(self, project_name):
-        pass
+        createProjectResponse = self.codebuildclient.create_webhook(
+            projectName=project_name,
+            branchFilter=job_config['webhook_branchFilter']
+        )
 
-    def delete_project(self, project_name):
-        pass
+    def project_exists(self, project_n):
+        exists = False
+        project_names = self.get_projects()
+        for project_name in project_names:
+            if (project_name == project_n):
+                exists = True
+        return exists
+
+    def delete_project(self, project_n):
+        if (self.project_exists(project_n)):
+            codebuildresponse = self.codebuildclient.delete_project(
+                name=project_n
+            )
 
     def send_email(self, subject_line, sns_topic, specified_projects, created_projects, updated_projects, deleted_projects):
         email_text = (
