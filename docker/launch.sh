@@ -415,8 +415,6 @@ if [ ${DESKTOP_ICON} = true ] ; then
             if [ ! ${OPTOFORCE_BRANCH} = false ]; then
                 cd /home/user/projects/shadow_robot/base/src
                 if [ ! -d "fh_optoforce_config" ]; then
-                    echo 'Cloning optoforce repo...'
-                    git clone https://github.com/shadow-robot/optoforce.git
                     echo 'Cloning optoforce config repo...'
                     git clone https://github.com/shadow-robot/fh_optoforce_config.git
                     cd fh_optoforce_config
