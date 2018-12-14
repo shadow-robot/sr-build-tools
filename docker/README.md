@@ -124,7 +124,7 @@ Posible options for the oneliner are:
 * -d or --desktopicon       Generates a desktop icon to launch the hand (default: true)
 * -b or --configbranch      Specify the branch for the specific hand (Only for dexterous hand)
 * -sn or --shortcutname     Specify the name for the desktop icon (default: Shadow_Hand_Launcher)
-* -o or --optoforce         Specify if optoforce sensors are going to be used (default: false)
+* -o or --optoforce         Specify if optoforce sensors are going to be used with a branch name (default: false)
 * -l or --launchhand        Specify if hand driver should start when double clicking desktop icon (default: true)
 * -bt or --buildtoolsbranch Specify the Git branch for sr-build-tools (default: master)
 * -ck or --customerkey      Flag to prompt for customer key for uploading files to AWS (can be skipped or be set to true)
