@@ -265,6 +265,7 @@ else
         fi
 
         sudo usermod -aG docker $USER
+        sudo chmod 666 /var/run/docker.sock
         echo ""
         echo " ---------------------------------------------------------------------------------------------------------"
         echo " |   Docker installed. Please logout, login and re-run the one-liner again to resume the installation    |"
