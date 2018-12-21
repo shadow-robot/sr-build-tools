@@ -267,7 +267,7 @@ else
         sudo usermod -aG docker $USER
         echo ""
         echo " ---------------------------------------------------------------------------------------------------------"
-        echo " |   Docker installed. Please logout, login and re-run the one-liner again to resume the installation    |"
+        echo " |   Docker installed. Please reboot and re-run the one-liner again to resume the installation    |"
         echo " ---------------------------------------------------------------------------------------------------------"
         echo ""
         exit 0
