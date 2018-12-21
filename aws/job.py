@@ -13,7 +13,7 @@ class Job(object):
         self.docker_tag = 'xenial-kinetic'
         self.template_project_name = ''
         self.toolset_modules = ['code_coverage']
-
+        self.exact_image = self.docker_image + ':'+self.docker_tag
         self.aws_yml = aws_yml
         self.parsed_yaml = yaml.load(aws_yml)
         self.repo = repo
@@ -97,41 +97,32 @@ artifacts:
     def update_settings(self, settings):
 
         try:
-            instance_size = settings['settings']['instance_size']
+            self.instance_size = settings['settings']['instance_size']
         except:
             pass
-        if (instance_size != 'BUILD_GENERAL1_SMALL' and instance_size != 'BUILD_GENERAL1_MEDIUM' and instance_size != 'BUILD_GENERAL1_LARGE'):
-            instance_size = 'BUILD_GENERAL1_SMALL'
+        if (self.instance_size != 'BUILD_GENERAL1_SMALL' and self.instance_size != 'BUILD_GENERAL1_MEDIUM' and self.instance_size != 'BUILD_GENERAL1_LARGE'):
+            self.instance_size = 'BUILD_GENERAL1_SMALL'
         try:
-            ubuntu_version = settings['settings']['ubuntu']['version']
-        except:
-            pass
-        try:
-            ros_release = settings['settings']['ros']['release']
+            self.ubuntu_version = settings['settings']['ubuntu']['version']
         except:
             pass
         try:
-            docker_image = settings['settings']['docker']['image']
+            self.ros_release = settings['settings']['ros']['release']
         except:
             pass
         try:
-            docker_tag = settings['settings']['docker']['tag']
+            self.docker_image = settings['settings']['docker']['image']
         except:
             pass
         try:
-            template_project_name = settings['settings']['template_project_name']
+            self.docker_tag = settings['settings']['docker']['tag']
         except:
             pass
         try:
-            toolset_modules = settings['settings']['toolset']['modules']
+            self.template_project_name = settings['settings']['template_project_name']
         except:
             pass
-
-        self.instance_size = instance_size
-        self.ubuntu_version = ubuntu_version
-        self.ros_release = ros_release
-        self.docker_image = docker_image
-        self.docker_tag = docker_tag
-        self.exact_image = docker_image+':'+docker_tag
-        self.toolset_modules = toolset_modules
-        self.template_project_name = template_project_name
+        try:
+            self.toolset_modules = settings['settings']['toolset']['modules']
+        except:
+            pass
