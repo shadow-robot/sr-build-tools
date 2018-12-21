@@ -88,31 +88,31 @@ artifacts:
     def update_settings(self, settings):
         try:
             self.instance_size
-        except NameError:
+        except:
             self.instance_size = 'BUILD_GENERAL1_SMALL'
         try:
             self.ubuntu_version
-        except NameError:
+        except:
             self.ubuntu_version = 'xenial'
         try:
             self.ros_release
-        except NameError:
+        except:
             self.ros_release = 'kinetic'
         try:
             self.docker_image
-        except NameError:
+        except:
             self.docker_image = 'shadowrobot/build-tools'
         try:
             self.docker_tag
-        except NameError:
+        except:
             self.docker_tag = 'xenial-kinetic'
         try:
             self.template_project_name
-        except NameError:
+        except:
             self.template_project_name = ''
         try:
             self.toolset_modules
-        except NameError:
+        except:
             self.toolset_modules = ['code_coverage']
         try:
             instance_size = settings['settings']['instance_size']
