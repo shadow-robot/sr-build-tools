@@ -6,11 +6,11 @@ class GitRepo(object):
 
     def __init__(self, aws_yml):
         self.raw_yaml = aws_yml
-        self.parsed_yaml = yaml.load(self.raw_yaml)
 
     def get_trunks(self):
         trunk_names = []
-        trunks = self.parsed_yaml['trunks']
+        parsed_yaml = yaml.load(self.raw_yaml)
+        trunks = parsed_yaml['trunks']
         for trunk in trunks:
             trunk_name = trunk['name']
             trunk_names.append(trunk_name)
@@ -18,7 +18,8 @@ class GitRepo(object):
 
     def get_jobs(self, trunk_n):
         job_names = []
-        trunks = self.parsed_yaml['trunks']
+        parsed_yaml = yaml.load(self.raw_yaml)
+        trunks = parsed_yaml['trunks']
         for trunk in trunks:
             trunk_name = trunk['name']
             if (trunk_name == trunk_n):
