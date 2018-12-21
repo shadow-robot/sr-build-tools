@@ -86,33 +86,19 @@ artifacts:
         self.config['webhook_branchFilter'] = '^'+self.trunk_name+'$'
 
     def update_settings(self, settings):
-        try:
-            self.instance_size
-        except:
+        if(not hasattr(self, instance_size)):
             self.instance_size = 'BUILD_GENERAL1_SMALL'
-        try:
-            self.ubuntu_version
-        except:
+        if(not hasattr(self, ubuntu_version)):
             self.ubuntu_version = 'xenial'
-        try:
-            self.ros_release
-        except:
+        if(not hasattr(self, ros_release)):
             self.ros_release = 'kinetic'
-        try:
-            self.docker_image
-        except:
+        if(not hasattr(self, docker_image)):
             self.docker_image = 'shadowrobot/build-tools'
-        try:
-            self.docker_tag
-        except:
+        if(not hasattr(self, docker_tag)):
             self.docker_tag = 'xenial-kinetic'
-        try:
-            self.template_project_name
-        except:
+        if(not hasattr(self, template_project_name)):
             self.template_project_name = ''
-        try:
-            self.toolset_modules
-        except:
+        if(not hasattr(self, toolset_modules)):
             self.toolset_modules = ['code_coverage']
         try:
             instance_size = settings['settings']['instance_size']
