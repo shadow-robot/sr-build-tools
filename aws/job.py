@@ -5,6 +5,15 @@
 class Job(object):
 
     def __init__(self, aws_yml, repo, trunk_name, job_name, project_name):
+
+        self.instance_size = 'BUILD_GENERAL1_SMALL'
+        self.ubuntu_version = 'xenial'
+        self.ros_release = 'kinetic'
+        self.docker_image = 'shadowrobot/build-tools'
+        self.docker_tag = 'xenial-kinetic'
+        self.template_project_name = ''
+        self.toolset_modules = ['code_coverage']
+
         self.aws_yml = aws_yml
         self.parsed_yaml = yaml.load(aws_yml)
         self.repo = repo
@@ -86,20 +95,7 @@ artifacts:
         self.config['webhook_branchFilter'] = '^'+self.trunk_name+'$'
 
     def update_settings(self, settings):
-        if(not hasattr(self, instance_size)):
-            self.instance_size = 'BUILD_GENERAL1_SMALL'
-        if(not hasattr(self, ubuntu_version)):
-            self.ubuntu_version = 'xenial'
-        if(not hasattr(self, ros_release)):
-            self.ros_release = 'kinetic'
-        if(not hasattr(self, docker_image)):
-            self.docker_image = 'shadowrobot/build-tools'
-        if(not hasattr(self, docker_tag)):
-            self.docker_tag = 'xenial-kinetic'
-        if(not hasattr(self, template_project_name)):
-            self.template_project_name = ''
-        if(not hasattr(self, toolset_modules)):
-            self.toolset_modules = ['code_coverage']
+
         try:
             instance_size = settings['settings']['instance_size']
         except:
