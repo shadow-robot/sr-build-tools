@@ -20,7 +20,7 @@ class AwsApi(object):
     def update_project(self, project_name, job_config):
         createProjectResponse = self.codebuildclient.update_project(
             name=project_name,
-            description=job_config.description,
+            description=project_name,
             source=job_config['source'],
             artifacts=job_config['artifacts'],
             environment=job_config['environment'],
@@ -39,7 +39,7 @@ class AwsApi(object):
     def create_project(self, project_name, job_config):
         createProjectResponse = self.codebuildclient.create_project(
             name=project_name,
-            description=job_config.description,
+            description=project_name,
             source=job_config['source'],
             artifacts=job_config['artifacts'],
             environment=job_config['environment'],
