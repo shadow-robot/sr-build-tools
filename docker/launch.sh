@@ -230,10 +230,11 @@ echo " |   Checking docker installation  |"
 echo " -----------------------------------"
 echo ""
 
+sudo apt-get update
+
 if [ -x "$(command -v curl)" ]; then
     echo "curl installed"
 else
-    sudo apt-get update
     sudo apt-get install  -y curl
 fi
 
@@ -245,10 +246,14 @@ else
        [[ $(cat /etc/*release | grep VERSION_CODENAME) = *"bionic"* ]]; then
         if [[ $(cat /etc/*release | grep VERSION_CODENAME) = *"bionic"* ]]; then
           echo "Ubuntu version: Bionic (18.04)"
+          if [ -x "$(command -v xterm)" ]; then
+            echo "xterm installed"
+          else
+            sudo apt-get install -y xterm
+          fi
         else
           echo "Ubuntu version: Xenial (16.04)"
         fi
-        sudo apt-get update
         sudo apt-get install  -y \
         apt-transport-https \
         ca-certificates \
@@ -273,7 +278,6 @@ else
         exit 0
     elif [[ $(cat /etc/*release | grep VERSION_CODENAME) = *"trusty"* ]]; then
         echo "Ubuntu version: Trusty (12.04)"
-        sudo apt-get update
         sudo apt-get -y install docker.io
         ln -sf /usr/bin/docker.io /usr/local/bin/docker
         sed -i '$acomplete -F _docker docker' /etc/bash_completion.d/docker.io
