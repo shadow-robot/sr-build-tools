@@ -175,7 +175,6 @@ if [ ! -z "$container_name" ]; then
                     else
                         echo -e "${RED}${bold} Failed to upload logs to Shadow servers for $current_container_name! Check your internet connection and try again.${normal}${NC}"
                         sleep 5
-                        exit 1
                     fi
                     sleep 1
                 fi
