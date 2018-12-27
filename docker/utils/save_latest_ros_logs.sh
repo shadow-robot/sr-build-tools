@@ -165,7 +165,7 @@ if [ ! -z "$container_name" ]; then
                 # copy new logs to temp folder
                 copy_logs
                 copy_to_host
-                if [ $upload_sr_log_messages == "true" ]; then
+                if [[ $upload_sr_log_messages == "true" ]]; then
                     echo "Uploading to Shadow servers - Please wait..."
                     upload_command=$(docker exec $current_container_name bash -c "source /usr/local/bin/shadow_upload.sh ${customerkey} /home/user/logs_temp $timestamp" || true)
                     if [[ $upload_command == "ok" ]]; then
