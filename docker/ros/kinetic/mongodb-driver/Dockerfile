@@ -11,7 +11,7 @@ RUN echo "Updating sources" && \
     
     echo "Downloading warehouse source" && \
     wstool init && \
-    wstool set -yu warehouse_ros_mongo --git https://github.com/ros-planning/warehouse_ros_mongo.git -v jade-devel && \
+    wstool set -yu warehouse_ros_mongo --git https://github.com/shadow-robot/warehouse_ros_mongo.git -v B_working_jade_devel && \
     wstool set -yu warehouse_ros --git https://github.com/ros-planning/warehouse_ros.git -v jade-devel && \
     
     echo "Installing mongocxx driver for the warehouse" && \
