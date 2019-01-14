@@ -721,9 +721,11 @@ else
     rm ${SAVE_LOGS_APP_FOLDER}/save_latest_ros_logs/customer.key   
 fi
 
-echo "Refreshing desktop.."
+echo "Refreshing desktop..."
 if [[ $(cat /etc/*release | grep VERSION_CODENAME) = *"bionic"* ]]; then
-    killall nautilus-desktop && nautilus-desktop &
+    #killall nautilus-desktop && nautilus-desktop &
+    killall nautilus-desktop &> /dev/null
+    nautilus-desktop &> /dev/null &
 fi
 
 echo ""
