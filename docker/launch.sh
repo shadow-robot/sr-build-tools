@@ -723,7 +723,7 @@ fi
 
 echo "Refreshing desktop.."
 if [[ $(cat /etc/*release | grep VERSION_CODENAME) = *"bionic"* ]]; then
-    killall nautilus-desktop && nautilus-desktop
+    killall nautilus-desktop && nautilus-desktop &
 fi
 
 echo ""
