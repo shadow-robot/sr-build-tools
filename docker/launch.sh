@@ -627,6 +627,13 @@ if [ ${DESKTOP_ICON} = true ] ; then
     if [[ $(cat /etc/*release | grep VERSION_CODENAME) = *"bionic"* ]]; then
         gio set /home/$USER/Desktop/${DESKTOP_SHORTCUT_NAME}.desktop "metadata::trusted" yes
     fi
+    if [[ $(cat /etc/*release | grep VERSION_CODENAME) = *"bionic"* && $(ps -ef | grep "nautilus-desktop" | grep -v "grep" | wc -l) ]]; then
+        if [[ ${DESKTOP_ICON} = true ||  ${DEMO_ICONS} = true ]]; then
+            echo "Refreshing desktop..."
+            killall nautilus-desktop &> /dev/null
+            nautilus-desktop &> /dev/null &
+        fi
+    fi
 fi
 
 if [ ${REINSTALL_DOCKER_CONTAINER} = false ] ; then
@@ -721,13 +728,6 @@ else
     rm ${SAVE_LOGS_APP_FOLDER}/save_latest_ros_logs/customer.key   
 fi
 
-if [[ $(cat /etc/*release | grep VERSION_CODENAME) = *"bionic"* && $(ps -ef | grep "nautilus-desktop" | grep -v "grep" | wc -l) ]]; then
-    if [[ ${DESKTOP_ICON} = true ||  ${DEMO_ICONS} = true ]]; then
-        echo "Refreshing desktop..."
-        killall nautilus-desktop &> /dev/null
-        nautilus-desktop &> /dev/null &
-    fi
-fi
 
 echo ""
 echo -e "${GREEN} ------------------------------------------------${NC}"
