@@ -219,12 +219,9 @@ elif echo "${DOCKER_IMAGE_NAME}" | grep -q "${HAND_H_NAME}"; then
     HAND_H=true
     HAND_ICON=hand_H.png
 else
-    echo "Hand E/G image requested"
-    HAND_H=false
-    HAND_ICON=hand_E.png
-    #echo -e "${RED}Unknown image requested ${NC}"
-    #HAND_H=""
-    #exit 1
+    echo -e "${RED}Unknown image requested ${NC}"
+    HAND_H=""
+    exit 1
 fi
 
 echo ""
