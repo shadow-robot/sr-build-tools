@@ -366,6 +366,10 @@ function create_hand_e_icons
                 Type=Application
                 Categories=Utility;Application;" > /home/$USER/Desktop/Cyberglove_demo.desktop
                 chmod +x /home/$USER/Desktop/Cyberglove_demo.desktop
+                if [[ $(cat /etc/*release | grep VERSION_CODENAME) = *"bionic"* ]]; then
+                    gio set /home/$USER/Desktop/Cyberglove_demo.desktop "metadata::trusted" yes
+                fi
+                
     fi
 
     wget --no-check-certificate https://raw.githubusercontent.com/shadow-robot/sr-build-tools/${BUILD_TOOLS_BRANCH}/docker/close_hand_icon.png -O ${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/close_hand_icon.png
@@ -381,6 +385,9 @@ function create_hand_e_icons
             Type=Application
             Categories=Utility;Application;" > /home/$USER/Desktop/Close_hand.desktop
             chmod +x /home/$USER/Desktop/Close_hand.desktop
+            if [[ $(cat /etc/*release | grep VERSION_CODENAME) = *"bionic"* ]]; then
+                gio set /home/$USER/Desktop/Close_hand.desktop "metadata::trusted" yes
+            fi
         
     wget --no-check-certificate https://raw.githubusercontent.com/shadow-robot/sr-build-tools/${BUILD_TOOLS_BRANCH}/docker/demo_hand_icon.png -O ${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/demo_hand_icon.png
     printf "docker exec -it ${DOCKER_CONTAINER_NAME} /ros_entrypoint.sh bash -c 'source /home/user/projects/shadow_robot/base_deps/devel/setup.bash;source /home/user/projects/shadow_robot/base/devel/setup.bash;rosrun sr_ethercat_hand_config demo_r.py'" > ${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/demo_hand.sh
@@ -395,6 +402,9 @@ function create_hand_e_icons
             Type=Application
             Categories=Utility;Application;" > /home/$USER/Desktop/Demo_hand.desktop
             chmod +x /home/$USER/Desktop/Demo_hand.desktop
+            if [[ $(cat /etc/*release | grep VERSION_CODENAME) = *"bionic"* ]]; then
+                gio set /home/$USER/Desktop/Demo_hand.desktop "metadata::trusted" yes
+            fi
 
     wget --no-check-certificate https://raw.githubusercontent.com/shadow-robot/sr-build-tools/${BUILD_TOOLS_BRANCH}/docker/open_hand_icon.png -O ${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/open_hand_icon.png
     printf "docker exec -it ${DOCKER_CONTAINER_NAME} /ros_entrypoint.sh bash -c 'source /home/user/projects/shadow_robot/base_deps/devel/setup.bash;source /home/user/projects/shadow_robot/base/devel/setup.bash;rosrun sr_ethercat_hand_config demo_ro.py'" > ${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/open_hand.sh
@@ -409,6 +419,9 @@ function create_hand_e_icons
             Type=Application
             Categories=Utility;Application;" > /home/$USER/Desktop/Open_hand.desktop
             chmod +x /home/$USER/Desktop/Open_hand.desktop
+            if [[ $(cat /etc/*release | grep VERSION_CODENAME) = *"bionic"* ]]; then
+                gio set /home/$USER/Desktop/Open_hand.desktop "metadata::trusted" yes
+            fi
 }
 
 function create_hand_h_icons
@@ -423,6 +436,9 @@ function create_hand_h_icons
             Icon=${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/demo_icon.png
             URL=http://127.0.0.1:8080/demos" > /home/$USER/Desktop/Grasp_loop_demo.desktop
             chmod +x /home/$USER/Desktop/Grasp_loop_demo.desktop
+            if [[ $(cat /etc/*release | grep VERSION_CODENAME) = *"bionic"* ]]; then
+                gio set /home/$USER/Desktop/Grasp_loop_demo.desktop "metadata::trusted" yes
+            fi
 }
 
 
@@ -570,6 +586,7 @@ if [ ${DESKTOP_ICON} = true ] ; then
     Type=Application
     Categories=Utility;Application;" > /home/$USER/Desktop/${DESKTOP_SHORTCUT_NAME}.desktop
 
+
     if [ ${CUSTOMER_KEY} = false ]; then
         echo "Creating save_ros_logs desktop file"
         printf "[Desktop Entry]
@@ -582,6 +599,9 @@ if [ ${DESKTOP_ICON} = true ] ; then
         Type=Application
         Categories=Utility;Application;" > /home/$USER/Desktop/ROS_Logs_Saver.desktop
         chmod +x /home/$USER/Desktop/ROS_Logs_Saver.desktop
+        if [[ $(cat /etc/*release | grep VERSION_CODENAME) = *"bionic"* ]]; then
+            gio set /home/$USER/Desktop/ROS_Logs_Saver.desktop "metadata::trusted" yes
+        fi
     else
         echo "Creating save_and_upload_ros_logs desktop file"
         printf "[Desktop Entry]
@@ -594,6 +614,9 @@ if [ ${DESKTOP_ICON} = true ] ; then
         Type=Application
         Categories=Utility;Application;" > /home/$USER/Desktop/ROS_Logs_Saver_And_Uploader.desktop
         chmod +x /home/$USER/Desktop/ROS_Logs_Saver_And_Uploader.desktop
+        if [[ $(cat /etc/*release | grep VERSION_CODENAME) = *"bionic"* ]]; then
+            gio set /home/$USER/Desktop/ROS_Logs_Saver_And_Uploader.desktop "metadata::trusted" yes
+        fi
     fi
     echo "Allowing files to be executable"
     chmod +x ${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/shadow_launcher_exec.sh
@@ -601,6 +624,16 @@ if [ ${DESKTOP_ICON} = true ] ; then
     chmod +x /home/$USER/Desktop/${DESKTOP_SHORTCUT_NAME}.desktop
     chmod +x ${SAVE_LOGS_APP_FOLDER}/save_latest_ros_logs/shadow_save_log_exec.sh
     chmod +x ${SAVE_LOGS_APP_FOLDER}/save_latest_ros_logs/save_latest_ros_logs.sh
+    if [[ $(cat /etc/*release | grep VERSION_CODENAME) = *"bionic"* ]]; then
+        gio set /home/$USER/Desktop/${DESKTOP_SHORTCUT_NAME}.desktop "metadata::trusted" yes
+    fi
+    if [[ $(cat /etc/*release | grep VERSION_CODENAME) = *"bionic"* && $(ps -ef | grep "nautilus-desktop" | grep -v "grep" | wc -l) ]]; then
+        if [[ ${DESKTOP_ICON} = true ||  ${DEMO_ICONS} = true ]]; then
+            echo "Refreshing desktop..."
+            killall nautilus-desktop &> /dev/null
+            nautilus-desktop &> /dev/null &
+        fi
+    fi
 fi
 
 if [ ${REINSTALL_DOCKER_CONTAINER} = false ] ; then
@@ -694,6 +727,7 @@ else
     docker cp ${SAVE_LOGS_APP_FOLDER}/save_latest_ros_logs/customer.key ${DOCKER_CONTAINER_NAME}:/usr/local/bin/customer.key
     rm ${SAVE_LOGS_APP_FOLDER}/save_latest_ros_logs/customer.key   
 fi
+
 
 echo ""
 echo -e "${GREEN} ------------------------------------------------${NC}"
