@@ -205,18 +205,18 @@ if [ -z ${DOCKER_IMAGE_NAME} ] || [ -z ${DOCKER_CONTAINER_NAME} ]; then
     exit 1
 fi
 
-if [[ ${NVIDIA} = false || ${NVIDIA_VERSION} = 2 ]]; then
-    DOCKER="docker"
-elif [ ${NVIDIA} = false ]; then
-    DOCKER="nvidia-docker"
-fi
+#if [[ ${NVIDIA} = false || ${NVIDIA_VERSION} = 2 ]]; then
+#    DOCKER="docker"
+#elif [ ${NVIDIA} = false ]; then
+#    DOCKER="nvidia-docker"
+#fi
 
 if [ ${NVIDIA} = false ]; then
     DOCKER="docker"
 elif [[ ${NVIDIA} = true && ${NVIDIA_VERSION} = 1 ]]; then
     DOCKER="nvidia-docker"
 else
-    DOCKER="nvidia"
+    DOCKER="docker"
 fi
 
 HAND_E_NAME="dexterous-hand"
@@ -738,6 +738,7 @@ else
         if [ ${NVIDIA_VERSION} = 1 ]; then
             ${DOCKER} create -it --privileged --name ${DOCKER_CONTAINER_NAME} ${OPTOFORCE_PATH} --ulimit core=-1 --security-opt seccomp=unconfined --network=host --pid=host -e DISPLAY -e QT_X11_NO_MITSHM=1 -e LOCAL_USER_ID=$(id -u) -v /tmp/.X11-unix:/tmp/.X11-unix:rw ${DOCKER_IMAGE_NAME} terminator -x bash -c "pkill -f \"^\"shadow_launcher_app_xterm && /usr/local/bin/setup_dexterous_hand.sh && bash || bash"
         else 
+            echo ${DOCKER}
             ${DOCKER} create -it --privileged --name ${DOCKER_CONTAINER_NAME} ${OPTOFORCE_PATH} --ulimit core=-1 --security-opt seccomp=unconfined --runtime=nvidia -e NVIDIA_VISIBLE_DEVICES=all --network=host --pid=host -e DISPLAY -e QT_X11_NO_MITSHM=1 -e LOCAL_USER_ID=$(id -u) -v /tmp/.X11-unix:/tmp/.X11-unix:rw ${DOCKER_IMAGE_NAME} terminator -x bash -c "pkill -f \"^\"shadow_launcher_app_xterm && /usr/local/bin/setup_dexterous_hand.sh && bash || bash"
         fi
         docker cp ${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/setup_dexterous_hand.sh ${DOCKER_CONTAINER_NAME}:/usr/local/bin/setup_dexterous_hand.sh
