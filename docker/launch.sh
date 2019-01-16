@@ -44,6 +44,10 @@ case $key in
     NVIDIA="$2"
     shift
     ;;
+    -nv|--nvidiadockerversion)
+    NVIDIA_VERSION="$2"
+    shift
+    ;;
     -s|--startcontainer)
     START_CONTAINER="$2"
     shift
@@ -97,6 +101,11 @@ fi
 if [ -z "${NVIDIA}" ];
 then
     NVIDIA=false
+fi
+
+if [ -z "${NVIDIA_VERSION}" ];
+then
+    NVIDIA_VERSION=1
 fi
 
 if [ -z "${START_CONTAINER}" ];
@@ -165,6 +174,7 @@ echo "  * -r or --reinstall           Flag to know if the docker container shoul
 echo "  * -n or --name                Name of the docker container"
 echo "  * -e or --ethercatinterface   Ethercat interface of the hand"
 echo "  * -g or --nvidiagraphics      Enable nvidia-docker (default: false)"
+echo "  * -nv or --nvidiadockerversion      nvidia-docker version (default: 1)"
 echo "  * -d or --desktopicon         Generates a desktop icon to launch the hand"
 echo "  * -b or --configbranch        Specify the branch for the specific hand (Only for dexterous hand)"
 echo "  * -sn or --shortcutname       Specify the name for the desktop icon (default: Shadow_Hand_Launcher)"
@@ -195,10 +205,18 @@ if [ -z ${DOCKER_IMAGE_NAME} ] || [ -z ${DOCKER_CONTAINER_NAME} ]; then
     exit 1
 fi
 
+if [[ ${NVIDIA} = false || ${NVIDIA_VERSION} = 2 ]]; then
+    DOCKER="docker"
+elif [ ${NVIDIA} = false ]; then
+    DOCKER="nvidia-docker"
+fi
+
 if [ ${NVIDIA} = false ]; then
     DOCKER="docker"
-else
+elif [[ ${NVIDIA} = true && ${NVIDIA_VERSION} = 1 ]]; then
     DOCKER="nvidia-docker"
+else
+    DOCKER="nvidia"
 fi
 
 HAND_E_NAME="dexterous-hand"
@@ -291,7 +309,11 @@ else
 fi
 
 if [ ${NVIDIA} = true ]; then
-    sudo apt-get install -y nvidia-docker
+    if [ ${NVIDIA_VERSION} = 1 ]; then
+        sudo apt-get install -y nvidia-docker
+    else
+        sudo apt-get install -y nvidia-docker2
+    fi
 fi
 
 # Log in to docker only for hand h images
@@ -647,7 +669,7 @@ if [ ${REINSTALL_DOCKER_CONTAINER} = false ] ; then
                 docker_login
                 docker pull ${DOCKER_IMAGE_NAME}
                 if [ ${NVIDIA} = true ]; then
-                    if [[ "$(docker images -q "${DOCKER_IMAGE_NAME}-nvidia" 2> /dev/null)" == "" ]]; then
+                    if [[ "$(docker images -q "${DOCKER_IMAGE_NAME}-nvidia" 2> /dev/null)" == ""  && ${NVIDIA_VERSION = 1} ]]; then
                         bash <(curl -Ls https://raw.githubusercontent.com/shadow-robot/sr-build-tools/master/docker/utils/docker_nvidialize.sh) ${DOCKER_IMAGE_NAME}
                     fi
                     DOCKER_IMAGE_NAME="${DOCKER_IMAGE_NAME}-nvidia"
@@ -666,8 +688,12 @@ if [ ${REINSTALL_DOCKER_CONTAINER} = false ] ; then
                 else
                     ${DOCKER} create -it --privileged --name ${DOCKER_CONTAINER_NAME} ${OPTOFORCE_PATH} -e verbose=true -e optoforce_launch=${OPTOFORCE} -e optofrc_branch=${OPTOFORCE_BRANCH} -e interface=${ETHERCAT_INTERFACE} --ulimit core=-1 --security-opt seccomp=unconfined --network=host --pid=host -e DISPLAY -e QT_X11_NO_MITSHM=1 -e LOCAL_USER_ID=$(id -u) -v /tmp/.X11-unix:/tmp/.X11-unix:rw ${DOCKER_IMAGE_NAME} bash -c "pkill -f \"^\"shadow_launcher_app_xterm && xterm -e /usr/local/bin/setup.sh || bash"
                 fi
-            else
-                ${DOCKER} create -it --privileged --name ${DOCKER_CONTAINER_NAME} ${OPTOFORCE_PATH} --ulimit core=-1 --security-opt seccomp=unconfined --network=host --pid=host -e DISPLAY -e QT_X11_NO_MITSHM=1 -e LOCAL_USER_ID=$(id -u) -v /tmp/.X11-unix:/tmp/.X11-unix:rw ${DOCKER_IMAGE_NAME} terminator -x bash -c "pkill -f \"^\"shadow_launcher_app_xterm && /usr/local/bin/setup_dexterous_hand.sh && bash || bash"
+            else 
+                if [ ${NVIDIA_VERSION} = 1 ]; then
+                    ${DOCKER} create -it --privileged --name ${DOCKER_CONTAINER_NAME} ${OPTOFORCE_PATH} --ulimit core=-1 --security-opt seccomp=unconfined --network=host --pid=host -e DISPLAY -e QT_X11_NO_MITSHM=1 -e LOCAL_USER_ID=$(id -u) -v /tmp/.X11-unix:/tmp/.X11-unix:rw ${DOCKER_IMAGE_NAME} terminator -x bash -c "pkill -f \"^\"shadow_launcher_app_xterm && /usr/local/bin/setup_dexterous_hand.sh && bash || bash"
+                else 
+                    ${DOCKER} create -it --privileged --name ${DOCKER_CONTAINER_NAME} ${OPTOFORCE_PATH} --ulimit core=-1 --runtime=nvidia -e NVIDIA_VISIBLE_DEVICES=all --security-opt seccomp=unconfined --network=host --pid=host -e DISPLAY -e QT_X11_NO_MITSHM=1 -e LOCAL_USER_ID=$(id -u) -v /tmp/.X11-unix:/tmp/.X11-unix:rw ${DOCKER_IMAGE_NAME} terminator -x bash -c "pkill -f \"^\"shadow_launcher_app_xterm && /usr/local/bin/setup_dexterous_hand.sh && bash || bash"
+                fi
                 docker cp ${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/setup_dexterous_hand.sh ${DOCKER_CONTAINER_NAME}:/usr/local/bin/setup_dexterous_hand.sh
             fi
         fi
@@ -686,7 +712,7 @@ else
     docker_login
     docker pull ${DOCKER_IMAGE_NAME}
     if [ ${NVIDIA} = true ]; then
-        if [[ "$(docker images -q "${DOCKER_IMAGE_NAME}-nvidia" 2> /dev/null)" == "" ]]; then
+        if [[ "$(docker images -q "${DOCKER_IMAGE_NAME}-nvidia" 2> /dev/null)" == "" && ${NVIDIA_VERSION = 1} ]]; then
             bash <(curl -Ls https://raw.githubusercontent.com/shadow-robot/sr-build-tools/master/docker/utils/docker_nvidialize.sh) ${DOCKER_IMAGE_NAME}
         fi
         DOCKER_IMAGE_NAME="${DOCKER_IMAGE_NAME}-nvidia"
@@ -709,7 +735,11 @@ else
             ${DOCKER} create -it --privileged --name ${DOCKER_CONTAINER_NAME} ${OPTOFORCE_PATH} -e verbose=true -e optoforce_launch=${OPTOFORCE} -e optofrc_branch=${OPTOFORCE_BRANCH} -e interface=${ETHERCAT_INTERFACE} --ulimit core=-1 --security-opt seccomp=unconfined --network=host --pid=host -e DISPLAY -e QT_X11_NO_MITSHM=1 -e LOCAL_USER_ID=$(id -u) -v /tmp/.X11-unix:/tmp/.X11-unix:rw ${DOCKER_IMAGE_NAME} bash -c "pkill -f \"^\"shadow_launcher_app_xterm && xterm -e /usr/local/bin/setup.sh || bash"
         fi
     else
-        ${DOCKER} create -it --privileged --name ${DOCKER_CONTAINER_NAME} ${OPTOFORCE_PATH} --ulimit core=-1 --security-opt seccomp=unconfined --network=host --pid=host -e DISPLAY -e QT_X11_NO_MITSHM=1 -e LOCAL_USER_ID=$(id -u) -v /tmp/.X11-unix:/tmp/.X11-unix:rw ${DOCKER_IMAGE_NAME} terminator -x bash -c "pkill -f \"^\"shadow_launcher_app_xterm && /usr/local/bin/setup_dexterous_hand.sh && bash || bash"
+        if [ ${NVIDIA_VERSION} = 1 ]; then
+            ${DOCKER} create -it --privileged --name ${DOCKER_CONTAINER_NAME} ${OPTOFORCE_PATH} --ulimit core=-1 --security-opt seccomp=unconfined --network=host --pid=host -e DISPLAY -e QT_X11_NO_MITSHM=1 -e LOCAL_USER_ID=$(id -u) -v /tmp/.X11-unix:/tmp/.X11-unix:rw ${DOCKER_IMAGE_NAME} terminator -x bash -c "pkill -f \"^\"shadow_launcher_app_xterm && /usr/local/bin/setup_dexterous_hand.sh && bash || bash"
+        else 
+            ${DOCKER} create -it --privileged --name ${DOCKER_CONTAINER_NAME} ${OPTOFORCE_PATH} --ulimit core=-1 --security-opt seccomp=unconfined --runtime=nvidia -e NVIDIA_VISIBLE_DEVICES=all --network=host --pid=host -e DISPLAY -e QT_X11_NO_MITSHM=1 -e LOCAL_USER_ID=$(id -u) -v /tmp/.X11-unix:/tmp/.X11-unix:rw ${DOCKER_IMAGE_NAME} terminator -x bash -c "pkill -f \"^\"shadow_launcher_app_xterm && /usr/local/bin/setup_dexterous_hand.sh && bash || bash"
+        fi
         docker cp ${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/setup_dexterous_hand.sh ${DOCKER_CONTAINER_NAME}:/usr/local/bin/setup_dexterous_hand.sh
     fi
 fi
