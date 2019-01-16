@@ -669,7 +669,7 @@ if [ ${REINSTALL_DOCKER_CONTAINER} = false ] ; then
                 docker_login
                 docker pull ${DOCKER_IMAGE_NAME}
                 if [ ${NVIDIA} = true ]; then
-                    if [[ "$(docker images -q "${DOCKER_IMAGE_NAME}-nvidia" 2> /dev/null)" == ""  && ${NVIDIA_VERSION = 1} ]]; then
+                    if [[ "$(docker images -q "${DOCKER_IMAGE_NAME}-nvidia" 2> /dev/null)" == ""  && ${NVIDIA_VERSION} = 1 ]]; then
                         bash <(curl -Ls https://raw.githubusercontent.com/shadow-robot/sr-build-tools/master/docker/utils/docker_nvidialize.sh) ${DOCKER_IMAGE_NAME}
                     fi
                     DOCKER_IMAGE_NAME="${DOCKER_IMAGE_NAME}-nvidia"
