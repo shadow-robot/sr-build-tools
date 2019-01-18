@@ -722,6 +722,7 @@ else
                 bash <(curl -Ls https://raw.githubusercontent.com/shadow-robot/sr-build-tools/${BUILD_TOOLS_BRANCH}/docker/utils/docker_nvidialize.sh) ${DOCKER_IMAGE_NAME}
             else 
                 bash <(curl -Ls https://raw.githubusercontent.com/shadow-robot/sr-build-tools/${BUILD_TOOLS_BRANCH}/docker/utils/docker2_nvidialize.sh) ${DOCKER_IMAGE_NAME}
+            fi
         fi
         DOCKER_IMAGE_NAME="${DOCKER_IMAGE_NAME}-nvidia"
     fi
