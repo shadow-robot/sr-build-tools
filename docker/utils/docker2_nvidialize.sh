@@ -6,6 +6,7 @@ set -e # fail on errors
 docker_image=$1
 
 mkdir -p /tmp/docker_nvidia_tmp
+cp /home/shadowop/sr-build-tools/docker/utils/10_nvidia.json /tmp/docker_nvidia_tmp/10_nvidia.json
 cd /tmp/docker_nvidia_tmp
 touch Dockerfile
 
