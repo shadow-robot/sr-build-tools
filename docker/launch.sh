@@ -673,12 +673,13 @@ if [ ${REINSTALL_DOCKER_CONTAINER} = false ] ; then
                     if [[ "$(docker images -q "${DOCKER_IMAGE_NAME}-nvidia" 2> /dev/null)" == "" ]]; then
                         if [ ${NVIDIA_VERSION} = 1 ]; then
                             bash <(curl -Ls https://raw.githubusercontent.com/shadow-robot/sr-build-tools/${BUILD_TOOLS_BRANCH}/docker/utils/docker_nvidialize.sh) ${DOCKER_IMAGE_NAME}
+                            DOCKER_IMAGE_NAME="${DOCKER_IMAGE_NAME}-nvidia"
                         else 
                             bash <(curl -Ls https://raw.githubusercontent.com/shadow-robot/sr-build-tools/${BUILD_TOOLS_BRANCH}/docker/utils/docker2_nvidialize.sh) ${DOCKER_IMAGE_NAME}
+                            DOCKER_IMAGE_NAME="${DOCKER_IMAGE_NAME}-n2vidia"
                             echo "nvidializing docker2"
                         fi
                     fi
-                    DOCKER_IMAGE_NAME="${DOCKER_IMAGE_NAME}-nvidia"
                 fi
             fi
 
@@ -720,16 +721,18 @@ else
     if [ ${NVIDIA} = true ]; then
 #        if [[ "$(docker images -q "${DOCKER_IMAGE_NAME}-nvidia" 2> /dev/null)" == "" ]]; then
         if [[ "$(docker images -q "${DOCKER_IMAGE_NAME}-nvidia" 2> /dev/null)" == "" ]]; then
-            echo "################################################################################################################################################"
+            echo "################################################################################################################################################ "
             echo "ECHOIG NVIDIA_VERSION"
             echo NVIDIA_VERSION
             if [ ${NVIDIA_VERSION} = 1 ]; then
                 bash <(curl -Ls https://raw.githubusercontent.com/shadow-robot/sr-build-tools/${BUILD_TOOLS_BRANCH}/docker/utils/docker_nvidialize.sh) ${DOCKER_IMAGE_NAME}
+                DOCKER_IMAGE_NAME="${DOCKER_IMAGE_NAME}-nvidia"
             else 
                 bash <(curl -Ls https://raw.githubusercontent.com/shadow-robot/sr-build-tools/${BUILD_TOOLS_BRANCH}/docker/utils/docker2_nvidialize.sh) ${DOCKER_IMAGE_NAME}
+                DOCKER_IMAGE_NAME="${DOCKER_IMAGE_NAME}-n2vidia"
             fi
         fi
-        DOCKER_IMAGE_NAME="${DOCKER_IMAGE_NAME}-nvidia"
+
     fi
 
     if [ ! ${OPTOFORCE_BRANCH} = false ]; then
