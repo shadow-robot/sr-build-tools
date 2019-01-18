@@ -720,6 +720,9 @@ else
     if [ ${NVIDIA} = true ]; then
 #        if [[ "$(docker images -q "${DOCKER_IMAGE_NAME}-nvidia" 2> /dev/null)" == "" ]]; then
         if [[ "$(docker images -q "${DOCKER_IMAGE_NAME}-nvidia" 2> /dev/null)" == "" ]]; then
+            echo "################################################################################################################################################"
+            echo "ECHOIG NVIDIA_VERSION"
+            echo NVIDIA_VERSION
             if [ ${NVIDIA_VERSION} = 1 ]; then
                 bash <(curl -Ls https://raw.githubusercontent.com/shadow-robot/sr-build-tools/${BUILD_TOOLS_BRANCH}/docker/utils/docker_nvidialize.sh) ${DOCKER_IMAGE_NAME}
             else 
