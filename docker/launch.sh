@@ -117,7 +117,7 @@ fi
 
 if [ -z "${NVIDIA_VERSION}" ];
 then
-    NVIDIA_VERSION=1
+    NVIDIA_VERSION=0
 fi
 
 if [ -z "${START_CONTAINER}" ];
@@ -216,12 +216,6 @@ if [ -z ${DOCKER_IMAGE_NAME} ] || [ -z ${DOCKER_CONTAINER_NAME} ]; then
     echo -e "${RED}Docker image name and name of container are required ${NC}"
     exit 1
 fi
-
-#if [[ ${NVIDIA} = false || ${NVIDIA_VERSION} = 2 ]]; then
-#    DOCKER="docker"
-#elif [ ${NVIDIA} = false ]; then
-#    DOCKER="nvidia-docker"
-#fi
 
 if [ ${NVIDIA} = false ]; then
     DOCKER="docker"
@@ -691,7 +685,6 @@ if [ ${REINSTALL_DOCKER_CONTAINER} = false ] ; then
                 docker_login
                 docker pull ${DOCKER_IMAGE_NAME}
                 if [ ${NVIDIA} = true ]; then
-#                    if [[ "$(docker images -q "${DOCKER_IMAGE_NAME}-nvidia" 2> /dev/null)" == ""  && ${NVIDIA_VERSION} = 1 ]]; then
                     if [[ "$(docker images -q "${DOCKER_IMAGE_NAME}-nvidia" 2> /dev/null)" == "" ]]; then
                         if [ ${NVIDIA_VERSION} = 1 ]; then
                             bash <(curl -Ls https://raw.githubusercontent.com/shadow-robot/sr-build-tools/${BUILD_TOOLS_BRANCH}/docker/utils/docker_nvidialize.sh) ${DOCKER_IMAGE_NAME}
