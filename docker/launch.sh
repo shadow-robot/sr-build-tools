@@ -103,9 +103,14 @@ then
     NVIDIA=false
 fi
 
+if [[ ${NVIDIA_VERSION} >2 || ${NVIDIA_VERSION} == 0 ]]; then
+    echo "Nvidia version not recognised, please use either -nv 1 or -nv 2"
+    exit 1
+fi
+
 if [[ ${NVIDIA_VERSION} = 1 || ${NVIDIA_VERSION} = 2 ]]; then
     if [ ${NVIDIA} = false ]; then
-        echo "nvidia docker version specified but -g (nvidia graphics) was set to false. To enable GPU support set -g to true. Or to not enable GPU support, don't specify -nv"
+        echo "Nvidia docker version specified but -g (nvidia graphics) was set to false. To enable GPU support set -g to true. Or to disable GPU support, don't specify -nv"
         exit 1
     fi
 fi
@@ -316,13 +321,22 @@ else
 fi
 
 if [ ${NVIDIA} = true ]; then
-    if [ ${NVIDIA_VERSION} = 1 ]; then
-        sudo apt-get install -y nvidia-docker
-    else
+    if [[ $(apt-cache policy nvidia-docker* | grep "Candidate: \+1" 2> /dev/null) != "" &&  $(apt-cache policy nvidia-docker* | grep "Candidate: \+2" 2> /dev/null) != "" ]]; then
+        if [[ $(apt-cache policy nvidia-docker* | grep "Installed: \+2" 2> /dev/null) != "" ]]; then
+            echo "Nvidia docker v2 is currently installed. Adding additional support for v1..."
+            sudo apt-get install -y nvidia-docker
+            if [[ $(apt-cache policy nvidia-docker* | grep "Installed: \+1" 2> /dev/null) != "" ]]; then
+                echo "Support for nvidia-docker v1 and v2 is active."
+            fi
+        elif [[ $(apt-cache policy nvidia-docker* | grep "Installed: \+1" 2> /dev/null) != "" ]]; then
+            echo "Support for nvidia-docker v1 and v2 is active."
+        fi       
+    else 
         sudo apt-get install -y nvidia-docker2
         sudo apt-get install -y nvidia-docker
     fi
 fi
+
 
 # Log in to docker only for hand h images
 function docker_login
@@ -688,7 +702,6 @@ if [ ${REINSTALL_DOCKER_CONTAINER} = false ] ; then
                         if [ ${NVIDIA_VERSION} = 2 ]; then
                             bash <(curl -Ls https://raw.githubusercontent.com/shadow-robot/sr-build-tools/${BUILD_TOOLS_BRANCH}/docker/utils/docker2_nvidialize.sh) ${DOCKER_IMAGE_NAME}
                             DOCKER_IMAGE_NAME="${DOCKER_IMAGE_NAME}-nvidia2"
-                            echo "nvidializing docker2"
                         fi
                     fi
                 fi
@@ -765,9 +778,6 @@ else
         if [ ${NVIDIA_VERSION} = 1 ]; then
             ${DOCKER} create -it --privileged --name ${DOCKER_CONTAINER_NAME} ${OPTOFORCE_PATH} --ulimit core=-1 --security-opt seccomp=unconfined --network=host --pid=host -e DISPLAY -e QT_X11_NO_MITSHM=1 -e LOCAL_USER_ID=$(id -u) -v /tmp/.X11-unix:/tmp/.X11-unix:rw ${DOCKER_IMAGE_NAME} terminator -x bash -c "pkill -f \"^\"shadow_launcher_app_xterm && /usr/local/bin/setup_dexterous_hand.sh && bash || bash"
         else 
-            echo ${DOCKER}
-            echo ${DOCKER_CONTAINER_NAME}
-            echo ${DOCKER_IMAGE_NAME}
             ${DOCKER} create -it --privileged --name ${DOCKER_CONTAINER_NAME} ${OPTOFORCE_PATH} --ulimit core=-1 --security-opt seccomp=unconfined --runtime=nvidia -e NVIDIA_VISIBLE_DEVICES=all --network=host --pid=host -e DISPLAY -e QT_X11_NO_MITSHM=1 -e LOCAL_USER_ID=$(id -u) -v /tmp/.X11-unix:/tmp/.X11-unix:rw ${DOCKER_IMAGE_NAME} terminator -x bash -c "pkill -f \"^\"shadow_launcher_app_xterm && /usr/local/bin/setup_dexterous_hand.sh && bash || bash"
         fi
         docker cp ${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/setup_dexterous_hand.sh ${DOCKER_CONTAINER_NAME}:/usr/local/bin/setup_dexterous_hand.sh
