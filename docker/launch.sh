@@ -117,7 +117,7 @@ fi
 
 if [ -z "${NVIDIA_VERSION}" ];
 then
-    NVIDIA_VERSION=0
+    NVIDIA_VERSION=1
 fi
 
 if [ -z "${START_CONTAINER}" ];
