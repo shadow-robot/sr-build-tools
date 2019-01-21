@@ -78,7 +78,7 @@ ENV PATH /usr/local/nvidia/bin:${PATH}
 
 ENV LD_LIBRARY_PATH /usr/local/nvidia/lib:/usr/local/nvidia/lib64:${LD_LIBRARY_PATH}" >> Dockerfile
 
-docker build --tag "$docker_image-nvidia" .
+docker build --tag "$docker_image-nvidia2" .
 
 cd
 rm -rf /tmp/docker_nvidia_tmp
