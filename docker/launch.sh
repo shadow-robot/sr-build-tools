@@ -315,8 +315,22 @@ else
 fi
 
 if [ ${NVIDIA} = true ]; then
+
+    if [ $(grep ^ /etc/apt/sources.list /etc/apt/sources.list.d/* | grep nvidia-docker | wc -l) == 0 ]; then
+        echo "no nvidia-docker sources detected. Adding sources and installing nvidia-modprobe..."
+        curl -s -L https://nvidia.github.io/nvidia-docker/gpgkey | \
+        sudo apt-key add -
+        distribution=$(. /etc/os-release;echo $ID$VERSION_ID)
+        curl -s -L https://nvidia.github.io/nvidia-docker/$distribution/nvidia-docker.list | \
+        sudo tee /etc/apt/sources.list.d/nvidia-docker.list
+        sudo apt-get update
+        sudo apt-get install -y nvidia-modprobe
+    fi
+
+
     #if nv1 and nv2 exist
     if [[ $(apt-cache policy nvidia-docker* | grep "Candidate: \+1" 2> /dev/null) != "" &&  $(apt-cache policy nvidia-docker* | grep "Candidate: \+2" 2> /dev/null) != "" ]]; then
+        echo "nvidia-docker v1 and v2 both exist"
         #if nv2 installed
         if [[ $(apt-cache policy nvidia-docker* | grep "Installed: \+2" 2> /dev/null) != "" ]]; then
             echo "Nvidia docker v2 is currently installed. Adding additional support for v1..."
@@ -331,25 +345,21 @@ if [ ${NVIDIA} = true ]; then
             echo "Support for nvidia-docker v1 and v2 is active."
         fi       
     #if neither are installed
-    elif [[ $(apt-cache policy nvidia-docker* | grep nvidia-docker*.: | wc -l) == 0 ]]; then
-        if [[ $(apt-cache search nvidia-docker | wc -l) < 2 ]]; then
-            curl -s -L https://nvidia.github.io/nvidia-docker/gpgkey | \
-              sudo apt-key add -
-            distribution=$(. /etc/os-release;echo $ID$VERSION_ID)
-            curl -s -L https://nvidia.github.io/nvidia-docker/$distribution/nvidia-docker.list | \
-              sudo tee /etc/apt/sources.list.d/nvidia-docker.list
-            sudo apt-get update
-        fi
+    elif [[ $(apt-cache policy nvidia-docker* | grep nvidia-docker*.: | wc -l) == 0 ]]; then  
+        echo "neither nvidia-docker v1 or v2 are installed"      
         #and v1 is requested
         if [ ${NVIDIA_VERSION} = 1 ]; then
             #install v1
+            echo "v1 requested, installing..."
             sudo apt-get install -y nvidia-docker
         else  
             #install v2
+            echo "v2 requested, installing..."
             sudo apt-get install -y nvidia-docker2
         fi
     #else if only one is installed
     else 
+        echo "Only one version is installed, adding support for both"
         sudo apt-get install -y nvidia-docker2
         sudo apt-get install -y nvidia-docker
     fi
