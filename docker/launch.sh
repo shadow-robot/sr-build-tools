@@ -343,6 +343,18 @@ if [ ${NVIDIA} = true ]; then
         elif [[ $(apt-cache policy nvidia-docker* | grep "Installed: \+1" 2> /dev/null) != "" ]]; then
             #all is good
             echo "Support for nvidia-docker v1 and v2 is active."
+        else
+                echo "neither nvidia-docker v1 or v2 are installed"      
+                #and v1 is requested
+                if [ ${NVIDIA_VERSION} = 1 ]; then
+                    #install v1
+                    echo "v1 requested, installing..."
+                    sudo apt-get install -y nvidia-docker
+                else  
+                    #install v2
+                    echo "v2 requested, installing..."
+                    sudo apt-get install -y nvidia-docker2
+                fi            
         fi       
     #if neither are installed
     elif [[ $(apt-cache policy nvidia-docker* | grep nvidia-docker*.: | wc -l) == 0 ]]; then  
