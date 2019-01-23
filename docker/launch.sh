@@ -347,6 +347,7 @@ if [ ${NVIDIA} = true ]; then
         else  
             #install v2
             sudo apt-get install -y nvidia-docker2
+        fi
     #else if only one is installed
     else 
         sudo apt-get install -y nvidia-docker2
