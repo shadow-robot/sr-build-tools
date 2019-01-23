@@ -331,8 +331,8 @@ if [ ${NVIDIA} = true ]; then
             echo "Support for nvidia-docker v1 and v2 is active."
         fi       
     #if neither are installed
-    elif [[ apt-cache policy nvidia-docker* | grep nvidia-docker*.: | wc -l = 0 ]]; then
-        if [[ apt-cache search nvidia-docker | wc -l < 2 ]]; then
+    elif [[ $(apt-cache policy nvidia-docker* | grep nvidia-docker*.: | wc -l) == 0 ]]; then
+        if [[ $(apt-cache search nvidia-docker | wc -l) < 2 ]]; then
             curl -s -L https://nvidia.github.io/nvidia-docker/gpgkey | \
               sudo apt-key add -
             distribution=$(. /etc/os-release;echo $ID$VERSION_ID)
