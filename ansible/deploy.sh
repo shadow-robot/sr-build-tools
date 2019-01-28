@@ -189,7 +189,7 @@ rm -rf ${SR_BUILD_TOOLS_HOME} &
 rm -rf ${PROJECT_HOME_DIR} &
 wait
 
-sudo pip install paramiko markupsafe PyYAML Jinja2 httplib2 six ansible==' 2.1.0.0'
+sudo pip install -r data/requirements.txt
 sudo pip install --upgrade setuptools
 
 echo ""
