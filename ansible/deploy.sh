@@ -184,12 +184,12 @@ while sudo fuser /var/lib/dpkg/lock >/dev/null 2>&1; do
     echo "Waiting for apt-get install file lock..."
     sleep 1
 done
-sudo apt-get install -y python-pip git subversion libyaml-dev libpython2.7-dev python-crypto libssl-dev libffi-dev python-dev sshpass &
+sudo apt-get install -y python-pip git libyaml-dev python-crypto libssl-dev libffi-dev sshpass &
 rm -rf ${SR_BUILD_TOOLS_HOME} &
 rm -rf ${PROJECT_HOME_DIR} &
 wait
 
-sudo pip install -r data/requirements.txt
+sudo pip install --user -r data/requirements.txt
 sudo pip install --upgrade setuptools
 
 echo ""

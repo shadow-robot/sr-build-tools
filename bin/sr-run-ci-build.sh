@@ -21,9 +21,9 @@ if  [ "semaphore_docker" != $server_type ] && [ "local" != $server_type ] && [ "
   export build_tools_folder="$HOME/sr-build-tools"
 
   sudo apt-get update
-  sudo apt-get install -y python-dev libxml2-dev libxslt-dev python-pip lcov wget git libssl-dev libffi-dev libyaml-dev
+  sudo apt-get install -y python-pip git libyaml-dev python-crypto libssl-dev libffi-dev sshpass
   sudo pip install --upgrade pip setuptools gcovr
-  sudo pip install -r ../anisble/data/requirements.txt
+  sudo pip install --user -r ../anisble/data/requirements.txt
 
   git config --global user.email "build.tools@example.com"
   git config --global user.name "Build Tools"
