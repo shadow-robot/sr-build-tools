@@ -125,8 +125,8 @@ if [ -z "${GITHUB_PASSWORD}" ] && [ -n "${GITHUB_LOGIN}" ]; then
     echo
 fi
 
-export SR_BUILD_TOOLS_HOME=/tmp/sr-build-tools/
-export PROJECT_HOME_DIR=/tmp/my_project/
+export SR_BUILD_TOOLS_HOME=/tmp/sr-build-tools
+export PROJECT_HOME_DIR=/tmp/my_project
 export SCRIPT_DIR="$(dirname "$(readlink -f "$0")")"
 export ANSIBLE_INVENTORY="${SR_BUILD_TOOLS_HOME}/ansible/hosts"
 export PLAYBOOKS_DIR="${SR_BUILD_TOOLS_HOME}/ansible"
@@ -195,7 +195,7 @@ echo " |   Cloning repo  |"
 echo " -------------------"
 echo ""
 
-git clone --depth 1 -b ${SR_BUILD_TOOLS_BRANCH:-"F#SRC-2603_ansible_fix"}  https://github.com/shadow-robot/sr-build-tools.git ${SR_BUILD_TOOLS_HOME}
+git clone --depth 1 -b ${SR_BUILD_TOOLS_BRANCH:-"master"}  https://github.com/shadow-robot/sr-build-tools.git ${SR_BUILD_TOOLS_HOME}
 
 echo ""
 echo " ----------------------------------"
@@ -203,9 +203,8 @@ echo " |   Downgrading ansible to 2.1.0.0  |"
 echo " ----------------------------------"
 echo ""
 
-sudo pip install -r ${SR_BUILD_TOOLS_HOME}ansible/data/requirements.txt
+sudo pip install -r "${SR_BUILD_TOOLS_HOME}/ansible/data/requirements.txt"
 sudo pip install --upgrade setuptools
-
 
 echo ""
 echo " ------------------------------------"
