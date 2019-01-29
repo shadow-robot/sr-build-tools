@@ -190,7 +190,7 @@ rm -rf ${PROJECT_HOME_DIR} &
 wait
 # change this to master
 wget https://raw.githubusercontent.com/shadow-robot/sr-build-tools/F%23SRC-2603_ansible_fix/ansible/data/requirements.txt -P /tmp
-sudo pip install --user -r /tmp/requirements.txt
+sudo pip install -r /tmp/requirements.txt
 sudo pip install --upgrade setuptools
 
 echo ""
