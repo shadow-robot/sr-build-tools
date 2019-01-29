@@ -188,13 +188,6 @@ sudo apt-get install -y python-pip git subversion libyaml-dev libpython2.7-dev p
 rm -rf ${SR_BUILD_TOOLS_HOME} &
 rm -rf ${PROJECT_HOME_DIR} &
 wait
-# change this to master
-sudo pip install paramiko markupsafe PyYAML Jinja2 httplib2 six ansible==' 2.1.0.0'
-pip freeze
-
-wget https://raw.githubusercontent.com/shadow-robot/sr-build-tools/F%23SRC-2603_ansible_fix/ansible/data/requirements.txt -P /tmp
-sudo pip install -r /tmp/requirements.txt
-sudo pip install --upgrade setuptools
 
 echo ""
 echo " -------------------"
@@ -203,6 +196,16 @@ echo " -------------------"
 echo ""
 
 git clone --depth 1 -b ${SR_BUILD_TOOLS_BRANCH:-"master"}  https://github.com/shadow-robot/sr-build-tools.git ${SR_BUILD_TOOLS_HOME}
+
+echo ""
+echo " ----------------------------------"
+echo " |   Downgrading ansible to 2.1.0.0  |"
+echo " ----------------------------------"
+echo ""
+
+sudo pip install -r ${SR_BUILD_TOOLS_HOME}/ansible/data/requirements.txt
+sudo pip install --upgrade setuptools
+
 
 echo ""
 echo " ------------------------------------"
