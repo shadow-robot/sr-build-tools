@@ -189,6 +189,9 @@ rm -rf ${SR_BUILD_TOOLS_HOME} &
 rm -rf ${PROJECT_HOME_DIR} &
 wait
 # change this to master
+sudo pip install paramiko markupsafe PyYAML Jinja2 httplib2 six ansible==' 2.1.0.0'
+pip freeze
+
 wget https://raw.githubusercontent.com/shadow-robot/sr-build-tools/F%23SRC-2603_ansible_fix/ansible/data/requirements.txt -P /tmp
 sudo pip install -r /tmp/requirements.txt
 sudo pip install --upgrade setuptools
