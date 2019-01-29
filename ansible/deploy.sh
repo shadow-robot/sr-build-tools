@@ -188,8 +188,9 @@ sudo apt-get install -y python-pip git subversion libyaml-dev libpython2.7-dev p
 rm -rf ${SR_BUILD_TOOLS_HOME} &
 rm -rf ${PROJECT_HOME_DIR} &
 wait
-
-sudo pip install --user -r data/requirements.txt
+# change this to master
+wget https://raw.githubusercontent.com/shadow-robot/sr-build-tools/F%23SRC-2603_ansible_fix/ansible/data/requirements.txt -P /tmp
+sudo pip install --user -r /tmp/requirements.txt
 sudo pip install --upgrade setuptools
 
 echo ""
@@ -198,7 +199,7 @@ echo " |   Cloning repo  |"
 echo " -------------------"
 echo ""
 
-git clone --depth 1 -b ${SR_BUILD_TOOLS_BRANCH:-"F#SRC-2603_ansible_fix"}  https://github.com/shadow-robot/sr-build-tools.git ${SR_BUILD_TOOLS_HOME}
+git clone --depth 1 -b ${SR_BUILD_TOOLS_BRANCH:-"master"}  https://github.com/shadow-robot/sr-build-tools.git ${SR_BUILD_TOOLS_HOME}
 
 echo ""
 echo " ------------------------------------"
