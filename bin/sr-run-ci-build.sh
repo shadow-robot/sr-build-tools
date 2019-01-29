@@ -16,7 +16,7 @@ export docker_user=${docker_user_name:-"user"}
 export docker_user_home=${docker_user_home_dir:-"/home/user"}
 
 # Do not install all libraries for docker container CI servers
-if  [ "semaphore_docker" != $server_type ] && [ "local1" != $server_type ] && [ "travis" != $server_type ]; then
+if  [ "semaphore_docker" != $server_type ] && [ "local-test" != $server_type ] && [ "travis" != $server_type ]; then
 
   export build_tools_folder="$HOME/sr-build-tools"
 
