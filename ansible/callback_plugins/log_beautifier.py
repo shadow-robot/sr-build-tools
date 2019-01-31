@@ -14,7 +14,10 @@ def fixed_dump_results(self, result, indent=None, sort_keys=True, keep_invocatio
     message_dictionary = json.loads(json_message, encoding="utf-8")
     result = ""
     for key, value in message_dictionary.iteritems():
-        value = value.replace(re.search('https://(.*)@github.com',unicode(value)).group(1),"***")
+        try:
+            value = value.replace(re.search('https://(.*)@github.com',unicode(value)).group(1),"***")
+        except AttributeError:
+            pass
         if key not in ["stderr", "stdout_lines"]:
             result = result + "  " + key + " => " + unicode(value) + "\n"
 
