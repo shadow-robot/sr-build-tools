@@ -44,8 +44,9 @@
 
 - name: Load dependencies recursively
   script: ../files/load_repositories.sh {{ros_workspace}} {{dependencies_file}} {{github_login | default('') }} {{github_password | default('') }}
+  no_log: true
   when: dependencies_file_exists.stat.exists
-  no_log: True
+
 
 - name: Update dependencies
   shell: bash -c "rosdep update -y"
