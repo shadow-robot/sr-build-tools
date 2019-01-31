@@ -4,7 +4,6 @@ See README.md
 """
 from __future__ import absolute_import
 import json
-import re
 from threading import Timer
 from ansible.plugins.callback import CallbackBase
 
@@ -13,14 +12,7 @@ def fixed_dump_results(self, result, indent=None, sort_keys=True, keep_invocatio
     json_message = self._original_dump_results(result, indent, sort_keys, keep_invocation)
     message_dictionary = json.loads(json_message, encoding="utf-8")
     result = ""
-    print "\nfixed_dump_results called\n"
     for key, value in message_dictionary.iteritems():
-        try:
-            value = value.replace(re.search('https://(.*)@github.com',unicode(value)).group(1),"***")
-            value = value.replace(re.search('.rosinstall (.*)',unicode(value)).group(1),"***")
-            result = value
-        except AttributeError:
-            pass
         if key not in ["stderr", "stdout_lines"]:
             result = result + "  " + key + " => " + unicode(value) + "\n"
 
