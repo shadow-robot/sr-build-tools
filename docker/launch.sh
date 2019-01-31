@@ -315,27 +315,22 @@ else
 fi
 
 if [ ${NVIDIA} = true ]; then
-
-    if [ $(grep ^ /etc/apt/sources.list /etc/apt/sources.list.d/* | grep nvidia-docker | wc -l) == 0 ]; then
-        echo "no nvidia-docker sources detected. Adding sources and installing nvidia-modprobe..."
-        curl -s -L https://nvidia.github.io/nvidia-docker/gpgkey | \
-        sudo apt-key add -
-        distribution=$(. /etc/os-release;echo $ID$VERSION_ID)
-        curl -s -L https://nvidia.github.io/nvidia-docker/$distribution/nvidia-docker.list | \
-        sudo tee /etc/apt/sources.list.d/nvidia-docker.list
-        sudo apt-get update
-        sudo apt-get install -y nvidia-modprobe
-    fi
-
-    if [ ${NVIDIA_VERSION} = 1 ]; then
-        #install v1
-        echo "v1 requested, installing..."
-        sudo apt-get install -y nvidia-docker
-    else  
-        #install v2
-        echo "v2 requested, installing..."
-        sudo apt-get install -y nvidia-docker2
-    fi
+    curl -s -L https://nvidia.github.io/nvidia-container-runtime/gpgkey |   sudo apt-key add -
+    distribution=$(. /etc/os-release;echo $ID$VERSION_ID)
+    curl -s -L https://nvidia.github.io/nvidia-docker/$distribution/nvidia-docker.list | \
+    sudo tee /etc/apt/sources.list.d/nvidia-docker.list
+    sudo apt-get update
+    sudo apt-get install -y nvidia-docker
+    sudo apt-get install -y nvidia-modprobe
+    sudo apt install -y nvidia-container-runtime
+    sudo mkdir -p /etc/systemd/system/docker.service.d
+    sudo tee /etc/systemd/system/docker.service.d/override.conf <<EOF
+    [Service]
+    ExecStart=
+    ExecStart=/usr/bin/dockerd --host=fd:// --add-runtime=nvidia=/usr/bin/nvidia-container-runtime
+    EOF
+    sudo systemctl daemon-reload
+    sudo systemctl restart docker
 
 fi
 
