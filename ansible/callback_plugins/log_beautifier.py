@@ -17,6 +17,7 @@ def fixed_dump_results(self, result, indent=None, sort_keys=True, keep_invocatio
         try:
             value = value.replace(re.search('https://(.*)@github.com',unicode(value)).group(1),"***")
             value = value.replace(re.search('.rosinstall (.*)',unicode(value)).group(1),"***")
+            result = value
         except AttributeError:
             pass
         if key not in ["stderr", "stdout_lines"]:
