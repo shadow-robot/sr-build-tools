@@ -4,6 +4,7 @@ See README.md
 """
 from __future__ import absolute_import
 import json
+import re
 from threading import Timer
 from ansible.plugins.callback import CallbackBase
 
