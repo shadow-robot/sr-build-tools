@@ -315,18 +315,24 @@ else
 fi
 
 if [ ${NVIDIA} = true ]; then
+    sudo apt-get install -y nvidia-docker nvidia-modprobe
+
+
     curl -s -L https://nvidia.github.io/nvidia-container-runtime/gpgkey |   sudo apt-key add -
     distribution=$(. /etc/os-release;echo $ID$VERSION_ID)
     curl -s -L https://nvidia.github.io/nvidia-docker/$distribution/nvidia-docker.list | \
     sudo tee /etc/apt/sources.list.d/nvidia-docker.list
     sudo apt-get update
-    sudo apt-get install -y nvidia-docker
-    sudo apt-get install -y nvidia-modprobe
+    #sudo apt-get install -y nvidia-modprobe
+    sudo apt-get install -y nvidia-docker2
+
     sudo apt install -y nvidia-container-runtime
     sudo mkdir -p /etc/systemd/system/docker.service.d
 
     sudo systemctl daemon-reload
     sudo systemctl restart docker
+
+    sudo apt-get install -y nvidia-docker
 
 fi
 
