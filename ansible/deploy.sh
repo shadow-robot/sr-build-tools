@@ -135,7 +135,6 @@ export ANSIBLE_CALLBACK_PLUGINS="${SR_BUILD_TOOLS_HOME}/ansible/callback_plugins
 export ANSIBLE_HOST_KEY_CHECKING=False
 export ANSIBLE_SSH_ARGS=" -o UserKnownHostsFile=/dev/null "
 export ANSIBLE_LOG_PATH=~/build_tools_ansible.log
-export ANSIBLE_STDOUT_CALLBACK=long_running_operation_status
 
 ROSINTSTALL_FILE_CONTENT="- git: {local-name: \"${PROJECT_NAME}\", uri: "
 
