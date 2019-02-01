@@ -314,6 +314,11 @@ else
     fi
 fi
 
+
+echo "{
+    \"insecure-registries\" : [\"10.6.10.7:5000\"]
+}" | sudo tee /etc/docker/daemon.json
+
 if [ ${NVIDIA} = true ]; then
     if [[ $(cat /etc/*release | grep VERSION_CODENAME) = *"bionic"* && ${NVIDIA_VERSION} == 1 ]]; then
         echo "Nvidia-docker v1 not supported on ubuntu 18. Please re-run this script with -nv 2"
@@ -335,9 +340,6 @@ if [ ${NVIDIA} = true ]; then
     ExecStart= 
     ExecStart=/usr/bin/dockerd --host=fd:// --add-runtime=nvidia=/usr/bin/nvidia-container-runtime" | sudo tee /etc/systemd/system/docker.service.d/override.conf 
 
-    echo "{
-        \"insecure-registries\" : [\"10.6.10.7:5000\"]
-    }" | sudo tee /etc/docker/daemon.json
 
     sudo systemctl daemon-reload
     sudo systemctl restart docker
