@@ -10,7 +10,9 @@ from ansible.plugins.callback import CallbackBase
 
 
 def fixed_dump_results(self, result, indent=None, sort_keys=True, keep_invocation=False):
+    print "fixed_dump_results called"
     json_message = self._original_dump_results(result, indent, sort_keys, keep_invocation)
+    print str(json_message)
     message_dictionary = json.loads(json_message, encoding="utf-8")
     result = ""
     for key, value in message_dictionary.iteritems():
