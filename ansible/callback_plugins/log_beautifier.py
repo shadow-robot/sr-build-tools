@@ -4,8 +4,13 @@ See README.md
 """
 from __future__ import absolute_import
 import json
+import re
 from threading import Timer
 from ansible.plugins.callback import CallbackBase
+
+
+def obfuscate_credentials(input_value):
+    return re.sub("https://(.*?)@github.com", "https://*****:*****@github.com", input_value)
 
 
 def fixed_dump_results(self, result, indent=None, sort_keys=True, keep_invocation=False):
@@ -14,10 +19,11 @@ def fixed_dump_results(self, result, indent=None, sort_keys=True, keep_invocatio
     result = ""
     for key, value in message_dictionary.iteritems():
         if key not in ["stderr", "stdout_lines"]:
-            result = result + "  " + key + " => " + unicode(value) + "\n"
+            result = result + "  " + key + " => " + obfuscate_credentials(unicode(value)) + "\n"
 
     if "stderr" in message_dictionary and len(unicode(message_dictionary["stderr"])) > 0:
-        result = result + "\nvvvvvvvv  STDERR  vvvvvvvvv\n\n  stderr => " + unicode(message_dictionary["stderr"])
+        result = result + "\nvvvvvvvv  STDERR  vvvvvvvvv\n\n  stderr => " + \
+            obfuscate_credentials(unicode(message_dictionary["stderr"]))
     return result
 
 
@@ -26,7 +32,7 @@ class CallbackModule(CallbackBase):
     CALLBACK_VERSION = 2.0
     CALLBACK_TYPE = 'beautifier'
     CALLBACK_NAME = 'long_running_operation_status'
-    
+
     # Monkey patch to turn off default callback logging
     CallbackBase._original_dump_results = CallbackBase._dump_results
     CallbackBase._dump_results = fixed_dump_results

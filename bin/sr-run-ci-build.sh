@@ -87,7 +87,7 @@ case $server_type in
   ;;
 
 "docker_hub") echo "Docker Hub"
-  PYTHONUNBUFFERED=1 ansible-playbook -vvv -i "localhost," -c local docker_site.yml --tags "docker_hub,$tags_list" -e "ros_release=$ros_release ubuntu_version_name=$ubuntu_version"
+  PYTHONUNBUFFERED=1 ansible-playbook -v -i "localhost," -c local docker_site.yml --tags "docker_hub,$tags_list" -e "ros_release=$ros_release ubuntu_version_name=$ubuntu_version"
   ;;
 
 "local") echo "Local run"
@@ -150,7 +150,7 @@ case $server_type in
     export benchmarking_dir=$benchmarking_result_dir
   fi
   export extra_variables="$extra_variables local_repo_dir=$local_repo local_test_dir=$unit_tests_dir local_code_coverage_dir=$coverage_tests_dir local_benchmarking_dir=$benchmarking_dir"
-  git pull && git checkout $toolset_branch && git pull && sudo PYTHONUNBUFFERED=1 ansible-playbook -vvv -i "localhost," -c local docker_site.yml --tags "local,$tags_list" -e "$extra_variables"
+  git pull && git checkout $toolset_branch && git pull && sudo PYTHONUNBUFFERED=1 ansible-playbook -v -i "localhost," -c local docker_site.yml --tags "local,$tags_list" -e "$extra_variables"
   ;;
 
 *) echo "Not supported server type $server_type"
