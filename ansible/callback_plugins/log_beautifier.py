@@ -16,6 +16,7 @@ def fixed_dump_results(self, result, indent=None, sort_keys=True, keep_invocatio
     for key, value in message_dictionary.iteritems():
         try:
             value = value.replace(re.search('https://(.*)@github.com',unicode(value)).group(1),"***")
+            result = value
         except AttributeError:
             pass        
         if key not in ["stderr", "stdout_lines"]:
@@ -29,7 +30,7 @@ def fixed_dump_results(self, result, indent=None, sort_keys=True, keep_invocatio
 class CallbackModule(CallbackBase):
 
     CALLBACK_VERSION = 2.0
-    CALLBACK_TYPE = 'beautifier'
+    CALLBACK_TYPE = 'stdout'
     CALLBACK_NAME = 'long_running_operation_status'
     
     # Monkey patch to turn off default callback logging
