@@ -315,24 +315,24 @@ else
 fi
 
 if [ ${NVIDIA} = true ]; then
-    sudo apt-get install -y nvidia-docker nvidia-modprobe
-
-
-    curl -s -L https://nvidia.github.io/nvidia-container-runtime/gpgkey |   sudo apt-key add -
     distribution=$(. /etc/os-release;echo $ID$VERSION_ID)
     curl -s -L https://nvidia.github.io/nvidia-docker/$distribution/nvidia-docker.list | \
     sudo tee /etc/apt/sources.list.d/nvidia-docker.list
+    curl -s -L https://nvidia.github.io/nvidia-container-runtime/gpgkey |   sudo apt-key add -
     sudo apt-get update
-    #sudo apt-get install -y nvidia-modprobe
-    sudo apt-get install -y nvidia-docker2
-
-    sudo apt install -y nvidia-container-runtime
+    sudo apt install -y nvidia-modprobe nvidia-container-runtime nvidia-docker
     sudo mkdir -p /etc/systemd/system/docker.service.d
+    echo "[Service] 
+    ExecStart= 
+    ExecStart=/usr/bin/dockerd --host=fd:// --add-runtime=nvidia=/usr/bin/nvidia-container-runtime" | sudo tee /etc/systemd/system/docker.service.d/override.conf 
+
+    echo "{
+        \"insecure-registries\" : [\"10.6.10.7:5000\"]
+    }" | sudo tee /etc/docker/daemon.json
 
     sudo systemctl daemon-reload
     sudo systemctl restart docker
-
-    sudo apt-get install -y nvidia-docker
+    sudo service nvidia-docker start
 
 fi
 
