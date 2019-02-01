@@ -32,7 +32,6 @@ class CallbackModule(CallbackBase):
     CALLBACK_TYPE = 'beautifier'
     CALLBACK_NAME = 'long_running_operation_status'
     
-
     # Monkey patch to turn off default callback logging
     CallbackBase._original_dump_results = CallbackBase._dump_results
     CallbackBase._dump_results = fixed_dump_results
