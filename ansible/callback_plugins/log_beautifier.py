@@ -10,7 +10,7 @@ from ansible.plugins.callback import CallbackBase
 
 
 def fixed_dump_results(self, result, indent=None, sort_keys=True, keep_invocation=False):
-    print "fixed_dump_results called"
+    print "fixed_dump_results CALLED"
     json_message = self._original_dump_results(result, indent, sort_keys, keep_invocation)
     print str(json_message)
     message_dictionary = json.loads(json_message, encoding="utf-8")
@@ -26,6 +26,7 @@ def fixed_dump_results(self, result, indent=None, sort_keys=True, keep_invocatio
 
     if "stderr" in message_dictionary and len(unicode(message_dictionary["stderr"])) > 0:
         result = result + "\nvvvvvvvv  STDERR  vvvvvvvvv\n\n  stderr => " + unicode(message_dictionary["stderr"])
+    result = result + "\n"+"fixed_dump_results call ENDED"
     return result
 
 
