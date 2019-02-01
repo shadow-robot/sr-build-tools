@@ -9,33 +9,30 @@ from threading import Timer
 from ansible.plugins.callback import CallbackBase
 
 
+def obfuscate_credentials(self, input_value):
+    return re.sub("https://(.*?)@github.com", "https://*****:*****@github.com", input_value)
+
+
 def fixed_dump_results(self, result, indent=None, sort_keys=True, keep_invocation=False):
-    print "fixed_dump_results CALLED"
     json_message = self._original_dump_results(result, indent, sort_keys, keep_invocation)
-    print str(json_message)
     message_dictionary = json.loads(json_message, encoding="utf-8")
     result = ""
     for key, value in message_dictionary.iteritems():
-        try:
-            value = value.replace(re.search('https://(.*)@github.com',unicode(value)).group(1),"***")
-            result = value
-        except AttributeError:
-            pass        
         if key not in ["stderr", "stdout_lines"]:
-            result = result + "  " + key + " => " + unicode(value) + "\n"
+            result = result + "  " + key + " => " + unicode(self.obfuscate_credentials(value)) + "\n"
 
     if "stderr" in message_dictionary and len(unicode(message_dictionary["stderr"])) > 0:
-        result = result + "\nvvvvvvvv  STDERR  vvvvvvvvv\n\n  stderr => " + unicode(message_dictionary["stderr"])
-    result = result + "\n"+"fixed_dump_results call ENDED"
+        result = result + "\nvvvvvvvv  STDERR  vvvvvvvvv\n\n  stderr => " + \
+            unicode(self.obfuscate_credentials(message_dictionary["stderr"]))
     return result
 
 
 class CallbackModule(CallbackBase):
 
     CALLBACK_VERSION = 2.0
-    CALLBACK_TYPE = 'stdout'
+    CALLBACK_TYPE = 'beautifier'
     CALLBACK_NAME = 'long_running_operation_status'
-    
+
     # Monkey patch to turn off default callback logging
     CallbackBase._original_dump_results = CallbackBase._dump_results
     CallbackBase._dump_results = fixed_dump_results
