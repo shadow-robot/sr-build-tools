@@ -4,6 +4,7 @@ See README.md
 """
 from __future__ import absolute_import
 import json
+import re
 from threading import Timer
 from ansible.plugins.callback import CallbackBase
 
@@ -13,6 +14,10 @@ def fixed_dump_results(self, result, indent=None, sort_keys=True, keep_invocatio
     message_dictionary = json.loads(json_message, encoding="utf-8")
     result = ""
     for key, value in message_dictionary.iteritems():
+        try:
+            value = value.replace(re.search('https://(.*)@github.com',unicode(value)).group(1),"***")
+        except AttributeError:
+            pass        
         if key not in ["stderr", "stdout_lines"]:
             result = result + "  " + key + " => " + unicode(value) + "\n"
 
@@ -26,7 +31,7 @@ class CallbackModule(CallbackBase):
     CALLBACK_VERSION = 2.0
     CALLBACK_TYPE = 'beautifier'
     CALLBACK_NAME = 'long_running_operation_status'
-    
+
     # Monkey patch to turn off default callback logging
     CallbackBase._original_dump_results = CallbackBase._dump_results
     CallbackBase._dump_results = fixed_dump_results
