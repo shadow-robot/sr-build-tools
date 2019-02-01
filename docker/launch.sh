@@ -315,12 +315,21 @@ else
 fi
 
 if [ ${NVIDIA} = true ]; then
+    if [[ $(cat /etc/*release | grep VERSION_CODENAME) = *"bionic"* && ${NVIDIA_VERSION} == 1 ]]; then
+        echo "Nvidia-docker v1 not supported on ubuntu 18. Please re-run this script with -nv 2"
+        exit 1
+    fi
     distribution=$(. /etc/os-release;echo $ID$VERSION_ID)
     curl -s -L https://nvidia.github.io/nvidia-docker/$distribution/nvidia-docker.list | \
     sudo tee /etc/apt/sources.list.d/nvidia-docker.list
     curl -s -L https://nvidia.github.io/nvidia-container-runtime/gpgkey |   sudo apt-key add -
     sudo apt-get update
-    sudo apt install -y nvidia-modprobe nvidia-container-runtime nvidia-docker
+    if [[ $(cat /etc/*release | grep VERSION_CODENAME) = *"bionic"* ]]; then    
+        sudo apt install -y nvidia-modprobe nvidia-container-runtime nvidia-docker2
+    elif [[ $(cat /etc/*release | grep VERSION_CODENAME) = *"xenial"* ]]; then
+        sudo apt install -y nvidia-modprobe nvidia-container-runtime nvidia-docker
+    fi
+
     sudo mkdir -p /etc/systemd/system/docker.service.d
     echo "[Service] 
     ExecStart= 
@@ -332,8 +341,9 @@ if [ ${NVIDIA} = true ]; then
 
     sudo systemctl daemon-reload
     sudo systemctl restart docker
-    sudo service nvidia-docker start
-
+    if [[ $(cat /etc/*release | grep VERSION_CODENAME) = *"xenial"* ]]; then
+        sudo service nvidia-docker start
+    fi
 fi
 
 
