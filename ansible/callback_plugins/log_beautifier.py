@@ -9,7 +9,7 @@ from threading import Timer
 from ansible.plugins.callback import CallbackBase
 
 
-def obfuscate_credentials(self, input_value):
+def obfuscate_credentials(input_value):
     return re.sub("https://(.*?)@github.com", "https://*****:*****@github.com", input_value)
 
 
@@ -19,11 +19,11 @@ def fixed_dump_results(self, result, indent=None, sort_keys=True, keep_invocatio
     result = ""
     for key, value in message_dictionary.iteritems():
         if key not in ["stderr", "stdout_lines"]:
-            result = result + "  " + key + " => " + unicode(self.obfuscate_credentials(value)) + "\n"
+            result = result + "  " + key + " => " + unicode(obfuscate_credentials(value)) + "\n"
 
     if "stderr" in message_dictionary and len(unicode(message_dictionary["stderr"])) > 0:
         result = result + "\nvvvvvvvv  STDERR  vvvvvvvvv\n\n  stderr => " + \
-            unicode(self.obfuscate_credentials(message_dictionary["stderr"]))
+            unicode(obfuscate_credentials(message_dictionary["stderr"]))
     return result
 
 
