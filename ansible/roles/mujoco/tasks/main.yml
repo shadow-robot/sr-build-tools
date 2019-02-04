@@ -10,9 +10,9 @@
   
 - name: Fix mujoco folder ownership
   file:
-    path: /home/{{ros_user}}/mjpro150
-    owner: {{ros_user}}
-    group: {{ros_user}}
+    path: "/home/{{ros_user}}/mjpro150"
+    owner: "{{ros_user}}"
+    group: "{{ros_user}}"
 
 - name: Install libglfw3-dev
   sudo: yes
