@@ -14,6 +14,7 @@
     path: "/home/{{ros_user}}/mjpro150"
     owner: "{{ros_user}}"
     group: "{{ros_user}}"
+    recurse: yes
 
 - name: Install libglfw3-dev
   sudo: yes
