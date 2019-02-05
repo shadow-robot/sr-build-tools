@@ -240,6 +240,11 @@ if echo "${DOCKER_IMAGE_NAME}" | grep -q "${HAND_E_NAME}"; then
     HAND_ICON=hand_E.png
 elif echo "${DOCKER_IMAGE_NAME}" | grep -q "${HAND_H_NAME}"; then
     echo "Hand H image requested"
+    if [ ${NVIDIA_VERSION} = 2 ]; then
+        echo ${HAND_H}
+        echo "Nvidia-docker v2 not currently supported with hand H"
+        exit 1
+    fi
     HAND_H=true
     HAND_ICON=hand_H.png
 else
@@ -248,11 +253,6 @@ else
     exit 1
 fi
 
-if [[ ${HAND_H} = true && ${NVIDIA_VERSION} = 2 ]]; then
-    echo ${HAND_H}
-    echo "Nvidia-docker v2 not currently supported with hand H"
-    exit 1
-fi
 
 
 echo ""
