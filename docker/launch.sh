@@ -248,7 +248,7 @@ else
     exit 1
 fi
 
-if [[ HAND_H && ${NVIDIA_VERSION} = 2 ]]; then
+if [[ ${HAND_H} = true && ${NVIDIA_VERSION} = 2 ]]; then
     echo "Nvidia-docker v2 not currently supported with hand H"
     exit 1
 fi
