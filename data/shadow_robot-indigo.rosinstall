@@ -46,7 +46,7 @@
 - git:
     local-name: sr_blockly
     uri: https://github.com/shadow-robot/sr_blockly.git
-    version: master
+    version: indigo-devel
 
 - git:
     local-name: robot_blockly
