@@ -44,7 +44,7 @@ case $key in
     NVIDIA="$2"
     shift
     ;;
-    -nv|--nvidiadockerversion)
+    -nv|--nvidiaversion)
     NVIDIA_VERSION="$2"
     shift
     ;;
@@ -186,7 +186,7 @@ echo "  * -r or --reinstall           Flag to know if the docker container shoul
 echo "  * -n or --name                Name of the docker container"
 echo "  * -e or --ethercatinterface   Ethercat interface of the hand"
 echo "  * -g or --nvidiagraphics      Enable nvidia-docker (default: false)"
-echo "  * -nv or --nvidiadockerversion      nvidia-docker version (default: 1)"
+echo "  * -nv or --nvidiaversion      nvidia-docker version (default: 1)"
 echo "  * -d or --desktopicon         Generates a desktop icon to launch the hand"
 echo "  * -b or --configbranch        Specify the branch for the specific hand (Only for dexterous hand)"
 echo "  * -sn or --shortcutname       Specify the name for the desktop icon (default: Shadow_Hand_Launcher)"
