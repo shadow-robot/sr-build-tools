@@ -320,10 +320,11 @@ else
     fi
 fi
 
-
-echo "{
-    \"insecure-registries\" : [\"10.6.10.7:5000\"]
-}" | sudo tee /etc/docker/daemon.json
+if [ ${START_CONTAINER} = false ]; then
+    echo "{
+        \"insecure-registries\" : [\"10.6.10.7:5000\"]
+    }" | sudo tee /etc/docker/daemon.json
+fi
 
 if [ ${NVIDIA} = true ]; then
     if [[ $(cat /etc/*release | grep VERSION_CODENAME) = *"bionic"* && ${NVIDIA_VERSION} == 1 ]]; then
