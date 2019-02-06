@@ -316,6 +316,7 @@ else
     fi
 fi
 
+#REMOVE THIS BEFORE MERGE
 if [ ${START_CONTAINER} = false ]; then
     echo "{
         \"insecure-registries\" : [\"10.6.10.7:5000\"]
