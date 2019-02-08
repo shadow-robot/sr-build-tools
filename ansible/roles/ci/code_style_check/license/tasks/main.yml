@@ -2,7 +2,7 @@
 # Playbook for checkig software license
 
 - name: Check for license file in the repository directory
-  script: ../files/license_check.sh {{ros_workspace}}
+  script: ../files/license_check.sh {{repo_sources_path}}
   
 - name: Check for copyright annotation in repository files
-  script: ../files/copyright_check.sh {{ros_workspace}}
+  script: ../files/copyright_check.sh {{repo_sources_path}}
