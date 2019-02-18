@@ -249,7 +249,6 @@ else
 fi
 
 
-
 echo ""
 echo " -----------------------------------"
 echo " |   Checking docker installation  |"
@@ -318,7 +317,6 @@ else
     fi
 fi
 
-
 if [ ${NVIDIA} = true ]; then
     if [[ $(cat /etc/*release | grep VERSION_CODENAME) = *"bionic"* && ${NVIDIA_VERSION} == 1 ]]; then
         echo "Nvidia-docker v1 not supported on ubuntu 18. Please re-run this script with -nv 2"
@@ -346,7 +344,6 @@ if [ ${NVIDIA} = true ]; then
         sudo service nvidia-docker start
     fi
 fi
-
 
 # Log in to docker only for hand h images
 function docker_login
