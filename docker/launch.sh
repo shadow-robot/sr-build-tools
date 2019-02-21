@@ -321,6 +321,7 @@ if [ ${NVIDIA} = true ]; then
         echo "Nvidia-docker v1 not supported on ubuntu 18. Please re-run this script with -nv 2"
         exit 1
     fi
+    sudo apt-get install -y docker-ce
     distribution=$(. /etc/os-release;echo $ID$VERSION_ID)
     curl -s -L https://nvidia.github.io/nvidia-docker/$distribution/nvidia-docker.list | \
     sudo tee /etc/apt/sources.list.d/nvidia-docker.list
