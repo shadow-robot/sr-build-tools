@@ -1,6 +1,20 @@
 ---
 # VSCode IDE installation
 
-- name: Install VSCode from script
-  script: ../files/install_vscode.sh
+- name: Update package lists
+  apt: update_cache=yes
   become: yes
+
+- name: Download VSC .deb file
+  get_url:
+    url: https://go.microsoft.com/fwlink/?LinkID=760868
+    dest: /tmp/code.deb
+
+- name: Install VSC from .deb
+  apt:
+    deb: /tmp/code.deb
+
+- name: Remove VSC .deb file
+  file:
+    state: absent
+    path: /tmp/code.deb
