@@ -11,6 +11,13 @@
     dest: /tmp/code.deb
   become: yes
 
+- name: Intall needed libs
+  apt: name={{item}} install_recommends=no
+  become: yes
+  with_items:
+    - libxkbfile1
+    - libsecret-1-0
+
 - name: Install VSC from .deb
   shell: dpkg -i /tmp/code.deb
   become: yes
