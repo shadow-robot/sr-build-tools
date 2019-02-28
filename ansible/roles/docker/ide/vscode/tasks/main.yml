@@ -9,12 +9,15 @@
   get_url:
     url: https://go.microsoft.com/fwlink/?LinkID=760868
     dest: /tmp/code.deb
+  become: yes
 
 - name: Install VSC from .deb
   apt:
     deb: /tmp/code.deb
+  become: yes
 
 - name: Remove VSC .deb file
   file:
     state: absent
     path: /tmp/code.deb
+  become: yes
