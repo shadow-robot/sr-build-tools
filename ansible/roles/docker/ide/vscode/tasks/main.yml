@@ -9,7 +9,6 @@
   get_url:
     url: https://go.microsoft.com/fwlink/?LinkID=760868
     dest: /tmp/code.deb
-  become: yes
 
 - name: Intall needed libs
   apt: name={{item}} install_recommends=no
@@ -26,4 +25,3 @@
   file:
     state: absent
     path: /tmp/code.deb
-  become: yes
