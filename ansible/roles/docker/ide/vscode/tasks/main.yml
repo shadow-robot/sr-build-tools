@@ -12,10 +12,8 @@
   become: yes
 
 - name: Install VSC from .deb
-  apt: deb={{item}}
+  shell: dpkg -i /tmp/code.deb
   become: yes
-  with_items:
-    - /tmp/code.deb
 
 - name: Remove VSC .deb file
   file:
