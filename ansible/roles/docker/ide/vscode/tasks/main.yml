@@ -5,10 +5,23 @@
   apt: update_cache=yes
   become: yes
 
-- name: Install VSCode from Internet
-  apt: deb=https://go.microsoft.com/fwlink/?LinkID=760868 force=yes
+- name: Download VSC .deb file
+  get_url:
+    url: https://go.microsoft.com/fwlink/?LinkID=760868
+    dest: /tmp/code.deb
+
+- name: Intall needed libs
+  apt: name={{item}} install_recommends=no
+  become: yes
+  with_items:
+    - libxkbfile1
+    - libsecret-1-0
+
+- name: Install VSC from .deb
+  shell: dpkg -i /tmp/code.deb
   become: yes
 
-- name: Create easy access symlink
-  file: src=/usr/share/code/code dest=/usr/bin/vscode state=link
-  become: yes
+- name: Remove VSC .deb file
+  file:
+    state: absent
+    path: /tmp/code.deb
