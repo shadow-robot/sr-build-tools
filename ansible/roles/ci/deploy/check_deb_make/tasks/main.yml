@@ -4,7 +4,7 @@
 # Redundant loop count to make sure that even complex dependencies scenario is resolved
 # mv command will fail in case if package is already installed for this case there is ignore_errors
 - name: Create and install debian packages recursively in order to fix local dependencies
-  shell: bash -c "source <(grep '^export\|^source' {{ansible_env.HOME}}/.bashrc) && source {{ros_workspace}}/devel/setup.bash && fakeroot ./debian/rules binary && mv -vt .  ../*.deb && sudo dpkg --install *.deb"
+  shell: bash -c "source <(grep '^export\|^source' {{ansible_env.HOME}}/.bashrc) && source /opt/ros/{{ros_release}}/setup.bash && fakeroot ./debian/rules binary && mv -vt .  ../*.deb && sudo dpkg --install *.deb"
     chdir={{ros_workspace}}/{{item[1].path}}
   ignore_errors: True
   with_nested:
@@ -13,7 +13,7 @@
 
 # In case if there is not errors fakeroot will not create new deb file just exit with 0 else it will print error
 - name: Check if debian build doesn't have any errors
-  shell: bash -c "source <(grep '^export\|^source' {{ansible_env.HOME}}/.bashrc) && source {{ros_workspace}}/devel/setup.bash && fakeroot ./debian/rules binary"
+  shell: bash -c "source <(grep '^export\|^source' {{ansible_env.HOME}}/.bashrc) && /opt/ros/{{ros_release}}/setup.bash && fakeroot ./debian/rules binary"
     chdir={{repo_sources_path}}/{{item.path}}
   with_items:
     - "{{repo_packages_list|default([])}}"
