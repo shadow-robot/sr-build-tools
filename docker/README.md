@@ -121,6 +121,7 @@ Posible options for the oneliner are:
 * -n or --name              Name of the docker container
 * -e or --ethercatinterface Ethercat interface of the hand
 * -g or --nvidiagraphics    Enable nvidia-docker (default: false)
+* -nv or --nvidiaversion    Nvidia-docker version (default: 1)
 * -d or --desktopicon       Generates a desktop icon to launch the hand (default: true)
 * -b or --configbranch      Specify the branch for the specific hand (Only for dexterous hand)
 * -sn or --shortcutname     Specify the name for the desktop icon (default: Shadow_Hand_Launcher)
@@ -236,6 +237,28 @@ Presuming we do not want the driver to auto-launch for our example, the final co
 
 ```bash
 bash <(curl -Ls bit.ly/launch-sh) -r true -i shadowrobot/dexterous-hand:kinetic-release -n hand_e_kinetic -sn hand_e_kinetic -e enp3s0 -b demohand_E_v1 -l false
+```
+
+### Nvidia GPU support ```-g```
+
+The oneliner allows containers to be created with Nvidia GPU support. By default this is disabled. To enable GPU support, add ```-g true``` to the oneliner.
+
+If we want nvidia GPU support, the final command would be:
+
+```bash
+bash <(curl -Ls bit.ly/launch-sh) -r true -i shadowrobot/dexterous-hand:kinetic-release -n hand_e_kinetic -sn hand_e_kinetic -e enp3s0 -b demohand_E_v1 -l false -g true
+``` 
+
+### Nvidia docker version ```-nv```
+
+Nvidia GPU support is achieved by using nvidia-docker. By default the version of nvidia-docker the oneliner will use is v1. To change to nvidia-docker v2, add ```-nv 2``` to the oneliner. 
+
+Nvidia-docker2 is recommended for fresh installs of ubuntu. For installs that have been running for a while, use ```-nv 1```. If your installation of ubuntu has been running for a while and you want to switch to nvidia-docker v2, you should run ```sudo apt-get upgrade``` before running the oneliner. Be aware that this can cause problems with software that has already been installed. 
+
+If we want to use nvidia-docker2, the final command would be:
+
+```bash
+bash <(curl -Ls bit.ly/launch-sh) -r true -i shadowrobot/dexterous-hand:kinetic-release -n hand_e_kinetic -sn hand_e_kinetic -e enp3s0 -b demohand_E_v1 -l false -g true -nv 2
 ```
 
 ### Build tools branch ```-bt```
