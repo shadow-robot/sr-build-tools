@@ -22,7 +22,7 @@ filter="*.$extension"
     # Concatenate a listing of all ignore files, with the path to the
     # ignore file it came from prefixed to each pattern
     {
-	    # Process all directories within ignore file
+        # Process all directories within ignore file
         find $repository_dir -type f -name $rules_file_name | xargs -n1 --no-run-if-empty dirname |
         while read dir
         do
