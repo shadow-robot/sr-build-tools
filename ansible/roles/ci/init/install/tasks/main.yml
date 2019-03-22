@@ -21,8 +21,7 @@
   become_user: root
   with_items:
      - catkin_pkg
-     - empy
-       version: 3.3.2
+     - empy==3.3.2
      - coverage
 
 - name: Update users bashrc to point to the ROS installation
