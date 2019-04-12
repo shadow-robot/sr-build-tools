@@ -12,10 +12,6 @@
   set_fact:
      non_repo_packages : "{{workspace_packages_names|difference(repo_packages_names)|join(';')}}"
 
-- name: catkin make workspace in isolated fashion
-  shell: bash -c "source <(grep '^export\|^source' {{ansible_env.HOME}}/.bashrc) && catkin_make_isolated"
-    chdir={{ros_workspace}}
-
-- name: catkin install workspace in isolated fashion
-  shell: bash -c "source <(grep '^export\|^source' {{ansible_env.HOME}}/.bashrc) && catkin_make_isolated --install"
+- name: build workspace in isolation and install
+  shell: bash -c "source <(grep '^export\|^source' {{ansible_env.HOME}}/.bashrc) && catkin_make_isolated --install --cmake-args -DBUILD_TESTING=0 -DCATKIN_SKIP_TESTING=1"
     chdir={{ros_workspace}}
