@@ -17,7 +17,7 @@
   when: sources_test_result.rc == 0
 
 - name: Add the ROS repo key
-  apt_key: id=B01FA116 url=http://packages.ros.org/ros.key
+  apt_key: id=AB17C654 url=http://packages.ros.org/ros.key
 
 - name: Add ROS repo
   copy: dest=/etc/apt/sources.list.d/ros-latest.list
