@@ -39,8 +39,8 @@
     local-name: sr_visualization
 
 - git:
-    local-name: sr_teleop
-    uri: https://github.com/shadow-robot/sr-teleop.git
+    local-name: sr_teleop_devices
+    uri: https://github.com/shadow-robot/sr_teleop_devices.git
     version: indigo-devel
 
 - git:
