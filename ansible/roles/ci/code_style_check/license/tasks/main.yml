@@ -6,8 +6,8 @@
   
 - name: Python check for copyright annotation in repository files
   script: ../files/copyright_check.sh {{repo_sources_path}}
-  when: {{repo_sources_path}}.split("/")[-1] not in ['hand-firmware']
+  when: repo_sources_path.split("/")[-1] not in ['hand-firmware']
 
 - name: Full check for copyright annotation in repository files
   script: ../files/copyright_check_full.sh {{repo_sources_path}}
-  when: {{repo_sources_path}}.split("/")[-1] in ['hand-firmware']
+  when: repo_sources_path.split("/")[-1] in ['hand-firmware']
