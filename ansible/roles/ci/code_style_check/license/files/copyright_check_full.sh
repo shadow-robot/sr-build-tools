@@ -8,18 +8,18 @@ filetypes=(py c h cpp hpp)
 copyrights_py=("# Copyright")
 exclusions_py=("__init__" "setup.py")
 
-copyright_symbol_utf16=$'\x20\xa9'
+copyright_symbol_iso_8859_1=$'\x20\xa9'
 copyright_symbol_utf8=$'\xc2\xa9'
 
-copyrights_c=("// "$copyright_symbol_utf16 "//"$copyright_symbol_utf16 "// "$copyright_symbol_utf8 "//"$copyright_symbol_utf8)
+copyrights_c=($copyright_symbol_iso_8859_1 $copyright_symbol_utf8 "* Copyright")
 exclusions_c=()
 
-copyrights_h=("// "$copyright_symbol_utf16 "//"$copyright_symbol_utf16 "// "$copyright_symbol_utf8 "//"$copyright_symbol_utf8)
+copyrights_h=($copyright_symbol_iso_8859_1 $copyright_symbol_utf8 "* Copyright")
 exclusions_h=()
 
-copyrights_cpp=("// "$copyright_symbol_utf16 "//"$copyright_symbol_utf16 "// "$copyright_symbol_utf8 "//"$copyright_symbol_utf8)
+copyrights_cpp=($copyright_symbol_iso_8859_1 $copyright_symbol_utf8 "* Copyright")
 exclusions_cpp=()
-copyrights_hpp=("// "$copyright_symbol_utf16 "//"$copyright_symbol_utf16 "// "$copyright_symbol_utf8 "//"$copyright_symbol_utf8)
+copyrights_hpp=($copyright_symbol_iso_8859_1 $copyright_symbol_utf8 "* Copyright")
 exclusions_hpp=()
 
 has_missing_copyrights=false
