@@ -3,24 +3,27 @@
 export directory=$1
 cd $directory
 
-filetypes=(py c h cpp hpp)
-
-copyrights_py=("# Copyright")
-exclusions_py=("__init__" "setup.py")
-
 copyright_symbol_iso_8859_1=$'\x20\xa9'
 copyright_symbol_utf8=$'\xc2\xa9'
+copyright_text='Copyright'
+hash_copyright="# $copyright_text"
+star_copyright="* $copyright_text"
 
-copyrights_c=("* Copyright")
+filetypes=(py c h cpp hpp)
+
+copyrights_py=("$hash_copyright")
+exclusions_py=("__init__" "setup.py")
+
+copyrights_c=("$star_copyright")
 exclusions_c=()
 
-copyrights_h=("* Copyright")
+copyrights_h=("$star_copyright")
 exclusions_h=()
 
-copyrights_cpp=("* Copyright")
+copyrights_cpp=("$star_copyright")
 exclusions_cpp=()
 
-copyrights_hpp=("* Copyright")
+copyrights_hpp=("$star_copyright")
 exclusions_hpp=()
 
 has_missing_copyrights=false
