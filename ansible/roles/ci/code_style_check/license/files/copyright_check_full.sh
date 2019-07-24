@@ -11,15 +11,16 @@ exclusions_py=("__init__" "setup.py")
 copyright_symbol_iso_8859_1=$'\x20\xa9'
 copyright_symbol_utf8=$'\xc2\xa9'
 
-copyrights_c=($copyright_symbol_iso_8859_1 $copyright_symbol_utf8 "* Copyright")
+copyrights_c=("* Copyright")
 exclusions_c=()
 
-copyrights_h=($copyright_symbol_iso_8859_1 $copyright_symbol_utf8 "* Copyright")
+copyrights_h=("* Copyright")
 exclusions_h=()
 
-copyrights_cpp=($copyright_symbol_iso_8859_1 $copyright_symbol_utf8 "* Copyright")
+copyrights_cpp=("* Copyright")
 exclusions_cpp=()
-copyrights_hpp=($copyright_symbol_iso_8859_1 $copyright_symbol_utf8 "* Copyright")
+
+copyrights_hpp=("* Copyright")
 exclusions_hpp=()
 
 has_missing_copyrights=false
