@@ -559,7 +559,7 @@ if [ ${DESKTOP_ICON} = true ] ; then
             
             # Changing ethernet interface
             sed -i 's|eth_port\" value=.*|eth_port\" value=\"${ETHERCAT_INTERFACE}\" />|' \$(rospack find sr_ethercat_hand_config)/launch/sr_rhand.launch
-
+            sed -i 's|eth_port\" value=.*|eth_port\" value=\"${ETHERCAT_INTERFACE}\" />|' \$(rospack find sr_ethercat_hand_config)/launch/sr_lhand.launch
             " > ${APP_FOLDER}/${DESKTOP_SHORTCUT_NAME}/setup_dexterous_hand.sh
 
             if [ ${LAUNCH_HAND} = true ]; then
