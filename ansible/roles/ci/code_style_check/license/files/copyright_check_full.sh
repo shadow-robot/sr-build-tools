@@ -60,26 +60,26 @@ for filetype in "${filetypes[@]}"; do
     copyrights=("${!copyrights_name}")
     for filename in $(find . -name "*.$filetype" -type f); do
         accept_file=true
-    for exclusion in "${exclusions[@]}"; do
-        if [[ $(echo -n $exclusion | wc -m) > 0 ]] && [[ $filename == *$exclusion* ]] ; then
-            accept_file=false
+        for exclusion in "${exclusions[@]}"; do
+            if [[ $(echo -n $exclusion | wc -m) > 0 ]] && [[ $filename == *$exclusion* ]] ; then
+                accept_file=false
             fi
         done
-    has_copyright=false
-    if $accept_file; then
         has_copyright=false
-        for copyright in "${copyrights[@]}"; do
-            grep -Pz "$copyright" "$filename" > /dev/null
-            if [[ $? == 0 ]]; then
-                has_copyright=true
+        if $accept_file; then
+            has_copyright=false
+            for copyright in "${copyrights[@]}"; do
+                grep -Pz "$copyright" "$filename" > /dev/null
+                if [[ $? == 0 ]]; then
+                    has_copyright=true
+                fi
+            done
+            if ! $has_copyright; then
+                echo $'\n'"$filename"
+            (( num_files_no_copyright++ ))
+            (( total_num_files_no_copyright++ ))
+            has_missing_copyrights=true
             fi
-        done
-        if ! $has_copyright; then
-            echo $'\n'"$filename"
-        (( num_files_no_copyright++ ))
-        (( total_num_files_no_copyright++ ))
-        has_missing_copyrights=true
-        fi
         fi
     done
     if [ $num_files_no_copyright != 0 ]; then
