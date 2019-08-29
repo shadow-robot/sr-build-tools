@@ -9,14 +9,9 @@ exclusions_py=("__init__" "setup.py")
 
 exclusions_c=()
 
-exclusions_h=()
+year_regex="(([0-9]{4}){1}(-[0-9]{4})?)+(, ([0-9]{4}){1}(-[0-9]{4})?)*"
 
-exclusions_cpp=()
-
-exclusions_hpp=()
-
-year_regex="(([0-9]{4}){1}(-[0-9]{4})?)+(,([0-9]{4}){1}(-[0-9]{4})?)*"
-copyrights_c_public="\*\n\* Copyright ${year_regex} Shadow Robot Company Ltd.\n\*\n\* This program is free software: you can redistribute it and\/or modify it\n\
+copyright_c_public="\* Copyright ${year_regex} Shadow Robot Company Ltd.\n\*\n\* This program is free software: you can redistribute it and\/or modify it\n\
 \* under the terms of the GNU General Public License as published by the Free\n\
 \* Software Foundation version 2 of the License.\n\
 \*\n\
@@ -26,16 +21,12 @@ copyrights_c_public="\*\n\* Copyright ${year_regex} Shadow Robot Company Ltd.\n\
 \* more details.\n\
 \*\n\
 \* You should have received a copy of the GNU General Public License along\n\
-\* with this program. If not, see <http://www.gnu.org/licenses/>.\n\
-\*/"
-copyrights_c_private="\/\*\n\* Copyright \(C\) ${year_regex} Shadow Robot Company Ltd - All Rights Reserved\. Proprietary and Confidential.\n\
-\* Unauthorized copying of the content in this file, via any medium is strictly prohibited\.\n\
-\*/"
-copyrights_c_regex="(${copyrights_c_public})|(${copyrights_c_private})"
-copyrights_h_regex=$copyrights_c_regex
-copyrights_cpp_regex=$copyrights_c_regex
-copyrights_hpp_regex=$copyrights_c_regex
-copyrights_py_public="\# Copyright ${year_regex} Shadow Robot Company Ltd.\n\#\n\# This program is free software: you can redistribute it and\/or modify it\n\
+\* with this program. If not, see <http://www.gnu.org/licenses/>.\n"
+
+copyright_c_private="\* Copyright \(C\) ${year_regex} Shadow Robot Company Ltd - All Rights Reserved\. Proprietary and Confidential.\n\
+\* Unauthorized copying of the content in this file, via any medium is strictly prohibited\.\n"
+
+copyright_py_public="# Copyright ${year_regex} Shadow Robot Company Ltd.\n\#\n\# This program is free software: you can redistribute it and\/or modify it\n\
 # under the terms of the GNU General Public License as published by the Free\n\
 # Software Foundation version 2 of the License\.\n\
 #\n\
@@ -46,48 +37,142 @@ copyrights_py_public="\# Copyright ${year_regex} Shadow Robot Company Ltd.\n\#\n
 #\n\
 # You should have received a copy of the GNU General Public License along\n\
 # with this program\. If not, see <http://www.gnu.org/licenses/>\."
-copyrights_py_private="# Copyright \(C\) ${year_regex} Shadow Robot Company Ltd - All Rights Reserved\. Proprietary and Confidential\.\n\
-# Unauthorized copying of the content in this file, via any medium is strictly prohibited\."
-copyrights_py_regex="(${copyrights_py_public})|(${copyrights_py_private})"
 
-has_missing_copyrights=false
+copyright_py_private="# Copyright \(C\) ${year_regex} Shadow Robot Company Ltd - All Rights Reserved\. Proprietary and Confidential\.\n\
+# Unauthorized copying of the content in this file, via any medium is strictly prohibited\."
+
+any_copyright_regex="Copyright"
+
+# Check if the repository is private
+private_repo_license_regex="Copyright \(C\) ${year_regex} Shadow Robot Company Ltd - All Rights Reserved\."
+repo_privacy=public
+grep -Pz "$private_repo_license_regex" "LICENSE" > /dev/null
+if [[ $? == 0 ]]; then
+    repo_privacy=private
+fi
+
+total_num_files=0
 total_num_files_no_copyright=0
+total_num_files_bad_copyright=0
+total_num_files_private_copyright_in_public=0
+total_num_files_public_copyright_in_private=0
+declare -a bad_copyright_file_list
+declare -a no_copyright_file_list
+declare -a private_copyright_in_public_file_list
+declare -a public_copyright_in_private_file_list
 for filetype in "${filetypes[@]}"; do
-    num_files_no_copyright=0
-    exclusions_name="exclusions_$filetype"[@]
-    exclusions=("${!exclusions_name}")
-    copyrights_name="copyrights_${filetype}_regex"[@]
-    copyrights=("${!copyrights_name}")
-    for filename in $(find . -name "*.$filetype" -type f); do
+    case $filetype in 
+        c|h|cpp|hpp)
+            private_copyright="${copyright_c_private}"
+            public_copyright="${copyright_c_public}"
+            exclusions=("${exclusions_c[@]}")
+            ;;
+        py)
+            private_copyright=${copyright_py_private}
+            public_copyright=${copyright_py_public}
+            exclusions=("${exclusions_py[@]}")
+            ;;
+        *)
+            echo "Unknown filetype ${filetype}"
+            continue
+    esac
+    for file_path in $(find . -name "*.$filetype" -type f); do
         accept_file=true
+        # See if the file is excluded by global exclude patterns (defined above)
         for exclusion in "${exclusions[@]}"; do
-            if [[ $(echo -n $exclusion | wc -m) > 0 ]] && [[ $filename == *$exclusion* ]] ; then
+            if [[ $(echo -n $exclusion | wc -m) > 0 ]] && [[ $file_path == *$exclusion* ]] ; then
                 accept_file=false
             fi
         done
-        has_copyright=false
         if $accept_file; then
-            has_copyright=false
-            for copyright in "${copyrights[@]}"; do
-                grep -Pz "$copyright" "$filename" > /dev/null
-                if [[ $? == 0 ]]; then
-                    has_copyright=true
+            # See if the file is excluded by a local (same directory) CPPLINT.cfg
+            dir_name=$(dirname "${file_path}")
+            if [[ -f "${dir_name}/CPPLINT.cfg" ]]; then
+                exclude_regex="^exclude_files=\K(.*)"
+                exclude_pattern="$(grep -oP ${exclude_regex} ${dir_name}/CPPLINT.cfg)"
+                if [[ ! -z ${exclude_pattern} ]]; then
+                    file_name=$(basename ${file_path})
+                    if [[ ${file_name} =~ ${exclude_pattern} ]]; then
+                        echo "Excluding file ${file_path} from copyright check as it matches CPPLINT.cfg exclude=${exclude_pattern}"
+                        accept_file=false
+                    fi
                 fi
-            done
-            if ! $has_copyright; then
-                echo $'\n'"$filename"
-            (( num_files_no_copyright++ ))
-            (( total_num_files_no_copyright++ ))
-            has_missing_copyrights=true
+            fi
+        fi
+        if $accept_file; then
+            (( total_num_files++ ))
+            if [[ $repo_privacy == "private" ]]; then
+                grep -Pz "$private_copyright" "$file_path" > /dev/null
+                if [[ $? != 0 ]]; then
+                    grep -Pz "$public_copyright" "$file_path" > /dev/null
+                    if [[ $? == 0 ]]; then
+                        public_copyright_in_private_file_list+=("${file_path}")
+                        (( total_num_files_public_copyright_in_private++ ))
+                    else
+                        grep -Pz "$any_copyright_regex" "$file_path" > /dev/null
+                        if [[ $? == 0 ]]; then
+                            bad_copyright_file_list+=("${file_path}")
+                            (( total_num_files_bad_copyright++ ))
+                        else
+                            no_copyright_file_list+=("${file_path}")
+                            (( total_num_files_no_copyright++ ))
+                        fi
+                    fi
+                fi
+            else
+                grep -Pz "$public_copyright" "$file_path" > /dev/null
+                if [[ $? != 0 ]]; then
+                    grep -Pz "$private_copyright" "$file_path" > /dev/null
+                    if [[ $? == 0 ]]; then
+                        private_copyright_in_public_file_list+=("${file_path}")
+                        (( total_num_files_private_copyright_in_public++ ))
+                    else
+                        grep -Pz "$any_copyright_regex" "$file_path" > /dev/null
+                        if [[ $? == 0 ]]; then
+                            bad_copyright_file_list+=("${file_path}")
+                            (( total_num_files_bad_copyright++ ))
+                        else
+                            no_copyright_file_list+=("${file_path}")
+                            (( total_num_files_no_copyright++ ))
+                        fi
+                    fi
+                fi
             fi
         fi
     done
-    if [ $num_files_no_copyright != 0 ]; then
-        echo $'\n'"Copyright check failure: There are $num_files_no_copyright $filetype files without copyright. See above for a list of files"
-    fi
 done
-if $has_missing_copyrights; then
-    echo $'\n\n'"Copyright check failure: There are $total_num_files_no_copyright files in total without copyright. See above for details."
+fail=false
+if [[ $total_num_files_no_copyright > 0 ]]; then
+    echo $'\n'"Copyright check failure: There are $total_num_files_no_copyright files without copyright notices:"
+    for file_path in "${no_copyright_file_list[@]}"; do
+        echo "${file_path}"
+    done
+    fail=true
+fi
+if [[ $total_num_files_bad_copyright > 0 ]]; then
+    echo $'\n'"Copyright check failure: There are $total_num_files_bad_copyright files with malformed copyright notices:"
+    for file_path in "${bad_copyright_file_list[@]}"; do
+        echo "${file_path}"
+    done
+    fail=true
+fi
+if [[ $total_num_files_public_copyright_in_private > 0 ]]; then
+    echo $'\n'"Copyright check failure: There are $total_num_files_public_copyright_in_private private files with public copyright notices:"
+    for file_path in "${public_copyright_in_private_file_list[@]}"; do
+        echo "${file_path}"
+    done
+    fail=true
+fi
+if [[ $total_num_files_private_copyright_in_public > 0 ]]; then
+    echo $'\n'"Copyright check failure: There are $total_num_files_private_copyright_in_public public files with private copyright notices:"
+    for file_path in "${private_copyright_in_public_file_list[@]}"; do
+        echo "${file_path}"
+    done
+    fail=true
+fi
+if [[ $fail == true ]]; then
+    echo $'\n'"Our ${repo_privacy} copyright notice templates are here: https://shadowrobot.atlassian.net/wiki/spaces/SDSR/pages/594411521/Licenses."
     exit 1
 fi
+echo "All ${total_num_files} copyright notices are compliant."
 exit 0
