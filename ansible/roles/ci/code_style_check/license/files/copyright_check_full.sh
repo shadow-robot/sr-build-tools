@@ -44,11 +44,11 @@ copyright_py_private="# Copyright \(C\) ${year_regex} Shadow Robot Company Ltd -
 any_copyright_regex="Copyright"
 
 # Check if the repository is private
-private_repo_license_regex="Copyright \(C\) ${year_regex} Shadow Robot Company Ltd - All Rights Reserved\."
-repo_privacy=public
-grep -Pz "$private_repo_license_regex" "LICENSE" > /dev/null
+public_repo_license_regex="GNU GENERAL PUBLIC LICENSE"
+repo_privacy=private
+grep -Pz "$public_repo_license_regex" "LICENSE" > /dev/null
 if [[ $? == 0 ]]; then
-    repo_privacy=private
+    repo_privacy=public
 fi
 
 total_num_files=0
