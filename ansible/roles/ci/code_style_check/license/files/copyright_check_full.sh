@@ -33,7 +33,6 @@ more details. \
 You should have received a copy of the GNU General Public License along \
 with this program. If not, see <http://www.gnu.org/licenses/>."
 copyright_c_public="$(regexify "$copyright_c_public" "\*")"
-# echo "${copyright_c_public}"
 
 copyright_c_private="Copyright (C) <Year> Shadow Robot Company Ltd - All Rights Reserved. Proprietary and Confidential. \
 Unauthorized copying of the content in this file, via any medium is strictly prohibited."
@@ -50,12 +49,10 @@ more details. \
 You should have received a copy of the GNU General Public License along \
 with this program. If not, see <http://www.gnu.org/licenses/>."
 copyright_py_public="$(regexify "${copyright_py_public}" "#")"
-# echo "$copyright_py_public"
 
 copyright_py_private="Copyright (C) <Year> Shadow Robot Company Ltd - All Rights Reserved. Proprietary and Confidential. \
 Unauthorized copying of the content in this file, via any medium is strictly prohibited."
 copyright_py_private="$(regexify "${copyright_py_private}" "#")"
-# echo "$copyright_py_private"
 
 any_copyright_regex="Copyright"
 
@@ -112,7 +109,6 @@ for filetype in "${filetypes[@]}"; do
                     if [[ ! -z ${exclude_pattern} ]]; then
                         file_name=$(basename ${file_path})
                         if [[ ${file_name} =~ ${exclude_pattern} ]]; then
-                            # echo "Excluding file ${file_path} from copyright check as it matches ${exclusion_filename} exclude=${exclude_pattern}"
                             accept_file=false
                         fi
                     fi
@@ -133,7 +129,6 @@ for filetype in "${filetypes[@]}"; do
                         if [[ $? == 0 ]]; then
                             bad_copyright_file_list+=("${file_path}")
                             (( total_num_files_bad_copyright++ ))
-                            # echo $private_copyright
                         else
                             no_copyright_file_list+=("${file_path}")
                             (( total_num_files_no_copyright++ ))
@@ -141,7 +136,6 @@ for filetype in "${filetypes[@]}"; do
                     fi
                 fi
             else
-                # echo "grep -Pz \"$public_copyright\" \"$directory/$file_path\""
                 grep -Pz "$public_copyright" "$file_path" > /dev/null
                 if [[ $? != 0 ]]; then
                     grep -Pz "$private_copyright" "$file_path" > /dev/null
@@ -152,7 +146,6 @@ for filetype in "${filetypes[@]}"; do
                         grep -Pz "$any_copyright_regex" "$file_path" > /dev/null
                         if [[ $? == 0 ]]; then
                             bad_copyright_file_list+=("${file_path}")
-                            # echo $public_copyright
                             (( total_num_files_bad_copyright++ ))
                         else
                             no_copyright_file_list+=("${file_path}")
@@ -169,7 +162,6 @@ if [[ $total_num_files_no_copyright > 0 ]]; then
     echo $'\n'"Copyright check failure: There are $total_num_files_no_copyright files without copyright notices:"
     for file_path in "${no_copyright_file_list[@]}"; do
         echo "${file_path}"
-        code "${file_path}"
     done
     fail=true
 fi
@@ -177,7 +169,6 @@ if [[ $total_num_files_bad_copyright > 0 ]]; then
     echo $'\n'"Copyright check failure: There are $total_num_files_bad_copyright files with malformed copyright notices:"
     for file_path in "${bad_copyright_file_list[@]}"; do
         echo "${file_path}"
-        code "${file_path}"
     done
     fail=true
 fi
@@ -185,7 +176,6 @@ if [[ $total_num_files_public_copyright_in_private > 0 ]]; then
     echo $'\n'"Copyright check failure: There are $total_num_files_public_copyright_in_private private files with public copyright notices:"
     for file_path in "${public_copyright_in_private_file_list[@]}"; do
         echo "${file_path}"
-        code "${file_path}"
     done
     fail=true
 fi
@@ -193,7 +183,6 @@ if [[ $total_num_files_private_copyright_in_public > 0 ]]; then
     echo $'\n'"Copyright check failure: There are $total_num_files_private_copyright_in_public public files with private copyright notices:"
     for file_path in "${private_copyright_in_public_file_list[@]}"; do
         echo "${file_path}"
-        code "${file_path}"
     done
     fail=true
 fi
