@@ -9,42 +9,55 @@ exclusions_py=("__init__" "setup.py")
 
 exclusions_c=()
 
-year_regex="(([0-9]{4}){1}(-[0-9]{4})?)+(, ([0-9]{4}){1}(-[0-9]{4})?)*"
+year_regex="(?:(?:[0-9]{4}){1}(?:-[0-9]{4})?)+(?:, (?:[0-9]{4}){1}(?:-[0-9]{4})?)*"
 
-copyright_c_public="\* Copyright ${year_regex} Shadow Robot Company Ltd.\n\*\n\* This program is free software: you can redistribute it and\/or modify it\n\
-\* under the terms of the GNU General Public License as published by the Free\n\
-\* Software Foundation version 2 of the License.\n\
-\*\n\
-\* This program is distributed in the hope that it will be useful, but WITHOUT\n\
-\* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or\n\
-\* FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for\n\
-\* more details.\n\
-\*\n\
-\* You should have received a copy of the GNU General Public License along\n\
-\* with this program. If not, see <http://www.gnu.org/licenses/>.\n"
+regexify () {
+    regexified=$1
+    regexified=${regexified//"."/"\."}
+    regexified=${regexified//"/"/"\/"}
+    regexified=${regexified//"("/"\("}
+    regexified=${regexified//")"/"\)"}
+    regexified=${regexified//" "/"(?: |(?:(?:\r*\n$2)*? ))"}
+    regexified=${regexified//"<Year>"/${year_regex}}
+    echo ${regexified}
+}
 
-copyright_c_private="\* Copyright \(C\) ${year_regex} Shadow Robot Company Ltd - All Rights Reserved\. Proprietary and Confidential.\n\
-\* Unauthorized copying of the content in this file, via any medium is strictly prohibited\.\n"
+copyright_c_public="Copyright <Year> Shadow Robot Company Ltd. \
+This program is free software: you can redistribute it and/or modify it \
+under the terms of the GNU General Public License as published by the Free \
+Software Foundation version 2 of the License. \
+This program is distributed in the hope that it will be useful, but WITHOUT \
+ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or \
+FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for \
+more details. \
+You should have received a copy of the GNU General Public License along \
+with this program. If not, see <http://www.gnu.org/licenses/>."
+copyright_c_public="$(regexify "$copyright_c_public" "\*")"
 
-copyright_py_public="# Copyright ${year_regex} Shadow Robot Company Ltd.\n\#\n\# This program is free software: you can redistribute it and\/or modify it\n\
-# under the terms of the GNU General Public License as published by the Free\n\
-# Software Foundation version 2 of the License\.\n\
-#\n\
-# This program is distributed in the hope that it will be useful, but WITHOUT\n\
-# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or\n\
-# FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for\n\
-# more details\.\n\
-#\n\
-# You should have received a copy of the GNU General Public License along\n\
-# with this program\. If not, see <http://www.gnu.org/licenses/>\."
+copyright_c_private="Copyright (C) <Year> Shadow Robot Company Ltd - All Rights Reserved. Proprietary and Confidential. \
+Unauthorized copying of the content in this file, via any medium is strictly prohibited."
+copyright_c_private="$(regexify "$copyright_c_private" "\*")"
 
-copyright_py_private="# Copyright \(C\) ${year_regex} Shadow Robot Company Ltd - All Rights Reserved\. Proprietary and Confidential\.\n\
-# Unauthorized copying of the content in this file, via any medium is strictly prohibited\."
+copyright_py_public="Copyright <Year> Shadow Robot Company Ltd. \
+This program is free software: you can redistribute it and/or modify it \
+under the terms of the GNU General Public License as published by the Free \
+Software Foundation version 2 of the License. \
+This program is distributed in the hope that it will be useful, but WITHOUT \
+ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or \
+FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for \
+more details. \
+You should have received a copy of the GNU General Public License along \
+with this program. If not, see <http://www.gnu.org/licenses/>."
+copyright_py_public="$(regexify "${copyright_py_public}" "#")"
+
+copyright_py_private="Copyright (C) <Year> Shadow Robot Company Ltd - All Rights Reserved. Proprietary and Confidential. \
+Unauthorized copying of the content in this file, via any medium is strictly prohibited."
+copyright_py_private="$(regexify "${copyright_py_private}" "#")"
 
 any_copyright_regex="Copyright"
 
 # Check if the repository is private
-public_repo_license_regex="GNU GENERAL PUBLIC LICENSE"
+public_repo_license_regex="(GNU GENERAL PUBLIC LICENSE)|(BSD 2-Clause License)"
 repo_privacy=private
 grep -Pz "$public_repo_license_regex" "LICENSE" > /dev/null
 if [[ $? == 0 ]]; then
@@ -76,6 +89,7 @@ for filetype in "${filetypes[@]}"; do
             echo "Unknown filetype ${filetype}"
             continue
     esac
+    IFS=$'\n' # Allows for filenames with spaces
     for file_path in $(find . -name "*.$filetype" -type f); do
         accept_file=true
         # See if the file is excluded by global exclude patterns (defined above)
@@ -85,19 +99,21 @@ for filetype in "${filetypes[@]}"; do
             fi
         done
         if $accept_file; then
-            # See if the file is excluded by a local (same directory) CPPLINT.cfg
+            # See if the file is excluded by a local (same directory) CPPLINT.cfg or copyright_exclusions.cfg
             dir_name=$(dirname "${file_path}")
-            if [[ -f "${dir_name}/CPPLINT.cfg" ]]; then
-                exclude_regex="^exclude_files=\K(.*)"
-                exclude_pattern="$(grep -oP ${exclude_regex} ${dir_name}/CPPLINT.cfg)"
-                if [[ ! -z ${exclude_pattern} ]]; then
-                    file_name=$(basename ${file_path})
-                    if [[ ${file_name} =~ ${exclude_pattern} ]]; then
-                        echo "Excluding file ${file_path} from copyright check as it matches CPPLINT.cfg exclude=${exclude_pattern}"
-                        accept_file=false
+            exclusion_filenames=("CPPLINT.cfg" "copyright_exclusions.cfg")
+            for exclusion_filename in "${exclusion_filenames[@]}"; do
+                if [[ -f "${dir_name}/${exclusion_filename}" ]]; then
+                    exclude_regex="^exclude_files=\K(.*)"
+                    exclude_pattern="$(grep -oP ${exclude_regex} ${dir_name}/${exclusion_filename})"
+                    if [[ ! -z ${exclude_pattern} ]]; then
+                        file_name=$(basename ${file_path})
+                        if [[ ${file_name} =~ ${exclude_pattern} ]]; then
+                            accept_file=false
+                        fi
                     fi
                 fi
-            fi
+            done
         fi
         if $accept_file; then
             (( total_num_files++ ))
