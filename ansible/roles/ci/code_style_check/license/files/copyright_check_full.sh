@@ -188,9 +188,9 @@ if [[ $total_num_files_private_copyright_in_public > 0 ]]; then
 fi
 if [[ $fail == true ]]; then
     echo $'\n'"Our ${repo_privacy} copyright notice templates are here:"
-    echo "https://shadowrobot.atlassian.net/wiki/spaces/SDSR/pages/594411521/Licenses."
+    echo "https://shadowrobot.atlassian.net/wiki/spaces/SDSR/pages/594411521/Licenses"
     echo $'\n'"For more information, such as how to exclude files from this check, see this readme:"
-    echo "https://github.com/shadow-robot/sr-build-tools/tree/master/ansible/roles/ci/code_style_check/license/README.md."
+    echo "https://github.com/shadow-robot/sr-build-tools/tree/master/ansible/roles/ci/code_style_check/license/README.md"
     exit 1
 fi
 echo "All ${total_num_files} copyright notices are compliant."
