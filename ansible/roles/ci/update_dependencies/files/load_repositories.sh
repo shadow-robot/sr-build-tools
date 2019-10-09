@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+set -e
+
 export ros_workspace=$1
 export dependencies_file=$2
 export github_user=${3:-github_user_not_provided}
