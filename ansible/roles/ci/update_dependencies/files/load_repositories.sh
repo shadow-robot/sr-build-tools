@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-set -e
+set -e # fail on errors
 
 export ros_workspace=$1
 export dependencies_file=$2
