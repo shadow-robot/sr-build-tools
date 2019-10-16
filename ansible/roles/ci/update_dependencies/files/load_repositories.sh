@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+set -e # fail on errors
+
 export ros_workspace=$1
 export dependencies_file=$2
 export github_user=${3:-github_user_not_provided}
@@ -15,7 +17,7 @@ export loops_count=10
 while [ $current_repo_count -ne $previous_repo_count ]; do
   find . -type f -name $rosintall_filename -exec wstool merge -y {} \;
   sed -i "s/{{github_login}}/$github_user/g; s/{{github_password}}/$github_password/g" .rosinstall
-  wstool update --delete-changed-uris
+  wstool update --abort-changed-uris -j5
 
   export previous_repo_count=$current_repo_count
   export current_repo_count=$(find . -type f -name $rosintall_filename | wc -l)
