@@ -234,8 +234,6 @@ else
     fi
 fi
 
-
-
 echo ""
 echo " -------------------"
 echo " | Running Ansible |"
