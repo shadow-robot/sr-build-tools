@@ -229,6 +229,9 @@ else
         git clone --depth 1 -b ${GITHUB_BRANCH} ${REPOSITORY_URL} ${PROJECT_HOME_DIR}
     fi
     cp "${PROJECT_HOME_DIR}/${INSTALL_FILE}" ${ROS_WORKSPACE_INSTALL_FILE}
+    if [ "${USE_SSH_URI}" = true ]; then
+        sed -i "s|https://{{github_login}}:{{github_password}}@github.com/|git@github.com:|g" ${ROS_WORKSPACE_INSTALL_FILE}
+    fi
 fi
 
 echo ""
