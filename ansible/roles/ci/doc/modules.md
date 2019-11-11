@@ -32,4 +32,4 @@
   * **cpp_code_coverage** - generate code coverage for C++ code
   * **code_coverage** - generate code coverage for Python and C++ code
   * **codecov_tool** - post Python and C++ code coverage results to [CodeCov](https://codecov.io)
-  * **check_sanitizer** - build with address sanitizer and run tests
+  * **check_sanitizer** - build with [address sanitizer](https://clang.llvm.org/docs/AddressSanitizer.html) and run tests to detect address sanitization errors at runtime 
