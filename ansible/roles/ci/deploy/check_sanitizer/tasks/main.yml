@@ -1,0 +1,24 @@
+---
+# Playbook for repository sanitization check
+
+- name: catkin clean workspace directories
+  file: path={{item}} state=absent
+  with_items:
+    - "{{ros_workspace}}/build_isolated"
+    - "{{ros_workspace}}/devel_isolated"
+    - "{{ros_workspace}}/install_isolated"
+
+- name: Set non-repository packages using lists substraction
+  set_fact:
+     non_repo_packages : "{{workspace_packages_names|difference(repo_packages_names)|join(';')}}"
+     
+-name: Set repo name
+  set_fact:
+    repo_name: repo_sources_path.split("/")[-1]
+
+- name: build workspace and run tests
+  shell: bash -c "source <(grep '^export\|^source' {{ansible_env.HOME}}/.bashrc) && catkin_make -DCATKIN_ENABLE_TESTING=1 -DCOMPILER_RT_BUILD_SHARED_ASAN=ON -DCMAKE_BUILD_TYPE=RelWithDebInfo && catkin_make -DCATKIN_ENABLE_TESTING=1 -DCOMPILER_RT_BUILD_SHARED_ASAN=ON -DCMAKE_BUILD_TYPE=RelWithDebInfo run_tests_{{ repo_name }}"
+    chdir={{ros_workspace}}
+
+
+    

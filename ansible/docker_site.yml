@@ -62,6 +62,7 @@
     - {role: ci/code_style_check/cpp, when: run_build, tags: ["cpp_code_style_check", "code_style_check"]}
     - {role: ci/code_style_check/license, when: run_build, tags: ["check_license"]}
     - {role: ci/deploy/check_install, when: run_build, tags: ["check_install"]}
+    - {role: ci/deploy/check_sanitizer, when: run_build, tags: ["check_sanitizer"]}
     - {role: ci/deploy/build_debs, when: run_build, tags: ["check_deb_make", "complete_deb_check", "upload_debs"]}
     - {role: ci/deploy/complete_deb_check, when: run_build, tags: ["complete_deb_check"]}
     - {role: ci/deploy/check_deb_make, when: run_build, tags: ["check_deb_make", "complete_deb_check", "upload_debs"]}
