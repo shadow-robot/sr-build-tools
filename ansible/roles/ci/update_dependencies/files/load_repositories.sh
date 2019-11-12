@@ -13,10 +13,16 @@ export rosintall_filename=$(basename "$dependencies_file")
 export current_repo_count=$(find . -type f -name $rosintall_filename | wc -l)
 export previous_repo_count=0
 export loops_count=10
+export starting_repo=$(basename $(echo $dependencies_file | sed "s/$(basename $dependencies_file)//"))
 
 while [ $current_repo_count -ne $previous_repo_count ]; do
   find . -type f -name $rosintall_filename -exec wstool merge -y {} \;
   sed -i "s/{{github_login}}/$github_user/g; s/{{github_password}}/$github_password/g" .rosinstall
+
+  if [[ $(grep "$starting_repo" ".rosinstall") ]]; then
+     wstool rm $starting_repo
+  fi
+
   wstool update --abort-changed-uris -j5
 
   export previous_repo_count=$current_repo_count
