@@ -13,7 +13,7 @@ export rosintall_filename=$(basename "$dependencies_file")
 export current_repo_count=$(find . -type f -name $rosintall_filename | wc -l)
 export previous_repo_count=0
 export loops_count=10
-export starting_repo=$(basename $(echo $dependencies_file | sed "s/$(basename $dependencies_file)//"))
+export starting_repo=$(basename $(echo $dependencies_file | sed "s/$rosintall_filename//"))
 
 while [ $current_repo_count -ne $previous_repo_count ]; do
   find . -type f -name $rosintall_filename -exec wstool merge -y {} \;
