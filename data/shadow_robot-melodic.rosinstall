@@ -1,62 +1,52 @@
 - git:
     uri: https://github.com/shadow-robot/sr-ros-interface.git
-    version: kinetic-devel
+    version: melodic-devel
     local-name: shadow_robot
 
 - git:
     uri: https://github.com/shadow-robot/sr_common.git
-    version: kinetic-devel
+    version: melodic-devel
     local-name: sr_common
 
 - git:
     uri: https://github.com/shadow-robot/sr_core.git
-    version: kinetic-devel
+    version: melodic-devel
     local-name: sr_core
 
 - git:
     uri: https://github.com/shadow-robot/sr_interface.git
-    version: kinetic-devel
+    version: melodic-devel
     local-name: sr_interface
 
 - git:
     uri: https://github.com/shadow-robot/sr_tools.git
-    version: kinetic-devel
+    version: melodic-devel
     local-name: sr_tools
 
 - git:
     uri: https://github.com/shadow-robot/sr-ros-interface-ethercat.git
-    version: kinetic-devel
+    version: melodic-devel
     local-name: shadow_robot_ethercat
 
 - git:
     uri: https://github.com/shadow-robot/sr-visualization.git
-    version: kinetic-devel
+    version: melodic-devel
     local-name: sr_visualization
 
 - git:
     local-name: sr_teleop_devices
     uri: https://github.com/shadow-robot/sr_teleop_devices.git
-    version: kinetic-devel
+    version: melodic-devel
 
 - git:
     local-name: ros_ethercat
     uri: https://github.com/shadow-robot/ros_ethercat.git
-    version: kinetic-devel
+    version: melodic-devel
 
 - git:
     local-name: sr_ur_arm
     uri: https://github.com/shadow-robot/sr_ur_arm.git
     version: melodic-devel
-
-- git:
-    local-name: sr_blockly
-    uri: https://github.com/shadow-robot/sr_blockly.git
-    version: kinetic-devel
-
-- git:
-    local-name: robot_blockly
-    uri: https://github.com/shadow-robot/robot_blockly.git
-    version: master
     
 - git:
     local-name: sr_config
@@ -66,12 +56,12 @@
 - git:
     local-name: ros_control_robot
     uri: https://github.com/shadow-robot/ros_control_robot.git
-    version: kinetic-devel
+    version: melodic-devel
 
 - git:
     local-name: common_resources
     uri: https://github.com/shadow-robot/common_resources.git
-    version: kinetic-devel
+    version: melodic-devel
 
 - git:
     local-name: optoforce
@@ -81,12 +71,12 @@
 - git:
     local-name: sr_visualization_common
     uri: https://github.com/shadow-robot/sr_visualization_common.git
-    version: kinetic-devel
+    version: melodic-devel
 
 - git:
     local-name: moveit
     uri: https://github.com/ros-planning/moveit.git
-    version: kinetic-devel
+    version: melodic-devel
 
 - git:
     local-name: sr_cyberglove_config
