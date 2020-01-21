@@ -22,8 +22,7 @@ if  [ "semaphore_docker" != $server_type ] && [ "local" != $server_type ] && [ "
 
   sudo apt-get update
   sudo apt-get install -y python-dev libxml2-dev libxslt-dev python-pip lcov wget git libssl-dev libffi-dev libyaml-dev
-  # Temporary fix for https://github.com/pypa/pip/issues/7217
-  sudo pip install --upgrade pip"<20.0" setuptools gcovr
+  sudo pip install --upgrade pip setuptools gcovr
   
   git config --global user.email "build.tools@example.com"
   git config --global user.name "Build Tools"
