@@ -22,7 +22,7 @@ if [ $? -eq 0 ]; then
     # Add nvidia-specific docker arguments, environment variables and volumes
     run_command="${run_command} --runtime nvidia"
     environment_variables+=("PATH=/usr/lib/nvidia-${nvidia_version}/bin:${PATH}" "LD_LIBRARY_PATH=/usr/lib/nvidia-${nvidia_version}" "NVIDIA_DRIVER_CAPABILITIES=all" "NVIDIA_VISIBLE_DEVICES=all")
-    volumes+=("/usr/lib/nvidia-430:/usr/lib/nvidia-${nvidia_version}:rw")
+    volumes+=("/usr/lib/nvidia-${nvidia_version}:/usr/lib/nvidia-${nvidia_version}:rw")
 else
     echo "No Nvidia GPU detected, using intel graphics for new container."
     nvidia=false
