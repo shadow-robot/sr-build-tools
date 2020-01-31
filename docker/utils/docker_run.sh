@@ -12,20 +12,26 @@ environment_variables=("DISPLAY" "QT_X11_NO_MITSHM=1" "LOCAL_USER_ID=$(id -u)")
 volumes=("/tmp/.X11-unix:/tmp/.X11-unix:rw" "/dev/input:/dev/input:rw" "/run/udev/data:/run/udev/data:rw")
 
 # Detect if Nvidia GPU is available (installed and in-use)
+nvidia=false
 command -v nvidia-smi >/dev/null 2>&1
 if [ $? -eq 0 ]; then
+  # Get Nvidia major version number
+  nvidia_smi="$(nvidia-smi)"
+  if [ $? -eq 0 ]; then
     nvidia=true
-    # Get Nvidia major version number
-    nvidia_smi="$(nvidia-smi)"
-    nvidia_version=$(echo ${nvidia_smi} | sed 's/.*Driver Version: \([^ \.]*\).*/\1/')
-    echo "Nvidia GPU detected, using Nvidia driver version ${nvidia_version} for new container."
-    # Add nvidia-specific docker arguments, environment variables and volumes
-    run_command="${run_command} --runtime nvidia"
-    environment_variables+=("PATH=/usr/lib/nvidia-${nvidia_version}/bin:${PATH}" "LD_LIBRARY_PATH=/usr/lib/nvidia-${nvidia_version}" "NVIDIA_DRIVER_CAPABILITIES=all" "NVIDIA_VISIBLE_DEVICES=all")
-    volumes+=("/usr/lib/nvidia-${nvidia_version}:/usr/lib/nvidia-${nvidia_version}:rw")
+  fi
+fi
+
+if $nvidia; then
+  nvidia_version=$(echo ${nvidia_smi} | sed 's/.*Driver Version: \([^ \.]*\).*/\1/')
+  echo "Nvidia GPU detected, using Nvidia driver version ${nvidia_version} for new container."
+  # Add nvidia-specific docker arguments, environment variables and volumes
+  run_command="${run_command} --runtime nvidia"
+  environment_variables+=("PATH=/usr/lib/nvidia-${nvidia_version}/bin:${PATH}" "LD_LIBRARY_PATH=/usr/lib/nvidia-${nvidia_version}" "NVIDIA_DRIVER_CAPABILITIES=all" "NVIDIA_VISIBLE_DEVICES=all")
+  volumes+=("/usr/lib/nvidia-${nvidia_version}:/usr/lib/nvidia-${nvidia_version}:rw")
 else
-    echo "No Nvidia GPU detected, using intel graphics for new container."
-    nvidia=false
+  echo "No Nvidia GPU detected, using intel graphics for new container."
+  nvidia=false
 fi
 
 # Add all environment variables to the final run command
