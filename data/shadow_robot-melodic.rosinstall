@@ -74,11 +74,6 @@
     version: melodic-devel
 
 - git:
-    local-name: moveit
-    uri: https://github.com/ros-planning/moveit.git
-    version: melodic-devel
-
-- git:
     local-name: sr_cyberglove_config
     uri: https://github.com/shadow-robot/sr_cyberglove_config.git
     version: master
