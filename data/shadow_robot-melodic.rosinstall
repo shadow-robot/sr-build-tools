@@ -42,11 +42,6 @@
     local-name: ros_ethercat
     uri: https://github.com/shadow-robot/ros_ethercat.git
     version: melodic-devel
-
-- git:
-    local-name: sr_ur_arm
-    uri: https://github.com/shadow-robot/sr_ur_arm.git
-    version: melodic-devel
     
 - git:
     local-name: sr_config
@@ -77,3 +72,13 @@
     local-name: sr_cyberglove_config
     uri: https://github.com/shadow-robot/sr_cyberglove_config.git
     version: master
+    
+- git:
+    local-name: Universal_Robots_ROS_Driver
+    uri: https://github.com/shadow-robot/Universal_Robots_ROS_Driver.git
+    version: local_hw_interface_and_fixed_doSwitch
+
+- git:
+    local-name: universal_robot
+    uri: https://github.com/fmauch/universal_robot.git
+    version: calibration_devel
