@@ -82,3 +82,8 @@
     local-name: universal_robot
     uri: https://github.com/fmauch/universal_robot.git
     version: calibration_devel
+    
+- git:
+    local-name: sr_tests
+    uri: https://github.com/shadow-robot/sr_tests.git
+    version: melodic-devel
