@@ -14,7 +14,7 @@
   find:
     paths: "{{test_results_dir}}"
     recurse: yes
-    contains: ".*<failure|<error.*"
+    contains: ".*<failure.*|.*<error.*"
     file_type: file
   register: unit_test_find_result
 
