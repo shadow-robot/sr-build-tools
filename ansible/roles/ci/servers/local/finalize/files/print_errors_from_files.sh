@@ -15,6 +15,6 @@ for file_path in $(find . -type f); do
     if [[ $? != 0 ]]; then
         (( files_with_errors_total++ ))
         errors=$(grep -Pzo '(?s)CDATA\[(.*?)\]\]' "$file_path" | sed 's/CDATA\[//g' | sed 's/\]\]/\n/g' )
-        echo $errors
+        echo -e "$errors"
     fi
 done
