@@ -10,21 +10,8 @@
   shell: bash -c "mv -vt {{test_results_dir}} {{ros_workspace}}/build/test_results/*"
   ignore_errors: yes
 
-- name: Find all unit test result files with errors
-  find:
-    paths: "{{test_results_dir}}"
-    recurse: yes
-    contains: ".*<failure.*|.*<error.*"
-    file_type: file
-  register: unit_test_find_result
-
-- name: Get the list of filenames only for the unit test result files
-  set_fact:
-    unit_test_file_list: "{{ unit_test_find_result.files | map(attribute='path') | list }}"
-
 - name: Print out the contents of all the failed unit test files
-  debug: var=item
-  with_file: "{{ unit_test_file_list }}"
+  script: ../files/print_errors_from_files.sh {{test_results_dir}}
 
 - name: Fail in case if unit tests failing
   shell: bash -c "! grep -E -R '<failure|<error' {{test_results_dir}}"
