@@ -37,7 +37,9 @@ def main(argv=sys.argv[1:]):
         'paths',
         nargs='*',
         default=[os.curdir],
-        help='The files or directories to check using xmllint',
+        help='The files or directories to check')
+    parser.add_argument(
+        '--exclude',
         nargs='*',
         default=[],
         help='Exclude specific file names and directory names from the check')
