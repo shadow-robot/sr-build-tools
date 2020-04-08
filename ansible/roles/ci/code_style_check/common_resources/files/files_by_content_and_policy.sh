@@ -14,10 +14,10 @@ package_dir=$(realpath $2)
 regexp="$3"
 rules_file_name=$4
 
-exclude_filter="*.*"
+exclude_filter=$5
 
 {
-    grep -R -P "$regexp" -l --exclude="$exclude_filter" $package_dir
+    grep -R -I -P "$regexp" -l --exclude="$exclude_filter" $package_dir
 
     # Concatenate a listing of all ignore files, with the path to the
     # ignore file it came from prefixed to each pattern
