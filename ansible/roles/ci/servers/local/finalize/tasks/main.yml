@@ -10,5 +10,5 @@
   shell: bash -c "mv -vt {{test_results_dir}} {{ros_workspace}}/build/test_results/*"
   ignore_errors: yes
 
-- name: Fail in case if unit tests failing
-  shell: bash -c "! grep -E -R '<failure|<error' {{test_results_dir}}"
+- name: Fail if any unit test fails and print the exact error
+  script: ../files/print_errors_from_files.sh {{test_results_dir}}
