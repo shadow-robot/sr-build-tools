@@ -76,7 +76,7 @@ def main(argv=sys.argv[1:]):
         except SAXParseException:
             pass
 
-        cmd = [xmllint_bin, '--noout', filename, '--valid']
+        cmd = [xmllint_bin, '--noout', filename]
         # choose validation options based on handler information
         for attributes in handler.xml_model_attributes:
             schematypens = attributes.get('schematypens')
