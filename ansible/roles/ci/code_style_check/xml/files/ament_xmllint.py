@@ -13,7 +13,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 import argparse
 import os
 import shutil
@@ -68,7 +67,6 @@ def main(argv=sys.argv[1:]):
     # invoke xmllint on all files
     for filename in files:
         # parse file to extract desired validation information
-        print("debug: " + str(filename))
         parser = make_parser()
         handler = CustomHandler()
         parser.setContentHandler(handler)

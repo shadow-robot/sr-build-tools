@@ -14,7 +14,7 @@
 - name: Execute xmllint for every package and all files starting with < (assumed to be XML) and write results in unit tests format
   script: ../files/ament_xmllint.py --xunit-file {{ros_workspace}}/build/test_results/{{item.item.name}}/ament-xmllint-ex-{{item.item.name}}.xml {{item.stdout}}
   args:
-    executable: "/bin/bash"
+    executable: python3
     chdir: "{{repo_sources_path}}/{{item.item.path}}"
   with_items: "{{xml_files_results|default([])}}"
   when: item.stdout != ""
