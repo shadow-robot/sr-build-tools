@@ -25,19 +25,17 @@ for file_path in $(find . -type f); do
                 echo -e "\nError $error_count in $cleaned_up_error"
             else
                 if [[ -z ${done_processing} ]] && [[ -z ${total_errors_found} ]]; then
-                    echo -e "Error $error_count in ${lines_in_cdata[$i]}"
+                    echo -e "${lines_in_cdata[$i]}"
                 fi
             fi
         done
     fi
 done
-echo -e "\nUnit test files checked: $unit_test_file_count"
-echo "Unit test files with errors: $unit_test_files_with_errors"
 echo "Total unit test errors: $error_count"
 if [[ $error_count == 0 ]]; then
-    echo "All unit tests passed"
+    echo "\nAll unit tests passed"
     exit 0
 else
-    echo "Build failed because at least 1 unit test failed, see above for the exact error"
+    echo "\nBuild failed because at least 1 unit test failed, see above for the exact error"
     exit 1
 fi
