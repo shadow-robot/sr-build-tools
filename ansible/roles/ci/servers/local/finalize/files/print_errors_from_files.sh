@@ -19,12 +19,12 @@ for file_path in $(find . -type f); do
             done_processing=$(echo ${lines_in_cdata[$i]} | grep -Po '^Done processing')
             total_errors_found=$(echo ${lines_in_cdata[$i]} | grep -Po '^Total errors found')
             new_error_line=$(echo ${lines_in_cdata[$i]} | grep -Po '^/')
-            if [[ -z ${new_error_line} ]]; then
+            if [[ ! -z ${new_error_line} ]]; then
                 (( error_count++ ))
                 cleaned_up_error=$(echo ${lines_in_cdata[$i]} | sed 's/\/home.*shadow-robot\///' )
                 echo -e "\nError $error_count in $cleaned_up_error"
             else
-                if [[ ! -z ${done_processing} ]] || [[ ! -z ${total_errors_found} ]]; then
+                if [[ -z ${done_processing} ]] || [[ -z ${total_errors_found} ]]; then
                     echo -e "\nError $error_count in ${lines_in_cdata[$i]}"
                 fi
             fi
