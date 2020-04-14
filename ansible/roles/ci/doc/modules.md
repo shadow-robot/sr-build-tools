@@ -14,8 +14,9 @@
   * **benchmarking** - run benchmarking of the functionality based on rostest
   * **check_build** - long running module. Compile independently each package in the project cleaning devel and build 
   folder beforehand and check if all dependencies are declared in CMakeList.txt correctly.
-  * **code_style_check** - run [roslint](http://wiki.ros.org/roslint) to check C++ and Python code in all packages of 
-  the project. Check could be ignore using patterns in *.lintignore* file. Content inside ignore files should comply
+  * **code_style_check** - run [roslint](http://wiki.ros.org/roslint) to check C++ and Python code and
+  [xmllint](http://xmlsoft.org/xmllint.html) to check all XML files (beginning with <) in all packages of the project.
+  Check could be ignore using patterns in *.lintignore* file. Content inside ignore files should comply
   with *-path* flag patterns of Linux **find** command.
   * **check_license** - check if copyright notice is present in all the files and the LICENSE file exsists in the 
   repository. 

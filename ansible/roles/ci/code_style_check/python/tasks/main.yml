@@ -13,7 +13,7 @@
 
 - name: Get list of all Python files in repository
   script: "../../common_resources/files/files_by_content_and_policy.sh \
-    {{repo_sources_path}} {{repo_sources_path}}/{{item.path}} '^#!/usr/bin/env python' .lintignore"
+    {{repo_sources_path}} {{repo_sources_path}}/{{item.path}} '^#!/usr/bin/env python|^#! /usr/bin/env python|^#!/usr/bin/python|^#! /usr/bin/python' .lintignore '*.*'"
   with_items: "{{repo_packages_list|default([])}}"
   register: python_files_without_extension
 

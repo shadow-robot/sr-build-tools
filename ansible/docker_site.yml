@@ -22,14 +22,16 @@
                                                         "code_coverage", "codecov_tool", "python_code_coverage",
                                                         "cpp_code_coverage", "check_deb_make", "complete_deb_check",
                                                         "check_build", "python_code_style_check",
-                                                        "cpp_code_style_check", "code_style_check",
-                                                        "create_workspace", "benchmarking", "check_install"]}
+                                                        "cpp_code_style_check", "xml_code_style_check",
+                                                        "code_style_check", "create_workspace", "benchmarking",
+                                                        "check_install"]}
     - {role: ci/init/create_workspace, when: run_install, tags: ["build", "unit_tests", "software_tests", "all_tests",
                                                                  "code_coverage", "codecov_tool",
                                                                  "python_code_coverage",
                                                                  "cpp_code_coverage", "check_deb_make",
                                                                  "complete_deb_check", "check_build",
                                                                  "python_code_style_check", "cpp_code_style_check",
+                                                                 "xml_code_style_check",
                                                                  "code_style_check", "create_workspace",
                                                                  "benchmarking", "check_install"]}
     - {role: ci/update_dependencies, when: run_build, tags: ["build", "unit_tests", "software_tests", "all_tests",
@@ -41,6 +43,7 @@
                                                          "codecov_tool", "python_code_coverage",
                                                          "cpp_code_coverage", "check_deb_make",
                                                          "complete_deb_check", "python_code_style_check",
+                                                         "xml_code_style_check",
                                                          "cpp_code_style_check", "code_style_check", "check_build",
                                                          "upload_debs", "benchmarking", "check_install"]}
     - {role: ci/build/check, when: run_build, tags: ["check_build"]}
@@ -59,6 +62,7 @@
                                                       "code_coverage", "codecov_tool",
                                                       "python_code_coverage", "cpp_code_coverage"]}
     - {role: ci/code_style_check/python, when: run_build, tags: ["python_code_style_check", "code_style_check"]}
+    - {role: ci/code_style_check/xml, when: run_build, tags: ["xml_code_style_check", "code_style_check"]}
     - {role: ci/code_style_check/cpp, when: run_build, tags: ["cpp_code_style_check", "code_style_check"]}
     - {role: ci/code_style_check/license, when: run_build, tags: ["check_license"]}
     - {role: ci/deploy/check_install, when: run_build, tags: ["check_install"]}
