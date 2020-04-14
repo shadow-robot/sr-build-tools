@@ -31,11 +31,11 @@ for file_path in $(find . -type f); do
         done
     fi
 done
-echo "Total unit test errors: $error_count"
+echo -e "\nTotal unit test errors: $error_count"
 if [[ $error_count == 0 ]]; then
-    echo "\nAll unit tests passed"
+    echo -e "\nAll unit tests passed"
     exit 0
 else
-    echo "\nBuild failed because at least 1 unit test failed, see above for the exact error"
+    echo -e "\nBuild failed because at least 1 unit test failed, see above for the exact error(s)"
     exit 1
 fi
