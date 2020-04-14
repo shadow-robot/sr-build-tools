@@ -68,6 +68,7 @@ def main(argv=sys.argv[1:]):
     # invoke xmllint on all files
     for filename in files:
         # parse file to extract desired validation information
+        print("debug: " + str(filename))
         parser = make_parser()
         handler = CustomHandler()
         parser.setContentHandler(handler)
