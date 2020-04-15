@@ -7,7 +7,7 @@
 # More details could be found here http://man7.org/linux/man-pages/man1/find.1.html
 
 set -e # fail on errors
-#set -x # echo commands run
+set -x # echo commands run
 
 repository_dir=$(realpath $1)
 package_dir=$(realpath $2)
