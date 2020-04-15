@@ -17,8 +17,8 @@ rules_file_name=$4
 exclude_regexp=$5
 
 {
-    find --regextype posix-extended ! -regex $exclude_regexp | grep -R -I -P "$regexp" -l $package_dir
-
+    find $package_dir -type f --regextype posix-extended ! -regex $exclude_regexp | grep -R -I -P "$regexp" -l
+    
     # Concatenate a listing of all ignore files, with the path to the
     # ignore file it came from prefixed to each pattern
     {
