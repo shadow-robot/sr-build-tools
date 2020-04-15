@@ -3,7 +3,7 @@
 
 - name: Get list of all XML files in repository (any file starting with < is assumed to be an XML file)
   script: "../../common_resources/files/files_by_content_and_policy.sh \
-    {{repo_sources_path}} {{repo_sources_path}}/{{item.path}} '^<.*' .lintignore '*.md'"
+    {{repo_sources_path}} {{repo_sources_path}}/{{item.path}} '^<.*' .lintignore '.*\.dox|.*\.html|.*\.md'"
   with_items: "{{repo_packages_list|default([])}}"
   register: xml_files
 
