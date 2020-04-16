@@ -7,7 +7,7 @@
 # More details could be found here http://man7.org/linux/man-pages/man1/find.1.html
 
 set -e # fail on errors
-set -x # echo commands run
+#set -x # echo commands run
 
 repository_dir=$(realpath $1)
 package_dir=$(realpath $2)
@@ -17,7 +17,7 @@ rules_file_name=$4
 exclude_regexp=$5
 
 {
-    find $package_dir -type f -regextype posix-extended ! -regex $exclude_regexp | xargs grep -R -I -P "$regexp" -l
+    find $package_dir -type f -regextype posix-extended ! -regex $exclude_regexp -exec grep -R -I -P "$regexp" -l {} \;
 
     # Concatenate a listing of all ignore files, with the path to the
     # ignore file it came from prefixed to each pattern
