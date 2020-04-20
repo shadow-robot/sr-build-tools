@@ -66,14 +66,13 @@ def main(argv=sys.argv[1:]):
         else:
             errors = None
 
-        packagename = os.path.relpath(packagename, start=os.getcwd())
         report.append((packagename, errors))
 
     for (packagename, errors) in report:
         if errors is not None:
             print("Package '%s' is invalid:" % packagename, file=sys.stderr)
             for line in errors.splitlines():
-                print(line, file=sys.stderr)
+                print(os.path.dirname(packagename)+'/'+line, file=sys.stderr)
             print('', file=sys.stderr)
         else:
             print("Package '%s' is valid" % packagename)
