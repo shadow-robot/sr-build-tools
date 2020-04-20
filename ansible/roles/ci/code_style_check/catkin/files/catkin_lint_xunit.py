@@ -30,12 +30,7 @@ def main(argv=sys.argv[1:]):
         'paths',
         nargs='*',
         default=[os.curdir],
-        help='The package to check with catkin_lint')
-    parser.add_argument(
-        '--exclude',
-        nargs='*',
-        default=[],
-        help='Exclude specific file names and directory names from the check')
+        help='The package or folder with packages to check with catkin_lint')
     # not using a file handle directly
     # in order to prevent leaving an empty file when something fails early
     parser.add_argument(
@@ -46,7 +41,7 @@ def main(argv=sys.argv[1:]):
     if args.xunit_file:
         start_time = time.time()
 
-    packages = get_packages(args.paths, args.exclude)
+    packages = args.paths
     if not packages:
         print('No packages found', file=sys.stderr)
         return 1
@@ -61,7 +56,7 @@ def main(argv=sys.argv[1:]):
     # invoke catkin_lint on all packages
     for packagename in packages:
         
-        cmd = [catkinlint_bin, '-W0', packagename]
+        cmd = [catkinlint_bin, '-W0','-q', packagename]
 
         try:
             subprocess.check_output(
@@ -90,7 +85,7 @@ def main(argv=sys.argv[1:]):
         print('No problems found')
         rc = 0
     else:
-        print('%d packages are invalid' % error_count, file=sys.stderr)
+        print('%d package(s) are invalid' % error_count, file=sys.stderr)
         rc = 1
 
     # generate xunit file
@@ -139,11 +134,9 @@ def get_xunit_content(report, testname, elapsed):
         if diff_lines:
             # report any diff as a failing testcase
             data = {
-                'quoted_location': quoteattr(packagename),
+                'quoted_location': packagename,
                 'testname': testname,
-                'quoted_message': quoteattr(
-                    'Diff with %d lines' % len(diff_lines)
-                ),
+                'quoted_message': 'Diff with %d lines' % len(diff_lines),
                 'cdata': ''.join(diff_lines),
             }
             xml += """  <testcase
@@ -157,7 +150,7 @@ def get_xunit_content(report, testname, elapsed):
         else:
             # if there is no diff report a single successful test
             data = {
-                'quoted_location': quoteattr(packagename),
+                'quoted_location': packagename,
                 'testname': testname,
             }
             xml += """  <testcase
@@ -167,7 +160,7 @@ def get_xunit_content(report, testname, elapsed):
 
     # output list of checked packages
     data = {
-        'escaped_packages': escape(''.join(['\n* %s' % r[0] for r in report])),
+        'escaped_packages': ''.join(['\n* %s' % r[0] for r in report]),
     }
     xml += """  <system-out>Checked packages:%(escaped_packages)s</system-out>
 """ % data
