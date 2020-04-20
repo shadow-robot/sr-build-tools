@@ -19,6 +19,8 @@ import shutil
 import subprocess
 import sys
 import time
+from xml.sax.saxutils import escape
+from xml.sax.saxutils import quoteattr
 
 
 def main(argv=sys.argv[1:]):
@@ -133,9 +135,9 @@ def get_xunit_content(report, testname, elapsed):
         if diff_lines:
             # report any diff as a failing testcase
             data = {
-                'quoted_location': packagename,
+                'quoted_location': quoteattr(packagename),
                 'testname': testname,
-                'quoted_message': 'Diff with %d lines' % len(diff_lines),
+                'quoted_message': quoteattr('Diff with %d lines' % len(diff_lines)),
                 'cdata': ''.join(diff_lines),
             }
             xml += """  <testcase
@@ -149,7 +151,7 @@ def get_xunit_content(report, testname, elapsed):
         else:
             # if there is no diff report a single successful test
             data = {
-                'quoted_location': packagename,
+                'quoted_location': quoteattr(packagename),
                 'testname': testname,
             }
             xml += """  <testcase
@@ -159,7 +161,7 @@ def get_xunit_content(report, testname, elapsed):
 
     # output list of checked packages
     data = {
-        'escaped_packages': ''.join(['\n* %s' % r[0] for r in report]),
+        'escaped_packages': escape(''.join(['\n* %s' % r[0] for r in report])),
     }
     xml += """  <system-out>Checked packages:%(escaped_packages)s</system-out>
 """ % data
