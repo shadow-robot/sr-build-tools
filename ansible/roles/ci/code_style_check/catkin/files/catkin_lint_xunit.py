@@ -131,14 +131,13 @@ def get_xunit_content(report, testname, elapsed):
 """ % data
 
     for (packagename, diff_lines) in report:
-        package_path=os.path.dirname(packagename)+'/'
         if diff_lines:
             # report any diff as a failing testcase
             data = {
                 'quoted_location': quoteattr(packagename),
                 'testname': testname,
                 'quoted_message': quoteattr('Diff with %d lines' % len(diff_lines)),
-                'cdata': package_path+diff_lines,
+                'cdata': ''.join([os.path.dirname(packagename)+'/'+line for line in diff_lines]),
             }
             xml += """  <testcase
     name=%(quoted_location)s
