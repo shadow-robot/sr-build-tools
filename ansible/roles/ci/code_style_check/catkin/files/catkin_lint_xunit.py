@@ -133,6 +133,9 @@ def get_xunit_content(report, testname, elapsed):
     for (packagename, diff_lines) in report:
         if diff_lines:
             # report any diff as a failing testcase
+            print("start")
+            print(diff_lines)
+            print("end")
             data = {
                 'quoted_location': quoteattr(packagename),
                 'testname': testname,
