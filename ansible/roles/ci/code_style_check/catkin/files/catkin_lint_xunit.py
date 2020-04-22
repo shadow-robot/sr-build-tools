@@ -138,7 +138,7 @@ def get_xunit_content(report, testname, elapsed):
                 'quoted_location': quoteattr(packagename),
                 'testname': testname,
                 'quoted_message': quoteattr('Diff with %d lines' % len(diff_lines)),
-                'cdata': package_path.join(diff_lines),
+                'cdata': package_path+diff_lines,
             }
             xml += """  <testcase
     name=%(quoted_location)s
