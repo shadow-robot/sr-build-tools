@@ -61,17 +61,18 @@ def main(argv=sys.argv[1:]):
     # invoke catkin_lint on all packages
     for packagename in packages:
         skip_package=False
-        lintignore_path = os.path.dirname(packagename)+'/'+args.lintignore
         cmd = [catkinlint_bin, '-W0','-q', packagename]
-        if os.path.exists(lintignore_path):
-            if os.stat(lintignore_path).st_size == 0:
-                # ignore this package
-                skip_package=True
-            else:
-                with open(lintignore_path) as f:
-                    lintignore_lines = f.read().splitlines()
-                full_ignore=','.join(lintignore_lines)
-                cmd = [catkinlint_bin, '-W0','-q','--ignore',full_ignore, packagename]
+        if args.lintignore:
+            lintignore_path = os.path.dirname(packagename)+'/'+args.lintignore
+            if os.path.exists(lintignore_path):
+                if os.stat(lintignore_path).st_size == 0:
+                    # ignore this package
+                    skip_package=True
+                else:
+                    with open(lintignore_path) as f:
+                        lintignore_lines = f.read().splitlines()
+                    full_ignore=','.join(lintignore_lines)
+                    cmd = [catkinlint_bin, '-W0','-q','--ignore',full_ignore, packagename]
         if skip_package:
             continue
 
