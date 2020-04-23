@@ -63,8 +63,8 @@ def main(argv=sys.argv[1:]):
         skip_package=False
         cmd = [catkinlint_bin, '-W0','-q', packagename]
         if args.lintignore:
-            lintignore_path = os.path.dirname(packagename)+'/'+args.lintignore
-            if os.path.exists(lintignore_path):
+            lintignore_path = packagename+'/'+args.lintignore
+            if os.path.isfile(lintignore_path):
                 if os.stat(lintignore_path).st_size == 0:
                     # ignore this package
                     skip_package=True
