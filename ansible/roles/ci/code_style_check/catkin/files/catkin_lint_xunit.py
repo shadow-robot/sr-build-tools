@@ -83,9 +83,9 @@ def generate_xunit_file(report, xunit_file_path, start_time):
                 file_name = file_name[0:-len(suffix)]
         testname = '%s.%s' % (folder_name, file_name)
         xunit_xml = get_xunit_content(report, testname, time.time() - start_time)
-        path = os.path.dirname(os.path.abspath(xunit_file_path))
-        if not os.path.exists(path):
-            os.makedirs(path)
+        xunit_folder = os.path.dirname(os.path.abspath(xunit_file_path))
+        if not os.path.exists(xunit_folder):
+            os.makedirs(xunit_folder)
         with open(xunit_file_path, 'w') as xunit_file:
             xunit_file.write(xunit_xml)
 
