@@ -92,7 +92,7 @@ def generate_xunit_file(report, xunit_file_path, start_time):
 
 def get_xunit_content(report, testname, elapsed):
     test_count = len(report)
-    data = {
+    xunit_xml_content = {
         'testname': testname,
         'test_count': test_count,
         'time': '%.3f' % round(elapsed, 3),
@@ -103,7 +103,7 @@ def get_xunit_content(report, testname, elapsed):
   tests="%(test_count)d"
   time="%(time)s"
 >
-""" % data
+""" % xunit_xml_content
     xunit_xml+=get_failure_messages(report, testname, xunit_xml)
     return xunit_xml
 
@@ -111,7 +111,7 @@ def get_failure_messages(report, testname, elapsed):
     failure_messages=""
     for (packagename, lines) in report:
         if lines:
-            data = {
+            xunit_xml_content = {
                 'quoted_location': quoteattr(packagename),
                 'testname': testname,
                 'quoted_message': quoteattr('catkin_lint report has %d line(s)' % len(lines.splitlines())),
@@ -123,21 +123,21 @@ def get_failure_messages(report, testname, elapsed):
   >
       <failure message=%(quoted_message)s><![CDATA[%(cdata)s]]></failure>
   </testcase>
-""" % data
+""" % xunit_xml_content
         else:
-            data = {
+            xunit_xml_content = {
                 'quoted_location': quoteattr(packagename),
                 'testname': testname,
             }
             failure_messages += """  <testcase
     name=%(quoted_location)s
     classname="%(testname)s"/>
-""" % data
-    data = {
+""" % xunit_xml_content
+    xunit_xml_content = {
         'escaped_packages': escape(''.join(['\n* %s' % lines[0] for lines in report])),
     }
     failure_messages += """  <system-out>Checked packages:%(escaped_packages)s</system-out>
-""" % data
+""" % xunit_xml_content
     failure_messages += '</testsuite>\n'
     return failure_messages
 
