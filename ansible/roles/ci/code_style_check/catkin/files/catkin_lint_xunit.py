@@ -1,18 +1,8 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
+#
+# Copyright (C) 2020 Shadow Robot Company Ltd - All Rights Reserved.
+# Proprietary and Confidential. Unauthorized copying of the content in this file, via any medium is strictly prohibited.
 
-# Copyright 2014-2018 Open Source Robotics Foundation, Inc.
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
 import argparse
 import os
 import shutil
@@ -24,7 +14,6 @@ from xml.sax.saxutils import quoteattr
 
 
 def main(argv=sys.argv[1:]):
-    
     parser = argparse.ArgumentParser(
         description='Check a package using catkin_lint.',
         formatter_class=argparse.ArgumentDefaultsHelpFormatter)
@@ -33,82 +22,59 @@ def main(argv=sys.argv[1:]):
         nargs='*',
         default=[os.curdir],
         help='The package or folder with packages to check with catkin_lint')
-    # not using a file handle directly
-    # in order to prevent leaving an empty file when something fails early
     parser.add_argument(
         '--xunit-file',
-        help='Generate a xunit compliant XML file')
+        help='The path where a xunit compliant XML file should be created')
     parser.add_argument(
         '--lintignore',
         help='Name of the lintignore file for catkin (normally .catkin_lint_ignore)')
     args = parser.parse_args(argv)
-
-    if args.xunit_file:
-        start_time = time.time()
-
     packages = args.paths
     if not packages:
         print('No packages found', file=sys.stderr)
         return 1
-    packages = [os.path.abspath(f) for f in packages]
+    packages = [os.path.abspath(package) for package in packages]
+    error_report=run_catkin_lint(packages,args.lintignore)
+    if args.xunit_file:
+        start_time = time.time()
+    generate_xunit_file(error_report,args.xunit_file,start_time)
 
+
+def run_catkin_lint(packages, lintignore):
+    report = []
     catkinlint_bin = shutil.which('catkin_lint')
     if not catkinlint_bin:
         return "Could not find 'catkin_lint' executable"
-
-    report = []
-
-    # invoke catkin_lint on all packages
     for packagename in packages:
         skip_package=False
-        cmd = [catkinlint_bin, '-W0','-q', packagename]
-        if args.lintignore:
-            lintignore_path = packagename+'/'+args.lintignore
+        cmd = [catkinlint_bin, '-W0', '-q', packagename]
+        if lintignore:
+            lintignore_path = packagename+'/'+lintignore
             if os.path.isfile(lintignore_path):
                 if os.stat(lintignore_path).st_size == 0:
-                    # ignore this package
                     skip_package=True
                 else:
-                    with open(lintignore_path) as f:
-                        lintignore_lines = f.read().splitlines()
+                    with open(lintignore_path) as lintignore_file:
+                        lintignore_lines = lintignore_file.read().splitlines()
                     full_ignore=','.join(lintignore_lines)
-                    cmd = [catkinlint_bin, '-W0','-q','--ignore',full_ignore, packagename]
+                    cmd = [catkinlint_bin, '-W0', '-q', '--ignore', full_ignore, packagename]
         if skip_package:
             continue
-
         try:
             subprocess.check_output(
                 cmd, cwd=os.path.dirname(packagename), stderr=subprocess.STDOUT)
-        except subprocess.CalledProcessError as e:
-            errors = e.output.decode()
+        except subprocess.CalledProcessError as process_error:
+            errors = process_error.output.decode()
         else:
             errors = None
-
         report.append((packagename, errors))
+    return report
 
-    for (packagename, errors) in report:
-        if errors is not None:
-            print("Package '%s' is invalid:" % packagename, file=sys.stderr)
-            for line in errors.splitlines():
-                print(os.path.dirname(packagename)+'/'+line, file=sys.stderr)
-            print('', file=sys.stderr)
-        else:
-            print("Package '%s' is valid" % packagename)
-            print('')
 
-    # output summary
-    error_count = sum(1 if r[1] else 0 for r in report)
-    if not error_count:
-        print('No problems found')
-        rc = 0
-    else:
-        print('%d package(s) are invalid' % error_count, file=sys.stderr)
-        rc = 1
-
-    # generate xunit file
-    if args.xunit_file:
-        folder_name = os.path.basename(os.path.dirname(args.xunit_file))
-        file_name = os.path.basename(args.xunit_file)
+def generate_xunit_file(report, xunit_file_path, start_time):
+    if xunit_file_path:
+        folder_name = os.path.basename(os.path.dirname(xunit_file_path))
+        file_name = os.path.basename(xunit_file_path)
         suffix = '.xml'
         if file_name.endswith(suffix):
             file_name = file_name[0:-len(suffix)]
@@ -116,73 +82,64 @@ def main(argv=sys.argv[1:]):
             if file_name.endswith(suffix):
                 file_name = file_name[0:-len(suffix)]
         testname = '%s.%s' % (folder_name, file_name)
-
-        xml = get_xunit_content(report, testname, time.time() - start_time)
-        path = os.path.dirname(os.path.abspath(args.xunit_file))
+        xunit_xml = get_xunit_content(report, testname, time.time() - start_time)
+        path = os.path.dirname(os.path.abspath(xunit_file_path))
         if not os.path.exists(path):
             os.makedirs(path)
-        with open(args.xunit_file, 'w') as f:
-            f.write(xml)
-
-    return rc
+        with open(xunit_file_path, 'w') as xunit_file:
+            xunit_file.write(xunit_xml)
 
 
 def get_xunit_content(report, testname, elapsed):
     test_count = len(report)
-    error_count = len([r for r in report if r[1]])
     data = {
         'testname': testname,
         'test_count': test_count,
-        'error_count': error_count,
         'time': '%.3f' % round(elapsed, 3),
     }
-    xml = """<?xml version="1.0" encoding="UTF-8"?>
+    xunit_xml = """<?xml version="1.0" encoding="UTF-8"?>
 <testsuite
   name="%(testname)s"
   tests="%(test_count)d"
-  errors="0"
-  failures="%(error_count)d"
   time="%(time)s"
 >
 """ % data
+    xunit_xml+=get_failure_messages(report, testname, xunit_xml)
+    return xunit_xml
 
-    for (packagename, diff_lines) in report:
-        if diff_lines:
-            # report any diff as a failing testcase
+def get_failure_messages(report, testname, elapsed):
+    failure_messages=""
+    for (packagename, lines) in report:
+        if lines:
             data = {
                 'quoted_location': quoteattr(packagename),
                 'testname': testname,
-                'quoted_message': quoteattr('Diff with %d lines' % len(diff_lines.splitlines())),
-                'cdata': "\n".join([os.path.dirname(packagename)+'/'+line for line in diff_lines.splitlines()]),
+                'quoted_message': quoteattr('catkin_lint report has %d line(s)' % len(lines.splitlines())),
+                'cdata': "\n".join([os.path.dirname(packagename)+'/'+line for line in lines.splitlines()]),
             }
-            xml += """  <testcase
+            failure_messages += """  <testcase
     name=%(quoted_location)s
     classname="%(testname)s"
   >
       <failure message=%(quoted_message)s><![CDATA[%(cdata)s]]></failure>
   </testcase>
 """ % data
-
         else:
-            # if there is no diff report a single successful test
             data = {
                 'quoted_location': quoteattr(packagename),
                 'testname': testname,
             }
-            xml += """  <testcase
+            failure_messages += """  <testcase
     name=%(quoted_location)s
     classname="%(testname)s"/>
 """ % data
-
-    # output list of checked packages
     data = {
-        'escaped_packages': escape(''.join(['\n* %s' % r[0] for r in report])),
+        'escaped_packages': escape(''.join(['\n* %s' % lines[0] for lines in report])),
     }
-    xml += """  <system-out>Checked packages:%(escaped_packages)s</system-out>
+    failure_messages += """  <system-out>Checked packages:%(escaped_packages)s</system-out>
 """ % data
-
-    xml += '</testsuite>\n'
-    return xml
+    failure_messages += '</testsuite>\n'
+    return failure_messages
 
 
 if __name__ == '__main__':
