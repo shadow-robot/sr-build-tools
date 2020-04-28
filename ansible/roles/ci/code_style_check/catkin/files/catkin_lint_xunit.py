@@ -34,17 +34,18 @@ def main(argv=sys.argv[1:]):
         print('No packages found', file=sys.stderr)
         return 1
     packages = [os.path.abspath(package) for package in packages]
-    error_report=run_catkin_lint(packages,args.lintignore)
+    catkinlint_bin = shutil.which('catkin_lint')
+    if not catkinlint_bin:
+        print("Could not find 'catkin_lint' executable", file=sys.stderr)
+        return 1
+    error_report=run_catkin_lint(packages,args.lintignore,catkinlint_bin)
     if args.xunit_file:
         start_time = time.time()
     generate_xunit_file(error_report,args.xunit_file,start_time)
 
 
-def run_catkin_lint(packages, lintignore):
+def run_catkin_lint(packages, lintignore,catkinlint_bin):
     report = []
-    catkinlint_bin = shutil.which('catkin_lint')
-    if not catkinlint_bin:
-        return "Could not find 'catkin_lint' executable"
     for packagename in packages:
         skip_package=False
         cmd = [catkinlint_bin, '-W0', '-q', packagename]
