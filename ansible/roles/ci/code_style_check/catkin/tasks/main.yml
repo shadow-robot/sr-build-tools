@@ -1,0 +1,11 @@
+---
+# Playbook for catkin code style check
+
+- name: Execute catkin_lint for every package and write results in unit tests format
+  script: ../files/catkin_lint_xunit.py --xunit-file {{ros_workspace}}/build/test_results/{{item.name}}/catkin_lint-{{item.name}}.xml --lintignore .catkin_lint_ignore {{repo_sources_path}}/{{item.path}}""
+  args:
+    executable: python3
+    chdir: "{{repo_sources_path}}/{{item.path}}"
+  with_items: "{{repo_packages_list|default([])}}"
+  when: item.path != ""
+  ignore_errors: True

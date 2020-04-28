@@ -14,10 +14,15 @@
   * **benchmarking** - run benchmarking of the functionality based on rostest
   * **check_build** - long running module. Compile independently each package in the project cleaning devel and build 
   folder beforehand and check if all dependencies are declared in CMakeList.txt correctly.
-  * **code_style_check** - run [roslint](http://wiki.ros.org/roslint) to check C++ and Python code and
-  [xmllint](http://xmlsoft.org/xmllint.html) to check all XML files (beginning with <) in all packages of the project.
-  Check could be ignore using patterns in *.lintignore* file. Content inside ignore files should comply
+  * **code_style_check** - run [roslint](http://wiki.ros.org/roslint) to check C++ and Python code,
+  [xmllint](http://xmlsoft.org/xmllint.html) to check all XML files (beginning with <) in all packages of the project and
+  [catkin_lint](http://fkie.github.io/catkin_lint) to check all packages using catkin_lint
+  C++, Python and XML files can be ignored using patterns in *.lintignore* file. Content inside .lintignore files should comply
   with *-path* flag patterns of Linux **find** command.
+  Whole packages can be excluded from catkin_lint by putting an empty .catkin_lint_ignore on the same level as package.xml
+  Specific catkin_lint error codes can be excluded from catkin_lint by putting a non-empty .catkin_lint_ignore on the same level
+  as package.xml and inside the .catkin_lint_ignore a list of catkin_lint ID codes to be ignored
+  from http://fkie.github.io/catkin_lint/messages/
   * **check_license** - check if copyright notice is present in all the files and the LICENSE file exsists in the 
   repository. 
   * **check_install** - quick check of the catkin_make_isolated install comparably to full Debian files build
