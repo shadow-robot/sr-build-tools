@@ -64,7 +64,7 @@
                                                       "python_code_coverage", "cpp_code_coverage"]}
     - {role: ci/code_style_check/python, when: run_build, tags: ["python_code_style_check", "code_style_check"]}
     - {role: ci/code_style_check/xml, when: run_build, tags: ["xml_code_style_check", "code_style_check"]}
-   # - {role: ci/code_style_check/catkin, when: run_build, tags: ["catkin_code_style_check", "code_style_check"]}
+    - {role: ci/code_style_check/catkin, when: run_build, tags: ["catkin_code_style_check", "code_style_check"]}
     - {role: ci/code_style_check/cpp, when: run_build, tags: ["cpp_code_style_check", "code_style_check"]}
     - {role: ci/code_style_check/license, when: run_build, tags: ["check_license"]}
     - {role: ci/deploy/check_install, when: run_build, tags: ["check_install"]}
