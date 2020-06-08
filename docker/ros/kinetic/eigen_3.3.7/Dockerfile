@@ -21,7 +21,7 @@ RUN set +x && \
     echo "Installing libglvnd" && \
     wget -O /tmp/aurora "$( echo "$aurora_script" | sed 's/#/%23/g' )" && \
     chmod 755 /tmp/aurora && \
-    gosu $MY_USERNAME /tmp/aurora install_software --debug-branch $aurora_branch software=[libglvnd] && \
+    gosu $MY_USERNAME /tmp/aurora install_software --branch $aurora_branch software=[libglvnd] && \
     echo "Removing cache" && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /home/$MY_USERNAME/.ansible /home/$MY_USERNAME/.gitconfig
