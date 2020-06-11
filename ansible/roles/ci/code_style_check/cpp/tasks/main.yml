@@ -56,17 +56,14 @@
   set_fact:
     repo_packages_and_hpp_files_results: "{{repo_packages_and_hpp_files.results}}"
 
-- name: "Execute roslint for every package and write results in unit tests format.\
-    In order to skip hpp files extension validation using stdin feed to checker."
-  shell: 'source /opt/ros/{{ros_release}}/setup.bash && \
+- name: Execute roslint for every package and write results in unit tests format
+  shell: "source /opt/ros/{{ros_release}}/setup.bash && \
     rosrun roslint test_wrapper \
-      {{ros_workspace}}/build/test_results/{{item.0.item.name}}/roslint-hpp-{{item.1|basename}}.xml \
-      "eval cat {{item.1}} | rosrun roslint cpplint --extensions=hpp --filter=-runtime/references {{item.1}}" '
+      {{ros_workspace}}/build/test_results/{{item.item.name}}/roslint-hpp-{{item.item.name}}.xml \
+      'rosrun roslint cpplint --extensions=hpp --filter=-runtime/references {{item.stdout}}' "
   args:
     executable: "/bin/bash"
-    chdir: "{{repo_sources_path}}/{{item.0.item.path}}"
-  with_subelements:
-     - "{{repo_packages_and_hpp_files_results|default([])}}"
-     - stdout_lines
-  when: item.0.stdout != ""
+    chdir: "{{repo_sources_path}}/{{item.item.path}}"
+  with_items: "{{repo_packages_and_hpp_files_results|default([])}}"
   ignore_errors: True
+  when: item.stdout != ""
