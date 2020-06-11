@@ -61,7 +61,7 @@
   shell: 'source /opt/ros/{{ros_release}}/setup.bash && \
     rosrun roslint test_wrapper \
       {{ros_workspace}}/build/test_results/{{item.0.item.name}}/roslint-hpp-{{item.1|basename}}.xml \
-      "eval cat {{item.1}} | rosrun roslint cpplint --extensions=hpp --filter=-runtime/references -" '
+      "eval cat {{item.1}} | rosrun roslint cpplint --extensions=hpp --filter=-runtime/references {{item.1}}" '
   args:
     executable: "/bin/bash"
     chdir: "{{repo_sources_path}}/{{item.0.item.path}}"
