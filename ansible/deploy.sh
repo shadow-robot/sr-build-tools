@@ -204,7 +204,7 @@ echo " ----------------------------------"
 echo ""
 
 sudo pip install -r "${SR_BUILD_TOOLS_HOME}/ansible/data/requirements.txt"
-sudo pip install --upgrade setuptools
+sudo pip install --upgrade setuptools==44.0.0
 
 echo ""
 echo " ------------------------------------"
