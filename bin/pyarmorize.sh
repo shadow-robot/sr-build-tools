@@ -4,8 +4,7 @@ echo "Installing pyarmor..."
 install pyarmor
 sudo apt update
 sudo apt install python-pip
-pip install pyarmor
-export PATH=$PATH:/home/user/.local/bin
+sudo pip install pyarmor
 
 echo "Finding all repos..."
 list_of_repos=($(find . -name .git -type d -prune | sed 's#^\([^/]*/\([^/]*\)/.*\)#\2#'))
