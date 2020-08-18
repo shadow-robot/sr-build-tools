@@ -1,7 +1,6 @@
 #!/bin/bash
 
 echo "Installing pyarmor..."
-install pyarmor
 sudo apt update
 sudo apt install python-pip
 sudo pip install pyarmor
