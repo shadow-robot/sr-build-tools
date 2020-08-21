@@ -73,7 +73,7 @@ cd src
 for repo in "${list_of_private_repos[@]}"
 do
    rm -rf $repo
-   wstool remote $repo
+   wstool remove $repo
 done
 
 # find dirs in /opt/ros/melodic corresponding to private repos
