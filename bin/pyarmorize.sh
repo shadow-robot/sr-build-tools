@@ -62,19 +62,19 @@ list_of_private_packages_as_string=$(printf " %s" "${list_of_private_packages[@]
 list_of_private_packages_as_string=${list_of_private_packages_as_string:1}
 echo $list_of_private_packages_as_string
 cd $workspace_path
-catkin_make_isolated --install --install-space /opt/ros/melodic --pkg sr_description_common_private #$list_of_private_packages_as_string
+sudo bash -c "source devel/setup.bash && catkin_make_isolated --install --install-space /opt/ros/melodic --pkg $list_of_private_packages_as_string"
 
 # # remove build and devel
 
-# rm -rf ./devel ./build ./devel_isolated ./build_isolated
+sudo rm -rf ./devel ./build ./devel_isolated ./build_isolated
 
-# # removing source code
-# cd src
-# for repo in "${list_of_private_repos[@]}"
-# do
-#    rm -rf $repo
-#    wstool remote $repo
-# done
+# removing source code
+cd src
+for repo in "${list_of_private_repos[@]}"
+do
+   rm -rf $repo
+   wstool remote $repo
+done
 
 # find dirs in /opt/ros/melodic corresponding to private repos
 
