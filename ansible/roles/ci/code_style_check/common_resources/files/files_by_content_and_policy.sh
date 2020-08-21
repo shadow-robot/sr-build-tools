@@ -34,7 +34,7 @@ exclude_regexp=$5
 
 	# And finally, print out all of the files that match each of the
 	# patterns from all ignore files.
-    } | xargs --no-run-if-empty -n1 find $repository_dir -type f --regextype posix-extended ! -regex $exclude_regexp -a -path | grep "^$package_dir"
+    } | xargs --no-run-if-empty -n1 find $repository_dir -type f -regextype posix-extended ! -regex $exclude_regexp -a -path | grep "^$package_dir"
 
     # Now, sort and then print only the unique lines.
 } | sort | uniq -u
