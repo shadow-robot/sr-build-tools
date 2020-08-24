@@ -34,6 +34,12 @@ The results are written to *&lt;workspace&gt;/build/test_results/&lt;package_nam
 
 # Compile new rt-preempt kernel deb
 
+## Install pre-requisites
+
+```bashsudo apt-get install git make gcc flex bison
+git clone https://github.com/shadow-robot/sr-build-tools
+```
+
 ## Prepare rt kernel
 
 - Check available versions of rt preempt patch https://www.kernel.org/pub/linux/kernel/projects/rt
