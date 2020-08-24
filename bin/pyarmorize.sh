@@ -4,11 +4,21 @@ set -e
 
 workspace_path=$1
 
+
+# echo "Installing pyarmor..."
+sudo apt update
+sudo apt install python-pip
+sudo pip install pyarmor
+pyarmor runtime --ouput $workspace_path/devel/lib/python2.7/dist-packages
+if [ -f $HOME/.pyarmor_capsule.zip ]; then
+    rm $HOME/.pyarmor_capsule.zip
+fi
+
 # echo "Building with catkin_make_isolated"
-# cd $PROJECTS_WS/base
-# source devel/setup.bash
-# catkin_make_isolated
-# cd
+cd $workspace_path
+source devel/setup.bash
+catkin_make_isolated
+cd
 
 # find all repos
 list_of_repos=()
@@ -77,6 +87,30 @@ do
 done
 
 # find dirs in /opt/ros/melodic corresponding to private repos
+
+cd /opt/ros/melodic/lib
+for package in "${list_of_private_packages[@]}"
+do
+   python_files_no_py_extension=()
+   cd $package
+
+   python_files_no_py_extension+=($(find . -type f -not -name '*.py' -exec grep -R -I -P '^#!/usr/bin/env python|^#! /usr/bin/env python|^#!/usr/bin/python|^#! /usr/bin/python' -l {} \; | sed "s/\.\///g"))
+   for file in "${python_files_no_py_extension[@]}"
+   do
+      mv $file "$file.py"
+   done
+
+   pyarmor obfuscate --no-runtime .
+   rm *.py
+   mv ./dist/* .
+   rm -rf dist
+   chmod +x *.py
+
+   for file in "${python_files_no_py_extension[@]}"
+   do
+      mv "$file.py" $file.py
+   done
+done
 
 # obfuscate py files
 
