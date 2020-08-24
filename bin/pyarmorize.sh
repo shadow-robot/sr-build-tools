@@ -117,40 +117,4 @@ do
    done
 done
 
-# obfuscate py files
-
-
-
-# echo "Installing pyarmor..."
-# sudo apt update
-# sudo apt install python-pip
-# sudo pip install pyarmor
-
-# echo "Finding all repos..."
-# list_of_repos=($(find . -name .git -type d -prune | sed 's#^\([^/]*/\([^/]*\)/.*\)#\2#'))
-
-
-# echo "Finding dirs containing python files..."
-# list_of_dirs_with_private_py_files=()
-# for priv_repo in "${list_of_private_repos[@]}"
-# do
-#    cd $priv_repo
-#    list_of_dirs_with_private_py_files_per_repo=($(find . -name '*.py' -printf '%h\n' | sort -u | sed "s/\.\//\.\/${priv_repo}\//g"))
-#    list_of_dirs_with_private_py_files+=( "${list_of_dirs_with_private_py_files_per_repo[@]}" )
-#    cd ..
-# done
-
-# echo "Obfuscating files..."
-# for dir in "${list_of_dirs_with_private_py_files[@]}"
-# do
-#    echo $dir
-#    pushd $dir
-#    pyarmor obfuscate .
-#    rm *.py
-#    mv ./dist/* .
-#    rm -rf dist
-#    chmod +x *.py
-#    popd
-# done
-
-# echo "Pyarmorize: done."
+echo "Pyarmorize: done."
