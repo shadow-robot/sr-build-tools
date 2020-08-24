@@ -36,7 +36,7 @@ The results are written to *&lt;workspace&gt;/build/test_results/&lt;package_nam
 
 ## Install pre-requisites
 
-```bashsudo apt-get install git make gcc flex bison
+```bash sudo apt-get install git make gcc flex bison
 git clone https://github.com/shadow-robot/sr-build-tools
 ```
 
