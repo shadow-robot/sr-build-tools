@@ -9,7 +9,7 @@ workspace_path=$1
 sudo apt update
 sudo apt install python-pip
 sudo pip install pyarmor
-pyarmor runtime --ouput $workspace_path/devel/lib/python2.7/dist-packages
+pyarmor runtime --output "$workspace_path/devel/lib/python2.7/dist-packages"
 if [ -f $HOME/.pyarmor_capsule.zip ]; then
     rm $HOME/.pyarmor_capsule.zip
 fi
