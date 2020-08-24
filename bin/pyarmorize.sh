@@ -122,6 +122,7 @@ do
    if [ $python_files_in_current_dir -eq 0 ]
    then
       echo "no python files, ommitting" >> pyarmor_log
+      cd ..
       continue
    fi 
 
