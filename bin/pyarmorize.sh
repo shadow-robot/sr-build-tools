@@ -56,21 +56,27 @@ do
 done
 
 echo "Private repos found:"
+echo "Private repos found:" >> pyarmor_log
 for repo in "${list_of_private_repos[@]}"
 do
    echo $repo
+   echo $repo >> pyarmor_log
 done
 
 echo "Private packages found:"
+echo "Private packages found:" >> pyarmor_log
 for package in "${list_of_private_packages[@]}"
 do
    echo $package
+   echo $package >> pyarmor_log
 done
 
 # install private packages
 list_of_private_packages_as_string=$(printf " %s" "${list_of_private_packages[@]}")
 list_of_private_packages_as_string=${list_of_private_packages_as_string:1}
 echo $list_of_private_packages_as_string
+echo "private packages as string" >> pyarmor_log
+echo $list_of_private_packages_as_string >> pyarmor_log
 cd $workspace_path
 source devel/setup.bash
 catkin_make_isolated --install --install-space /opt/ros/melodic --pkg $list_of_private_packages_as_string
@@ -90,9 +96,13 @@ done
 # find dirs in /opt/ros/melodic corresponding to private repos
 
 cd /opt/ros/melodic/lib
+echo "pyarmoring..." >> pyarmor_log
 for package in "${list_of_private_packages[@]}"
 do
+   echo "processed package:" >> pyarmor_log
+   echo $package >> pyarmor_log
    if [ ! -d "$package" ]; then
+      echo "no directory, ommiting" >> pyarmor_log
       continue
    fi
 
@@ -107,8 +117,11 @@ do
    done
 
    python_files_in_current_dir=`ls -1 *.py 2>/dev/null | wc -l`
+   echo "python files in curent dir" >> pyarmor_log
+   echo $python_files_in_current_dir >> pyarmor_log
    if [ $python_files_in_current_dir -eq 0 ]
-   then 
+   then
+      echo "no python files, ommitting" >> pyarmor_log
       continue
    fi 
 
