@@ -107,7 +107,7 @@ do
    done
 
    python_files_in_current_dir=`ls -1 *.py 2>/dev/null | wc -l`
-   if [ $python_files_in_current_dir != 0 ]
+   if [ $python_files_in_current_dir -eq 0 ]
    then 
       continue
    fi 
