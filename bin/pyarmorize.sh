@@ -6,9 +6,9 @@ workspace_path=$1
 
 
 # echo "Installing pyarmor..."
-sudo apt update
-sudo apt install python-pip
-sudo pip install pyarmor
+apt update
+apt install python-pip
+pip install pyarmor
 pyarmor runtime --output "$workspace_path/devel/lib/python2.7/dist-packages"
 if [ -f $HOME/.pyarmor_capsule.zip ]; then
     rm $HOME/.pyarmor_capsule.zip
@@ -72,11 +72,12 @@ list_of_private_packages_as_string=$(printf " %s" "${list_of_private_packages[@]
 list_of_private_packages_as_string=${list_of_private_packages_as_string:1}
 echo $list_of_private_packages_as_string
 cd $workspace_path
-sudo bash -c "source devel/setup.bash && catkin_make_isolated --install --install-space /opt/ros/melodic --pkg $list_of_private_packages_as_string"
+source devel/setup.bash
+catkin_make_isolated --install --install-space /opt/ros/melodic --pkg $list_of_private_packages_as_string
 
 # # remove build and devel
 
-sudo rm -rf ./devel ./build ./devel_isolated ./build_isolated
+rm -rf ./devel ./build ./devel_isolated ./build_isolated
 
 # removing source code
 cd src
@@ -91,6 +92,10 @@ done
 cd /opt/ros/melodic/lib
 for package in "${list_of_private_packages[@]}"
 do
+   if [ ! -d "$package" ]; then
+      continue
+   fi
+
    python_files_no_py_extension=()
    cd $package
 
