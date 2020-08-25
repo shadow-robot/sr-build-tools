@@ -3,13 +3,13 @@
 set -e
 
 workspace_path=$1
-
+user_name=$2
 
 # echo "Installing pyarmor..."
 apt update
 apt install python-pip
 pip install pyarmor
-pyarmor runtime --output "$workspace_path/devel/lib/python2.7/dist-packages"
+pyarmor runtime --output "/opt/ros/melodic/lib/python2.7/dist-packages"
 if [ -f $HOME/.pyarmor_capsule.zip ]; then
     rm $HOME/.pyarmor_capsule.zip
 fi
@@ -56,27 +56,21 @@ do
 done
 
 echo "Private repos found:"
-echo "Private repos found:" >> pyarmor_log
 for repo in "${list_of_private_repos[@]}"
 do
    echo $repo
-   echo $repo >> pyarmor_log
 done
 
 echo "Private packages found:"
-echo "Private packages found:" >> pyarmor_log
 for package in "${list_of_private_packages[@]}"
 do
    echo $package
-   echo $package >> pyarmor_log
 done
 
 # install private packages
 list_of_private_packages_as_string=$(printf " %s" "${list_of_private_packages[@]}")
 list_of_private_packages_as_string=${list_of_private_packages_as_string:1}
 echo $list_of_private_packages_as_string
-echo "private packages as string" >> pyarmor_log
-echo $list_of_private_packages_as_string >> pyarmor_log
 cd $workspace_path
 source devel/setup.bash
 catkin_make_isolated --install --install-space /opt/ros/melodic --pkg $list_of_private_packages_as_string
@@ -93,16 +87,16 @@ do
    wstool remove $repo
 done
 
-# find dirs in /opt/ros/melodic corresponding to private repos
+echo "Building public packages"
+cd $workspace_path
+source /opt/ros/melodic/setup.bash
+gosu $user_name catkin_make -DCMAKE_BUILD_TYPE=RelWithDebInfo
 
+# pyarmorize
 cd /opt/ros/melodic/lib
-echo "pyarmoring..." >> pyarmor_log
 for package in "${list_of_private_packages[@]}"
 do
-   echo "processed package:" >> pyarmor_log
-   echo $package >> pyarmor_log
    if [ ! -d "$package" ]; then
-      echo "no directory, ommiting" >> pyarmor_log
       continue
    fi
 
@@ -117,11 +111,8 @@ do
    done
 
    python_files_in_current_dir=`ls -1 *.py 2>/dev/null | wc -l`
-   echo "python files in curent dir" >> pyarmor_log
-   echo $python_files_in_current_dir >> pyarmor_log
    if [ $python_files_in_current_dir -eq 0 ]
    then
-      echo "no python files, ommitting" >> pyarmor_log
       cd ..
       continue
    fi 
