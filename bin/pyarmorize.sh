@@ -5,6 +5,8 @@ set -e
 workspace_path=$1
 user_name=$2
 
+source $workspace_path/devel/setup.bash
+
 # echo "Installing pyarmor..."
 apt update
 apt install python-pip
@@ -16,7 +18,6 @@ fi
 
 # echo "Building with catkin_make_isolated"
 cd $workspace_path
-source devel/setup.bash
 catkin_make_isolated
 cd
 
@@ -72,7 +73,6 @@ list_of_private_packages_as_string=$(printf " %s" "${list_of_private_packages[@]
 list_of_private_packages_as_string=${list_of_private_packages_as_string:1}
 echo $list_of_private_packages_as_string
 cd $workspace_path
-source devel/setup.bash
 catkin_make_isolated --install --install-space /opt/ros/melodic --pkg $list_of_private_packages_as_string
 
 # # remove build and devel
@@ -89,7 +89,6 @@ done
 
 echo "Building public packages"
 cd $workspace_path
-source /opt/ros/melodic/setup.bash
 gosu $user_name catkin_make -DCMAKE_BUILD_TYPE=RelWithDebInfo
 
 # pyarmorize
