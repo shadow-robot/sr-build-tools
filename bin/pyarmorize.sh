@@ -126,7 +126,7 @@ do
       continue
    fi 
 
-   pyarmor obfuscate --no-runtime .
+   pyarmor obfuscate --exact --no-runtime *.py
    rm *.py
    mv ./dist/* .
    rm -rf dist
