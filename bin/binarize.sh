@@ -8,7 +8,9 @@ pyarmor_license_zip_file_path=$3
 
 source $workspace_path/devel/setup.bash
 
-# echo "Installing pyarmor..."
+echo "Running binarization script on workspace: $workspace_path"
+
+echo "Installing pyarmor"
 apt update
 apt install python-pip
 pip install pyarmor
@@ -18,23 +20,23 @@ if [ -f $HOME/.pyarmor_capsule.zip ]; then
     rm $HOME/.pyarmor_capsule.zip
 fi
 
-# echo "Building with catkin_make_isolated"
+echo "Building with catkin_make_isolated"
 cd $workspace_path
 catkin_make_isolated
 cd
 
-# find all repos
+echo "finding all repos in workspace"
 list_of_repos=()
 echo "Finding all repos..."
 cd $workspace_path/src
 list_of_repos+=($(find . -name .git -type d -prune | sed 's#^\([^/]*/\([^/]*\)/.*\)#\2#'))
 cd
 
-# get all ros packages
+echo "Finding all ros packages"
 list_of_ros_packages=($(rospack list-names))
 list_of_private_packages=()
 
-echo "Finding all private repos and packages..."
+echo "Finding all private repos and packages"
 list_of_private_repos=()
 
 cd $workspace_path/src
@@ -61,27 +63,27 @@ done
 echo "Private repos found:"
 for repo in "${list_of_private_repos[@]}"
 do
-   echo $repo
+   echo "  - $repo"
 done
 
 echo "Private packages found:"
 for package in "${list_of_private_packages[@]}"
 do
-   echo $package
+   echo "  - $package"
 done
 
-# install private packages
+echo "Installing private packages"
 list_of_private_packages_as_string=$(printf " %s" "${list_of_private_packages[@]}")
 list_of_private_packages_as_string=${list_of_private_packages_as_string:1}
 echo $list_of_private_packages_as_string
 cd $workspace_path
 catkin_make_isolated --install --install-space /opt/ros/melodic --pkg $list_of_private_packages_as_string
 
-# # remove build and devel
+echo "Removing build and devel directories"
 
 rm -rf ./devel ./build ./devel_isolated ./build_isolated
 
-# removing source code
+echo "Removing source code"
 cd src
 for repo in "${list_of_private_repos[@]}"
 do
@@ -93,7 +95,7 @@ echo "Building public packages"
 cd $workspace_path
 gosu $user_name catkin_make -DCMAKE_BUILD_TYPE=RelWithDebInfo
 
-# pyarmorize
+echo "Running pyarmorize"
 cd /opt/ros/melodic/lib
 for package in "${list_of_private_packages[@]}"
 do
@@ -131,4 +133,4 @@ do
    cd ..
 done
 
-echo "Pyarmorize: done."
+echo "Binarize: done."
