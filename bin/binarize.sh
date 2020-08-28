@@ -91,46 +91,60 @@ do
    wstool remove $repo
 done
 
-echo "Building public packages"
-cd $workspace_path
-gosu $user_name catkin_make -DCMAKE_BUILD_TYPE=RelWithDebInfo
-
-echo "Running pyarmorize"
-cd /opt/ros/melodic/lib
+echo "Removing headers if they were installed"
+cd /opt/ros/melodic/include
 for package in "${list_of_private_packages[@]}"
 do
    if [ ! -d "$package" ]; then
       continue
    fi
+   rm -rf "$package"
+done
 
-   python_files_no_py_extension=()
-   cd $package
+echo "Building public packages"
+cd $workspace_path
+gosu $user_name catkin_make -DCMAKE_BUILD_TYPE=RelWithDebInfo
 
-   python_files_no_py_extension+=($(find . -type f -not -name '*.py' -exec grep -R -I -P '^#!/usr/bin/env python|^#! /usr/bin/env python|^#!/usr/bin/python|^#! /usr/bin/python' -l {} \; | sed "s/\.\///g"))
-   
-   for file in "${python_files_no_py_extension[@]}"
+echo "Running pyarmorize"
+pyarmorize_paths=("/opt/ros/melodic/lib" "/opt/ros/melodic/lib/python2.7/dist-packages")
+for pyarmorize_path in "${pyarmorize_paths[@]}"
+do
+   cd $pyarmorize_path
+   for package in "${list_of_private_packages[@]}"
    do
-      mv $file "$file.py"
-   done
+      if [ ! -d "$package" ]; then
+         continue
+      fi
 
-   python_files_in_current_dir=`ls -1 *.py 2>/dev/null | wc -l`
-   if [ $python_files_in_current_dir -eq 0 ]
-   then
+      python_files_no_py_extension=()
+      cd $package
+
+      python_files_no_py_extension+=($(find . -type f -not -name '*.py' -exec grep -R -I -P '^#!/usr/bin/env python|^#! /usr/bin/env python|^#!/usr/bin/python|^#! /usr/bin/python' -l {} \; | sed "s/\.\///g"))
+      
+      for file in "${python_files_no_py_extension[@]}"
+      do
+         mv $file "$file.py"
+      done
+
+      python_files_in_current_dir=`ls -1 *.py 2>/dev/null | wc -l`
+      if [ $python_files_in_current_dir -eq 0 ]
+      then
+         cd ..
+         continue
+      fi 
+
+      pyarmor obfuscate --exact --no-runtime *.py
+      rm *.py
+      mv ./dist/* .
+      rm -rf dist
+      chmod +x *.py
+
+      for file in "${python_files_no_py_extension[@]}"
+      do
+         mv "$file.py" $file
+      done
       cd ..
-      continue
-   fi 
-
-   pyarmor obfuscate --exact --no-runtime *.py
-   rm *.py
-   mv ./dist/* .
-   rm -rf dist
-   chmod +x *.py
-
-   for file in "${python_files_no_py_extension[@]}"
-   do
-      mv "$file.py" $file
    done
-   cd ..
 done
 
 echo "Binarize: done."
