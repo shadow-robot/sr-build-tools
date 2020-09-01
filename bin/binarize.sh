@@ -144,7 +144,7 @@ do
       rm -rf dist
       chmod +x *.py
 
-      if [ ! -d "tmp_init_file_dir" ]; then
+      if [ -d "tmp_init_file_dir" ]; then
          mv ./tmp_init_file_dir/__init__.py .
          rm -rf ./tmp_init_file_dir
       fi
