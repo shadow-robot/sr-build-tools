@@ -126,17 +126,19 @@ do
          mv $file "$file.py"
       done
 
-      python_files_in_current_dir=`ls -1 *.py 2>/dev/null | wc -l`
-      if [ $python_files_in_current_dir -eq 0 ]
-      then
-         cd ..
-         continue
-      fi 
-
       if [ -f "__init__.py" ]; then
          mkdir tmp_init_file_dir
          mv __init__.py ./tmp_init_file_dir
       fi
+
+      python_files_in_current_dir=`ls -1 *.py 2>/dev/null | wc -l`
+      if [ $python_files_in_current_dir -eq 0 ]
+      then
+         mv ./tmp_init_file_dir/__init__.py .
+         rm -rf ./tmp_init_file_dir
+         cd ..
+         continue
+      fi 
 
       pyarmor obfuscate --exact --no-runtime *.py
       rm *.py
