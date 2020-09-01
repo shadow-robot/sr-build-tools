@@ -133,11 +133,21 @@ do
          continue
       fi 
 
+      if [ -f "__init__.py" ]; then
+         mkdir tmp_init_file_dir
+         mv __init__.py ./tmp_init_file_dir
+      fi
+
       pyarmor obfuscate --exact --no-runtime *.py
       rm *.py
       mv ./dist/* .
       rm -rf dist
       chmod +x *.py
+
+      if [ ! -d "tmp_init_file_dir" ]; then
+         mv ./tmp_init_file_dir/__init__.py .
+         rm -rf ./tmp_init_file_dir
+      fi
 
       for file in "${python_files_no_py_extension[@]}"
       do
