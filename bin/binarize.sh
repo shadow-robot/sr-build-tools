@@ -60,6 +60,15 @@ do
    cd ..
 done
 
+list_of_private_packages_as_string=$(printf " %s" "${list_of_private_packages[@]}")
+list_of_private_packages_as_string=${list_of_private_packages_as_string:1}
+
+if [ -z "$list_of_private_packages_as_string" ]
+then
+   echo "No private packages in the workspace. Exiting."
+   exit 0
+fi
+
 echo "Private repos found:"
 for repo in "${list_of_private_repos[@]}"
 do
@@ -73,9 +82,6 @@ do
 done
 
 echo "Installing private packages"
-list_of_private_packages_as_string=$(printf " %s" "${list_of_private_packages[@]}")
-list_of_private_packages_as_string=${list_of_private_packages_as_string:1}
-echo $list_of_private_packages_as_string
 cd $workspace_path
 catkin_make_isolated --install --install-space /opt/ros/melodic --pkg $list_of_private_packages_as_string
 
