@@ -65,7 +65,8 @@ list_of_private_packages_as_string=${list_of_private_packages_as_string:1}
 
 if [ -z "$list_of_private_packages_as_string" ]
 then
-   echo "No private packages in the workspace. Exiting."
+   echo "No private packages in the workspace."
+   echo "Binarize: done."
    exit 0
 fi
 
