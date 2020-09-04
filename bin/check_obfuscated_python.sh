@@ -3,8 +3,8 @@ armored_count=0
 folders_to_check="/opt/ros"
 for folder in $folders_to_check; do
   python_files=()
-  python_files=($(find $folder -type f -path "*sr_*" ! -path "*/_*" ! -path "*/test/*" ! -path "*/cfg/*" -not -name '*.py' -not -name '*.cfg' -exec grep -R -I -P '^#!/usr/bin/env python|^#! /usr/bin/env python|^#!/usr/bin/python|^#! /usr/bin/python' -l {} \;))
-  python_files+=($(find $folder -type f -path "*sr_*" ! -path "*/_*" ! -path "*/cfg/*" ! -path "*/test/*" -name '*.py' -not -name "*pc.py" -not -name "*__init__.py*"))
+  python_files=($(find $folder -type f -path "*sr_*" -not -name '*.py' -exec grep -R -I -P '^#!/usr/bin/env python|^#! /usr/bin/env python|^#!/usr/bin/python|^#! /usr/bin/python' -l {} \;))
+  python_files+=($(find $folder -type f -path "*sr_*" -name '*.py' -not -name "*.pc.py" -not -name "*__init__.py*"))
   for file in "${python_files[@]}"
   do
       check=$(cat $file | grep "__pyarmor__")
