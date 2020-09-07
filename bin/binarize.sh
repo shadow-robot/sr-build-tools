@@ -4,7 +4,7 @@ set -e
 
 workspace_path=$1
 user_name=$2
-pyarmor_license_zip_file_path=$3
+# pyarmor_license_zip_file_path=$3
 
 source $workspace_path/devel/setup.bash
 
@@ -14,7 +14,7 @@ echo "Installing pyarmor"
 apt update
 apt install python-pip
 pip install pyarmor
-pyarmor register $pyarmor_license_zip_file_path
+# pyarmor register $pyarmor_license_zip_file_path
 pyarmor runtime --output "/opt/ros/melodic/lib/python2.7/dist-packages"
 if [ -f $HOME/.pyarmor_capsule.zip ]; then
     rm $HOME/.pyarmor_capsule.zip
@@ -149,7 +149,7 @@ do
          continue
       fi 
 
-      pyarmor obfuscate --exact --recursive --no-runtime *.py
+      pyarmor obfuscate --exact --no-runtime *.py
       rm *.py
       mv ./dist/* .
       rm -rf dist
