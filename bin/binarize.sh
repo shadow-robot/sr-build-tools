@@ -127,30 +127,30 @@ do
       done
 
       if [ -f "__init__.py" ]; then
-         mkdir tmp_init_file_dir
-         mv __init__.py ./tmp_init_file_dir
+         mkdir /tmp/tmp_init_file_dir
+         mv __init__.py /tmp/tmp_init_file_dir
       fi
 
       python_files_in_current_dir=`ls -1 *.py 2>/dev/null | wc -l`
       if [ $python_files_in_current_dir -eq 0 ]
       then
-         if [ -d "tmp_init_file_dir" ]; then
-            mv ./tmp_init_file_dir/__init__.py .
-            rm -rf ./tmp_init_file_dir
+         if [ -d "/tmp/tmp_init_file_dir" ]; then
+            mv /tmp/tmp_init_file_dir/__init__.py .
+            rm -rf /tmp/tmp_init_file_dir
          fi
          cd ..
          continue
       fi 
 
-      pyarmor obfuscate --exact --no-runtime *.py
+      pyarmor obfuscate --exact --recursive --no-runtime *.py
       rm *.py
       mv ./dist/* .
       rm -rf dist
       chmod +x *.py
 
-      if [ -d "tmp_init_file_dir" ]; then
-         mv ./tmp_init_file_dir/__init__.py .
-         rm -rf ./tmp_init_file_dir
+      if [ -d "/tmp/tmp_init_file_dir" ]; then
+         mv /tmp/tmp_init_file_dir/__init__.py .
+         rm -rf /tmp/tmp_init_file_dir
       fi
 
       for file in "${python_files_no_py_extension[@]}"
