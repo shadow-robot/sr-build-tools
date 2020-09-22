@@ -6,7 +6,7 @@ workspace_path=$1
 # pyarmor_license_zip_file_path=$2
 user_name=${4:-user}
 install_space=${5:-/opt/ros/shadow}
-underlay_devel=${3:-install_space}
+underlay_devel=${3:-$install_space}
 
 source $workspace_path/devel/setup.bash
 
