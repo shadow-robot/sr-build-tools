@@ -3,9 +3,10 @@
 set -e
 
 workspace_path=$1
-user_name=${2:-user}
-# pyarmor_license_zip_file_path=$3
-install_space=${4:-/opt/ros/shadow}
+# pyarmor_license_zip_file_path=$2
+user_name=${4:-user}
+install_space=${5:-/opt/ros/shadow}
+underlay_devel=${3:-install_space}
 
 source $workspace_path/devel/setup.bash
 
@@ -90,7 +91,7 @@ if [[ ! -d $install_space ]]; then
    rosws init
    cp /opt/ros/$ROS_DISTRO/env.sh $install_space/.
 fi
-source $install_space/setup.bash
+source $underlay_devel/setup.bash
 cd $workspace_path
 rm -rf ./devel ./build
 catkin_make_isolated --install --install-space $install_space --pkg $list_of_private_packages_as_string
@@ -118,7 +119,7 @@ done
 
 echo "Building public packages"
 cd $workspace_path
-source $install_space/setup.bash
+source $underlay_devel/setup.bash
 gosu $user_name catkin_make -DCMAKE_BUILD_TYPE=RelWithDebInfo
 
 # echo "Running pyarmorize"
