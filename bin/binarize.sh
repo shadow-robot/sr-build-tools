@@ -21,10 +21,10 @@ echo "Running binarization script on workspace: $workspace_path"
 #     rm $HOME/.pyarmor_capsule.zip
 # fi
 
-echo "Building with catkin_make_isolated"
-cd $workspace_path
-catkin_make_isolated
-cd
+# echo "Building with catkin_make_isolated"
+# cd $workspace_path
+# catkin_make_isolated
+# cd
 
 echo "finding all repos in workspace"
 list_of_repos=()
@@ -92,19 +92,19 @@ if [[ ! -d $install_space ]]; then
 fi
 source $install_space/setup.bash
 cd $workspace_path
+rm -rf ./devel ./build
 catkin_make_isolated --install --install-space $install_space --pkg $list_of_private_packages_as_string
 
 # echo "Removing build and devel directories"
+# rm -rf ./devel_isolated ./build_isolated
 
-# rm -rf ./devel ./build ./devel_isolated ./build_isolated
-
-# echo "Removing source code"
-# cd src
-# for repo in "${list_of_private_repos[@]}"
-# do
-#    rm -rf $repo
-#    wstool remove $repo
-# done
+echo "Removing source code"
+cd src
+for repo in "${list_of_private_repos[@]}"
+do
+   rm -rf $repo
+   wstool remove $repo
+done
 
 # echo "Removing headers if they were installed"
 # cd $install_space/include
@@ -116,11 +116,10 @@ catkin_make_isolated --install --install-space $install_space --pkg $list_of_pri
 #    rm -rf "$package"
 # done
 
-# echo "Building public packages"
-# cd $workspace_path
-# # source the binary install space first, so that this workspace now depends on it
-# source $install_space/setup.bash
-# gosu $user_name catkin_make -DCMAKE_BUILD_TYPE=RelWithDebInfo
+echo "Building public packages"
+cd $workspace_path
+source $install_space/setup.bash
+gosu $user_name catkin_make -DCMAKE_BUILD_TYPE=RelWithDebInfo
 
 # echo "Running pyarmorize"
 # pyarmorize_paths=("$install_space/lib" "$install_space/lib/python2.7/dist-packages")
