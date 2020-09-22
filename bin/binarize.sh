@@ -93,11 +93,14 @@ if [[ ! -d $install_space ]]; then
 fi
 source $underlay_devel/setup.bash
 cd $workspace_path
-rm -rf ./devel ./build
-catkin_make_isolated --install --install-space $install_space --pkg $list_of_private_packages_as_string
+mv ./devel ./devel-backup
+mv ./build ./build-backup
+catkin_make_isolated --install --install-space $install_space --only-pkg-with-deps $list_of_private_packages_as_string
+mv ./devel-backup ./devel
+mv ./build-backup ./build
 
 # echo "Removing build and devel directories"
-# rm -rf ./devel_isolated ./build_isolated
+rm -rf ./devel ./build ./devel_isolated ./build_isolated
 
 echo "Removing source code"
 cd src
