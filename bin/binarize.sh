@@ -3,10 +3,22 @@
 set -e
 
 workspace_path=$1
-pyarmor_license_zip_file_path=$2
-user_name=${4:-user}
+pyarmor_license_zip_file_path=${2:-/home/user/pyarmor-regfile-1.zip}
 install_space=${5:-/opt/ros/shadow}
-underlay_devel=${3:-$install_space}
+
+# If the user to rebuild non-private workspace as is not specified, use the owner of it
+if [ -z $4 ]; then
+   user_name=$(stat -c '%U' $workspace_path)
+else
+   user_name=$4
+fi
+
+# If no underlying workspace is specified, use the binary install space instead
+if [ -z $3 ]; then
+   underlay_devel=$install_space
+else
+   underlay_devel="$3/devel"
+fi
 
 source $workspace_path/devel/setup.bash
 
@@ -21,11 +33,6 @@ pyarmor runtime --output "/opt/ros/$ROS_DISTRO/lib/python2.7/dist-packages"
 if [ -f $HOME/.pyarmor_capsule.zip ]; then
     rm $HOME/.pyarmor_capsule.zip
 fi
-
-echo "Building with catkin_make_isolated"
-cd $workspace_path
-catkin_make_isolated
-cd
 
 echo "finding all repos in workspace"
 list_of_repos=()
@@ -67,25 +74,25 @@ list_of_private_packages_as_string=${list_of_private_packages_as_string:1}
 
 if [ -z "$list_of_private_packages_as_string" ]
 then
-   echo "No private packages in the workspace."
-   echo "Binarize: done."
+   echo "No private packages in the workspace at $workspace_path."
+   echo "Binarize: nothing to do. Exiting."
    exit 0
 fi
 
-echo "Private repos found:"
+echo "Private repos found in $workspace_path:"
 for repo in "${list_of_private_repos[@]}"
 do
    echo "  - $repo"
 done
 
-echo "Private packages found:"
+echo "Private packages found in $workspace_path:"
 for package in "${list_of_private_packages[@]}"
 do
    echo "  - $package"
 done
 
-echo "Installing private packages"
 if [[ ! -d $install_space ]]; then
+   echo "Creating private binary workspace at $install_space"
    mkdir $install_space
    cd $install_space
    rosws init
@@ -93,16 +100,17 @@ if [[ ! -d $install_space ]]; then
 fi
 source $underlay_devel/setup.bash
 cd $workspace_path
-mv ./devel ./devel-backup
-mv ./build ./build-backup
-catkin_make_isolated --install --install-space $install_space --only-pkg-with-deps $list_of_private_packages_as_string
-mv ./devel-backup ./devel
-mv ./build-backup ./build
+echo "Removing all old build artefacts from $workspace_path"
+rm -rf ./devel ./build ./devel_isolated ./build_isolated ./install ./install_isolated
+echo "Building private packages and dependencies in $workspace_path"
+catkin_make_isolated --install --only-pkg-with-deps $list_of_private_packages_as_string
+echo "Installing private packages from $workspace_path to $install_space"
+catkin_make_isolated --install --install-space $install_space --pkg $list_of_private_packages_as_string
 
-echo "Removing build and devel directories"
-rm -rf ./devel ./build ./devel_isolated ./build_isolated
+echo "Removing private build artefacts from $workspace_path"
+rm -rf ./devel_isolated ./build_isolated ./install_isolated
 
-echo "Removing source code"
+echo "Removing private source code from $workspace_path"
 cd src
 for repo in "${list_of_private_repos[@]}"
 do
@@ -110,17 +118,7 @@ do
    wstool remove $repo
 done
 
-echo "Removing headers if they were installed"
-cd $install_space/include
-for package in "${list_of_private_packages[@]}"
-do
-   if [ ! -d "$package" ]; then
-      continue
-   fi
-   rm -rf "$package"
-done
-
-echo "Building public packages"
+echo "Building remaining public packages in $workspace_path"
 cd $workspace_path
 source $underlay_devel/setup.bash
 gosu $user_name catkin_make -DCMAKE_BUILD_TYPE=RelWithDebInfo
