@@ -26,11 +26,17 @@
 
 - name: Update package lists
   apt: update_cache=yes
+  become: yes
+  become_method: sudo
+  become_user: root
 
 # Is this a bit rude todo here? dist or safe or full?
 # http://docs.ansible.com/apt_module.html
 - name: Update all packages to the latest version
   apt: upgrade=dist
+  become: yes
+  become_method: sudo
+  become_user: root
 
 # ROS Install
 - name: Install ROS stuff
