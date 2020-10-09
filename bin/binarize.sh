@@ -69,14 +69,27 @@ do
    cd ..
 done
 
+if [[ ! -d $install_space ]]; then
+   echo "Creating private binary workspace at $install_space"
+   mkdir $install_space
+   cd $install_space
+   rosws init $install_space /opt/ros/$ROS_DISTRO
+   cp /opt/ros/$ROS_DISTRO/env.sh $install_space/.
+fi
+
 list_of_private_packages_as_string=$(printf " %s" "${list_of_private_packages[@]}")
 list_of_private_packages_as_string=${list_of_private_packages_as_string:1}
 
 if [ -z "$list_of_private_packages_as_string" ]
 then
+   dummy_name="sr_dummy"
    echo "No private packages in the workspace at $workspace_path."
-   echo "Binarize: nothing to do. Exiting."
-   exit 0
+   echo "Creating dummy package $dummy_name for private binary workspace."
+   gosu $user_name mkdir -p $workspace_path/src/$dummy_name
+   cd $workspace_path/src/$dummy_name
+   gosu $user_name catkin_create_pkg $dummy_name
+   list_of_private_packages_as_string="$dummy_name"
+   list_of_private_repos+=($dummy_name)
 fi
 
 echo "Private repos found in $workspace_path:"
@@ -91,13 +104,6 @@ do
    echo "  - $package"
 done
 
-if [[ ! -d $install_space ]]; then
-   echo "Creating private binary workspace at $install_space"
-   mkdir $install_space
-   cd $install_space
-   rosws init
-   cp /opt/ros/$ROS_DISTRO/env.sh $install_space/.
-fi
 source $underlay_devel/setup.bash
 cd $workspace_path
 echo "Removing all old build artefacts from $workspace_path"
@@ -115,7 +121,8 @@ cd src
 for repo in "${list_of_private_repos[@]}"
 do
    rm -rf $repo
-   wstool remove $repo
+   # Remove from .rosinstall (if present, hence "|| true")
+   wstool remove $repo || true
 done
 
 echo "Building remaining public packages in $workspace_path"
