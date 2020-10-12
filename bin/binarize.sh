@@ -134,56 +134,58 @@ echo "Running pyarmorize"
 pyarmorize_paths=("$install_space/lib" "$install_space/lib/python2.7/dist-packages")
 for pyarmorize_path in "${pyarmorize_paths[@]}"
 do
-   cd $pyarmorize_path
-   for package in "${list_of_private_packages[@]}"
-   do
-      if [ ! -d "$package" ]; then
-         continue
-      fi
-
-      python_files_no_py_extension=()
-      cd $package
-
-      python_files_no_py_extension+=($(find . -type f -not -name '*.py' -exec grep -R -I -P '^#!/usr/bin/env python|^#! /usr/bin/env python|^#!/usr/bin/python|^#! /usr/bin/python' -l {} \; | sed "s/\.\///g"))
-      
-      for file in "${python_files_no_py_extension[@]}"
+   if [ -d $pyarmorize_path ]; then
+      cd $pyarmorize_path
+      for package in "${list_of_private_packages[@]}"
       do
-         mv $file "$file.py"
-      done
+         if [ ! -d "$package" ]; then
+            continue
+         fi
 
-      if [ -f "__init__.py" ]; then
-         mkdir tmp_init_file_dir
-         mv __init__.py ./tmp_init_file_dir
-      fi
+         python_files_no_py_extension=()
+         cd $package
 
-      python_files_in_current_dir=`ls -1 *.py 2>/dev/null | wc -l`
-      if [ $python_files_in_current_dir -eq 0 ]
-      then
+         python_files_no_py_extension+=($(find . -type f -not -name '*.py' -exec grep -R -I -P '^#!/usr/bin/env python|^#! /usr/bin/env python|^#!/usr/bin/python|^#! /usr/bin/python' -l {} \; | sed "s/\.\///g"))
+         
+         for file in "${python_files_no_py_extension[@]}"
+         do
+            mv $file "$file.py"
+         done
+
+         if [ -f "__init__.py" ]; then
+            mkdir tmp_init_file_dir
+            mv __init__.py ./tmp_init_file_dir
+         fi
+
+         python_files_in_current_dir=`ls -1 *.py 2>/dev/null | wc -l`
+         if [ $python_files_in_current_dir -eq 0 ]
+         then
+            if [ -d "tmp_init_file_dir" ]; then
+               mv ./tmp_init_file_dir/__init__.py .
+               rm -rf ./tmp_init_file_dir
+            fi
+            cd ..
+            continue
+         fi 
+
+         pyarmor obfuscate --exact --no-runtime *.py
+         rm *.py
+         mv ./dist/* .
+         rm -rf dist
+         chmod +x *.py
+
          if [ -d "tmp_init_file_dir" ]; then
             mv ./tmp_init_file_dir/__init__.py .
             rm -rf ./tmp_init_file_dir
          fi
+
+         for file in "${python_files_no_py_extension[@]}"
+         do
+            mv "$file.py" $file
+         done
          cd ..
-         continue
-      fi 
-
-      pyarmor obfuscate --exact --no-runtime *.py
-      rm *.py
-      mv ./dist/* .
-      rm -rf dist
-      chmod +x *.py
-
-      if [ -d "tmp_init_file_dir" ]; then
-         mv ./tmp_init_file_dir/__init__.py .
-         rm -rf ./tmp_init_file_dir
-      fi
-
-      for file in "${python_files_no_py_extension[@]}"
-      do
-         mv "$file.py" $file
       done
-      cd ..
-   done
+   fi
 done
 
 echo "Binarize: done."
