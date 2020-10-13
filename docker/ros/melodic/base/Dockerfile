@@ -51,6 +51,12 @@ RUN set -x && \
     mv /tmp/terminator_config /home/$MY_USERNAME/.config/terminator/config && \
     chown -R $MY_USERNAME:$MY_USERNAME /home/$MY_USERNAME/.config &&\
     \
+    echo "Creating XDG_RUNTIME_DIR to avoid rqt black windows" && \
+    mkdir -p /run/$MY_USERNAME/1000 && \
+    chmod 0700 /run/$MY_USERNAME/1000 && \
+    chown 1000:1000 /run/$MY_USERNAME/1000 && \
+    export XDG_RUNTIME_DIR=/run/$MY_USERNAME/1000 && \
+    \
     echo "Removing cache" && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /home/$MY_USERNAME/.ansible /home/$MY_USERNAME/.gitconfig /home/$MY_USERNAME/.cache
