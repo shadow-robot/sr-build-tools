@@ -45,7 +45,7 @@ def lambda_handler(event, context):
     timestamp = year+"-"+month+"-"+day+"T"+hour+":"+minute+":"+second
     
     corrected_object_name = objectname.replace("%3A",":")
-    corrected_object_name = corrected_object_name.replace("%25","")
+    corrected_object_name = corrected_object_name.replace("%25","%")
     presigned_url=s3.generate_presigned_url('get_object', Params = {'Bucket': bucket, 'Key': corrected_object_name}, ExpiresIn = 604800)
     
     
