@@ -35,7 +35,6 @@ def lambda_handler(event, context):
     customername = filename.split("_")[0]
     customername = customername.replace("-"," ")
     customername = customername.replace("%26","&")
-    customername = customername.replace("%3A",":")
     timestamp = filename.split("_")[1].split(".")[0]
     year = timestamp.split("-")[0]
     month = timestamp.split("-")[1]
