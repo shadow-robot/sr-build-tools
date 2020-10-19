@@ -47,7 +47,7 @@ git clone https://github.com/shadow-robot/sr-build-tools
 - Check corresponding kernel version https://www.kernel.org/pub/linux/kernel
 - Edit `prepare_rt_kernel.sh` variables to fit the chosen versions
 - Run `prepare_rt_kernel.sh`. It will open menuconfig, where you have to configure the preemption model.
-- `Processor type and features` -> `Preemption Model`  set to Fully Preemptible Kernel (RT)
+- `General setup` -> `Preemption Model`  set to Fully Preemptible Kernel (RT)
 
 ## Compile and create deb
 
