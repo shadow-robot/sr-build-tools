@@ -20,7 +20,7 @@ cp /boot/config-`uname -r` .config
 make olddefconfig
 
 # edit manually the RT_PREEMPT parameters:
-# Processor type and features -> Preemption Model  set to Fully Preemptible Kernel (RT)
+# General Setup -> Preemption Model  set to Fully Preemptible Kernel (RT)
 sudo apt-get install libncurses-dev
 make menuconfig
 #or
