@@ -56,7 +56,7 @@ git clone https://github.com/shadow-robot/sr-build-tools
 
 ## Install kernel
 
-- Run `dpkg -i linux-*.deb` to install the deb packages
+- Run `sudo dpkg -i linux-*.deb` to install the deb packages
 
 ## Grub configuration
 
