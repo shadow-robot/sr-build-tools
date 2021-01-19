@@ -1,0 +1,30 @@
+version: 0.2
+
+env:
+  variables:
+     branch: F_add_aws_builds
+     image: build-tools
+     tag: xenial-kinetic
+     dockerfile_folder: docker/ros/kinetic/base/
+  exported-variables:
+     - branch
+     - image
+     - tag
+     - dockerfile_folder
+phases:
+  install:
+    runtime-versions:
+      docker: 19
+  build:
+    commands:
+      - awscli_v1_executable=$(which aws)
+      - rm $awscli_v1_executable
+      - curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+      - unzip awscliv2.zip
+      - ./aws/install
+      - git checkout $branch
+      - cd $dockerfile_folder
+      - aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws/shadowrobot
+      - docker build -t $image .
+      - docker tag $image:latest public.ecr.aws/shadowrobot/$image:$tag
+      - docker push public.ecr.aws/shadowrobot/$image:$tag
