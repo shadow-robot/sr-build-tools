@@ -1,6 +1,7 @@
 version: 0.2
 
 env:
+  shell: bash
   variables:
      branch: F_add_aws_builds
      image: build-tools
@@ -30,4 +31,4 @@ phases:
       - docker push public.ecr.aws/shadowrobot/$image:$tag
       - comm -13 <(aws ecr-public describe-image-tags --repository-name $image --region us-east-1 --output text | awk '{print $3}' | tr " " "\n" | sort -u) <(aws ecr-public describe-images --repository-name $image --region us-east-1 --output text | awk '{print $2}' | tr " " "\n" | sort -u) >> ids_to_delete.txt
       - ids_to_delete=$(sed 's/^/imageDigest=/' ids_to_delete.txt)
-      - aws ecr-public batch-delete-image --repository-name $image--region us-east-1 --image-ids $ids_to_delete --output text
+      - aws ecr-public batch-delete-image --repository-name $image --region us-east-1 --image-ids $ids_to_delete --output text
