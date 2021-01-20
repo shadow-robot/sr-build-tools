@@ -3,7 +3,7 @@ version: 0.2
 env:
   shell: bash
   variables:
-     branch: F_add_aws_builds
+     branch: master
      image: build-tools
      tag: xenial-kinetic
      dockerfile_folder: docker/ros/kinetic/base/
