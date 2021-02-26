@@ -4,7 +4,7 @@
 # https://github.com/shadow-robot/sr-build-tools/
 #
 
-FROM ros:kinetic-perception
+FROM public.ecr.aws/shadowrobot/ros:kinetic-perception
 
 MAINTAINER "Shadow Robot's Software Team <software@shadowrobot.com>"
 

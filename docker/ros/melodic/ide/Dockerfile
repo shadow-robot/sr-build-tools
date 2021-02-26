@@ -4,7 +4,7 @@
 # https://github.com/shadow-robot/sr-build-tools/
 #
 
-FROM shadowrobot/build-tools:bionic-melodic
+FROM public.ecr.aws/shadowrobot/build-tools:bionic-melodic
 
 MAINTAINER "Shadow Robot's Software Team <software@shadowrobot.com>"
 
