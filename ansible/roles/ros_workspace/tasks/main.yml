@@ -3,22 +3,22 @@
 
 - name: Delete any files in {{ros_workspace}} to have a fresh workspace
   shell: "rm -rf {{ros_workspace}}"
-  sudo: yes
+  become: yes
 
 - name: Delete any files in {{ros_workspace}}_deps to have a fresh workspace
   shell: "rm -rf {{ros_workspace}}_deps"
-  sudo: yes
+  become: yes
 
 - name: Create workspace for dependencies {{ros_workspace}}_deps
   file: state=directory path={{ros_workspace}}_deps/src owner={{ros_user}} group={{ros_group}}
-  sudo: yes
+  become: yes
   sudo_user: "{{ros_user}}"
 
 - name: catkin_init_workspace deps
   shell: bash -c "source /opt/ros/{{ros_release}}/setup.bash && catkin_init_workspace"
     chdir={{ros_workspace}}_deps/src
     creates={{ros_workspace}}_deps/src/CMakeLists.txt
-  sudo: yes
+  become: yes
   sudo_user: "{{ros_user}}"
 
 # Do an initial make of the empty workspace to get a setup.bash.
@@ -27,19 +27,19 @@
   shell: bash -c "source /opt/ros/{{ros_release}}/setup.bash && catkin_make"
     chdir={{ros_workspace}}_deps
     creates={{ros_workspace}}_deps/devel/setup.bash
-  sudo: yes
+  become: yes
   sudo_user: "{{ros_user}}"
 
 - name: Create workspace {{ros_workspace}}
   file: state=directory path={{ros_workspace}}/src owner={{ros_user}} group={{ros_group}}
-  sudo: yes
+  become: yes
   sudo_user: "{{ros_user}}"
 
 - name: catkin_init_workspace
   shell: bash -c "source {{ros_workspace}}_deps/devel/setup.bash && catkin_init_workspace"
     chdir={{ros_workspace}}/src
     creates={{ros_workspace}}/src/CMakeLists.txt
-  sudo: yes
+  become: yes
   sudo_user: "{{ros_user}}"
 
 # Do an initial make of the empty workspace to get a setup.bash.
@@ -48,7 +48,7 @@
   shell: bash -c "source {{ros_workspace}}_deps/devel/setup.bash && catkin_make"
     chdir={{ros_workspace}}
     creates={{ros_workspace}}/devel/setup.bash
-  sudo: yes
+  become: yes
   sudo_user: "{{ros_user}}"
 
 - name: Update users bashrc to point to the workspace
@@ -92,40 +92,40 @@
 
 - name: Delete duplicated deps
   shell: for BASE_SRC in `ls {{ros_workspace}}/src` ; do if [ -d {{ros_workspace}}_deps/src/${BASE_SRC} ]; then rm -rf {{ros_workspace}}_deps/src/${BASE_SRC}; fi ; done
-  sudo: yes
+  become: yes
 
 - name: Fix perms (As we installed code as root, fix the perms.)
   file: path={{ros_workspace}} recurse=yes owner={{ros_user}} group={{ros_group}}
-  sudo: yes
+  become: yes
 
 - name: Fix perms for deps (As we installed code as root, fix the perms.)
   file: path={{ros_workspace}}_deps recurse=yes owner={{ros_user}} group={{ros_group}}
-  sudo: yes
+  become: yes
 
 - name: Install dependencies of the source deps
   script: ../files/rosdep_install.sh {{ros_workspace}}_deps
-  sudo: yes
+  become: yes
 
 # Now build the code we just installed.
 - name: catkin_make for deps
   shell: bash -c "source <(grep '^export\|^source' ~{{ros_user}}/.bashrc) && catkin_make -DCMAKE_BUILD_TYPE=RelWithDebInfo"
     chdir={{ros_workspace}}_deps
-  sudo: yes
+  become: yes
   sudo_user: "{{ros_user}}"
 
 - name: Install dependencies
   script: ../files/rosdep_install.sh {{ros_workspace}}
-  sudo: yes
+  become: yes
 
 - name: Fix permission for rosdep
   file: path=~{{ros_user}}/.ros recurse=yes owner={{ros_user}} group={{ros_group}} state=directory
-  sudo: yes
+  become: yes
 
 # Now build the code we just installed.
 - name: catkin_make
   shell: bash -c "source <(grep '^export\|^source' ~{{ros_user}}/.bashrc) && catkin_make -DCMAKE_BUILD_TYPE=RelWithDebInfo"
     chdir={{ros_workspace}}
-  sudo: yes
+  become: yes
   sudo_user: "{{ros_user}}"
 
 - name: Add ws_update alias for updating the workspace to ~/.bashrc

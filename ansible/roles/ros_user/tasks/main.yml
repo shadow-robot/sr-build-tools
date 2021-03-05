@@ -34,21 +34,21 @@
 
 - name: Delete existing icons from ~{{ros_user}}
   shell: "rm -f ~{{ros_user}}/Desktop/*"
-  sudo: yes
+  become: yes
 
 - name: Install home directory files from {{ros_user_home_files}}
   copy: src="{{ros_user_home_files}}/" dest="~{{ros_user}}/" owner={{ros_user}} group={{ros_group}}
   when: ros_user_home_files|default("") != ""
-  sudo: yes
+  become: yes
   sudo_user: "{{ros_user}}"
 
 - name: Copy icons to /usr/local/share/icons
   copy: src="files/icons" dest="/usr/local/share"
-  sudo: yes
+  become: yes
 
 - name: Set executable bit for icons
   shell: "find ~{{ros_user}}/Desktop/*.desktop -exec chmod +x {} +"
-  sudo: yes
+  become: yes
   sudo_user: "{{ros_user}}"
 
 - name: Test for existing bashrc setup
@@ -78,7 +78,7 @@
   shell: "dbus-launch --exit-with-session gsettings set org.gnome.desktop.background picture-uri file://{{background_destination_folder}}{{ros_user_background|basename}}"
   register: command_result
   failed_when: '"exited with non-zero exit status" in command_result.stderr'
-  sudo: yes
+  become: yes
   sudo_user: "{{ros_user}}"
 
 # Default font a bit large for a VM
@@ -89,7 +89,7 @@
   shell: "dbus-launch --exit-with-session gsettings set org.gnome.desktop.interface monospace-font-name '{{monospace_font}}'"
   register: command_result
   failed_when: '"exited with non-zero exit status" in command_result.stderr'
-  sudo: yes
+  become: yes
   sudo_user: "{{ros_user}}"
 
 - name: Disable screen save and lock
@@ -101,13 +101,13 @@
     - "set org.gnome.desktop.screensaver idle-activation-enabled false"
     - "set org.gnome.desktop.screensaver lock-enabled false"
     - "set org.gnome.desktop.screensaver ubuntu-lock-on-suspend false"
-  sudo: yes
+  become: yes
   sudo_user: "{{ros_user}}"
 
 
 - name: Update rosdep
   shell: bash -c "source /opt/ros/{{ros_release}}/setup.bash && rosdep update"
-  sudo: yes
+  become: yes
   sudo_user: "{{ros_user}}"
 
 - name: Setup git name

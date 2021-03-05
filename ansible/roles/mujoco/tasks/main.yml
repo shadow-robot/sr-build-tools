@@ -17,11 +17,11 @@
     recurse: yes
 
 - name: Install libglfw3-dev
-  sudo: yes
+  become: yes
   apt:
     name: libglfw3-dev
 
 - name: Install libglew
-  sudo: yes
+  become: yes
   apt:
     name: libglew-dev

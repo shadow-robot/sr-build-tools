@@ -5,7 +5,7 @@
   vars:
     ros_release: 'hydro'
     ros_user_background: 'files/images/Hydromedusa_web1.jpg'
-  sudo: yes
+  become: yes
   roles:
     - ros_vagrant_base
 
@@ -13,7 +13,7 @@
   vars:
     ros_release: 'indigo'
     ros_user_background: 'files/images/indigoigloo_600.png'
-  sudo: yes
+  become: yes
   roles:
     - ros_vagrant_base
 
@@ -24,7 +24,7 @@
     # Only works wity lightdb atm, needs support for the xfce login manager.
     ros_user_autologin: no
     ubuntu_desktop_base: xubuntu-desktop
-  sudo: yes
+  become: yes
   roles:
     - ros_vagrant_base
 
@@ -33,7 +33,7 @@
   vars:
     ros_release: 'hydro'
     ros_user_background: 'files/images/Hydromedusa_web1.jpg'
-  sudo: yes
+  become: yes
   roles:
     - ros_vagrant_base
 
@@ -41,7 +41,7 @@
   vars:
     ros_release: 'indigo'
     ros_user_background: 'files/images/indigoigloo_600.png'
-  sudo: yes
+  become: yes
   roles:
     - ros_vagrant_base
 
@@ -59,7 +59,7 @@
     ros_workspace_install: "../data/shadow_robot-{{ros_release}}.rosinstall"
     ros_packages:
       - ethercat-grant
-  sudo: yes
+  become: yes
   roles:
   - hand_prod
 
@@ -78,7 +78,7 @@
       - shadow-robot-ethercat
       - sr-config
       - sr-visualization
-  sudo: yes
+  become: yes
   roles:
   - ros_install
   - ros_user
@@ -94,7 +94,7 @@
     ros_workspace_install: "../data/shadow_robot-{{ros_release}}.rosinstall"
     ros_user_background: "files/images/ShadowRobot-smaller.jpg_1280x1280.jpg"
     monospace_font: "Ubuntu Mono 11"
-  sudo: yes
+  become: yes
   roles:
   - ros_install
   - ros_user
@@ -112,7 +112,7 @@
     ros_workspace_install: "../data/shadow_robot-{{ros_release}}.rosinstall"
     ros_user_background: "files/images/ShadowRobot-smaller.jpg_1280x1280.jpg"
     monospace_font: "Ubuntu Mono 11"
-  sudo: yes
+  become: yes
   roles:
     - ros_install
     - ros_user
@@ -120,7 +120,7 @@
     - share_folder
 
 - hosts: ronex
-  sudo: yes
+  become: yes
   vars:
     ros_release: 'hydro'
     ros_user: 'ronex'
@@ -135,7 +135,7 @@
     - ronex_user
 
 - hosts: ronex-indigo
-  sudo: yes
+  become: yes
   vars:
     ros_release: 'indigo'
   roles:
@@ -143,7 +143,7 @@
     - ronex_user
 
 - hosts: ronexserial
-  sudo: yes
+  become: yes
   vars:
     ros_release: 'indigo'
     ros_user: 'ronexserial'
@@ -154,7 +154,7 @@
   - share_folder
 
 - hosts: glassbot
-  sudo: yes
+  become: yes
   vars:
     ros_packages:
       - rosbridge-suite
@@ -165,7 +165,7 @@
     - share_folder
 
 - hosts: gsc
-  sudo: yes
+  become: yes
   roles:
   - ssh_auth_sock
   - gsc
