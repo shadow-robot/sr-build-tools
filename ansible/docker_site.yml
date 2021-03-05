@@ -3,7 +3,8 @@
 
 - hosts: all
   vars:
-    ros_release: "indigo"
+    ros_release: "noetic"
+    ansible_python_interpreter: /usr/bin/python3
   roles:
     - {role: docker/setup_ui, tags: ["setup_docker_user"]}
     - {role: gazebo_models, tags: ["setup_docker_user"]}
