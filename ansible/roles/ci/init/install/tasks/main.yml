@@ -8,10 +8,10 @@
   become_user: root
   with_items:
      - ros-{{ros_release}}-cmake-modules
-     - python-rosdep
-     - python-pip
+     - python3-rosdep
+     - python3-pip
      - cobertura
-     - python-bloom
+     - python3-bloom
      - fakeroot
 
 - name: Install PIP modules
