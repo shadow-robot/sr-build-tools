@@ -15,7 +15,9 @@
 
 - name: Install ubuntu make
   become: yes
-  apt: name=ubuntu-make state=present
+  apt: 
+    name: ubuntu-make 
+    state: present
 
 - name: Change umake directory owner and group
   become: yes

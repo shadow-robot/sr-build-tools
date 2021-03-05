@@ -2,6 +2,6 @@
 #Installing a webserver
 
 - name: Install apache
-  apt: name={{item}}
-  with_items:
-    - apache2
+  apt: 
+    name: ['apache2']
+    state: "present"

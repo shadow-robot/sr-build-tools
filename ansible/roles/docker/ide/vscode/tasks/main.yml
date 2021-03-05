@@ -11,11 +11,11 @@
     dest: /tmp/code.deb
 
 - name: Intall needed libs
-  apt: name={{item}} install_recommends=no
+  apt: 
+    name: ['libxkbfile1','libsecret-1-0']
+    install_recommends: no
+    state: "present"
   become: yes
-  with_items:
-    - libxkbfile1
-    - libsecret-1-0
 
 - name: Install VSC from .deb
   shell: dpkg -i /tmp/code.deb
