@@ -14,7 +14,7 @@
 
 - name: Add line to rosdep package cache
   lineinfile: dest=/etc/ros/rosdep/sources.list.d/20-default.list line="yaml file://{{repo_sources_path}}/local_custom_rosdep.yaml"
-  become: yes
+  sudo: yes
 
 - name: Create empty file or clean existing one
   shell: bash -c "cat /dev/null > {{repo_sources_path}}/local_custom_rosdep.yaml"
