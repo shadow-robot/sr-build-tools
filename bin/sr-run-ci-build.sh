@@ -21,7 +21,7 @@ if  [ "semaphore_docker" != $server_type ] && [ "local" != $server_type ] && [ "
   export build_tools_folder="$HOME/sr-build-tools"
 
   sudo apt-get update
-  sudo apt-get install -y python-dev libxml2-dev libxslt-dev python-pip lcov wget git libssl-dev libffi-dev libyaml-dev
+  sudo apt-get install -y python-dev libxml2-dev libxslt-dev python3-pip lcov wget git libssl-dev libffi-dev libyaml-dev
   sudo pip install --upgrade pip setuptools==44.0.0 gcovr
   
   git config --global user.email "build.tools@example.com"
