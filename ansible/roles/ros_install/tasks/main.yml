@@ -34,13 +34,9 @@
 
 # ROS Install
 - name: Install ROS stuff
-  apt: name={{item}}
-  with_items:
-    - "{{ ros_base_package }}"
-    - python3-wstool
-    - python3-rosinstall
-    - python3-pip
-    - ssh
+  apt: 
+    name: ['{{ ros_base_package }}','python3-wstool','python3-rosinstall','python3-pip','ssh']
+    state: present
 
 - name: Aggregate specific ROS packages names
   when: ros_packages is defined and ros_packages != ""
