@@ -22,7 +22,7 @@ if  [ "semaphore_docker" != $server_type ] && [ "local" != $server_type ] && [ "
 
   sudo apt-get update
   sudo apt-get install -y python-dev libxml2-dev libxslt-dev python3-pip lcov wget git libssl-dev libffi-dev libyaml-dev
-  sudo pip install --upgrade pip setuptools==44.0.0 gcovr
+  sudo pip3 install --upgrade pip setuptools==44.0.0 gcovr
   
   git config --global user.email "build.tools@example.com"
   git config --global user.name "Build Tools"
@@ -38,7 +38,7 @@ if  [ "semaphore_docker" != $server_type ] && [ "local" != $server_type ] && [ "
     git clone https://github.com/shadow-robot/sr-build-tools.git -b "$toolset_branch" $build_tools_folder
     cd $build_tools_folder/ansible
   fi
-  sudo pip install -r data/requirements.txt
+  sudo pip3 install -r data/requirements.txt
 fi
 
 export extra_variables="codecov_secure=$CODECOV_TOKEN github_login=$GITHUB_LOGIN github_password=$GITHUB_PASSWORD ros_release=$ros_release ubuntu_version_name=$ubuntu_version "
