@@ -8,7 +8,7 @@
   shell: git checkout '{{ config_branch }}'
          chdir={{ros_workspace}}/src/sr_config
   become: yes
-  sudo_user: "{{ros_user}}"
+  become_user: "{{ros_user}}"
   when: sr_config_path.stat.exists
 
 - name: Adds the user to dialout
