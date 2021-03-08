@@ -3,16 +3,9 @@
 
 # Install packages a ros user will need
 - name: Install packages
-  apt: name={{item}}
-  with_items:
-    - git
-    - vim
-    - emacs
-    - tree
-    - htop
-    - terminator
-    - synaptic
-    - wajig
+  apt: 
+    name: ['git','vim','emacs','tree','htop','terminator','synaptic','wajig']
+  state: present
 
 # We put all users in the ros group, so they can work togther easily
 - name: Add ros group
@@ -37,19 +30,25 @@
   become: yes
 
 - name: Install home directory files from {{ros_user_home_files}}
-  copy: src="{{ros_user_home_files}}/" dest="~{{ros_user}}/" owner={{ros_user}} group={{ros_group}}
+  copy: 
+    src: "{{ros_user_home_files}}/" 
+    dest: "~{{ros_user}}/" 
+    owner: "{{ros_user}}" 
+    group: "{{ros_group}}"
   when: ros_user_home_files|default("") != ""
   become: yes
-  sudo_user: "{{ros_user}}"
+  become_user: "{{ros_user}}"
 
 - name: Copy icons to /usr/local/share/icons
-  copy: src="files/icons" dest="/usr/local/share"
+  copy: 
+    src: "files/icons" 
+    dest: "/usr/local/share"
   become: yes
 
 - name: Set executable bit for icons
   shell: "find ~{{ros_user}}/Desktop/*.desktop -exec chmod +x {} +"
   become: yes
-  sudo_user: "{{ros_user}}"
+  become_user: "{{ros_user}}"
 
 - name: Test for existing bashrc setup
   shell: grep '^source.*/setup\.bash' ~{{ros_user}}/.bashrc
@@ -67,8 +66,9 @@
 
 - name: Copy background over
   when: ros_user_background is defined and ros_user_background != "" and background_destination_folder is defined and background_destination_folder != ""
-  copy: src={{ros_user_background}}
-        dest={{background_destination_folder}}
+  copy: 
+    src: "{{ros_user_background}}"
+    dest: "{{background_destination_folder}}"
 
 # http://askubuntu.com/questions/276509/change-gsettings-without-running-x-and-unity
 # http://askubuntu.com/questions/66914/how-to-change-desktop-background-from-command-line-in-unity
@@ -79,7 +79,7 @@
   register: command_result
   failed_when: '"exited with non-zero exit status" in command_result.stderr'
   become: yes
-  sudo_user: "{{ros_user}}"
+  become_user: "{{ros_user}}"
 
 # Default font a bit large for a VM
 # There are others we could tweak if we wanted to:
@@ -90,7 +90,7 @@
   register: command_result
   failed_when: '"exited with non-zero exit status" in command_result.stderr'
   become: yes
-  sudo_user: "{{ros_user}}"
+  become_user: "{{ros_user}}"
 
 - name: Disable screen save and lock
   when: ros_user_disable_lock
@@ -102,13 +102,13 @@
     - "set org.gnome.desktop.screensaver lock-enabled false"
     - "set org.gnome.desktop.screensaver ubuntu-lock-on-suspend false"
   become: yes
-  sudo_user: "{{ros_user}}"
+  become_user: "{{ros_user}}"
 
 
 - name: Update rosdep
   shell: bash -c "source /opt/ros/{{ros_release}}/setup.bash && rosdep update"
   become: yes
-  sudo_user: "{{ros_user}}"
+  become_user: "{{ros_user}}"
 
 - name: Setup git name
   command: git config --global user.name "{{ros_user}}"
