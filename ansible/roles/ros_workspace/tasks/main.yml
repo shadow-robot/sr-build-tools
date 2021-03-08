@@ -19,16 +19,18 @@
   become_user: "{{ros_user}}"
 
 - name: catkin_init_workspace deps
-  shell: bash -c "source /opt/ros/{{ros_release}}/setup.bash && catkin_init_workspace"
-    chdir={{ros_workspace}}_deps/src
-    creates={{ros_workspace}}_deps/src/CMakeLists.txt
+  shell: 
+    cmd: bash -c "source /opt/ros/{{ros_release}}/setup.bash && catkin_init_workspace"
+    chdir: "{{ros_workspace}}_deps/src"
+    creates: "{{ros_workspace}}_deps/src/CMakeLists.txt"
   become: yes
   become_user: "{{ros_user}}"
 
 # Do an initial make of the empty workspace to get a setup.bash.
 # If there is one already don't do this, so we don't trigger a big make
 - name: catkin make workspace deps
-  shell: bash -c "source /opt/ros/{{ros_release}}/setup.bash && catkin_make"
+  shell: 
+    cmd: bash -c "source /opt/ros/{{ros_release}}/setup.bash && catkin_make"
     chdir: "{{ros_workspace}}_deps"
     creates: "{{ros_workspace}}_deps/devel/setup.bash"
   become: yes
@@ -44,7 +46,8 @@
   become_user: "{{ros_user}}"
 
 - name: catkin_init_workspace
-  shell: bash -c "source {{ros_workspace}}_deps/devel/setup.bash && catkin_init_workspace"
+  shell: 
+    cmd: bash -c "source {{ros_workspace}}_deps/devel/setup.bash && catkin_init_workspace"
     chdir: "{{ros_workspace}}/src"
     creates: "{{ros_workspace}}/src/CMakeLists.txt"
   become: yes
@@ -53,7 +56,8 @@
 # Do an initial make of the empty workspace to get a setup.bash.
 # If there is one already don't do this, so we don't trigger a big make
 - name: catkin make workspace
-  shell: bash -c "source {{ros_workspace}}_deps/devel/setup.bash && catkin_make"
+  shell: 
+    cmd: bash -c "source {{ros_workspace}}_deps/devel/setup.bash && catkin_make"
     chdir: "{{ros_workspace}}"
     creates: "{{ros_workspace}}/devel/setup.bash"
   become: yes
@@ -129,7 +133,8 @@
 
 # Now build the code we just installed.
 - name: catkin_make for deps
-  shell: bash -c "source <(grep '^export\|^source' ~{{ros_user}}/.bashrc) && catkin_make -DCMAKE_BUILD_TYPE=RelWithDebInfo"
+  shell: 
+    cmd: bash -c "source <(grep '^export\|^source' ~{{ros_user}}/.bashrc) && catkin_make -DCMAKE_BUILD_TYPE=RelWithDebInfo"
     chdir: "{{ros_workspace}}_deps"
   become: yes
   become_user: "{{ros_user}}"
@@ -149,7 +154,8 @@
 
 # Now build the code we just installed.
 - name: catkin_make
-  shell: bash -c "source <(grep '^export\|^source' ~{{ros_user}}/.bashrc) && catkin_make -DCMAKE_BUILD_TYPE=RelWithDebInfo"
+  shell: 
+    cmd: bash -c "source <(grep '^export\|^source' ~{{ros_user}}/.bashrc) && catkin_make -DCMAKE_BUILD_TYPE=RelWithDebInfo"
     chdir: "{{ros_workspace}}"
   become: yes
   sudo_user: "{{ros_user}}"
