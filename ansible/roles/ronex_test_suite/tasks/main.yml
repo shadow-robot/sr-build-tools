@@ -41,7 +41,7 @@
   shell: bash -c "source {{ronexserial.installdir}}/SOEM1.3.0/setup.sh linux && make all"
     chdir="{{ronexserial.installdir}}/SOEM1.3.0"
   become: yes
-  sudo_user: "{{ros_user}}"
+  become_user: "{{ros_user}}"
 
 - name: Create ~{{ros_user}}/logs dir
   file: state=directory path=~{{ros_user}}/logs owner={{ros_user}} group={{ros_group}}
@@ -58,12 +58,12 @@
 
 - name: Create postgresql database
   become: yes
-  sudo_user: postgres
+  become_user: postgres
   postgresql_db: name={{ronexserial.dbname}}
 
 - name: Ensure user has access to database
   become: yes
-  sudo_user: postgres
+  become_user: postgres
   postgresql_user:
     db={{ronexserial.dbname}}
     name={{ronexserial.dbuser}}
@@ -72,7 +72,7 @@
 
 - name: Ensure user does not have unnecessary privilege
   become: yes
-  sudo_user: postgres
+  become_user: postgres
   postgresql_user: name={{ronexserial.dbuser}}
     role_attr_flags=NOSUPERUSER,NOCREATEDB
 
@@ -101,7 +101,7 @@
 # This is for the admin user that syncdb prompts for when run as a user.
 - name: Boot strap auth admin user
   become: yes
-  sudo_user: "{{ ros_user }}"
+  become_user: "{{ ros_user }}"
   shell: "cat {{ronexserial.installdir}}/ronexserial/serials/sql/auth.sql | python manage.py dbshell chdir={{ronexserial.installdir}}/ronexserial"
 
 - name: Create autostart directory
