@@ -48,7 +48,7 @@
   when: full_ros_packages_names.changed
   apt: 
     name: "{{item.stdout}}"
-  with_items: full_ros_packages_names.results
+  with_items: full_ros_packages_names
 
 - name: rosdep init
   command: rosdep init creates=/etc/ros/rosdep/sources.list.d/20-default.list
