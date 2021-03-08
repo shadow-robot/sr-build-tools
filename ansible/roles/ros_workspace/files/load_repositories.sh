@@ -7,7 +7,7 @@ recursive_rosinstall () {
         sed -i "$1" .rosinstall
 
         mv .rosinstall repository.rosinstall
-       	wstool init --shallow . repository.rosinstall -j5
+        wstool init --shallow . repository.rosinstall -j5
 
         export previous_repo_count=$current_repo_count
         export current_repo_count=$(find $destination_folder -type f -name $rosinstall_filename | wc -l)
@@ -20,7 +20,6 @@ recursive_rosinstall () {
         export current_folder=$destination_folder
     done
 }
-
 
 export initial_folder=$1
 export destination_folder=$2
