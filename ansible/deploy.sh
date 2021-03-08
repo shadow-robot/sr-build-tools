@@ -184,7 +184,7 @@ while sudo fuser /var/lib/dpkg/lock >/dev/null 2>&1; do
     echo "Waiting for apt-get install file lock..."
     sleep 1
 done
-sudo apt-get install -y python-pip git subversion libyaml-dev libpython2.7-dev python-crypto libssl-dev libffi-dev python-dev sshpass &
+sudo apt-get install -y python3-pip git subversion libyaml-dev libpython2.7-dev python-crypto libssl-dev libffi-dev python-dev sshpass &
 rm -rf ${SR_BUILD_TOOLS_HOME} &
 rm -rf ${PROJECT_HOME_DIR} &
 wait
@@ -199,12 +199,12 @@ git clone --depth 1 -b ${SR_BUILD_TOOLS_BRANCH:-"master"}  https://github.com/sh
 
 echo ""
 echo " ----------------------------------"
-echo " |   Downgrading ansible to 2.1.0.0  |"
+echo " |   Setting up requirements      |"
 echo " ----------------------------------"
 echo ""
 
-sudo pip install -r "${SR_BUILD_TOOLS_HOME}/ansible/data/requirements.txt"
-sudo pip install --upgrade setuptools==44.0.0
+sudo pip3 install -r "${SR_BUILD_TOOLS_HOME}/ansible/data/requirements.txt"
+sudo pip3 install --upgrade setuptools==44.0.0
 
 echo ""
 echo " ------------------------------------"
