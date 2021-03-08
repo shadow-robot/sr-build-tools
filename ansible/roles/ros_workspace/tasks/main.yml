@@ -158,7 +158,7 @@
     cmd: bash -c "source <(grep '^export\|^source' ~{{ros_user}}/.bashrc) && catkin_make -DCMAKE_BUILD_TYPE=RelWithDebInfo"
     chdir: "{{ros_workspace}}"
   become: yes
-  sudo_user: "{{ros_user}}"
+  become_user: "{{ros_user}}"
 
 - name: Add ws_update alias for updating the workspace to ~/.bashrc
   lineinfile: 
