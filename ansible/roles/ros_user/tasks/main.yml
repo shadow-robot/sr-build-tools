@@ -17,7 +17,7 @@
     comment: "{{ros_user_comment}}"
     shell: /bin/bash
     append: yes 
-    groups: "{{ros_group}}",adm,sudo,plugdev,cdrom
+    groups: "{{ros_group}},adm,sudo,plugdev,cdrom"
 
 - debug: msg="Added user named:{{ros_user}} in group:ros"
 
