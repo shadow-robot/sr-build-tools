@@ -1,7 +1,7 @@
 FROM shadowrobot/build-tools:xenial-kinetic
 
 LABEL Description="This ROS Kinetic image contains Ros Kinetic and Eigen v. 3.3.7"
-ENV eigen_folder=eigen_3.3.7
+ENV eigen_folder=eigen-3.3.7
 ENV aurora_branch="master"
 ENV aurora_script="https://raw.githubusercontent.com/shadow-robot/aurora/$aurora_branch/bin/run-ansible.sh"
 
@@ -11,7 +11,7 @@ RUN set +x && \
     wget "https://gitlab.com/libeigen/eigen/-/archive/3.3.7/eigen-3.3.7.tar.bz2" -O $eigen_folder.tar.bz2 && \
     mkdir $eigen_folder && \
     tar -xjf $eigen_folder.tar.bz2 -C $eigen_folder --strip-components=1 && \
-    cd eigen_3.3.7 && \
+    cd $eigen_folder && \
     mkdir build && \
     cd build && \
     cmake .. && \
