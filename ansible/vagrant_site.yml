@@ -174,7 +174,8 @@
 
 - hosts: dev-machine
   vars:
-    ros_release: 'indigo'
+    ansible_python_interpreter: /usr/bin/python3
+    ros_release: 'noetic'
     ros_packages:
       - ethercat-grant
     ros_workspace_install: "../data/shadow_robot-{{ros_release}}.rosinstall"
