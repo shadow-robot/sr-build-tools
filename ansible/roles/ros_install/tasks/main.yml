@@ -4,6 +4,12 @@
 # TODO:
 # - Do some sanity checks on the ros versions, distro etc.
 #   E.g. hydro only allowed for precise, quantal, raring
+- name: Create a directory if it does not exist
+  ansible.builtin.file:
+    path: ~/.ssh
+    state: directory
+    mode: '0755'
+    
 - name: Adding bitbucket keys until trac_ik is released on noetic. (remove this and repository.rosinstall from dexteroushand image)
   shell: echo "bitbucket.org,104.192.143.1 ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAubiN81eDcafrgMeLzaFPsw2kNvEcqTKl/VqLat/MaB33pZy0y3rJZtnqwR2qOOvbwKZYKiEO1O6VqNEBxKvJJelCq0dTXWT5pbO2gDXC6h6QDXCaHo6pOHGPUy+YBaGQRGuSusMEASYiWunYN0vCAI8QaXnWMXNMdFP3jHAJH0eDsoiGnLPBlBp4TNm6rYI74nMzgz3B9IikW4WVK+dc8KZJZWYjAuORU3jc1c/NPskD2ASinf8v3xnfXeukU0sJ5N6m5E8VLjObPEO+mN2t/FZTMZLiFqPWc/ALSqnMnnhwrNi2rbfg/rd/IpL8Le3pSBne8+seeFVBoGqzHM9yXw==" > ~/.ssh/known_hosts
   become: yes
