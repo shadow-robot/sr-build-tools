@@ -184,7 +184,7 @@ while sudo fuser /var/lib/dpkg/lock >/dev/null 2>&1; do
     echo "Waiting for apt-get install file lock..."
     sleep 1
 done
-sudo apt-get install -y python3-pip git subversion libyaml-dev libpython2.7-dev python-crypto libssl-dev libffi-dev python-dev sshpass &
+sudo apt-get install -y python3-pip git subversion libyaml-dev libpython3-dev python-crypto libssl-dev libffi-dev python3-dev sshpass &
 rm -rf ${SR_BUILD_TOOLS_HOME} &
 rm -rf ${PROJECT_HOME_DIR} &
 wait
