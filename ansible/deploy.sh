@@ -252,7 +252,7 @@ export SR_CONFIG_BRANCH=" \"config_branch\":\"${SR_CONFIG_BRANCH}\", "
 
 export WORKSPACE_SETTINGS="\"ros_workspace\":\"${WORKSPACE_PATH}\", \"ros_workspace_install\":\"${ROS_WORKSPACE_INSTALL_FILE}\" "
 export EXTERNAL_VARIABLES_JSON="{ ${GITHUB_CREDENTIALS} ${EXTRA_ANSIBLE_PARAMETER_ROS_USER} ${ROS_RELEASE_SETTINGS} ${SR_CONFIG_BRANCH} ${WORKSPACE_SETTINGS}}"
-ansible-playbook ${MY_ANSIBLE_PARAMETERS} --extra-vars "${EXTERNAL_VARIABLES_JSON}"
+ansible-playbook -vvvv ${MY_ANSIBLE_PARAMETERS} --extra-vars "${EXTERNAL_VARIABLES_JSON}"
 
 echo ""
 echo " ------------------------------------------------"
