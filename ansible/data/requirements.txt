@@ -13,3 +13,4 @@ pycrypto==2.6.1
 PyNaCl==1.4.0
 pyopenssl==20.0.1
 six==1.15.0
+testresources==2.0.1
