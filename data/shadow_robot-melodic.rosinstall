@@ -1,0 +1,89 @@
+- git:
+    uri: https://github.com/shadow-robot/sr-ros-interface.git
+    version: melodic-devel
+    local-name: shadow_robot
+
+- git:
+    uri: https://github.com/shadow-robot/sr_common.git
+    version: melodic-devel
+    local-name: sr_common
+
+- git:
+    uri: https://github.com/shadow-robot/sr_core.git
+    version: melodic-devel
+    local-name: sr_core
+
+- git:
+    uri: https://github.com/shadow-robot/sr_interface.git
+    version: melodic-devel
+    local-name: sr_interface
+
+- git:
+    uri: https://github.com/shadow-robot/sr_tools.git
+    version: melodic-devel
+    local-name: sr_tools
+
+- git:
+    uri: https://github.com/shadow-robot/sr-ros-interface-ethercat.git
+    version: melodic-devel
+    local-name: shadow_robot_ethercat
+
+- git:
+    uri: https://github.com/shadow-robot/sr-visualization.git
+    version: melodic-devel
+    local-name: sr_visualization
+
+- git:
+    local-name: sr_teleop_devices
+    uri: https://github.com/shadow-robot/sr_teleop_devices.git
+    version: melodic-devel
+
+- git:
+    local-name: ros_ethercat
+    uri: https://github.com/shadow-robot/ros_ethercat.git
+    version: melodic-devel
+    
+- git:
+    local-name: sr_config
+    uri: https://github.com/shadow-robot/sr-config.git
+    version: melodic-devel
+
+- git:
+    local-name: ros_control_robot
+    uri: https://github.com/shadow-robot/ros_control_robot.git
+    version: melodic-devel
+
+- git:
+    local-name: common_resources
+    uri: https://github.com/shadow-robot/common_resources.git
+    version: melodic-devel
+
+- git:
+    local-name: optoforce
+    uri: https://github.com/shadow-robot/optoforce.git
+    version: indigo-devel
+
+- git:
+    local-name: sr_visualization_common
+    uri: https://github.com/shadow-robot/sr_visualization_common.git
+    version: melodic-devel
+
+- git:
+    local-name: sr_cyberglove_config
+    uri: https://github.com/shadow-robot/sr_cyberglove_config.git
+    version: master
+    
+- git:
+    local-name: Universal_Robots_ROS_Driver
+    uri: https://github.com/shadow-robot/Universal_Robots_ROS_Driver.git
+    version: local_hw_interface_and_fixed_doSwitch
+
+- git:
+    local-name: universal_robot
+    uri: https://github.com/shadow-robot/universal_robot.git
+    version: F_#SRC-4392_UR10_CoG
+    
+- git:
+    local-name: sr_tests
+    uri: https://github.com/shadow-robot/sr_tests.git
+    version: melodic-devel

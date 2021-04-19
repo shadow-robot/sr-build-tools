@@ -135,7 +135,7 @@ rm -rf ansible &
 wait
 
 sudo apt-get remove ansible -y &
-sudo pip install --upgrade pip setuptools &
+sudo pip install --upgrade pip setuptools==44.0.0 &
 wait
 
 sudo pip install paramiko markupsafe PyYAML Jinja2 httplib2 six autobahn trollius txaio ansible==' 2.1.0.0'

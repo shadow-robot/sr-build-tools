@@ -1,9 +1,9 @@
 #!/bin/bash
 
-KERNEL_VERSION="4.1.10"
+KERNEL_VERSION="4.13.13"
 
 # https://www.debian.org/releases/stable/i386/ch08s06.html.en
-sudo apt-get install kernel-package fakeroot
+sudo apt-get install kernel-package fakeroot libssl-dev
 
 cd linux-${KERNEL_VERSION}/
 make-kpkg clean

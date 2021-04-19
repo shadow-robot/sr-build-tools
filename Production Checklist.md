@@ -76,7 +76,7 @@ Then modify the [sr_rhand.launch file](https://github.com/shadow-robot/sr-config
     <arg name="sim" value="false"/>
   </include>
 
-  <node pkg="sr_moveit_hand_config" type="timed_roslaunch.sh" args="10 sr_ethercat_hand_config optoforce_hand.launch port:=/dev/ttyACM1"
+  <node pkg="sr_utilities_common" type="timed_roslaunch.sh" args="10 sr_ethercat_hand_config optoforce_hand.launch port:=/dev/ttyACM1"
        name="timed_roslaunch_optoforce" output="screen"/>
 </launch>
 ```

@@ -26,11 +26,11 @@
     chdir: "{{workspace_path}}/src/mongo-cxx-driver"
 
 - name: Download warehouse_ros_mongo source
-  shell: bash -c "wstool set -yu warehouse_ros_mongo --git https://github.com/ros-planning/warehouse_ros_mongo.git -v jade-devel"
+  shell: bash -c "wstool set -yu warehouse_ros_mongo --git https://github.com/shadow-robot/warehouse_ros_mongo.git -v B_working_jade_devel"
     chdir={{workspace_path}}/src
     
 - name: Download warehouse_ros source
-  shell: bash -c "wstool set -yu warehouse_ros --git https://github.com/ros-planning/warehouse_ros.git -v jade-devel"
+  shell: bash -c "wstool set -yu warehouse_ros --git https://github.com/ros-planning/warehouse_ros.git -v kinetic-devel"
     chdir={{workspace_path}}/src
 
 - name: Build the workspace

@@ -1,0 +1,7 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Terminal=false
+Exec=bash -i -c "/opt/ros/kinetic/bin/rqt"
+Name=rqt
+Icon=/usr/local/share/icons/shadowrobot/rqt.png

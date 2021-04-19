@@ -34,7 +34,7 @@ echo ROS UBUNTU installed sucessfully
     git clone https://github.com/shadow-robot/ros_ethercat.git
     git clone https://github.com/shadow-robot/ethercat_grant.git
     git clone https://github.com/shadow-robot/sr-contrib.git
-    git clone https://github.com/shadow-robot/sr-teleop.git
+    git clone https://github.com/shadow-robot/sr_teleop_devices.git
     git clone https://github.com/ozymandium/cereal-port.git
     git clone https://github.com/shadow-robot/universal_robot.git -b F_sr_plugin_compatible
     git clone https://github.com/shadow-robot/lma_kinematics_plugin.git -b F_ik_with_joint_limits

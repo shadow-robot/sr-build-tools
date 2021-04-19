@@ -1,9 +1,9 @@
 #!/bin/bash
 
-RT_PATCH_DIR="4.1"
-RT_PATCH_VERSION="4.1.10-rt11"
+RT_PATCH_DIR="4.13"
+RT_PATCH_VERSION="4.13.13-rt5"
 KERNEL_DIR="v4.x"
-KERNEL_VERSION="4.1.10"
+KERNEL_VERSION="4.13.13"
 
 wget https://www.kernel.org/pub/linux/kernel/projects/rt/${RT_PATCH_DIR}/patch-${RT_PATCH_VERSION}.patch.xz
 wget https://www.kernel.org/pub/linux/kernel/${KERNEL_DIR}/linux-${KERNEL_VERSION}.tar.xz
@@ -20,7 +20,7 @@ cp /boot/config-`uname -r` .config
 make olddefconfig
 
 # edit manually the RT_PREEMPT parameters:
-# Processor type and features -> Preemption Model  set to Fully Preemptible Kernel (RT)
+# General Setup -> Preemption Model  set to Fully Preemptible Kernel (RT)
 sudo apt-get install libncurses-dev
 make menuconfig
 #or

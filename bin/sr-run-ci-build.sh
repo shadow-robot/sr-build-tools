@@ -8,23 +8,22 @@ export server_type=$2
 export tags_list=$3
 
 
-export ubuntu_version=${ubuntu_version_name:-"trusty"}
-export ros_release=${ros_release_name:-"indigo"}
+export ubuntu_version=${ubuntu_version_name:-"xenial"}
+export ros_release=${ros_release_name:-"kinetic"}
 export docker_image=${docker_image_name:-"shadowrobot/build-tools:$ubuntu_version-$ros_release"}
 
 export docker_user=${docker_user_name:-"user"}
 export docker_user_home=${docker_user_home_dir:-"/home/user"}
 
 # Do not install all libraries for docker container CI servers
-if  [ "circle" != $server_type ] && [ "semaphore_docker" != $server_type ] && [ "local" != $server_type ] && [ "travis" != $server_type ]; then
+if  [ "semaphore_docker" != $server_type ] && [ "local" != $server_type ] && [ "travis" != $server_type ]; then
 
   export build_tools_folder="$HOME/sr-build-tools"
 
   sudo apt-get update
   sudo apt-get install -y python-dev libxml2-dev libxslt-dev python-pip lcov wget git libssl-dev libffi-dev libyaml-dev
-  sudo pip install --upgrade pip setuptools gcovr
-  sudo pip install paramiko markupsafe PyYAML Jinja2 httplib2 six ansible
-
+  sudo pip install --upgrade pip setuptools==44.0.0 gcovr
+  
   git config --global user.email "build.tools@example.com"
   git config --global user.name "Build Tools"
 
@@ -39,6 +38,7 @@ if  [ "circle" != $server_type ] && [ "semaphore_docker" != $server_type ] && [ 
     git clone https://github.com/shadow-robot/sr-build-tools.git -b "$toolset_branch" $build_tools_folder
     cd $build_tools_folder/ansible
   fi
+  sudo pip install -r data/requirements.txt
 fi
 
 export extra_variables="codecov_secure=$CODECOV_TOKEN github_login=$GITHUB_LOGIN github_password=$GITHUB_PASSWORD ros_release=$ros_release ubuntu_version_name=$ubuntu_version "
@@ -75,14 +75,19 @@ case $server_type in
   ;;
 
 "circle") echo "Circle CI server"
-  export CIRCLE_REPO_DIR=$HOME/$CIRCLE_PROJECT_REPONAME
-  sudo docker pull $docker_image
-  export extra_variables="$extra_variables circle_repo_dir=/host$CIRCLE_REPO_DIR  circle_is_pull_request=$CI_PULL_REQUEST circle_test_dir=/host$CI_REPORTS circle_code_coverage_dir=/host$CIRCLE_ARTIFACTS"
-  sudo docker run -w "$docker_user_home/sr-build-tools/ansible" -v $CIRCLE_REPO_DIR:/host$CIRCLE_REPO_DIR -v $CI_REPORTS:/host$CI_REPORTS:rw -v $CIRCLE_ARTIFACTS:/host$CIRCLE_ARTIFACTS:rw $docker_image  bash -c "git pull && git checkout $toolset_branch && sudo PYTHONUNBUFFERED=1 ansible-playbook -v -i \"localhost,\" -c local docker_site.yml --tags \"circle,$tags_list\" -e \"$extra_variables\" "
+
+  export circle_test_dir=$CIRCLE_WORKING_DIRECTORY/test_results
+  export circle_code_coverage_dir=$CIRCLE_WORKING_DIRECTORY/code_coverage_results
+
+  mkdir -p $circle_test_dir
+  mkdir -p $circle_code_coverage_dir
+
+  export extra_variables="$extra_variables circle_repo_dir=$CIRCLE_WORKING_DIRECTORY circle_is_pull_request=$CIRCLE_PULL_REQUEST circle_test_dir=$circle_test_dir circle_code_coverage_dir=$circle_code_coverage_dir"
+  sudo PYTHONUNBUFFERED=1 ansible-playbook -v -i "localhost," -c local docker_site.yml --tags "circle,$tags_list" -e "$extra_variables"
   ;;
 
 "docker_hub") echo "Docker Hub"
-  PYTHONUNBUFFERED=1 ansible-playbook -vvv -i "localhost," -c local docker_site.yml --tags "docker_hub,$tags_list" -e "ros_release=$ros_release ubuntu_version_name=$ubuntu_version"
+  PYTHONUNBUFFERED=1 ansible-playbook -v -i "localhost," -c local docker_site.yml --tags "docker_hub,$tags_list" -e "ros_release=$ros_release ubuntu_version_name=$ubuntu_version"
   ;;
 
 "local") echo "Local run"
@@ -121,6 +126,31 @@ case $server_type in
   export extra_variables="$extra_variables local_repo_dir=/host$local_repo_dir local_test_dir=$unit_tests_dir local_code_coverage_dir=$coverage_tests_dir"
   export extra_variables="$extra_variables local_benchmarking_dir=$benchmarking_dir"
   docker run -w "$docker_user_home/sr-build-tools/ansible" -e LOCAL_USER_ID=$(id -u) $docker_flags --rm -v $HOME:/host:rw $docker_image  bash -c "git pull && git checkout $toolset_branch && git pull && PYTHONUNBUFFERED=1 ansible-playbook -v -i \"localhost,\" -c local docker_site.yml --tags \"local,$tags_list\" -e \"$extra_variables\" "
+  ;;
+  
+"local-docker") echo "Using Docker Image from Docker Hub"
+  export local_repo=$4
+  
+  if [ -z "$unit_tests_result_dir" ]
+  then
+    export unit_tests_dir="/home/user/unit_tests"
+  else
+    export unit_tests_dir=$unit_tests_result_dir
+  fi
+  if [ -z "$coverage_tests_result_dir" ]
+  then
+    export coverage_tests_dir="/home/user/code_coverage"
+  else
+    export coverage_tests_dir=$coverage_tests_result_dir
+  fi
+  if [ -z "$benchmarking_result_dir" ]
+  then
+    export benchmarking_dir="/home/user/benchmarking_results"
+  else
+    export benchmarking_dir=$benchmarking_result_dir
+  fi
+  export extra_variables="$extra_variables local_repo_dir=$local_repo local_test_dir=$unit_tests_dir local_code_coverage_dir=$coverage_tests_dir local_benchmarking_dir=$benchmarking_dir"
+  git pull && git checkout $toolset_branch && git pull && sudo PYTHONUNBUFFERED=1 ansible-playbook -v -i "localhost," -c local docker_site.yml --tags "local,$tags_list" -e "$extra_variables"
   ;;
 
 *) echo "Not supported server type $server_type"

@@ -1,0 +1,21 @@
+---
+# Playbook for XML code style check
+
+- name: Get list of all XML files in repository (any file with a line starting with < is assumed to be an XML file)
+  script: "../../common_resources/files/files_by_content_and_policy.sh \
+    {{repo_sources_path}} {{repo_sources_path}}/{{item.path}} '^<.*' .lintignore '.*\\.dox|.*\\.cpp|.*\\.html|.*\\.md'"
+  with_items: "{{repo_packages_list|default([])}}"
+  register: xml_files
+
+- name: Set variable to workaround ansible type evaluation issue
+  set_fact:
+    xml_files_results: "{{xml_files.results}}"
+
+- name: Execute xmllint for every package and all files with a line starting with < (assumed to be XML) and write results in unit tests format
+  script: ../files/ament_xmllint.py --xunit-file {{ros_workspace}}/build/test_results/{{item.item.name}}/ament-xmllint-ex-{{item.item.name}}.xml {{item.stdout}}
+  args:
+    executable: python3
+    chdir: "{{repo_sources_path}}/{{item.item.path}}"
+  with_items: "{{xml_files_results|default([])}}"
+  when: item.stdout != ""
+  ignore_errors: True
