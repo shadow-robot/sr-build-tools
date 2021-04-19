@@ -4,11 +4,11 @@
 # https://github.com/shadow-robot/sr-build-tools/
 #
 
-FROM public.ecr.aws/shadowrobot/ros:melodic-perception
+FROM public.ecr.aws/shadowrobot/ros:noetic-robot
 
 MAINTAINER "Shadow Robot's Software Team <software@shadowrobot.com>"
 
-LABEL Description="This image is used to make ROS Melodic based projects build faster using build tools" Vendor="Shadow Robot" Version="1.0"
+LABEL Description="This image is used to make ROS Noetic based projects build faster using build tools" Vendor="Shadow Robot" Version="1.0"
 
 ENV DEBIAN_FRONTEND noninteractive
 
@@ -16,13 +16,13 @@ ENV PULSE_SERVER /run/pulse/native
 ENV GOSU_VERSION 1.10
 ENV MY_USERNAME user
 
-ENV toolset_branch="master"
+ENV toolset_branch="python3"
 ENV server_type="docker_hub"
 ENV used_modules="check_cache,create_workspace"
-ENV ros_release_name=melodic
+ENV ros_release_name=noetic
 ENV remote_shell_script="https://raw.githubusercontent.com/shadow-robot/sr-build-tools/$toolset_branch/bin/sr-run-ci-build.sh"
 
-ENV remote_additional_bashrc_cmds="https://raw.githubusercontent.com/shadow-robot/sr-build-tools/$toolset_branch/docker/utils/additional_bashrc_cmds_melodic"
+ENV remote_additional_bashrc_cmds="https://raw.githubusercontent.com/shadow-robot/sr-build-tools/$toolset_branch/docker/utils/additional_bashrc_cmds_noetic"
 
 COPY entrypoint.sh /usr/local/bin/entrypoint.sh
 COPY terminator_config /tmp/terminator_config

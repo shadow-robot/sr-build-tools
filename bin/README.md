@@ -34,13 +34,20 @@ The results are written to *&lt;workspace&gt;/build/test_results/&lt;package_nam
 
 # Compile new rt-preempt kernel deb
 
+## Install pre-requisites
+
+```bash
+sudo apt-get install git make gcc flex bison
+git clone https://github.com/shadow-robot/sr-build-tools
+```
+
 ## Prepare rt kernel
 
 - Check available versions of rt preempt patch https://www.kernel.org/pub/linux/kernel/projects/rt
 - Check corresponding kernel version https://www.kernel.org/pub/linux/kernel
 - Edit `prepare_rt_kernel.sh` variables to fit the chosen versions
 - Run `prepare_rt_kernel.sh`. It will open menuconfig, where you have to configure the preemption model.
-- `Processor type and features` -> `Preemption Model`  set to Fully Preemptible Kernel (RT)
+- `General setup` -> `Preemption Model`  set to Fully Preemptible Kernel (RT)
 
 ## Compile and create deb
 
@@ -49,7 +56,7 @@ The results are written to *&lt;workspace&gt;/build/test_results/&lt;package_nam
 
 ## Install kernel
 
-- Run `dpkg -i linux-*.deb` to install the deb packages
+- Run `sudo dpkg -i linux-*.deb` to install the deb packages
 
 ## Grub configuration
 

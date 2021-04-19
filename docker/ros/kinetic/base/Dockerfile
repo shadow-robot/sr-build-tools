@@ -4,7 +4,7 @@
 # https://github.com/shadow-robot/sr-build-tools/
 #
 
-FROM ros:kinetic-perception
+FROM public.ecr.aws/shadowrobot/ros:kinetic-perception
 
 MAINTAINER "Shadow Robot's Software Team <software@shadowrobot.com>"
 
@@ -32,7 +32,7 @@ RUN set -x && \
     echo "Installing wget" && \
     apt-get update && \
     apt-get upgrade -y && \
-    apt-get install -y --no-install-recommends ca-certificates wget sudo && \
+    apt-get install -y --no-install-recommends ca-certificates wget sudo curl && \
     apt-get install -y bash-completion && \
     apt-get install -y gdb && \
     \
