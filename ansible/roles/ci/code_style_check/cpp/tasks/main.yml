@@ -60,11 +60,11 @@
     In order to skip hpp files extension validation using stdin feed to checker."
   shell: 'source /opt/ros/{{ros_release}}/setup.bash && \
     rosrun roslint test_wrapper \
-      {{ros_workspace}}/build/test_results/{{item.item.name}}/roslint-hpp-{{item.item.name}}.xml \
-      "cpplint --linelength=120 --filter=-runtime/references {{item.stdout}}" '
+      {{ros_workspace}}/build/test_results/{{item.0.item.name}}/roslint-hpp-{{item.1|basename}}.xml \
+      "cpplint --linelength=120 --filter=-runtime/references {{item.1}}" '
   args:
     executable: "/bin/bash"
-    chdir: "{{repo_sources_path}}/{{item.item.path}}"
+    chdir: "{{repo_sources_path}}/{{item.0.item.path}}"
   with_subelements:
      - "{{repo_packages_and_hpp_files_results|default([])}}"
      - stdout_lines
