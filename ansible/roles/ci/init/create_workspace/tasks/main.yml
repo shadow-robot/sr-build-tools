@@ -20,7 +20,7 @@
 
 - name: Adding roslint with python3 support
   blockinfile:
-    path: {{ros_workspace}}/src/.rosinstall
+    path: "{{ros_workspace}}/src/.rosinstall"
     block: |
       - git:
         local-name: roslint
