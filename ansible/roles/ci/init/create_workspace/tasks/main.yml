@@ -17,3 +17,17 @@
 - name: Update dependencies
   shell: bash -c "rosdep update -y"
          chdir={{ros_workspace}}
+
+- name: Adding roslint with python3 support
+  blockinfile:
+    path: {{ros_workspace}}/src/.rosinstall
+    block: |
+      - git:
+        local-name: roslint
+        uri: https://github.com/ros/roslint.git
+        version: python3-support
+
+- name: catkin_make for roslint
+  shell: catkin_make
+  args:
+    chdir: {{ros_workspace}}
