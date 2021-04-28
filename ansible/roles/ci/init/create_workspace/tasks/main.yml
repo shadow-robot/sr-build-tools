@@ -27,7 +27,4 @@
         uri: https://github.com/ros/roslint.git
         version: python3-support
 
-- name: catkin_make for roslint
-  command: bash -c "source /opt/ros/{{ros_release}}/setup.bash && catkin_make"
-  args:
-    chdir: "{{ ros_workspace }}"
+
