@@ -25,7 +25,7 @@
   shell: "source /opt/ros/{{ros_release}}/setup.bash && \
     rosrun roslint test_wrapper \
       {{ros_workspace}}/build/test_results/{{item.item.name}}/roslint-python-py-{{item.item.name}}.xml \
-      'pycodestyle --max-line-length=120 {{item.stdout}}'"
+      'rosrun roslint pycodestyle --max-line-length=120 {{item.stdout}}'"
   args:
     executable: "/bin/bash"
     chdir: "{{repo_sources_path}}/{{item.item.path}}"
@@ -37,7 +37,7 @@
   shell: "source /opt/ros/{{ros_release}}/setup.bash && \
     rosrun roslint test_wrapper \
       {{ros_workspace}}/build/test_results/{{item.item.name}}/roslint-python-ex-{{item.item.name}}.xml \
-      'pycodestyle --max-line-length=120 {{item.stdout}}' "
+      'rosrun roslint pycodestyle --max-line-length=120 {{item.stdout}}' "
   args:
     executable: "/bin/bash"
     chdir: "{{repo_sources_path}}/{{item.item.path}}"
