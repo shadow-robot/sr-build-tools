@@ -28,6 +28,6 @@
         version: python3-support
 
 - name: catkin_make for roslint
-  shell: catkin_make
+  shell: bash -c "source /opt/ros/{{ros_release}}/setup.bash && catkin_make
   args:
     chdir={{ros_workspace}}
