@@ -18,13 +18,12 @@
   shell: bash -c "rosdep update -y"
          chdir={{ros_workspace}}
 
-- name: Adding roslint with python3 support
-  blockinfile:
-    path: "{{ros_workspace}}/src/.rosinstall"
-    block: |
-      - git:
-        local-name: roslint
-        uri: https://github.com/ros/roslint.git
-        version: python3-support
-
+- git:
+    repo: 'https://github.com/ros/roslint.git'
+    dest: /home/user/workspace/src/
+    version: python3-support
+    
+- name: Updating roslint with python3 support
+  shell: bash -c "source /opt/ros/{{ros_release}}/setup.bash && catkin_make_isolated --install --install-space $install_space /opt/ros/{{ros_release}}"
+    chdir: "/home/user/workspace/src/"
 
