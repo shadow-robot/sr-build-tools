@@ -30,4 +30,4 @@
 - name: catkin_make for roslint
   command: bash -c "source /opt/ros/{{ros_release}}/setup.bash && catkin_make"
   args:
-    chdir: {{ ros_workspace }}
+    chdir: "{{ ros_workspace }}"
