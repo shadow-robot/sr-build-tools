@@ -20,7 +20,7 @@
 
 - git:
     repo: 'https://github.com/ros/roslint.git'
-    dest: /home/user/workspace/src/
+    dest: /home/user/workspace/src/roslint
     version: python3-support
     
 - name: Updating roslint with python3 support
