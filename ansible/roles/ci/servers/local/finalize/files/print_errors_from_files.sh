@@ -13,6 +13,7 @@ for file_path in $(find . -type f); do
     (( unit_test_file_count++))
     error_found=$(grep -Po '<failure|<error' "$file_path")
     echo $file_path
+    cat $file_path
     if [[ ! -z ${error_found} ]]; then
         (( unit_test_files_with_errors++ ))
         lines_in_cdata=($(grep -Pzo '(?s)CDATA\[(.*?)\]\]' $file_path | sed 's/CDATA\[//g' | sed 's/\]\]/\n/g' | sed 's/\x0//g'))
