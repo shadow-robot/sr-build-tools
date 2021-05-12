@@ -15,7 +15,7 @@
   shell: ../files/ament_xmllint.py --xunit-file {{ros_workspace}}/build/test_results/{{item.item.name}}/ament-xmllint-ex-{{item.item.name}}.xml {{item.stdout}}
   args:
     executable: "/bin/bash"
-    chdir: "{{repo_sources_path}}/{{item.item.path}}"
+    chdir: "{{role_path}}"
   with_items: "{{xml_files_results|default([])}}"
   when: item.stdout != ""
   ignore_errors: True
