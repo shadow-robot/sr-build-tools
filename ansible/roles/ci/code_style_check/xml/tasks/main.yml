@@ -12,10 +12,7 @@
     xml_files_results: "{{xml_files.results}}"
 
 - name: Execute xmllint for every package and all files with a line starting with < (assumed to be XML) and write results in unit tests format
-  shell: ../files/ament_xmllint.py --xunit-file {{ros_workspace}}/build/test_results/{{item.item.name}}/ament-xmllint-ex-{{item.item.name}}.xml {{item.stdout}}
-  args:
-    executable: "/bin/bash"
-    chdir: "{{role_path}}"
+  script: ../files/ament_xmllint.py --xunit-file {{ros_workspace}}/build/test_results/{{item.item.name}}/ament-xmllint-ex-{{item.item.name}}.xml {{item.stdout}}
   with_items: "{{xml_files_results|default([])}}"
   when: item.stdout != ""
   ignore_errors: True
