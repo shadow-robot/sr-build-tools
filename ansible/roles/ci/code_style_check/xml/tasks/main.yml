@@ -19,3 +19,6 @@
   with_items: "{{xml_files_results|default([])}}"
   when: item.stdout != ""
   ignore_errors: True
+  become: yes
+  become_method: sudo
+  become_user: root
