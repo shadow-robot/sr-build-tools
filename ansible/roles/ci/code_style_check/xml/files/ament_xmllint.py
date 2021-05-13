@@ -13,6 +13,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+
 import argparse
 import os
 import shutil
@@ -28,7 +29,8 @@ from xml.sax.saxutils import quoteattr
 
 
 def main(argv=sys.argv[1:]):
-    
+    extensions = ['xml']
+
     parser = argparse.ArgumentParser(
         description='Check XML markup using xmllint.',
         formatter_class=argparse.ArgumentDefaultsHelpFormatter)
@@ -36,7 +38,9 @@ def main(argv=sys.argv[1:]):
         'paths',
         nargs='*',
         default=[os.curdir],
-        help='The files or directories to check')
+        help='The files or directories to check. For directories files ending '
+             'in %s will be considered.' %
+             ', '.join(["'.%s'" % e for e in extensions]))
     parser.add_argument(
         '--exclude',
         nargs='*',
@@ -52,7 +56,7 @@ def main(argv=sys.argv[1:]):
     if args.xunit_file:
         start_time = time.time()
 
-    files = get_files(args.paths, args.exclude)
+    files = get_files(args.paths, extensions, args.exclude)
     if not files:
         print('No files found', file=sys.stderr)
         return 1
@@ -148,12 +152,12 @@ def main(argv=sys.argv[1:]):
     return rc
 
 
-def get_files(paths, excludes=[]):
+def get_files(paths, extensions, excludes=[]):
     files = []
     for path in paths:
         if os.path.isdir(path):
             for dirpath, dirnames, filenames in os.walk(path):
-                if 'AMENT_IGNORE' in filenames:
+                if 'AMENT_IGNORE' in dirnames + filenames:
                     dirnames[:] = []
                     continue
                 # ignore folder starting with . or _
@@ -162,10 +166,13 @@ def get_files(paths, excludes=[]):
                 dirnames[:] = [d for d in dirnames if d not in excludes]
                 dirnames.sort()
 
+                # select files by extension
                 for filename in sorted(filenames):
                     if filename in excludes:
                         continue
                     _, ext = os.path.splitext(filename)
+                    if ext not in ['.%s' % e for e in extensions]:
+                        continue
                     files.append(os.path.join(dirpath, filename))
         if os.path.isfile(path):
             files.append(path)
