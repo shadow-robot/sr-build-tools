@@ -246,7 +246,7 @@ export ROS_RELEASE_SETTINGS=" \"ros_release\":\"${ROS_VERSION}\", "
 if [ "${ROS_VERSION}" != "indigo" ]; then
   ROS_RELEASE_SETTINGS="${ROS_RELEASE_SETTINGS} \"ros_packages\":[], "
 fi
-
+export ANSIBLE_DEBUG=1
 export SR_CONFIG_BRANCH=" \"config_branch\":\"${SR_CONFIG_BRANCH}\", "
 
 export WORKSPACE_SETTINGS="\"ros_workspace\":\"${WORKSPACE_PATH}\", \"ros_workspace_install\":\"${ROS_WORKSPACE_INSTALL_FILE}\" "
