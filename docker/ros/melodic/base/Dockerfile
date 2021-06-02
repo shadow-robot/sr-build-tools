@@ -30,7 +30,7 @@ COPY terminator_config /tmp/terminator_config
 RUN set -x && \
     \
     echo "Installing wget" && \
-    apt-key adv --keyserver 'hkp://keyserver.ubuntu.com:80' --recv-key C1CF6E31E6BADE8868B172B4F42ED6FBAB17C654
+    apt-key adv --keyserver 'hkp://keyserver.ubuntu.com:80' --recv-key C1CF6E31E6BADE8868B172B4F42ED6FBAB17C654 && \
     apt-get update && \
     apt-get upgrade -y && \
     apt-get install -y --no-install-recommends ca-certificates wget sudo curl && \
