@@ -19,9 +19,12 @@ RUN set +x && \
     cmake . -DCMAKE_INSTALL_PREFIX=/usr && \
     make install && \
     echo "Installing libglvnd" && \
-    wget -O /tmp/aurora "$( echo "$aurora_script" | sed 's/#/%23/g' )" && \
-    chmod 755 /tmp/aurora && \
-    gosu $MY_USERNAME /tmp/aurora install_software --branch $aurora_branch software=[libglvnd] && \
+    apt-get install git ca-certificates make automake autoconf libtool pkg-config python libxext-dev libx11-dev x11proto-gl-dev && \
+    git clone https://github.com/NVIDIA/libglvnd.git /opt/libglvnd && \
+    cd /opt/libglvnd && \
+    ./autogen.sh && ./configure --prefix=/usr/local --libdir=/usr/local/lib/x86_64-linux-gnu && \
+    make -j $(nproc) install-strip && \
+    find /usr/local/lib/x86_64-linux-gnu -type f -name 'lib*.la' -delete && \
     echo "Removing cache" && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /home/$MY_USERNAME/.ansible /home/$MY_USERNAME/.gitconfig
