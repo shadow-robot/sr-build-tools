@@ -71,3 +71,4 @@ function catkin_make_here {
 alias depmelodic='rosdep install --from-paths . --ignore-src --rosdistro noetic -y'
 
 export ROSCONSOLE_FORMAT='[${severity}](${node}): [${time}] ${message}'
+alias python=python3
