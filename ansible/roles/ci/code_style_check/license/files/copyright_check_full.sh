@@ -57,7 +57,7 @@ copyright_py_private="$(regexify "${copyright_py_private}" "#")"
 any_copyright_regex="Copyright"
 
 # Check if the repository is private
-public_repo_license_regex="(GNU GENERAL PUBLIC LICENSE)|(BSD 2-Clause License)"
+public_repo_license_regex="(GNU GENERAL PUBLIC LICENSE)|(BSD 2-Clause License)|(GNU LESSER GENERAL PUBLIC LICENSE)"
 repo_privacy=private
 grep -Pz "$public_repo_license_regex" "LICENSE" > /dev/null
 if [[ $? == 0 ]]; then
