@@ -3,7 +3,7 @@ version: 0.2
 env:
   shell: bash
   variables:
-     branch: master
+     branch: python3
      image: build-tools
      tag: focal-melodic
      dockerfile_folder: docker/ros/noetic/
