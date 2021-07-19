@@ -67,7 +67,6 @@ def run_roslaunch_check(launch_files, test_dir):
     for count, path_to_file in enumerate(launch_files):
         file_name = path_to_file.split("/")[-1].split(".")[0]
         path = os.path.join(test_dir, file_name + ".xml")
-        # Runs roslaunch-check on each file while redirecting the output.
         completed_process = subprocess.run(["rosrun", "roslaunch", "roslaunch-check", path_to_file, "-o", path])
 
 
@@ -105,7 +104,6 @@ def setup_test_env(test_location):
 
 
 if __name__ == "__main__":
-    # sys.argv[0] is the path of the python file called
     repository_dir, test_location = check_argument(sys.argv[1:])
     setup_test_env(test_location)
     launch_files = gather_launch_files(repository_dir)

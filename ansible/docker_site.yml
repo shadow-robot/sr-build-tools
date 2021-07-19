@@ -3,7 +3,8 @@
 
 - hosts: all
   vars:
-    ros_release: "indigo"
+    ros_release: "noetic"
+    ansible_python_interpreter: /usr/bin/python3
   roles:
     - {role: docker/setup_ui, tags: ["setup_docker_user"]}
     - {role: gazebo_models, tags: ["setup_docker_user"]}
@@ -38,7 +39,7 @@
                                                              "code_coverage", "codecov_tool", "python_code_coverage",
                                                              "cpp_code_coverage", "check_deb_make", "code_style_check",
                                                              "complete_deb_check", "check_build", "benchmarking",
-                                                             "check_install", "code_style_check"]}
+                                                             "check_install"]}
     - {role: ci/common/packages, when: run_build, tags: ["unit_tests", "software_tests", "all_tests", "code_coverage",
                                                          "codecov_tool", "python_code_coverage",
                                                          "cpp_code_coverage", "check_deb_make",
