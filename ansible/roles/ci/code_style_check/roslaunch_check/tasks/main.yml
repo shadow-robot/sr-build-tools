@@ -1,0 +1,6 @@
+# Playbook for checking the roslaunch files.
+- name: Run py script
+  shell: "source /root/workspace/devel/setup.bash && \
+   python3 roles/ci/code_style_check/roslaunch_check/files/test_launchfiles.py \
+   {{repo_sources_path}} {{ros_workspace}}/build/test_results/launchfiles"
+  ignore_errors: True 
