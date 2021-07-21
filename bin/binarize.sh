@@ -26,7 +26,7 @@ echo "Running binarization script on workspace: $workspace_path"
 
 echo "Installing pyarmor"
 apt update
-apt install python-pip
+apt install python3-pip
 pip install pyarmor
 pyarmor register $pyarmor_license_zip_file_path
 pyarmor runtime --output "/opt/ros/$ROS_DISTRO/lib/python2.7/dist-packages"
