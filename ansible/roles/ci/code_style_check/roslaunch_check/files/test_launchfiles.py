@@ -19,44 +19,8 @@
 import sys
 import os
 import subprocess
+import argparse
 from xml.etree import ElementTree as et
-
-OUTPUT_PATH = "/home/user/testxml"
-
-
-def print_dictonary(dep_dict):
-    """Test function, may be removed later."""
-    error_count = 0
-    for key in dep_dict.keys():
-        print("Within the file {} include:".format(key))
-        for dep in dep_dict[key]:
-            print(dep)
-            error_count += 1
-        print()
-    print("Total errors found {}".format(error_count))
-    if error_count > 0:
-        exit(1)
-
-
-def strip_dependecies(dependency_list):
-    """Takes in a list of dependency and strips each string value."""
-    stripped_list = []
-    for dep in dependency_list:
-        stripped_list.append(dep.strip())
-    return stripped_list
-
-
-def gather_errors_from_produced_xmls():
-    """Goes through the testcase xmls and gathers all of the errors located. Places them in a dict."""
-    missing_dependencies = {"other_errors": []}
-    xml_files = [os.path.join(OUTPUT_PATH, f) for f in os.listdir(OUTPUT_PATH)]
-    for xml_file in xml_files:
-        tree = et.parse(xml_file)
-        root = tree.getroot()
-        testcase_name = root.find("testcase").attrib["name"]
-        for element in root.findall('system-out'):  # Use this incase there are many entries
-            missing_dependencies[testcase_name] = strip_dependecies(element.text.split("\n")[1:-1])
-    print_dictonary(missing_dependencies)
 
 
 def run_roslaunch_check(launch_files, test_dir):
@@ -64,10 +28,15 @@ def run_roslaunch_check(launch_files, test_dir):
     Iterates through launch files and preforms roslaunch-check on them.
     Puts produced xmls in a specified output folder.
     """
-    for count, path_to_file in enumerate(launch_files):
+    for path_to_file in launch_files:
         file_name = path_to_file.split("/")[-1].split(".")[0]
         path = os.path.join(test_dir, file_name + ".xml")
-        completed_process = subprocess.run(["rosrun", "roslaunch", "roslaunch-check", path_to_file, "-o", path])
+        try:
+            subprocess.run(["rosrun", "roslaunch", "roslaunch-check", path_to_file, "-o", path])
+        except:
+            print("Subprocess failed unexpectently when running roslaunch-check.")
+            print("Failed on file: {}".format(path))
+            exit(1)
 
 
 def gather_launch_files(directory):
@@ -83,18 +52,18 @@ def gather_launch_files(directory):
     return launch_files
 
 
-def check_argument(arguments):
+def check_argument():
     """Checks the given directory argument to search for the launch files. Ensure it exists."""
-    if len(arguments) < 2:
-        print("Needs both repo_dir and output_dir parameters.\nExiting test.")
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-r', '--repo', help='Repo directory folder.', required=True)
+    parser.add_argument('-t', '--test', help='Test directory folder.', required=True)
+    args = parser.parse_args()
+    repository_dir = args.repo
+    test_location = args.test
+    if not os.path.exists(repository_dir):
+        print("The given repo directory does not exist.\nExiting test.")
         exit(1)
-    elif len(arguments) > 2:
-        print("Too many arguments.\nExiting test.")
-        exit(1)
-    if not os.path.exists(arguments[0]) and not os.path.exists(arguments[1]):
-        print("This path does not exist.\nExiting test.")
-        exit(1)
-    return arguments[0], arguments[1]
+    return repository_dir, test_location
 
 
 def setup_test_env(test_location):
@@ -104,8 +73,7 @@ def setup_test_env(test_location):
 
 
 if __name__ == "__main__":
-    repository_dir, test_location = check_argument(sys.argv[1:])
+    repository_dir, test_location = check_argument()
     setup_test_env(test_location)
     launch_files = gather_launch_files(repository_dir)
     run_roslaunch_check(launch_files, test_location)
-    gather_errors_from_produced_xmls()
