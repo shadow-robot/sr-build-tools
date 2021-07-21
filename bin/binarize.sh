@@ -131,7 +131,7 @@ source $underlay_devel/setup.bash
 gosu $user_name catkin_make -DCMAKE_BUILD_TYPE=RelWithDebInfo
 
 echo "Running pyarmorize"
-pyarmorize_paths=("$install_space/lib" "$install_space/lib/python2.7/dist-packages")
+pyarmorize_paths=("$install_space/lib" "$install_space/lib/python3/dist-packages")
 for pyarmorize_path in "${pyarmorize_paths[@]}"
 do
    if [ -d $pyarmorize_path ]; then
