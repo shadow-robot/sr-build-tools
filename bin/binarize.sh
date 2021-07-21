@@ -29,7 +29,7 @@ apt update
 apt install python3-pip
 pip install pyarmor
 pyarmor register $pyarmor_license_zip_file_path
-pyarmor runtime --output "/opt/ros/$ROS_DISTRO/lib/python2.7/dist-packages"
+pyarmor runtime --output "/opt/ros/$ROS_DISTRO/lib/python3/dist-packages"
 if [ -f $HOME/.pyarmor_capsule.zip ]; then
     rm $HOME/.pyarmor_capsule.zip
 fi
