@@ -21,7 +21,7 @@ for file_path in $(find . -type f); do
             new_error_line=$(echo ${lines_in_cdata[$i]} | grep -Po '^/.*')
             if [[ ! -z ${new_error_line} ]]; then
                 (( error_count++ ))
-                cleaned_up_error=$(echo ${lines_in_cdata[$i]} | sed 's/\/home.*shadow-robot\///' )
+                cleaned_up_error=$(echo ${lines_in_cdata[$i]} | sed 's/\/home.*shadow-robot\///' | sed 's/\*\*\*\*\*\*.*//' )
                 echo -e "\nError $error_count in $cleaned_up_error"
             else
                 if [[ -z ${done_processing} ]] && [[ -z ${total_errors_found} ]]; then
@@ -31,8 +31,8 @@ for file_path in $(find . -type f); do
         done
     fi
 done
-echo -e "\nTotal unit test errors: $unit_test_files_with_errors"
-if [[ $unit_test_files_with_errors == 0 ]]; then
+echo -e "\nTotal unit test errors: $error_count"
+if [[ $error_count == 0 ]]; then
     echo -e "\nAll unit tests passed"
     exit 0
 else
