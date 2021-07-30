@@ -70,4 +70,4 @@ function catkin_make_here {
 
 alias depnoetic='rosdep install --from-paths . --ignore-src --rosdistro noetic -y'
 alias python=python3
-export ROSCONSOLE_FORMAT='[${severity}](${node}): [${time}] ${message}'
+export ROSCONSOLE_FORMAT='[${severity}](${node}): [${time}] [${logger}]: ${message}'
