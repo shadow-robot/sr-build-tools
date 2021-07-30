@@ -55,7 +55,7 @@ def main(argv=sys.argv[1:]):
 
     if args.xunit_file:
         start_time = time.time()
-    print(args.paths)
+    print("PATHS HERE: ",args.paths)
     files = get_files(args.paths, extensions, args.exclude)
     if not files:
         print('No files found', file=sys.stderr)
