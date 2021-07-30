@@ -29,7 +29,7 @@ from xml.sax.saxutils import quoteattr
 
 
 def main(argv=sys.argv[1:]):
-    extensions = ['xml']
+    extensions = ['xml', 'launch', 'xacro']
 
     parser = argparse.ArgumentParser(
         description='Check XML markup using xmllint.',
@@ -75,8 +75,10 @@ def main(argv=sys.argv[1:]):
         handler = CustomHandler()
         parser.setContentHandler(handler)
         try:
+            print("ATTEMPTING TO PARSE {}".format(filename))
             parser.parse(filename)
         except SAXParseException:
+            print("FAILED TO PARSE {}".format(filename))
             pass
 
         cmd = [xmllint_bin, '--noout', filename]
