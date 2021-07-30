@@ -35,7 +35,7 @@ def main(argv=sys.argv[1:]):
         description='Check XML markup using xmllint.',
         formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     parser.add_argument(
-        'paths',
+        '--paths',
         nargs='*',
         default=[os.curdir],
         help='The files or directories to check. For directories files ending '
@@ -55,7 +55,7 @@ def main(argv=sys.argv[1:]):
 
     if args.xunit_file:
         start_time = time.time()
-
+    print(args.paths)
     files = get_files(args.paths, extensions, args.exclude)
     if not files:
         print('No files found', file=sys.stderr)
