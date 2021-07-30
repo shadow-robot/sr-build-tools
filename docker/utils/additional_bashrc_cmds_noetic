@@ -68,6 +68,6 @@ function catkin_make_here {
     cd $startdir
 }
 
-alias depmelodic='rosdep install --from-paths . --ignore-src --rosdistro noetic -y'
+alias depnoetic='rosdep install --from-paths . --ignore-src --rosdistro noetic -y'
 alias python=python3
 export ROSCONSOLE_FORMAT='[${severity}](${node}): [${time}] ${message}'
