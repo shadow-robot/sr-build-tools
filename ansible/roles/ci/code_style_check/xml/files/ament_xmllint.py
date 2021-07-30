@@ -36,7 +36,7 @@ def main(argv=sys.argv[1:]):
         formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     parser.add_argument(
         '--paths',
-        nargs='*',
+        nargs='+',
         default=[os.curdir],
         help='The files or directories to check. For directories files ending '
              'in %s will be considered.' %
