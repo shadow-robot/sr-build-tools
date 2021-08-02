@@ -35,8 +35,8 @@ def main(argv=sys.argv[1:]):
         description='Check XML markup using xmllint.',
         formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     parser.add_argument(
-        '--paths',
-        nargs='+',
+        '--path',
+        nargs='*',
         default=[os.curdir],
         help='The files or directories to check. For directories files ending '
              'in %s will be considered.' %
@@ -55,8 +55,7 @@ def main(argv=sys.argv[1:]):
 
     if args.xunit_file:
         start_time = time.time()
-    print("PATHS HERE: ",args.paths)
-    files = get_files(args.paths, extensions, args.exclude)
+    files = gather_files(args.path[0], extensions)
     if not files:
         print('No files found', file=sys.stderr)
         return 1
@@ -75,10 +74,8 @@ def main(argv=sys.argv[1:]):
         handler = CustomHandler()
         parser.setContentHandler(handler)
         try:
-            print("ATTEMPTING TO PARSE {}".format(filename))
             parser.parse(filename)
         except SAXParseException:
-            print("FAILED TO PARSE {}".format(filename))
             pass
 
         cmd = [xmllint_bin, '--noout', filename]
@@ -101,7 +98,6 @@ def main(argv=sys.argv[1:]):
             cmd += [
                 '--schema',
                 handler.root_attributes['xsi:noNamespaceSchemaLocation']]
-
         try:
             subprocess.check_output(
                 cmd, cwd=os.path.dirname(filename), stderr=subprocess.STDOUT)
@@ -153,32 +149,18 @@ def main(argv=sys.argv[1:]):
 
     return rc
 
-
-def get_files(paths, extensions, excludes=[]):
-    files = []
-    for path in paths:
-        if os.path.isdir(path):
-            for dirpath, dirnames, filenames in os.walk(path):
-                if 'AMENT_IGNORE' in dirnames + filenames:
-                    dirnames[:] = []
-                    continue
-                # ignore folder starting with . or _
-                dirnames[:] = [d for d in dirnames if d[0] not in ['.', '_']]
-                # ignore excluded folders
-                dirnames[:] = [d for d in dirnames if d not in excludes]
-                dirnames.sort()
-
-                # select files by extension
-                for filename in sorted(filenames):
-                    if filename in excludes:
-                        continue
-                    _, ext = os.path.splitext(filename)
-                    if ext not in ['.%s' % e for e in extensions]:
-                        continue
-                    files.append(os.path.join(dirpath, filename))
-        if os.path.isfile(path):
-            files.append(path)
-    return [os.path.normpath(f) for f in files]
+def gather_files(directory, extensions):
+    """Walks through the directory and puts all files with the correct 
+    extensions into a list, exits if empty."""
+    launch_files = []
+    for root, _, files in os.walk(directory):
+        for file in files:
+            if os.path.splitext(file)[1][1:] in extensions:
+                launch_files.append(os.path.join(root, file))
+    if not launch_files:
+        print("No files detected.\nExiting test.")
+        exit(0)
+    return launch_files
 
 
 class CustomHandler(ContentHandler):
