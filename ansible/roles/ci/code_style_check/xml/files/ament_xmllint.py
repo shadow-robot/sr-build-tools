@@ -46,6 +46,7 @@ def main(argv=sys.argv[1:]):
         nargs='*',
         default=[],
         help='Exclude specific file names and directory names from the check')
+    print("TESTING TESTING ")
     # not using a file handle directly
     # in order to prevent leaving an empty file when something fails early
     parser.add_argument(
