@@ -3,6 +3,4 @@
 
 - name: Execute xmllint for every package and all files with a line starting with < (assumed to be XML) and write results in unit tests format
   script: ../files/ament_xmllint.py --xunit-file {{ros_workspace}}/build/test_results/{{item.item.name}}/ament-xmllint-ex-{{item.item.name}}.xml --path {{repo_sources_path}}
-  with_items: "{{xml_files_results|default([])}}"
-  when: item.stdout != ""
   ignore_errors: True
