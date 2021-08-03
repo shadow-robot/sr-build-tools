@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-# Copyright 2014-2018 Open Source Robotics Foundation, Inc.
+# Copyright 2014-2018, 2021 Open Source Robotics Foundation, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -46,7 +46,6 @@ def main(argv=sys.argv[1:]):
         nargs='*',
         default=[],
         help='Exclude specific file names and directory names from the check')
-    print("TESTING TESTING ")
     # not using a file handle directly
     # in order to prevent leaving an empty file when something fails early
     parser.add_argument(
@@ -78,7 +77,6 @@ def main(argv=sys.argv[1:]):
             parser.parse(filename)
         except SAXParseException:
             pass
-
         cmd = [xmllint_bin, '--noout', filename]
         # choose validation options based on handler information
         for attributes in handler.xml_model_attributes:
@@ -106,6 +104,15 @@ def main(argv=sys.argv[1:]):
             errors = e.output.decode()
         else:
             errors = None
+        gather_all_dependencies(filename)
+        if filename.split(".")[-1] == "launch":
+            try:
+                package = os.path.abspath(os.path.join(filename ,"../.."))
+                file_name = filename.split('/')[-1]
+                subprocess.check_output(['roscat', package, file_name],
+                 shell=True, stderr=subprocess.STDOUT)
+            except subprocess.CalledProcessError as e:
+                print(e.output.decode())
 
         filename = os.path.relpath(filename, start=os.getcwd())
         report.append((filename, errors))
@@ -163,6 +170,29 @@ def gather_files(directory, extensions):
         exit(0)
     return launch_files
 
+#<xacro:include filename="$(find sr_box_ur10_moveit_config)/config/hand_box.xacro" />
+#<include file="$(find sr_box_ur10_moveit_config)/launch/warehouse_settings.launch.xml" />
+def gather_all_dependencies(filename):
+    try:
+        tree = ElementTree.parse(filename)
+    except:
+        # If file doesn't parse it's caught elsewhere
+        return None
+    root = tree.getroot()
+    dependencies = []
+    for dep in root.findall('include'):
+        dependencies.append(dep.attrib['file'])
+    for dep in root.findall('xacro:include'):
+       dependencies.append(dep.attrib['filename'])
+    test_dependencies(dependencies)
+
+def test_dependencies(dependencies):
+    for dep in dependencies:
+        try:
+            subprocess.check_output(
+                dep, shell=True, stderr=subprocess.STDOUT)
+        except subprocess.CalledProcessError as e:
+            errors = e.output.decode()
 
 class CustomHandler(ContentHandler):
 
