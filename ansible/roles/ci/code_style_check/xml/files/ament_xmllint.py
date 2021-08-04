@@ -104,15 +104,10 @@ def main(argv=sys.argv[1:]):
             errors = e.output.decode()
         else:
             errors = None
-        gather_all_dependencies(filename)
-        if filename.split(".")[-1] == "launch":
-            try:
-                package = os.path.abspath(os.path.join(filename ,"../.."))
-                file_name = filename.split('/')[-1]
-                subprocess.check_output(['roscat', package, file_name],
-                 shell=True, stderr=subprocess.STDOUT)
-            except subprocess.CalledProcessError as e:
-                print(e.output.decode())
+
+        dependencies = gather_all_dependencies(filename)
+        if dependencies:
+            err = test_dependencies(dependencies, args.path[0])
 
         filename = os.path.relpath(filename, start=os.getcwd())
         report.append((filename, errors))
@@ -157,26 +152,26 @@ def main(argv=sys.argv[1:]):
 
     return rc
 
+
 def gather_files(directory, extensions):
     """Walks through the directory and puts all files with the correct 
     extensions into a list, exits if empty."""
-    launch_files = []
+    all_files = []
     for root, _, files in os.walk(directory):
         for file in files:
             if os.path.splitext(file)[1][1:] in extensions:
-                launch_files.append(os.path.join(root, file))
-    if not launch_files:
+                all_files.append(os.path.join(root, file))
+    if not all_files:
         print("No files detected.\nExiting test.")
         exit(0)
-    return launch_files
+    return all_files
 
-#<xacro:include filename="$(find sr_box_ur10_moveit_config)/config/hand_box.xacro" />
-#<include file="$(find sr_box_ur10_moveit_config)/launch/warehouse_settings.launch.xml" />
+
 def gather_all_dependencies(filename):
+    """Goes through each file and gathers all includes within the file."""
     try:
         tree = ElementTree.parse(filename)
-    except:
-        # If file doesn't parse it's caught elsewhere
+    except:  # If file doesn't parse it's caught by previous check.
         return None
     root = tree.getroot()
     dependencies = []
@@ -184,15 +179,33 @@ def gather_all_dependencies(filename):
         dependencies.append(dep.attrib['file'])
     for dep in root.findall('xacro:include'):
        dependencies.append(dep.attrib['filename'])
-    test_dependencies(dependencies)
+    return dependencies
 
-def test_dependencies(dependencies):
+
+def test_dependencies(dependencies, path):
+    """Goes through the gatered deps and checks they are valid.
+    Returns a list of invalid dependencies."""
+    errors = []
     for dep in dependencies:
-        try:
-            subprocess.check_output(
-                dep, shell=True, stderr=subprocess.STDOUT)
-        except subprocess.CalledProcessError as e:
-            errors = e.output.decode()
+        if "/$(arg" in dep:  # Skip deps that require arguments.
+            continue
+        dep_path = dep.split('$(find ')[1].replace(')','')
+        package_exist = does_package_exist(path, dep_path)
+        if not package_exist:
+            print("FAIL")
+            errors.append("FILE NOT FOUND: " + dep)
+    return errors
+
+
+def does_dependency_exist(repo_path, dependency_path):
+    """Goes through the repo and checks if the dependency exists."""
+    for root, _, files in os.walk(repo_path, topdown=False):
+        for f in files:
+            fullpath = os.path.join(root, f)
+            if dependency_path in fullpath:
+                return True
+    return False
+
 
 class CustomHandler(ContentHandler):
 
