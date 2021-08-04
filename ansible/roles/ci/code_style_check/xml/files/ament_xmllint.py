@@ -20,6 +20,7 @@ import shutil
 import subprocess
 import sys
 import time
+import rospkg
 from xml.etree import ElementTree
 from xml.sax import make_parser
 from xml.sax import SAXParseException
@@ -107,7 +108,10 @@ def main(argv=sys.argv[1:]):
 
         dependencies = gather_all_dependencies(filename)
         if dependencies:
-            err = test_dependencies(dependencies, args.path[0])
+            if errors:
+                errors += test_dependencies(dependencies, args.path[0])
+            else:
+                errors = test_dependencies(dependencies, args.path[0])
 
         filename = os.path.relpath(filename, start=os.getcwd())
         report.append((filename, errors))
@@ -185,26 +189,24 @@ def gather_all_dependencies(filename):
 def test_dependencies(dependencies, path):
     """Goes through the gatered deps and checks they are valid.
     Returns a list of invalid dependencies."""
-    errors = []
+    errors = None
     for dep in dependencies:
         if "/$(arg" in dep:  # Skip deps that require arguments.
             continue
-        dep_path = dep.split('$(find ')[1].replace(')','')
-        package_exist = does_package_exist(path, dep_path)
-        if not package_exist:
-            print("FAIL")
-            errors.append("FILE NOT FOUND: " + dep)
+        paths = dep.split('$(find ')[1].split(')')
+        package_path = paths[0]
+        dep_path = paths[1]
+        rp = rospkg.RosPack()
+        # TODO: REMEMBER TO ADD CHECK FOR THE FILE DEP PATH TOO!
+        try:
+            package_path = rp.get_path(package_path)
+        except rospkg.ResourceNotFound as e:
+            if errors:
+                errors += str(e)
+            else:
+                errors = "MISSING THE PACKAGE: " + str(e)
     return errors
 
-
-def does_dependency_exist(repo_path, dependency_path):
-    """Goes through the repo and checks if the dependency exists."""
-    for root, _, files in os.walk(repo_path, topdown=False):
-        for f in files:
-            fullpath = os.path.join(root, f)
-            if dependency_path in fullpath:
-                return True
-    return False
 
 
 class CustomHandler(ContentHandler):
