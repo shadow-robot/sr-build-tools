@@ -52,6 +52,11 @@ def main(argv=sys.argv[1:]):
     parser.add_argument(
         '--xunit-file',
         help='Generate a xunit compliant XML file')
+    parser.add_argument(
+        '--debug',
+        default=False,
+        help='Enabled debug mode. Adds more prints.'
+    )
     args = parser.parse_args(argv)
 
     if args.xunit_file:
@@ -115,25 +120,21 @@ def main(argv=sys.argv[1:]):
 
         filename = os.path.relpath(filename, start=os.getcwd())
         report.append((filename, errors))
-
-    for (filename, errors) in report:
-        if errors is not None:
-            errormsg = "File '{}' is invalid: ".format(filename)
-            for line in errors.splitlines():
-                errormsg += line + " "
-            print(errormsg, file=sys.stderr)
-            print('', file=sys.stderr)
-        else:
-            print("File '%s' is valid" % filename)
-            print('')
-
-    # output summary
+    if args.debug:
+        for (filename, errors) in report:
+            if errors is not None:
+                errormsg = "File '{}' is invalid: ".format(filename)
+                for line in errors.splitlines():
+                    errormsg += line.strip() + " "
+                print(errormsg, file=sys.stderr)
+                print('', file=sys.stderr)
+        # output summary
     error_count = sum(1 if r[1] else 0 for r in report)
     if not error_count:
-        print('No problems found')
+        if args.debug: print('No problems found')
         rc = 0
     else:
-        print('%d files are invalid' % error_count, file=sys.stderr)
+        if args.debug: print('%d files are invalid' % error_count, file=sys.stderr)
         rc = 1
 
     # generate xunit file
@@ -202,12 +203,12 @@ def test_dependencies(dependencies, path):
             package_path = rp.get_path(package_path)
             if not os.path.exists(package_path + dep_path):
                 if errors:
-                    errors += "FILE NOT FOUND: {}".format(package_path + dep_path)
+                    errors += " FILE NOT FOUND: {}".format(package_path + dep_path)
                 else:
                     errors = "FILE NOT FOUND: {}".format(package_path + dep_path)
         except rospkg.ResourceNotFound as e:
             if errors:
-                errors += "MISSING THE PACKAGE: {}".format(str(e).split('\n')[0])
+                errors += " MISSING THE PACKAGE: {}".format(str(e).split('\n')[0])
             else:
                 errors = "MISSING THE PACKAGE: {}".format(str(e).split('\n')[0])
     return errors
