@@ -31,7 +31,7 @@ for file_path in $(find . -type f); do
         done
     fi
 done
-echo -e "\nTotal unit test errors: $error_count"
+echo -e "\nTotal unit test errors: $error_found"
 if [[ $error_count == 0 ]]; then
     echo -e "\nAll unit tests passed"
     exit 0
