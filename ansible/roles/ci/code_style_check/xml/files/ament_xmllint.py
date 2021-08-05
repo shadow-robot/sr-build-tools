@@ -118,9 +118,10 @@ def main(argv=sys.argv[1:]):
 
     for (filename, errors) in report:
         if errors is not None:
-            print("File '%s' is invalid:" % filename, file=sys.stderr)
+            errormsg = "File '{}' is invalid: ".format(filename)
             for line in errors.splitlines():
-                print(line, file=sys.stderr)
+                errormsg += line + " "
+            print(errormsg, file=sys.stderr)
             print('', file=sys.stderr)
         else:
             print("File '%s' is valid" % filename)
@@ -188,7 +189,7 @@ def gather_all_dependencies(filename):
 
 def test_dependencies(dependencies, path):
     """Goes through the gatered deps and checks they are valid.
-    Returns a list of invalid dependencies."""
+    Returns a string co."""
     errors = None
     for dep in dependencies:
         if "/$(arg" in dep:  # Skip deps that require arguments.
@@ -197,14 +198,18 @@ def test_dependencies(dependencies, path):
         package_path = paths[0]
         dep_path = paths[1]
         rp = rospkg.RosPack()
-        # TODO: REMEMBER TO ADD CHECK FOR THE FILE DEP PATH TOO!
         try:
             package_path = rp.get_path(package_path)
+            if not os.path.exists(package_path + dep_path):
+                if errors:
+                    errors += "FILE NOT FOUND: {}".format(package_path + dep_path)
+                else:
+                    errors = "FILE NOT FOUND: {}".format(package_path + dep_path)
         except rospkg.ResourceNotFound as e:
             if errors:
-                errors += str(e)
+                errors += "MISSING THE PACKAGE: {}".format(str(e).split('\n')[0])
             else:
-                errors = "MISSING THE PACKAGE: " + str(e)
+                errors = "MISSING THE PACKAGE: {}".format(str(e).split('\n')[0])
     return errors
 
 
