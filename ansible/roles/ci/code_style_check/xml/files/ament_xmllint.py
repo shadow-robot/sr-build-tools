@@ -114,9 +114,9 @@ def main(argv=sys.argv[1:]):
         dependencies = gather_all_dependencies(filename)
         if dependencies:
             if errors:
-                errors += test_dependencies(dependencies, args.path[0])
+                errors += test_dependencies(dependencies, filename)
             else:
-                errors = test_dependencies(dependencies, args.path[0])
+                errors = test_dependencies(dependencies, filename)
 
         filename = os.path.relpath(filename, start=os.getcwd())
         report.append((filename, errors))
@@ -131,10 +131,12 @@ def main(argv=sys.argv[1:]):
         # output summary
     error_count = sum(1 if r[1] else 0 for r in report)
     if not error_count:
-        if args.debug: print('No problems found')
+        if args.debug:
+            print('No problems found')
         rc = 0
     else:
-        if args.debug: print('%d files are invalid' % error_count, file=sys.stderr)
+        if args.debug:
+            print('%d files are invalid' % error_count, file=sys.stderr)
         rc = 1
 
     # generate xunit file
@@ -160,7 +162,7 @@ def main(argv=sys.argv[1:]):
 
 
 def gather_files(directory, extensions):
-    """Walks through the directory and puts all files with the correct 
+    """Walks through the directory and puts all files with the correct
     extensions into a list, exits if empty."""
     all_files = []
     for root, _, files in os.walk(directory):
@@ -177,42 +179,61 @@ def gather_all_dependencies(filename):
     """Goes through each file and gathers all includes within the file."""
     try:
         tree = ElementTree.parse(filename)
-    except:  # If file doesn't parse it's caught by previous check.
+    except ElementTree.ParseError:  # If file doesn't parse it's caught by previous check.
         return None
     root = tree.getroot()
     dependencies = []
     for dep in root.findall('include'):
         dependencies.append(dep.attrib['file'])
     for dep in root.findall('xacro:include'):
-       dependencies.append(dep.attrib['filename'])
+        dependencies.append(dep.attrib['filename'])
     return dependencies
 
 
 def test_dependencies(dependencies, path):
-    """Goes through the gatered deps and checks they are valid.
-    Returns a string co."""
+    """Goes through the gatered deps and checks they are valid. Checks with default values for launch
+    files which contain arguments. Returns an error string for the given file."""
     errors = None
     for dep in dependencies:
-        if "/$(arg" in dep:  # Skip deps that require arguments.
-            continue
-        paths = dep.split('$(find ')[1].split(')')
-        package_path = paths[0]
-        dep_path = paths[1]
+        path_string = ''
+        for path_element in dep.split('/'):
+            if "$(find" in path_element:
+                continue  # Gathered later
+            elif "$(arg" in path_element:
+                defaultval = get_dependency_args(dep, path)
+                rest_of_string = path_element.split(')')[1]
+                path_string += "/" + defaultval + rest_of_string
+            else:
+                path_string += "/" + path_element
+        package_path = dep.split('$(find ')[1].split(')')[0]
         rp = rospkg.RosPack()
         try:
             package_path = rp.get_path(package_path)
-            if not os.path.exists(package_path + dep_path):
+            full_path = package_path + path_string
+            if not os.path.exists(full_path):
                 if errors:
-                    errors += " FILE NOT FOUND: {}".format(package_path + dep_path)
+                    errors += " FILE NOT FOUND: {}".format(full_path)
                 else:
-                    errors = "FILE NOT FOUND: {}".format(package_path + dep_path)
+                    errors = "ERROR IN FILE {}: FILE NOT FOUND: {}".format(path, full_path)
         except rospkg.ResourceNotFound as e:
             if errors:
                 errors += " MISSING THE PACKAGE: {}".format(str(e).split('\n')[0])
             else:
-                errors = "MISSING THE PACKAGE: {}".format(str(e).split('\n')[0])
+                errors = "ERROR IN FILE {}: MISSING THE PACKAGE: {}".format(path, str(e).split('\n')[0])
     return errors
 
+
+def get_dependency_args(dependency, path):
+    """This function is used to get the default value of a dependencies argument."""
+    try:
+        tree = ElementTree.parse(path)
+    except ElementTree.ParseError:  # If file doesn't parse it's caught by previous check.
+        return None
+    root = tree.getroot()
+    argument = dependency.split("$(arg ")[1].split(")")[0]
+    for arg in root.findall('arg'):
+        if arg.attrib["name"] == argument:
+            return arg.attrib["default"]
 
 
 class CustomHandler(ContentHandler):
