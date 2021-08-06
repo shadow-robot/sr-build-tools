@@ -138,7 +138,6 @@ def main(argv=sys.argv[1:]):
         if args.debug:
             print('%d files are invalid' % error_count, file=sys.stderr)
         rc = 1
-
     # generate xunit file
     if args.xunit_file:
         folder_name = os.path.basename(os.path.dirname(args.xunit_file))
@@ -157,7 +156,6 @@ def main(argv=sys.argv[1:]):
             os.makedirs(path)
         with open(args.xunit_file, 'w') as f:
             f.write(xml)
-
     return rc
 
 
@@ -184,9 +182,11 @@ def gather_all_dependencies(filename):
     root = tree.getroot()
     dependencies = []
     for dep in root.findall('include'):
-        dependencies.append(dep.attrib['file'])
+        fulldep = ElementTree.tostring(dep).decode("utf-8").split('\n')[0]
+        dependencies.append((fulldep, dep.attrib['file']))
     for dep in root.findall('xacro:include'):
-        dependencies.append(dep.attrib['filename'])
+        fulldep = ElementTree.tostring(dep).decode("utf-8").split('\n')[0]
+        dependencies.append((fulldep, dep.attrib['filename']))
     return dependencies
 
 
@@ -194,7 +194,7 @@ def test_dependencies(dependencies, path):
     """Goes through the gatered deps and checks they are valid. Checks with default values for launch
     files which contain arguments. Returns an error string for the given file."""
     errors = None
-    for dep in dependencies:
+    for (fulldepstr, dep) in dependencies:
         path_string = ''
         for path_element in dep.split('/'):
             if "$(find" in path_element:
@@ -212,14 +212,16 @@ def test_dependencies(dependencies, path):
             full_path = package_path + path_string
             if not os.path.exists(full_path):
                 if errors:
-                    errors += " FILE NOT FOUND: {}".format(full_path)
+                    errors += " THIS FILE WAS NOT FOUND '{}' ERROR ON THE LINE: {}".format(full_path, fulldepstr)
                 else:
-                    errors = "ERROR IN FILE {}: FILE NOT FOUND: {}".format(path, full_path)
+                    errors = "{} THIS FILE WAS NOT FOUND '{}' ERROR ON THE LINE: {}".format(path, full_path, fulldepstr)
         except rospkg.ResourceNotFound as e:
             if errors:
-                errors += " MISSING THE PACKAGE: {}".format(str(e).split('\n')[0])
+                errors += " ROS PACKAGE NOT FOUND '{}' ERROR ON THE LINE: {}".format(
+                    str(e).split('\n')[0], fulldepstr)
             else:
-                errors = "ERROR IN FILE {}: MISSING THE PACKAGE: {}".format(path, str(e).split('\n')[0])
+                errors = "{} ROS PACKAGE NOT FOUND: '{}' ERROR ON THE LINE: {}".format(
+                    path, str(e).split('\n')[0], fulldepstr)
     return errors
 
 
