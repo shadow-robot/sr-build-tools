@@ -55,6 +55,7 @@
     - {role: ci/code_coverage/python/setup, when: run_build, tags: ["python_code_coverage", "code_coverage",
                                                                     "codecov_tool"]}
     - {role: ci/code_coverage/cpp/setup, when: run_build, tags: ["cpp_code_coverage", "code_coverage", "codecov_tool"]}
+    - {role: ci/code_coverage/xml, when: run_build, tags: {"code_coverage"}}
     - {role: ci/tests/software_tests, when: run_build, tags: ["unit_tests", "software_tests", "code_coverage",
                                                               "codecov_tool", "python_code_coverage",
                                                               "cpp_code_coverage"]}
