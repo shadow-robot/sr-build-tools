@@ -6,4 +6,4 @@
     --xunit-file {{ros_workspace}}/build/test_results/{{repo_sources_path}}/ament-xmlcodecov-ex-{{repo_sources_path}}.xml --path {{repo_sources_path}}"
   args:
     executable: python3
-  ignore_errors: False
+  ignore_errors: True
