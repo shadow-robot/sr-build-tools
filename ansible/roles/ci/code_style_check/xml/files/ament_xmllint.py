@@ -20,7 +20,6 @@ import shutil
 import subprocess
 import sys
 import time
-import rospkg
 from xml.etree import ElementTree
 from xml.sax import make_parser
 from xml.sax import SAXParseException
@@ -111,13 +110,6 @@ def main(argv=sys.argv[1:]):
         else:
             errors = None
 
-        dependencies = gather_all_dependencies(filename)
-        if dependencies:
-            if errors:
-                errors += test_dependencies(dependencies, filename)
-            else:
-                errors = test_dependencies(dependencies, filename)
-
         filename = os.path.relpath(filename, start=os.getcwd())
         report.append((filename, errors))
     if args.debug:
@@ -171,71 +163,6 @@ def gather_files(directory, extensions):
         print("No files detected.\nExiting test.")
         exit(0)
     return all_files
-
-
-def gather_all_dependencies(filename):
-    """Goes through each file and gathers all includes within the file."""
-    try:
-        tree = ElementTree.parse(filename)
-    except ElementTree.ParseError:  # If file doesn't parse it's caught by previous check.
-        return None
-    root = tree.getroot()
-    dependencies = []
-    for dep in root.findall('include'):
-        fulldep = ElementTree.tostring(dep).decode("utf-8").split('\n')[0]
-        dependencies.append((fulldep, dep.attrib['file']))
-    for dep in root.findall('xacro:include'):
-        fulldep = ElementTree.tostring(dep).decode("utf-8").split('\n')[0]
-        dependencies.append((fulldep, dep.attrib['filename']))
-    return dependencies
-
-
-def test_dependencies(dependencies, path):
-    """Goes through the gatered deps and checks they are valid. Checks with default values for launch
-    files which contain arguments. Returns an error string for the given file."""
-    errors = None
-    for (fulldepstr, dep) in dependencies:
-        path_string = ''
-        for path_element in dep.split('/'):
-            if "$(find" in path_element:
-                continue  # Gathered later
-            elif "$(arg" in path_element:
-                defaultval = get_dependency_args(dep, path)
-                rest_of_string = path_element.split(')')[1]
-                path_string += "/" + defaultval + rest_of_string
-            else:
-                path_string += "/" + path_element
-        package_path = dep.split('$(find ')[1].split(')')[0]
-        rp = rospkg.RosPack()
-        try:
-            package_path = rp.get_path(package_path)
-            full_path = package_path + path_string
-            if not os.path.exists(full_path):
-                if errors:
-                    errors += " THIS FILE WAS NOT FOUND '{}' ERROR ON THE LINE: {}".format(full_path, fulldepstr)
-                else:
-                    errors = "{} THIS FILE WAS NOT FOUND '{}' ERROR ON THE LINE: {}".format(path, full_path, fulldepstr)
-        except rospkg.ResourceNotFound as e:
-            if errors:
-                errors += " ROS PACKAGE NOT FOUND '{}' ERROR ON THE LINE: {}".format(
-                    str(e).split('\n')[0], fulldepstr)
-            else:
-                errors = "{} ROS PACKAGE NOT FOUND: '{}' ERROR ON THE LINE: {}".format(
-                    path, str(e).split('\n')[0], fulldepstr)
-    return errors
-
-
-def get_dependency_args(dependency, path):
-    """This function is used to get the default value of a dependencies argument."""
-    try:
-        tree = ElementTree.parse(path)
-    except ElementTree.ParseError:  # If file doesn't parse it's caught by previous check.
-        return None
-    root = tree.getroot()
-    argument = dependency.split("$(arg ")[1].split(")")[0]
-    for arg in root.findall('arg'):
-        if arg.attrib["name"] == argument:
-            return arg.attrib["default"]
 
 
 class CustomHandler(ContentHandler):
