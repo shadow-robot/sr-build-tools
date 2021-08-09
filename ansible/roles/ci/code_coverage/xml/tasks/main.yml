@@ -2,7 +2,7 @@
 # Playbook for XML code coverage check
 
 - name: Execute xmllint for every package and all files with a line starting with < (assumed to be XML) and write results in unit tests format
-  script: "python3 ~/ansible/roles/ci/code_coverage/xml/files/ament_xml_codecov.py \
+  script: "../files/ament_xml_codecov.py \
     --xunit-file {{ros_workspace}}/build/test_results/{{repo_sources_path}}/ament-xmlcodecov-ex-{{repo_sources_path}}.xml --path {{repo_sources_path}}"
   args:
     executable: python3
