@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-# Copyright 2014-2018 Open Source Robotics Foundation, Inc.
+# Copyright 2014-2018, 2021 Open Source Robotics Foundation, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -29,13 +29,13 @@ from xml.sax.saxutils import quoteattr
 
 
 def main(argv=sys.argv[1:]):
-    extensions = ['xml']
+    extensions = ['xml', 'launch', 'xacro']
 
     parser = argparse.ArgumentParser(
         description='Check XML markup using xmllint.',
         formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     parser.add_argument(
-        'paths',
+        '--path',
         nargs='*',
         default=[os.curdir],
         help='The files or directories to check. For directories files ending '
@@ -51,12 +51,16 @@ def main(argv=sys.argv[1:]):
     parser.add_argument(
         '--xunit-file',
         help='Generate a xunit compliant XML file')
+    parser.add_argument(
+        '--debug',
+        default=False,
+        help='Enabled debug mode. Adds more prints.'
+    )
     args = parser.parse_args(argv)
 
     if args.xunit_file:
         start_time = time.time()
-
-    files = get_files(args.paths, extensions, args.exclude)
+    files = gather_files(args.path[0], extensions)
     if not files:
         print('No files found', file=sys.stderr)
         return 1
@@ -78,7 +82,6 @@ def main(argv=sys.argv[1:]):
             parser.parse(filename)
         except SAXParseException:
             pass
-
         cmd = [xmllint_bin, '--noout', filename]
         # choose validation options based on handler information
         for attributes in handler.xml_model_attributes:
@@ -99,7 +102,6 @@ def main(argv=sys.argv[1:]):
             cmd += [
                 '--schema',
                 handler.root_attributes['xsi:noNamespaceSchemaLocation']]
-
         try:
             subprocess.check_output(
                 cmd, cwd=os.path.dirname(filename), stderr=subprocess.STDOUT)
@@ -110,26 +112,24 @@ def main(argv=sys.argv[1:]):
 
         filename = os.path.relpath(filename, start=os.getcwd())
         report.append((filename, errors))
-
-    for (filename, errors) in report:
-        if errors is not None:
-            print("File '%s' is invalid:" % filename, file=sys.stderr)
-            for line in errors.splitlines():
-                print(line, file=sys.stderr)
-            print('', file=sys.stderr)
-        else:
-            print("File '%s' is valid" % filename)
-            print('')
-
-    # output summary
+    if args.debug:
+        for (filename, errors) in report:
+            if errors is not None:
+                errormsg = "File '{}' is invalid: ".format(filename)
+                for line in errors.splitlines():
+                    errormsg += line.strip() + " "
+                print(errormsg, file=sys.stderr)
+                print('', file=sys.stderr)
+        # output summary
     error_count = sum(1 if r[1] else 0 for r in report)
     if not error_count:
-        print('No problems found')
+        if args.debug:
+            print('No problems found')
         rc = 0
     else:
-        print('%d files are invalid' % error_count, file=sys.stderr)
+        if args.debug:
+            print('%d files are invalid' % error_count, file=sys.stderr)
         rc = 1
-
     # generate xunit file
     if args.xunit_file:
         folder_name = os.path.basename(os.path.dirname(args.xunit_file))
@@ -148,35 +148,21 @@ def main(argv=sys.argv[1:]):
             os.makedirs(path)
         with open(args.xunit_file, 'w') as f:
             f.write(xml)
-
     return rc
 
 
-def get_files(paths, extensions, excludes=[]):
-    files = []
-    for path in paths:
-        if os.path.isdir(path):
-            for dirpath, dirnames, filenames in os.walk(path):
-                if 'AMENT_IGNORE' in dirnames + filenames:
-                    dirnames[:] = []
-                    continue
-                # ignore folder starting with . or _
-                dirnames[:] = [d for d in dirnames if d[0] not in ['.', '_']]
-                # ignore excluded folders
-                dirnames[:] = [d for d in dirnames if d not in excludes]
-                dirnames.sort()
-
-                # select files by extension
-                for filename in sorted(filenames):
-                    if filename in excludes:
-                        continue
-                    _, ext = os.path.splitext(filename)
-                    if ext not in ['.%s' % e for e in extensions]:
-                        continue
-                    files.append(os.path.join(dirpath, filename))
-        if os.path.isfile(path):
-            files.append(path)
-    return [os.path.normpath(f) for f in files]
+def gather_files(directory, extensions):
+    """Walks through the directory and puts all files with the correct
+    extensions into a list, exits if empty."""
+    all_files = []
+    for root, _, files in os.walk(directory):
+        for file in files:
+            if os.path.splitext(file)[1][1:] in extensions:
+                all_files.append(os.path.join(root, file))
+    if not all_files:
+        print("No files detected.\nExiting test.")
+        exit(0)
+    return all_files
 
 
 class CustomHandler(ContentHandler):
