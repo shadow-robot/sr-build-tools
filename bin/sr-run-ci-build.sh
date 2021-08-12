@@ -8,8 +8,8 @@ export server_type=$2
 export tags_list=$3
 
 
-export ubuntu_version=${ubuntu_version_name:-"xenial"}
-export ros_release=${ros_release_name:-"kinetic"}
+export ubuntu_version=${ubuntu_version_name:-"focal"}
+export ros_release=${ros_release_name:-"noetic"}
 export docker_image=${docker_image_name:-"shadowrobot/build-tools:$ubuntu_version-$ros_release"}
 
 export docker_user=${docker_user_name:-"user"}
