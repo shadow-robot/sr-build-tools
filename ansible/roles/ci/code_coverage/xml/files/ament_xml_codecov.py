@@ -30,7 +30,7 @@ from xml.sax.saxutils import quoteattr
 
 
 def main(argv=sys.argv[1:]):
-    extensions = ['xml', 'launch', 'xacro']
+    const_extensions = ['xml', 'launch', 'xacro']
 
     parser = argparse.ArgumentParser(
         description='Check XML markup using xmllint.',
@@ -41,7 +41,7 @@ def main(argv=sys.argv[1:]):
         default=[os.curdir],
         help='The files or directories to check. For directories files ending '
              'in %s will be considered.' %
-             ', '.join(["'.%s'" % e for e in extensions]))
+             ', '.join(["'.%s'" % e for e in const_extensions]))
     parser.add_argument(
         '--exclude',
         nargs='*',
@@ -61,7 +61,7 @@ def main(argv=sys.argv[1:]):
 
     if args.xunit_file:
         start_time = time.time()
-    files = gather_files(args.path[0], extensions)
+    files = gather_files(args.path[0], const_extensions)
     if not files:
         print('No files found', file=sys.stderr)
         return 1
