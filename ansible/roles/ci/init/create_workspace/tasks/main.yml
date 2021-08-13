@@ -24,7 +24,7 @@
     version: python3-support
     
 - name: Updating roslint with python3 support
-  command: bash -c "source /opt/ros/{{ros_release}}/setup.bash && catkin_make_isolated --install --install-space $install_space /opt/ros/{{ros_release}}"
+  command: bash -c "source /opt/ros/{{ros_release}}/setup.bash && catkin_make_isolated --install --pkg roslint --install-space $install_space /opt/ros/{{ros_release}}"
   args:
     chdir: "/home/user/workspace/"
   become: yes
