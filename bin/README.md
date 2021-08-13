@@ -1,24 +1,24 @@
 # sr-run-ci-build.sh
 The following instructions run CI checks locally on a container
 
-Download the latest sr-build-tools from aws: ```bash docker pull public.ecr.aws/shadowrobot/build-tools:focal-noetic```
+Download the latest sr-build-tools image from aws: ```docker pull public.ecr.aws/shadowrobot/build-tools:focal-noetic```
 
-If it asks you for login then use the following command: ```bash aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws/shadowrobot```
+If it asks you for login then use the following command: ```aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws/shadowrobot```
 
-Create a temp container: ```bash docker run -it --rm --net=host --privileged -e DISPLAY -e QT_X11_NO_MITSHM=1 --gpus all -e NVIDIA_DRIVER_CAPABILITIES=all -e NVIDIA_VISIBLE_DEVICES=all -e LOCAL_USER_ID=$(id -u) -v /tmp/.X11-unix:/tmp/.X11-unix:rw public.ecr.aws/shadowrobot/build-tools:focal-noetic```
+Create a temp container: ```docker run -it --rm --net=host --privileged -e DISPLAY -e QT_X11_NO_MITSHM=1 --gpus all -e NVIDIA_DRIVER_CAPABILITIES=all -e NVIDIA_VISIBLE_DEVICES=all -e LOCAL_USER_ID=$(id -u) -v /tmp/.X11-unix:/tmp/.X11-unix:rw public.ecr.aws/shadowrobot/build-tools:focal-noetic```
  
-pull the latest sr-build-tools: ```bash cd sr-build-tools; git pull```
+pull the latest sr-build-tools: ```cd sr-build-tools; git pull```
 
-Clone the repository you want to test with: ```bash git clone --branch test_branch https://github.com/shadow-robot/sr_interface.git /home/user/workspace/src/```
+Clone the repository you want to test with: ```git clone --branch test_branch https://github.com/shadow-robot/sr_interface.git /home/user/workspace/src/```
 
 Make sure you replace the test_branch with the branch you want to test
 
-Enter in bin folder: ```bash cd bin```
+Enter in bin folder: ```cd bin```
 
 Now its time to run the check script: 
 The arguments are: branch name of sr-build-tools, check type (local in our case), checks and local repository in our container
 For example:
-```bash sudo ./sr-run-ci-build.sh python3 local-docker check_cache,code_coverage /home/user/workspace/src/sr_interface```
+```sudo ./sr-run-ci-build.sh python3 local-docker check_cache,code_coverage /home/user/workspace/src/sr_interface```
 
 
 
