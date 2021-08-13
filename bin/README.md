@@ -9,7 +9,7 @@ Create a temp container: ```docker run -it --rm --net=host --privileged -e DISPL
  
 pull the latest sr-build-tools: ```cd sr-build-tools; git pull```
 
-Clone the repository you want to test with: ```git clone --branch test_branch https://github.com/shadow-robot/sr_interface.git /home/user/workspace/src/```
+Clone the repository you want to test with: ```git clone --branch test_branch https://github.com/shadow-robot/sr_interface.git /home/user/workspace/src/sr_interface```
 
 Make sure you replace the test_branch with the branch you want to test
 
