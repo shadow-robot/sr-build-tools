@@ -17,9 +17,13 @@ Enter in bin folder: ```cd bin```
 
 Now its time to run the check script: 
 The arguments are: branch name of sr-build-tools, check type (local in our case), checks and local repository in our container
+
 The available checks are
+
 install check: *check_install*
+
 Style Check: *code_style_check,check_license*
+
 Code Coverage: *check_cache,code_coverage*
 
 For example:
