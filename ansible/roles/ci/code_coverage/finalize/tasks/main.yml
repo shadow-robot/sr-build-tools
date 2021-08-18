@@ -1,0 +1,7 @@
+---
+# Playbook for XML code coverage check
+
+- name: Print the content of failed code coverage tests. 
+  shell: "python3 roles/ci/code_coverage/finalize/files/finalize.py --path {{test_results_dir}}"
+  args:
+    executable: "/bin/bash"
