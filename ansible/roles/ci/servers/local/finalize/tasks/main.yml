@@ -11,4 +11,7 @@
   ignore_errors: yes
 
 - name: Fail if any unit test fails and print the exact error
-  script: ../files/print_errors_from_files.sh {{test_results_dir}}
+  script: ../files/finalize.py --path {{test_results_dir}}
+  args:
+    executable: python3
+
