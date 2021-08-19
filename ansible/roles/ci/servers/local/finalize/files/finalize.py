@@ -25,7 +25,6 @@ FAIL_COLOUR = '\033[91m'  # Used to make the terminal text red
 SUCCESS_COLOUR = '\033[92m'
 
 
-
 def main(argv=sys.argv[1:]):
     const_extensions = ['xml']
     parser = argparse.ArgumentParser(
@@ -63,7 +62,7 @@ def main(argv=sys.argv[1:]):
         subprocess.call(['echo', '-e', fail_msg])
 
     total_error_msg = FAIL_COLOUR + "TESTS FAILED WITH {} ERRORS FOUND.".format(error_count)
-    subprocess.call(['echo', '-e', total_error_msg])    
+    subprocess.call(['echo', '-e', total_error_msg])
     exit(1)
 
 
@@ -101,7 +100,6 @@ def gather_all_failures(filename, error_count):
                 + fail_msg.strip() + '\n'
             failures.append(fail_msg)
     return failures, count
-
 
 
 if __name__ == '__main__':
