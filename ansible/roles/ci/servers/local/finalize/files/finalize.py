@@ -28,7 +28,6 @@ SUCCESS_COLOUR = '\033[92m'
 
 def main(argv=sys.argv[1:]):
     const_extensions = ['xml']
-
     parser = argparse.ArgumentParser(
         description='Check XML markup using xmllint.',
         formatter_class=argparse.ArgumentDefaultsHelpFormatter)
@@ -41,7 +40,6 @@ def main(argv=sys.argv[1:]):
              ', '.join(["'.%s'" % e for e in const_extensions]))
 
     args = parser.parse_args(argv)
-
     files = gather_files(args.path[0], const_extensions)
 
     if not files:
@@ -65,8 +63,7 @@ def main(argv=sys.argv[1:]):
         subprocess.call(['echo', '-e', fail_msg])
 
     total_error_msg = FAIL_COLOUR + "TESTS FAILED WITH {} ERRORS FOUND.".format(error_count)
-    subprocess.call(['echo', '-e', total_error_msg])
-
+    subprocess.call(['echo', '-e', total_error_msg])    
     exit(1)
 
 
