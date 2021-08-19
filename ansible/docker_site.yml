@@ -83,4 +83,3 @@
     - {role: ci/code_coverage/cpp/finalize, when: run_build, tags: ["cpp_code_coverage", "code_coverage",
                                                                     "codecov_tool"]}
     - {role: ci/code_coverage/codecov, when: run_build, tags: ["codecov_tool"]}
-#    - {role: ci/code_coverage/finalize, when: run_build, tags: ["code_coverage"]}

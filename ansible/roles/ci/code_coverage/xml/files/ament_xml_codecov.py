@@ -16,8 +16,6 @@
 
 import argparse
 import os
-import shutil
-import subprocess
 import sys
 import time
 import rospkg
@@ -67,13 +65,7 @@ def main(argv=sys.argv[1:]):
         return 1
     files = [os.path.abspath(f) for f in files]
 
-    xmllint_bin = shutil.which('xmllint')
-    if not xmllint_bin:
-        return "Could not find 'xmllint' executable"
-
     report = []
-
-    # invoke xmllint on all files
     for filename in files:
         # parse file to extract desired validation information
         parser = make_parser()

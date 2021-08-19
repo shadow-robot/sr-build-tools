@@ -22,6 +22,8 @@ from xml.etree import ElementTree
 
 
 FAIL_COLOUR = '\033[91m'  # Used to make the terminal text red
+SUCCESS_COLOUR = '\033[92m'
+
 
 
 def main(argv=sys.argv[1:]):
@@ -55,12 +57,14 @@ def main(argv=sys.argv[1:]):
         failures = failures + failed_tests
 
     if error_count == 0:
+        success_msg = SUCCESS_COLOUR + 'TESTS SUCCEEDED WITH 0 ERRORS.'
+        subprocess.call(['echo', '-e', success_msg])
         exit(0)
 
     for fail_msg in failures:
         subprocess.call(['echo', '-e', fail_msg])
 
-    total_error_msg = FAIL_COLOUR + "TOTAL ERRORS FOUND {}".format(error_count)
+    total_error_msg = FAIL_COLOUR + "TESTS FAILED WITH {} ERRORS FOUND.".format(error_count)
     subprocess.call(['echo', '-e', total_error_msg])
 
     exit(1)
@@ -98,15 +102,9 @@ def gather_all_failures(filename, error_count):
 
             fail_msg = FAIL_COLOUR + 'ERROR {}: \n'.format(error_count + count) \
                 + fail_msg.strip() + '\n'
-            
             failures.append(fail_msg)
     return failures, count
 
-
-def get_test_filename(error_message, test_failed):
-    for error in error_message.split('File "'):
-        if test_failed in error:
-            print(error, 'HM', test_failed)
 
 
 if __name__ == '__main__':
