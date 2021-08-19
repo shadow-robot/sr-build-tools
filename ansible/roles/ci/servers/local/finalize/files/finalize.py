@@ -21,6 +21,9 @@ import sys
 from xml.etree import ElementTree
 
 
+#TODO MAKE SURE TO CHECK system-err node
+# RUN TEST ON PR/649
+
 FAIL_COLOUR = '\033[91m'  # Used to make the terminal text red
 SUCCESS_COLOUR = '\033[92m'
 
@@ -55,15 +58,16 @@ def main(argv=sys.argv[1:]):
 
     if error_count == 0:
         success_msg = SUCCESS_COLOUR + 'TESTS SUCCEEDED WITH 0 ERRORS.'
-        subprocess.call(['echo', '-e', success_msg])
-        exit(0)
+        output_to_cmd(success_msg)
+        return 0
 
+    output_to_cmd('\n')
     for fail_msg in failures:
-        subprocess.call(['echo', '-e', fail_msg])
+        output_to_cmd(fail_msg)
 
     total_error_msg = FAIL_COLOUR + "TESTS FAILED WITH {} ERRORS FOUND.".format(error_count)
-    subprocess.call(['echo', '-e', total_error_msg])
-    exit(1)
+    output_to_cmd(total_error_msg)
+    return 1
 
 
 def gather_files(directory, extensions):
@@ -100,6 +104,11 @@ def gather_all_failures(filename, error_count):
                 + fail_msg.strip() + '\n'
             failures.append(fail_msg)
     return failures, count
+
+
+def output_to_cmd(string):
+    """Simple function to echo a string to terminal."""
+    subprocess.call(['echo', '-e', string])
 
 
 if __name__ == '__main__':
