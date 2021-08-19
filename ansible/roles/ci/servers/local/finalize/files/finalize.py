@@ -21,7 +21,7 @@ import sys
 from xml.etree import ElementTree
 
 
-FAIL_COLOUR = '\033[91m'
+FAIL_COLOUR = '\033[91m'  # Used to make the terminal text red
 
 
 def main(argv=sys.argv[1:]):
@@ -46,7 +46,7 @@ def main(argv=sys.argv[1:]):
         print('No files found', file=sys.stderr)
         return 1
     files = [os.path.abspath(f) for f in files]
-    # invoke xmllint on all files
+
     error_count = 0
     failures = []
     for filename in files:
@@ -64,6 +64,7 @@ def main(argv=sys.argv[1:]):
     subprocess.call(['echo', '-e', total_error_msg])
 
     exit(1)
+
 
 def gather_files(directory, extensions):
     """Walks through the directory and puts all files with the correct
@@ -95,8 +96,8 @@ def gather_all_failures(filename, error_count):
                 fail_msg = failure.attrib['message']
             count += 1
 
-            fail_msg = FAIL_COLOUR + 'ERROR {}: \n'.format(error_count + count) 
-            + fail_msg.strip() + '\n'
+            fail_msg = FAIL_COLOUR + 'ERROR {}: \n'.format(error_count + count) \
+                + fail_msg.strip() + '\n'
             
             failures.append(fail_msg)
     return failures, count
