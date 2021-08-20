@@ -54,7 +54,7 @@ def main(argv=sys.argv[1:]):
         failures = failures + failed_tests
 
     if error_count == 0:
-        success_msg = SUCCESS_COLOUR + 'TESTS SUCCEEDED WITH 0 ERRORS.'
+        success_msg = 'TESTS SUCCEEDED WITH 0 ERRORS.'
         output_to_cmd(success_msg)
         return 0
 
@@ -62,7 +62,7 @@ def main(argv=sys.argv[1:]):
     for fail_msg in failures:
         output_to_cmd(fail_msg)
 
-    total_error_msg = FAIL_COLOUR + "TESTS FAILED WITH {} ERRORS FOUND.".format(error_count)
+    total_error_msg = "TESTS FAILED WITH {} ERRORS FOUND.".format(error_count)
     output_to_cmd(total_error_msg)
     return 1
 
@@ -103,7 +103,6 @@ def gather_all_failures(filename, error_count):
                 message = sys_err.text
                 # Range [10:-8] cuts out the ![CDATA[& and [0m ]]&gt from the end of the string
                 fail_msg = fail_msg + message.strip()[10:-8] + '\n'
-            fail_msg = FAIL_COLOUR + fail_msg
             failures.append(fail_msg)
     return failures, count
 
