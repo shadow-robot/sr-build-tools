@@ -21,10 +21,6 @@ import sys
 from xml.etree import ElementTree
 
 
-FAIL_COLOUR = '\033[91m'  # Used to make the terminal text red
-SUCCESS_COLOUR = '\033[92m'
-
-
 def main(argv=sys.argv[1:]):
     const_extensions = ['xml']
     parser = argparse.ArgumentParser(
@@ -54,8 +50,7 @@ def main(argv=sys.argv[1:]):
         failures = failures + failed_tests
 
     if error_count == 0:
-        success_msg = 'TESTS SUCCEEDED WITH 0 ERRORS.'
-        output_to_cmd(success_msg)
+        output_to_cmd('TESTS SUCCEEDED WITH 0 ERRORS.')
         return 0
 
     output_to_cmd('\n')
