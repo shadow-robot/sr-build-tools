@@ -96,13 +96,14 @@ def gather_all_failures(filename, error_count):
             if not fail_msg:
                 fail_msg = failure.attrib['message']
             count += 1
-            fail_msg = FAIL_COLOUR + 'ERROR {}: \n'.format(error_count + count) \
+            fail_msg = 'ERROR {}: \n'.format(error_count + count) \
                 + fail_msg.strip() + '\n'
             sys_err = root.find('system-err')
             if sys_err is not None:
                 message = sys_err.text
                 # Range [10:-8] cuts out the ![CDATA[& and [0m ]]&gt from the end of the string
                 fail_msg = fail_msg + message.strip()[10:-8] + '\n'
+            fail_msg = FAIL_COLOUR + fail_msg
             failures.append(fail_msg)
     return failures, count
 
