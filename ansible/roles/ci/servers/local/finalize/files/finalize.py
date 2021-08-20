@@ -21,9 +21,6 @@ import sys
 from xml.etree import ElementTree
 
 
-#TODO MAKE SURE TO CHECK system-err node
-# RUN TEST ON PR/649
-
 FAIL_COLOUR = '\033[91m'  # Used to make the terminal text red
 SUCCESS_COLOUR = '\033[92m'
 
