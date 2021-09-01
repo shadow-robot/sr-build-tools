@@ -83,7 +83,6 @@ def gather_all_failures(filename, error_count):
     try:
         tree = ElementTree.parse(filename)
     except ElementTree.ParseError:  # If file doesn't parse it's caught by previous check.
-        output_to_cmd(filename + "ERROR HERE \n\n")
         return None, None
     root = tree.getroot()
     failures = []
