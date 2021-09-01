@@ -46,7 +46,7 @@ def main(argv=sys.argv[1:]):
     failures = []
     for filename in files:
         failed_tests, count = gather_all_failures(filename, error_count)
-        if type(failed_tests) is None or type(count) is None:
+        if failed_tests is None or count is None:
             continue
         error_count += count
         failures = failures + failed_tests
