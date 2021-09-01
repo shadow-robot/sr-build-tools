@@ -46,6 +46,8 @@ def main(argv=sys.argv[1:]):
     failures = []
     for filename in files:
         failed_tests, count = gather_all_failures(filename, error_count)
+        if type(failed_tests) is None or type(count) is None:
+            continue
         error_count += count
         failures = failures + failed_tests
 
@@ -81,7 +83,8 @@ def gather_all_failures(filename, error_count):
     try:
         tree = ElementTree.parse(filename)
     except ElementTree.ParseError:  # If file doesn't parse it's caught by previous check.
-        return None
+        print(filename)
+        return None, None
     root = tree.getroot()
     failures = []
     count = 0
