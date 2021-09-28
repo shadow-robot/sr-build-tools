@@ -13,5 +13,7 @@
      non_repo_packages : "{{workspace_packages_names|difference(repo_packages_names)|join(';')}}"
 
 - name: build workspace in isolation and install
-  shell: bash -c "set +x && source <(grep '^export\|^source' {{ansible_env.HOME}}/.bashrc) && catkin_make_isolated --install --cmake-args -DBUILD_TESTING=0 -DCATKIN_SKIP_TESTING=1"
+  shell: bash -c "source <(grep '^export\|^source' {{ansible_env.HOME}}/.bashrc) && catkin_make_isolated --install --cmake-args -DBUILD_TESTING=0 -DCATKIN_SKIP_TESTING=1"
     chdir={{ros_workspace}}
+  register: command_result
+  failed_when: "'STDERR' in command_result.stderr"
