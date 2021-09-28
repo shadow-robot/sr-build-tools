@@ -16,4 +16,6 @@
   shell: bash -c "source <(grep '^export\|^source' {{ansible_env.HOME}}/.bashrc) && catkin_make_isolated --install --cmake-args -DBUILD_TESTING=0 -DCATKIN_SKIP_TESTING=1"
     chdir={{ros_workspace}}
   register: command_result
-  failed_when: "'SyntaxError' in command_result.stderr"
+  failed_when: 
+    - "'SyntaxError' in command_result.stderr"
+    - command_result.rc == 0 or command_result.rc >= 2
