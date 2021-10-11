@@ -109,13 +109,13 @@ def gather_all_failures(filename, error_count, failure_count):
             if not error_msg:
                 error_msg = failure.attrib['message']
             count_f += 1
-            fail_msg = 'ERROR {}: \n'.format(error_count + count_e) \
-                + fail_msg.strip() + '\n'
+            error_msg = 'ERROR {}: \n'.format(error_count + count_e) \
+                + error_msg.strip() + '\n'
             sys_err = root.find('system-err')
             if sys_err is not None:
                 message = sys_err.text
-                fail_msg = fail_msg + message.strip()[10:-8] + '\n'
-            failures.append(fail_msg)
+                error_msg = error_msg + message.strip()[10:-8] + '\n'
+            failures.append(error_msg)
 
     return failures, count_e, count_f
 
