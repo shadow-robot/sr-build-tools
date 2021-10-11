@@ -47,13 +47,12 @@ def main(argv=sys.argv[1:]):
     failures = []
     for filename in files:
         failed_tests, count_e, count_f = gather_all_failures(filename, error_count, failure_count)
-        if failed_tests is None or count_e or count_f:
+        if failed_tests is None or count_e is None or count_f is None:
             continue
         error_count += count_e
         failure_count += count_f
         failures = failures + failed_tests
-
-    if error_count == 0:
+    if error_count == 0 and failure_count == 0:
         output_to_cmd('TESTS SUCCEEDED WITH 0 ERRORS AND FAILURES.')
         return 0
 
@@ -85,7 +84,7 @@ def gather_all_failures(filename, error_count, failure_count):
     try:
         tree = ElementTree.parse(filename)
     except ElementTree.ParseError:  # If file doesn't parse it's caught by previous check.
-        return None, None
+        return None, None, None
     root = tree.getroot()
     failures = []
     count_e = 0
@@ -116,7 +115,6 @@ def gather_all_failures(filename, error_count, failure_count):
                 message = sys_err.text
                 error_msg = error_msg + message.strip()[10:-8] + '\n'
             failures.append(error_msg)
-
     return failures, count_e, count_f
 
 
