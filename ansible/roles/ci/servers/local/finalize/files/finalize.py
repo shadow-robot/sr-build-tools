@@ -43,23 +43,24 @@ def main(argv=sys.argv[1:]):
     files = [os.path.abspath(f) for f in files]
 
     error_count = 0
+    failure_count = 0
     failures = []
     for filename in files:
-        failed_tests, count = gather_all_failures(filename, error_count)
-        if failed_tests is None or count is None:
+        failed_tests, count_e, count_f = gather_all_failures(filename, error_count, failure_count)
+        if failed_tests is None:
             continue
-        error_count += count
+        error_count += count_e
+        failure_count += count_f
         failures = failures + failed_tests
-
-    if error_count == 0:
-        output_to_cmd('TESTS SUCCEEDED WITH 0 ERRORS.')
+    if error_count == 0 and failure_count == 0:
+        output_to_cmd('TESTS SUCCEEDED WITH 0 ERRORS AND FAILURES.')
         return 0
 
     output_to_cmd('\n')
     for fail_msg in failures:
         output_to_cmd(fail_msg)
 
-    total_error_msg = "TESTS FAILED WITH {} ERRORS FOUND.".format(error_count)
+    total_error_msg = "TESTS FAILED WITH {} ERRORS AND {} FAILURES FOUND.".format(error_count, failure_count)
     output_to_cmd(total_error_msg)
     return 1
 
@@ -78,22 +79,23 @@ def gather_files(directory, extensions):
     return all_files
 
 
-def gather_all_failures(filename, error_count):
+def gather_all_failures(filename, error_count, failure_count):
     """Goes through each file and gathers all failures within the file."""
     try:
         tree = ElementTree.parse(filename)
     except ElementTree.ParseError:  # If file doesn't parse it's caught by previous check.
-        return None, None
+        return None, None, None
     root = tree.getroot()
     failures = []
-    count = 0
+    count_e = 0
+    count_f = 0
     for testcase in root.findall('testcase'):
         for failure in testcase.findall('failure'):
             fail_msg = failure.text
             if not fail_msg:
                 fail_msg = failure.attrib['message']
-            count += 1
-            fail_msg = 'ERROR {}: \n'.format(error_count + count) \
+            count_f += 1
+            fail_msg = 'FAILURE {}: \n'.format(failure_count + count_f) \
                 + fail_msg.strip() + '\n'
             sys_err = root.find('system-err')
             if sys_err is not None:
@@ -101,7 +103,19 @@ def gather_all_failures(filename, error_count):
                 # Range [10:-8] cuts out the ![CDATA[& and [0m ]]&gt from the end of the string
                 fail_msg = fail_msg + message.strip()[10:-8] + '\n'
             failures.append(fail_msg)
-    return failures, count
+        for error in testcase.findall('error'):
+            error_msg = error.text
+            if not error_msg:
+                error_msg = failure.attrib['message']
+            count_e += 1
+            error_msg = 'ERROR {}: \n'.format(error_count + count_e) \
+                + error_msg.strip() + '\n'
+            sys_err = root.find('system-err')
+            if sys_err is not None:
+                message = sys_err.text
+                error_msg = error_msg + message.strip()[10:-8] + '\n'
+            failures.append(error_msg)
+    return failures, count_e, count_f
 
 
 def output_to_cmd(string):
