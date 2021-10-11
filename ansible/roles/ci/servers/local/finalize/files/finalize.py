@@ -47,7 +47,7 @@ def main(argv=sys.argv[1:]):
     failures = []
     for filename in files:
         failed_tests, count_e, count_f = gather_all_failures(filename, error_count, failure_count)
-        if failed_tests is None or count_e is None or count_f is None:
+        if failed_tests is None:
             continue
         error_count += count_e
         failure_count += count_f
