@@ -108,7 +108,7 @@ def gather_all_failures(filename, error_count, failure_count):
             error_msg = error.text
             if not error_msg:
                 error_msg = failure.attrib['message']
-            count += 1
+            count_f += 1
             fail_msg = 'ERROR {}: \n'.format(error_count + count_e) \
                 + fail_msg.strip() + '\n'
             sys_err = root.find('system-err')
