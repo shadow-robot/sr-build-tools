@@ -117,7 +117,7 @@ def gather_all_failures(filename, error_count, failure_count):
                 fail_msg = fail_msg + message.strip()[10:-8] + '\n'
             failures.append(fail_msg)
 
-    return failures, count_e count_f
+    return failures, count_e, count_f
 
 
 def output_to_cmd(string):
