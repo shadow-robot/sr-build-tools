@@ -53,15 +53,22 @@ def main(argv=sys.argv[1:]):
         failure_count += count_f
         failures = failures + failed_tests
     if error_count == 0 and failure_count == 0:
-        output_to_cmd('TESTS SUCCEEDED WITH 0 ERRORS AND FAILURES.')
+        output_to_cmd('TESTS SUCCEEDED. NO FAILURES OR ERRORS DETECTED.')
         return 0
 
     output_to_cmd('\n')
     for fail_msg in failures:
         output_to_cmd(fail_msg)
 
-    total_error_msg = "TESTS FAILED WITH {} ERRORS AND {} FAILURES FOUND.".format(error_count, failure_count)
-    output_to_cmd(total_error_msg)
+    if error_count > 0 and failure_count == 0:
+        total_error_msg = "\nERRORS FOUND IN TEST. {} ERRORS FOUND.".format(error_count)
+        output_to_cmd(total_error_msg)
+    elif failure_count > 0 and error_count == 0:
+        total_error_msg = "\nFAILURES FOUND IN TEST. {} FAILURES FOUND.".format(error_count)
+        output_to_cmd(total_error_msg)
+    else:
+        total_error_msg = "\nISSUES FOUND IN TEST. {} ERRORS AND {} FAILURES FOUND.".format(error_count, failure_count)
+        output_to_cmd(total_error_msg)
     return 1
 
 
