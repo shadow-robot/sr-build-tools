@@ -4,8 +4,9 @@ list_of_private_repos=()
 Gather_Private_Repos () {
     cwd= pwd
     cd $1
-    for repo in $(ls -d) 
+    for repo in $(find . -maxdepth 1 -type d -printf '%f\n') 
     do
+        repo="$1/$repo"
         cd $repo
         if [ -d ".git" ]
         then
