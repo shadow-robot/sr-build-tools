@@ -28,7 +28,7 @@ Find_And_Replace_Licence_Var () {
     done
 }
 
-Gather_Private_Repos "/home/user/projects/shadow_robot/base/src/"
+Gather_Private_Repos $1
 for repo in ${list_of_private_repos[@]}
 do
     Find_And_Replace_Licence_Var $repo
