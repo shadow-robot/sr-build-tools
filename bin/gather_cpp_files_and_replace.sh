@@ -24,7 +24,7 @@ Find_And_Replace_Licence_Var () {
     directories=( $(find $1 -type f -name "*.cpp") )
     for dir in ${directories[@]} 
     do
-        sed -i 's/bool LICENCE_ENABLED = false;/bool LICENCE_ENABLED = true;/g' $dir
+        sed -i 's/const bool LICENCE_ENABLED = false;/const bool LICENCE_ENABLED = true;/g' $dir
     done
 }
 
