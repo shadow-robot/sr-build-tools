@@ -5,7 +5,7 @@ env:
   variables:
      branch: python3
      image: build-tools
-     tag: focal-melodic
+     tag: focal-noetic
      dockerfile_folder: docker/ros/noetic/
   exported-variables:
      - branch
