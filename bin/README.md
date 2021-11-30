@@ -20,6 +20,7 @@ The arguments are: branch name of sr-build-tools, check type (local in our case)
 If the repository you want to check is a private one or contains private repos in its repository rosinstall file you need to export your github credentials like that:
 
 ```export GITHUB_LOGIN=your_username```
+
 ```export GITHUB_PASSWORD=your_password```
 
 These will be lost when you exit the container
