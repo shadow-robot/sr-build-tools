@@ -25,7 +25,7 @@ Find_And_Replace_Licence_Var () {
     directories=( $(find $1 -type f -name "*.cpp") )
     for dir in ${directories[@]} 
     do
-        sed -i 's/if (false && licence_check() != 0) exit(1);/if (true && licence_check() != 0) exit(1);/g' $dir
+        sed -i 's/\"if (false && licence_check() != 0) exit(1);\"/\"if (true && licence_check() != 0) exit(1);\"/g' $dir
     done
 }
 
