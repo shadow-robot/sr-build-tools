@@ -15,6 +15,7 @@ Gather_Private_Repos () {
             if [ $return_code -ne 200 ]
             then
                 list_of_private_repos+=($repo)
+                echo $repo
             fi
         fi
     done
