@@ -120,7 +120,7 @@ echo "Removing private source code from $workspace_path"
 cd src
 for repo in "${list_of_private_repos[@]}"
 do
-   #rm -rf $repo
+   rm -rf $repo
    # Remove from .rosinstall (if present, hence "|| true")
    wstool remove $repo || true
 done
