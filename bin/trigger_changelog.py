@@ -58,6 +58,25 @@ def main():
 
 
 def get_prs_since_date(repo, start_date, end_date):
+    """ Format of data given from API Call.
+    {
+    "sr-ros-interface": {},
+    "sr_common": {
+        "https: //github.com/shadow-robot/sr_common/pull/126": [
+            "F refactoring sr description multi",
+            "F_refactoring_sr_description_multi",
+            "n/a",
+            "2022-01-03T15:59:51Z"
+        ],
+        "https://github.com/shadow-robot/sr_common/pull/127": [
+            "adding DIRECT_PWM_MODE to teach_mode_node",
+            "SRC-6613_update_controller_guis",
+            "https://shadowrobot.atlassian.net/browse/SRC-6613",
+            "2022-01-18T12:17:08Z"
+        ]
+      }
+    }
+    """
     if end_date:
         query_url = Constants.GITHUB_API_URL+"/search/issues?q=repo:shadow-robot/" + \
             f"{repo}+is:pr+is:merged+sort:updated-asc+merged:{start_date}..{end_date}"
