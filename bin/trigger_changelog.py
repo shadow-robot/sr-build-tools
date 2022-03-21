@@ -32,9 +32,9 @@ def gather_args():
     parser.add_argument('--token', '-t', type=str, required=True, help=help)
     help = "This is the image repo you want to get the changelog from.\n" + \
         "Choices are shadow_dexterous_hand, shadow_teleop_haptx, shadow_teleop_polhemus."
-    parser.add_argument('--image_repo', '-ir', type=str, required=True, help=help)
+    parser.add_argument('--repo', '-r', type=str, required=True, help=help)
     help = "This is the image branch you want to use."
-    parser.add_argument('--image_branch', '-ib', type=str, help=help, default="noetic-devel")
+    parser.add_argument('--branch', '-b', type=str, help=help, default="noetic-devel")
     help = "This is the date you want to query from."
     parser.add_argument('--start_date', '-sd', type=str, required=True, help=help)
     help = "This is the date you want to end your query too."
@@ -42,7 +42,7 @@ def gather_args():
     args = parser.parse_args()
     Constants.GIT_USERNAME = args.username
     Constants.GIT_TOKEN = args.token
-    return args.start_date, args.end_date, args.image_repo, args.image_branch
+    return args.start_date, args.end_date, args.repo, args.branch
 
 
 def main():
