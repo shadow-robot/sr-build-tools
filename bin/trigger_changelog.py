@@ -19,6 +19,7 @@ class Constants:
     GITHUB_API_URL = "https://api.github.com"
     GIT_USERNAME = ""
     GIT_TOKEN = ""
+    EXCLUDED_REPOS = ["sr_hand_config"]
 
 
 def gather_args():
@@ -53,7 +54,9 @@ def main():
     repo_prs = {}
     print("Gathering all pr's within timeframe.\n")
     for repo in repos_dict:
-        repo_prs[repo] = get_prs_since_date(repo, start_date, end_date)
+        repo_data = get_prs_since_date(repo, start_date, end_date)
+        if repo_data:
+            repo_prs[repo] = repo_data
     format_message(repo_prs)
 
 
@@ -77,6 +80,9 @@ def get_prs_since_date(repo, start_date, end_date):
       }
     }
     """
+    if repo in Constants.EXCLUDED_REPOS:
+        return None
+
     if end_date:
         query_url = Constants.GITHUB_API_URL+"/search/issues?q=repo:shadow-robot/" + \
             f"{repo}+is:pr+is:merged+sort:updated-asc+merged:{start_date}..{end_date}"
@@ -103,10 +109,11 @@ def get_prs_since_date(repo, start_date, end_date):
         pr_body = pr['body']
         pr_title_continued = ""
         try:
-            pr_title_continued = re.search(
-                Constants.REGEXP_TITLE_CONTINUED, pr_body).group(1)
+            if type(pr_body) == str or type(pr_body) == bytes:
+                pr_title_continued = re.search(
+                    Constants.REGEXP_TITLE_CONTINUED, pr_body).group(1)
         except AttributeError:
-            pass
+            continue
         pr_title += pr_title_continued
         pr_title = pr_title.replace("…", "")
         pr_title = pr_title.replace("## Proposed changes", "")
@@ -160,14 +167,13 @@ def format_message(data_dict):
     for repo, prs in data_dict.items():
         if not prs:
             continue
-        string = ("=" * 100) + "\n"
-        print(f"{string}The repo is {repo}")
         for pr_url, array in prs.items():
             pr_title = array[0]
-            pr_branch = array[1]
-            pr_jira_link = array[2]
-            string = f"PR Title: {pr_title}\nPR Url: {pr_url}\n" + \
-                f"PR Branch: {pr_branch}\nPR Jira Link: {pr_jira_link}\n"
+            if array[2] == "n/a":
+                string = f"{pr_title} ([Github|({pr_url}])\n"
+            else:
+                pr_jira_link = array[2]
+                string = f"{pr_title} ([Jira|{pr_jira_link}]) ([Github|{pr_url}])\n"
             print(string)
 
 
