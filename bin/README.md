@@ -117,7 +117,7 @@ To pull the changelog between two dates run the script like this:</br>
 To pull the changelog from one date up to the date it was executed run this:</br>
 ```python3 trigger_changelog.py -u <github_username> -t <github_token> -ir <image_repository> -ib <image_branch (default: noetic-devel)> -sd <start_date>```</br>
 
-The optional feilds in this script are ```-ib``` and ```-ed```.
+The optional fields in this script are ```-ib``` and ```-ed```.
 
 ## Examples
 Pull the changelog between two dates:</br>

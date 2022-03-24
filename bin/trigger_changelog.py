@@ -10,7 +10,7 @@ import time
 
 
 class Constants:
-    URL_BEGINNING = "https://raw.githubusercontent.com/"
+    URL_BEGINNING = "https://raw.githubusercontent.com"
     REPOSITORY_ROSINSTALL = "repository.rosinstall"
     REGEXP_IMAGE_NAME = "image="
     REGEXP_BRANCH_STORY = "SRC-[^_]+(?=_)"
@@ -57,7 +57,7 @@ def main():
         repo_data = get_prs_since_date(repo, start_date, end_date)
         if repo_data:
             repo_prs[repo] = repo_data
-    format_message(repo_prs)
+    format_output_data(repo_prs)
 
 
 def get_prs_since_date(repo, start_date, end_date):
@@ -100,8 +100,7 @@ def get_prs_since_date(repo, start_date, end_date):
         pr_number = str(item['number'])
         pr_url = item['pull_request']['html_url']
         pr_title = item['title']
-        pr_query = Constants.GITHUB_API_URL + \
-            "/repos/shadow-robot/"+repo+"/pulls/"+pr_number
+        pr_query = f"{Constants.GITHUB_API_URL}/repos/shadow-robot/{repo}/pulls/{pr_number}"
         pr_query_result = requests.get(pr_query, auth=(
             Constants.GIT_USERNAME, Constants.GIT_TOKEN))
         pr = json.loads(pr_query_result.text)
@@ -109,7 +108,7 @@ def get_prs_since_date(repo, start_date, end_date):
         pr_body = pr['body']
         pr_title_continued = ""
         try:
-            if type(pr_body) == str or type(pr_body) == bytes:
+            if isinstance(pr_body, str) or isinstance(pr_body, bytes):
                 pr_title_continued = re.search(
                     Constants.REGEXP_TITLE_CONTINUED, pr_body).group(1)
         except AttributeError:
@@ -132,8 +131,8 @@ def get_prs_since_date(repo, start_date, end_date):
 
 
 def recursive_get_repos_from_rosinstall(owner, repo, branch, repo_dict):
-    repository_rosinstall_url = Constants.URL_BEGINNING + \
-        owner+'/'+repo+'/'+branch+'/'+Constants.REPOSITORY_ROSINSTALL
+    repository_rosinstall_url = f"{Constants.URL_BEGINNING}/{owner}/{repo}/" + \
+        f"{branch}/{Constants.REPOSITORY_ROSINSTALL}"
     repository_rosinstall_result = requests.get(
         repository_rosinstall_url, auth=(Constants.GIT_USERNAME, Constants.GIT_TOKEN))
     if repository_rosinstall_result.status_code == 200:
@@ -163,8 +162,8 @@ def recursive_get_repos_from_rosinstall(owner, repo, branch, repo_dict):
     return repo_dict
 
 
-def format_message(data_dict):
-    for repo, prs in data_dict.items():
+def format_output_data(data_dict):
+    for _repo, prs in data_dict.items():
         if not prs:
             continue
         for pr_url, array in prs.items():
