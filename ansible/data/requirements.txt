@@ -2,7 +2,7 @@ ansible==2.10.4
 asn1crypto==1.4.0
 bcrypt==3.2.0
 cffi==1.14.5
-cryptography==3.4.7
+cryptography==3.3.2
 ipaddress==1.0.22
 Jinja2==2.11.3
 MarkupSafe==1.1.1
