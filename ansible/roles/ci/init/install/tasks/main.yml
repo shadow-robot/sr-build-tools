@@ -12,6 +12,7 @@
   pip: 
     name: ['catkin_pkg','empy==3.3.2','coverage','catkin-lint','pylint==2.10.2']
     extra_args: '--upgrade'
+    executable: pip3
   become: yes
   become_method: sudo
   become_user: root
