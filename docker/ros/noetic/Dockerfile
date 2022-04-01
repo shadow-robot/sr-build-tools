@@ -1,5 +1,5 @@
 #
-# ROS Melodic with build tools Dockerfile
+# ROS Noetic with build tools Dockerfile
 #
 # https://github.com/shadow-robot/sr-build-tools/
 #
