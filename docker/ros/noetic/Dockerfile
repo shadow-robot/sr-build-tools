@@ -60,7 +60,7 @@ RUN set -x && \
     \
     echo "Removing cache" && \
     apt-get clean && \
-    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /home/$MY_USERNAME/workspace/build_isolated /home/$MY_USERNAME/workspace/devel_isolated /home/$MY_USERNAME/workspace/src/roslint /home/$MY_USERNAME/.ansible /home/$MY_USERNAME/.gitconfig /home/$MY_USERNAME/.cache 
+    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /home/$MY_USERNAME/workspace/build_isolated /home/$MY_USERNAME/workspace/devel_isolated /home/$MY_USERNAME/workspace/src/roslint /home/$MY_USERNAME/.ansible /home/$MY_USERNAME/.gitconfig /home/$MY_USERNAME/.cache
 
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
 

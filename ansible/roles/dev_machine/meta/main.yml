@@ -1,5 +1,5 @@
 ---
 dependencies:
-  - { role: ros_install, sudo: yes }
+  - { role: ros_install, become: yes }
   - { role: ros_workspace }
   - { role: gazebo_models }

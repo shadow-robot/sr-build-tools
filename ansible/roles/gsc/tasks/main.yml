@@ -6,8 +6,8 @@
   register: kcl_remote_test
 
 - name: Add KCL remote
-  sudo: yes
-  sudo_user: "{{ ros_user }}"
+  become: yes
+  become_user: "{{ ros_user }}"
   command: git remote add kcl git@github.com:shadow-robot/kcl-gsc-source-code.git
            chdir={{ ros_workspace }}/src/sr_grasp_stabilisation
   when: kcl_remote_test|failed
@@ -19,9 +19,9 @@
   when: kcl_remote_test|failed
 
 - name: Normal user access for ethercat loop
-  sudo: yes
+  become: yes
   command: setcap cap_sys_nice,cap_ipc_lock,cap_net_raw,cap_net_admin=eip /opt/ros/hydro/lib/pr2_ethercat/pr2_ethercat
 
 - name: Setcap nice
-  sudo: yes
+  become: yes
   command: setcap cap_sys_nice=eip /usr/bin/nice

@@ -6,8 +6,8 @@
 # Remove the now unnecessary ros_build space (it was necessary to use ar_pose)
 - name: Remove rosbuild workspace dir
   file: state=absent path={{ros_build_workspace}}
-  sudo: yes
-  sudo_user: "{{ros_user}}"
+  become: yes
+  become_user: "{{ros_user}}"
 
 # Link the index page to rosbridge
 - name: Remove index.html

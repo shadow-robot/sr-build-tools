@@ -22,10 +22,14 @@
     python_files_without_extension_results: "{{python_files_without_extension.results}}"
 
 - name: Execute roslint for every package and .py files and write results in unit tests format
-  shell: "source /opt/ros/{{ros_release}}/setup.bash && \
-    rosrun roslint test_wrapper \
-      {{ros_workspace}}/build/test_results/{{item.item.name}}/roslint-python-py-{{item.item.name}}.xml \
-      'rosrun roslint pep8 --max-line-length=120 {{item.stdout}}'"
+  shell: |
+    source /opt/ros/{{ros_release}}/setup.bash && rosrun roslint test_wrapper \
+    {{ros_workspace}}/build/test_results/{{item.item.name}}/roslint-python-py-{{item.item.name}}.xml \
+    'rosrun roslint pycodestyle --max-line-length=120 {{item.stdout}}'
+     
+    source /opt/ros/{{ros_release}}/setup.bash && rosrun roslint test_wrapper \
+    {{ros_workspace}}/build/test_results/{{item.item.name}}/roslint-python3-py-{{item.item.name}}.xml \
+    "pylint -sn --py3k --msg-template='{abspath}:{line}:{column}:{msg_id}:{msg}' {{item.stdout}}"
   args:
     executable: "/bin/bash"
     chdir: "{{repo_sources_path}}/{{item.item.path}}"
@@ -34,13 +38,19 @@
   ignore_errors: True
 
 - name: Execute roslint for every package and no extension files and write results in unit tests format
-  shell: "source /opt/ros/{{ros_release}}/setup.bash && \
-    rosrun roslint test_wrapper \
-      {{ros_workspace}}/build/test_results/{{item.item.name}}/roslint-python-ex-{{item.item.name}}.xml \
-      'rosrun roslint pep8 --max-line-length=120 {{item.stdout}}' "
+  shell: |
+    source /opt/ros/{{ros_release}}/setup.bash && rosrun roslint test_wrapper \
+    {{ros_workspace}}/build/test_results/{{item.item.name}}/roslint-python-ex-{{item.item.name}}.xml \
+    'rosrun roslint pycodestyle --max-line-length=120 {{item.stdout}}'
+         
+    source /opt/ros/{{ros_release}}/setup.bash && rosrun roslint test_wrapper \
+    {{ros_workspace}}/build/test_results/{{item.item.name}}/roslint-python3-ex-{{item.item.name}}.xml \
+    "pylint -sn --py3k --msg-template='{abspath}:{line}:{column}:{msg_id}:{msg}' {{item.stdout}}"
   args:
     executable: "/bin/bash"
     chdir: "{{repo_sources_path}}/{{item.item.path}}"
   with_items: "{{python_files_without_extension_results|default([])}}"
   when: item.stdout != ""
   ignore_errors: True
+
+

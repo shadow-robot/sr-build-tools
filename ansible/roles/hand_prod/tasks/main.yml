@@ -3,9 +3,9 @@
 - name: Checkout or create the config branch
   shell: git checkout '{{ config_branch }}'
          chdir={{ros_workspace}}/src/sr_config
-  sudo: yes
-  sudo_user: "{{ros_user}}"
+  become: yes
+  become_user: "{{ros_user}}"
 
 - name: Adds the user to dialout
   shell: usermod -a -G dialout '{{ros_user}}'
-  sudo: yes
+  become: yes

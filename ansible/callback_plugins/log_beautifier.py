@@ -17,13 +17,13 @@ def fixed_dump_results(self, result, indent=None, sort_keys=True, keep_invocatio
     json_message = self._original_dump_results(result, indent, sort_keys, keep_invocation)
     message_dictionary = json.loads(json_message, encoding="utf-8")
     result = ""
-    for key, value in message_dictionary.iteritems():
+    for key, value in message_dictionary.items():
         if key not in ["stderr", "stdout_lines"]:
-            result = result + "  " + key + " => " + obfuscate_credentials(unicode(value)) + "\n"
+            result = result + "  " + key + " => " + obfuscate_credentials(str(value)) + "\n"
 
-    if "stderr" in message_dictionary and len(unicode(message_dictionary["stderr"])) > 0:
+    if "stderr" in message_dictionary and len(str(message_dictionary["stderr"])) > 0:
         result = result + "\nvvvvvvvv  STDERR  vvvvvvvvv\n\n  stderr => " + \
-            obfuscate_credentials(unicode(message_dictionary["stderr"]))
+            obfuscate_credentials(str(message_dictionary["stderr"]))
     return result
 
 

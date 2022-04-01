@@ -3,26 +3,21 @@
 
 # Install packages a ros user will need
 - name: Install packages
-  apt: name={{item}}
-  with_items:
-    - git
-    - vim
-    - emacs
-    - tree
-    - htop
-    - terminator
-    - synaptic
-    - wajig
+  apt: 
+    name: ['git','vim','emacs','tree','htop','terminator','synaptic','wajig']
+    state: present
 
 # We put all users in the ros group, so they can work togther easily
 - name: Add ros group
   group: name=ros
 
 - name: "Add ROS user"
-  user: name={{ros_user}}
-    comment="{{ros_user_comment}}"
-    shell=/bin/bash
-    append=yes groups={{ros_group}},adm,sudo,plugdev,cdrom
+  user: 
+    name: "{{ros_user}}"
+    comment: "{{ros_user_comment}}"
+    shell: /bin/bash
+    append: yes 
+    groups: "{{ros_group}},adm,sudo,plugdev,cdrom"
 
 - debug: msg="Added user named:{{ros_user}} in group:ros"
 
@@ -34,22 +29,28 @@
 
 - name: Delete existing icons from ~{{ros_user}}
   shell: "rm -f ~{{ros_user}}/Desktop/*"
-  sudo: yes
+  become: yes
 
 - name: Install home directory files from {{ros_user_home_files}}
-  copy: src="{{ros_user_home_files}}/" dest="~{{ros_user}}/" owner={{ros_user}} group={{ros_group}}
+  copy: 
+    src: "{{ros_user_home_files}}/" 
+    dest: "~{{ros_user}}/" 
+    owner: "{{ros_user}}" 
+    group: "{{ros_group}}"
   when: ros_user_home_files|default("") != ""
-  sudo: yes
-  sudo_user: "{{ros_user}}"
+  become: yes
+  become_user: "{{ros_user}}"
 
 - name: Copy icons to /usr/local/share/icons
-  copy: src="files/icons" dest="/usr/local/share"
-  sudo: yes
+  copy: 
+    src: "files/icons" 
+    dest: "/usr/local/share"
+  become: yes
 
 - name: Set executable bit for icons
   shell: "find ~{{ros_user}}/Desktop/*.desktop -exec chmod +x {} +"
-  sudo: yes
-  sudo_user: "{{ros_user}}"
+  become: yes
+  become_user: "{{ros_user}}"
 
 - name: Test for existing bashrc setup
   shell: grep '^source.*/setup\.bash' ~{{ros_user}}/.bashrc
@@ -67,8 +68,9 @@
 
 - name: Copy background over
   when: ros_user_background is defined and ros_user_background != "" and background_destination_folder is defined and background_destination_folder != ""
-  copy: src={{ros_user_background}}
-        dest={{background_destination_folder}}
+  copy: 
+    src: "{{ros_user_background}}"
+    dest: "{{background_destination_folder}}"
 
 # http://askubuntu.com/questions/276509/change-gsettings-without-running-x-and-unity
 # http://askubuntu.com/questions/66914/how-to-change-desktop-background-from-command-line-in-unity
@@ -78,8 +80,8 @@
   shell: "dbus-launch --exit-with-session gsettings set org.gnome.desktop.background picture-uri file://{{background_destination_folder}}{{ros_user_background|basename}}"
   register: command_result
   failed_when: '"exited with non-zero exit status" in command_result.stderr'
-  sudo: yes
-  sudo_user: "{{ros_user}}"
+  become: yes
+  become_user: "{{ros_user}}"
 
 # Default font a bit large for a VM
 # There are others we could tweak if we wanted to:
@@ -89,8 +91,8 @@
   shell: "dbus-launch --exit-with-session gsettings set org.gnome.desktop.interface monospace-font-name '{{monospace_font}}'"
   register: command_result
   failed_when: '"exited with non-zero exit status" in command_result.stderr'
-  sudo: yes
-  sudo_user: "{{ros_user}}"
+  become: yes
+  become_user: "{{ros_user}}"
 
 - name: Disable screen save and lock
   when: ros_user_disable_lock
@@ -101,14 +103,14 @@
     - "set org.gnome.desktop.screensaver idle-activation-enabled false"
     - "set org.gnome.desktop.screensaver lock-enabled false"
     - "set org.gnome.desktop.screensaver ubuntu-lock-on-suspend false"
-  sudo: yes
-  sudo_user: "{{ros_user}}"
+  become: yes
+  become_user: "{{ros_user}}"
 
 
 - name: Update rosdep
   shell: bash -c "source /opt/ros/{{ros_release}}/setup.bash && rosdep update"
-  sudo: yes
-  sudo_user: "{{ros_user}}"
+  become: yes
+  become_user: "{{ros_user}}"
 
 - name: Setup git name
   command: git config --global user.name "{{ros_user}}"

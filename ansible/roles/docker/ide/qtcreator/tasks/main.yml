@@ -6,7 +6,8 @@
   become: yes
 
 - name: Intall QtCreator
-  apt: name={{item}}
+  apt: 
+    name: ['qtcreator']
+    state: "present"
   become: yes
-  with_items:
-    - qtcreator
+

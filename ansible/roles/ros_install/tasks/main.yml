@@ -4,7 +4,6 @@
 # TODO:
 # - Do some sanity checks on the ros versions, distro etc.
 #   E.g. hydro only allowed for precise, quantal, raring
-
 - name: Test for restricted, universe, multiverse
   shell: grep '^#deb.*{{ansible_distribution_release}}\(-updates\)\? \(restricted\|universe\|multiverse\)' /etc/apt/sources.list
   register: sources_test_result
@@ -34,24 +33,21 @@
 
 # ROS Install
 - name: Install ROS stuff
-  apt: name={{item}}
-  with_items:
-    - "{{ ros_base_package }}"
-    - python-wstool
-    - python-rosinstall
-    - python-pip
-    - ssh
+  apt: 
+    name: ['{{ ros_base_package }}','python3-wstool','python3-rosinstall','python3-pip','ssh']
+    state: present
 
 - name: Aggregate specific ROS packages names
   when: ros_packages is defined and ros_packages != ""
   action: shell echo "ros-{{ros_release}}-{{item}}"
-  with_items: ros_packages
+  with_items: "{{ros_packages}}"
   register: full_ros_packages_names
 
 - name: Install specific ROS packages
   when: full_ros_packages_names.changed
-  apt: name={{item.stdout}}
-  with_items: full_ros_packages_names.results
+  apt: 
+    name: "{{item.stdout}}"
+  loop: "{{full_ros_packages_names.results}}"
 
 - name: rosdep init
   command: rosdep init creates=/etc/ros/rosdep/sources.list.d/20-default.list

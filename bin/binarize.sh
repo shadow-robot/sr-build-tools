@@ -26,10 +26,10 @@ echo "Running binarization script on workspace: $workspace_path"
 
 echo "Installing pyarmor"
 apt update
-apt install python-pip
+apt install python3-pip
 pip install pyarmor
 pyarmor register $pyarmor_license_zip_file_path
-pyarmor runtime --output "/opt/ros/$ROS_DISTRO/lib/python2.7/dist-packages"
+pyarmor runtime --output "/opt/ros/$ROS_DISTRO/lib/python3/dist-packages"
 if [ -f $HOME/.pyarmor_capsule.zip ]; then
     rm $HOME/.pyarmor_capsule.zip
 fi
@@ -131,7 +131,7 @@ source $underlay_devel/setup.bash
 gosu $user_name catkin_make -DCMAKE_BUILD_TYPE=RelWithDebInfo
 
 echo "Running pyarmorize"
-pyarmorize_paths=("$install_space/lib" "$install_space/lib/python2.7/dist-packages")
+pyarmorize_paths=("$install_space/lib" "$install_space/lib/python3/dist-packages")
 for pyarmorize_path in "${pyarmorize_paths[@]}"
 do
    if [ -d $pyarmorize_path ]; then

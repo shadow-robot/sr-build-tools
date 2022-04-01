@@ -8,8 +8,8 @@ export server_type=$2
 export tags_list=$3
 
 
-export ubuntu_version=${ubuntu_version_name:-"xenial"}
-export ros_release=${ros_release_name:-"kinetic"}
+export ubuntu_version=${ubuntu_version_name:-"focal"}
+export ros_release=${ros_release_name:-"noetic"}
 export docker_image=${docker_image_name:-"shadowrobot/build-tools:$ubuntu_version-$ros_release"}
 
 export docker_user=${docker_user_name:-"user"}
@@ -21,9 +21,10 @@ if  [ "semaphore_docker" != $server_type ] && [ "local" != $server_type ] && [ "
   export build_tools_folder="$HOME/sr-build-tools"
 
   sudo apt-get update
-  sudo apt-get install -y python-dev libxml2-dev libxslt-dev python-pip lcov wget git libssl-dev libffi-dev libyaml-dev
-  sudo pip install typing
-  sudo pip install --upgrade "pip < 21.0" setuptools==44.0.0 gcovr
+  
+  sudo apt-get install -y python3-dev libxml2-dev libxslt-dev python3-pip lcov wget git libssl-dev libffi-dev libyaml-dev
+  sudo pip3 install --upgrade pip setuptools==44.0.0 gcovr
+  sudo pip3 install PyYAML==5.4.1 --ignore-installed
   
   git config --global user.email "build.tools@example.com"
   git config --global user.name "Build Tools"
@@ -39,7 +40,7 @@ if  [ "semaphore_docker" != $server_type ] && [ "local" != $server_type ] && [ "
     git clone https://github.com/shadow-robot/sr-build-tools.git -b "$toolset_branch" $build_tools_folder
     cd $build_tools_folder/ansible
   fi
-  sudo pip install -r data/requirements.txt
+  sudo pip3 install -r data/requirements.txt
 fi
 
 export extra_variables="codecov_secure=$CODECOV_TOKEN github_login=$GITHUB_LOGIN github_password=$GITHUB_PASSWORD ros_release=$ros_release ubuntu_version_name=$ubuntu_version "

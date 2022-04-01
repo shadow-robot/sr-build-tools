@@ -15,7 +15,7 @@
   shell: "source /opt/ros/{{ros_release}}/setup.bash && \
     rosrun roslint test_wrapper \
       {{ros_workspace}}/build/test_results/{{item.item.name}}/roslint-h-{{item.item.name}}.xml \
-      'rosrun roslint cpplint --filter=-runtime/references {{item.stdout}}' "
+      'rosrun roslint cpplint --linelength=120 --filter=-runtime/references {{item.stdout}}' "
   args:
     executable: "/bin/bash"
     chdir: "{{repo_sources_path}}/{{item.item.path}}"
@@ -37,7 +37,7 @@
   shell: "source /opt/ros/{{ros_release}}/setup.bash && \
     rosrun roslint test_wrapper \
       {{ros_workspace}}/build/test_results/{{item.item.name}}/roslint-cpp-{{item.item.name}}.xml \
-      'rosrun roslint cpplint --filter=-runtime/references {{item.stdout}}' "
+      'rosrun roslint cpplint --linelength=120 --filter=-runtime/references {{item.stdout}}' "
   args:
     executable: "/bin/bash"
     chdir: "{{repo_sources_path}}/{{item.item.path}}"
@@ -61,7 +61,7 @@
   shell: 'source /opt/ros/{{ros_release}}/setup.bash && \
     rosrun roslint test_wrapper \
       {{ros_workspace}}/build/test_results/{{item.0.item.name}}/roslint-hpp-{{item.1|basename}}.xml \
-      "eval cat {{item.1}} | rosrun roslint cpplint --filter=-runtime/references -" '
+      "rosrun roslint cpplint --extensions=hpp --linelength=120 --filter=-runtime/references {{item.1}}" '
   args:
     executable: "/bin/bash"
     chdir: "{{repo_sources_path}}/{{item.0.item.path}}"

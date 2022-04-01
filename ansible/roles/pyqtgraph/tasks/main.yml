@@ -2,6 +2,6 @@
 
 - name: Installing PyQtGraph package
   pip:
-    name: pyqtgraph
+    name: pyqtgraph==0.11.1
     umask: "0022"
   become: True

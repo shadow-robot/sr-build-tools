@@ -10,17 +10,17 @@
     update: yes
 
 - name: Install scons package
-  sudo: yes
+  become: yes
   apt:
     name: scons
 
 - name: Install mongodb package
-  sudo: yes
+  become: yes
   apt:
     name: mongodb
 
 - name: Build mongodb from source
-  sudo: yes
+  become: yes
   shell: scons --use-system-boost --prefix=/usr/local/ --full --disable-warnings-as-errors
   args:
     chdir: "{{workspace_path}}/src/mongo-cxx-driver"
