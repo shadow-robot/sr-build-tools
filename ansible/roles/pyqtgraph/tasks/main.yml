@@ -4,4 +4,5 @@
   pip:
     name: pyqtgraph==0.11.1
     umask: "0022"
+    executable: pip3
   become: True
