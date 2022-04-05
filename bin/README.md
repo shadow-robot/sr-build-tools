@@ -34,7 +34,7 @@ Style Check: *code_style_check,check_license*
 Code Coverage: *check_cache,code_coverage*
 
 For example:
-```sudo -E ./sr-run-ci-build.sh python3 local-docker check_cache,code_coverage /home/user/workspace/src/sr_interface```
+```sudo -E ./sr-run-ci-build.sh master local-docker check_cache,code_coverage /home/user/workspace/src/sr_interface```
 
 The unit tests are stored here: ```/home/user/unit_tests```
 
