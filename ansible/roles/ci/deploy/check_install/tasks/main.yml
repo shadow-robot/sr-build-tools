@@ -17,6 +17,5 @@
     chdir={{ros_workspace}}
   register: command_result
   failed_when: >
-    ("'SyntaxError' in command_result.stderr") or 
-    ("'failed' in command_result.stderr") or
-    (command_result.rc >= 1)  
+    (("'SyntaxError' in command_result.stderr") and (command_result.rc >= 1)) or 
+    (("'failed' in command_result.stderr") and (command_result.rc >= 1))
