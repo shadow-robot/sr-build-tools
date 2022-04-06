@@ -29,7 +29,7 @@
      
     source /opt/ros/{{ros_release}}/setup.bash && rosrun roslint test_wrapper \
     {{ros_workspace}}/build/test_results/{{item.item.name}}/roslint-python3-py-{{item.item.name}}.xml \
-    "pylint -sn --py3k --msg-template='{abspath}:{line}:{column}:{msg_id}:{msg}' {{item.stdout}}"
+    "pylint -sn --max-line-length=120 --disable=C0112,C0114,C0115,C0116,R0903,R0904,W9005,W9006,W9008,W9010,W9011,W9012,W9013,W9014,W9015,W9016,R0801,W0717,C1901,C2001,W0141,R0902,R0913,R0916,W0703,C0413,C0415,C0200,C0201,R1715,R1716,R1718 --msg-template='{abspath}:{line}:{column}:{msg_id}:{msg}' {{item.stdout}}"
   args:
     executable: "/bin/bash"
     chdir: "{{repo_sources_path}}/{{item.item.path}}"
@@ -45,7 +45,7 @@
          
     source /opt/ros/{{ros_release}}/setup.bash && rosrun roslint test_wrapper \
     {{ros_workspace}}/build/test_results/{{item.item.name}}/roslint-python3-ex-{{item.item.name}}.xml \
-    "pylint -sn --py3k --msg-template='{abspath}:{line}:{column}:{msg_id}:{msg}' {{item.stdout}}"
+    "pylint -sn --max-line-length=120 --disable=C0112,C0114,C0115,C0116,R0903,R0904,W9005,W9006,W9008,W9010,W9011,W9012,W9013,W9014,W9015,W9016,R0801,W0717,C1901,C2001,W0141,R0902,R0913,R0916,W0703,C0413,C0415,C0200,C0201,R1715,R1716,R1718 --msg-template='{abspath}:{line}:{column}:{msg_id}:{msg}' {{item.stdout}}"
   args:
     executable: "/bin/bash"
     chdir: "{{repo_sources_path}}/{{item.item.path}}"
