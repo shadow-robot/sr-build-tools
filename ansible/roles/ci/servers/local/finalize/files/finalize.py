@@ -63,7 +63,7 @@ def main(argv=sys.argv[1:]):
     if error_count > 0 and failure_count == 0:
         total_error_msg = "\nERRORS FOUND IN TEST. {} ERRORS FOUND.".format(error_count)
     elif failure_count > 0 and error_count == 0:
-        total_error_msg = "\nFAILURES FOUND IN TEST. {} FAILURES FOUND.".format(error_count)
+        total_error_msg = "\nFAILURES FOUND IN TEST. {} FAILURES FOUND.".format(failure_count)
     else:
         total_error_msg = "\nISSUES FOUND IN TEST. {} ERRORS AND {} FAILURES FOUND.".format(error_count, failure_count)
     output_to_cmd(total_error_msg)
