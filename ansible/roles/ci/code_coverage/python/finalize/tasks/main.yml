@@ -22,3 +22,9 @@
 - name: Generate xml for the coverage
   shell: coverage xml -o coverage.python.xml chdir={{code_coverage_results_dir}}
   ignore_errors: True
+
+- name: Check python files for import errors
+  include_role: 
+    name: ci/code_style_check/python
+  vars:
+    linter_command: pylint --disable=all --enable=E0611,E0401
