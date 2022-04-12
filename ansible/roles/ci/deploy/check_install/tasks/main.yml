@@ -22,6 +22,6 @@
 
 - name: Check python files for import errors
   include_role: 
-    names: ci/code_style_check/python
+    name: ci/code_style_check/python
   vars:
     linter_command: pylint --disable=all --enable=E0611,E0401
