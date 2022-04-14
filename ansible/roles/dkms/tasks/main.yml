@@ -1,8 +1,0 @@
-# Makes a machine capable of installing DKMS modules like the VirtualBox guest
-# additions.
-- name: Install kernal source and DKMS
-  apt: name={{item}}
-  with_items:
-    - linux-headers-{{ansible_kernel}}
-    - build-essential
-    - dkms
