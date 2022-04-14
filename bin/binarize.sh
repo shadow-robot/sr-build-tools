@@ -2,7 +2,7 @@
 
 set -e
 git config --global --add safe.directory /home/user/projects/shadow_robot/base_deps/src/leap_motion
-
+git config --global --add safe.directory /home/user/projects/shadow_robot/base_deps/src/ros_ethercat_eml
 
 workspace_path=$1
 pyarmor_license_zip_file_path=${2:-/home/user/pyarmor-regfile-1.zip}
