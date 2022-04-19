@@ -10,6 +10,7 @@ Gather_Private_Repos () {
         cd $repo
         if [ -d ".git" ]
         then
+            git config --global --add safe.directory $workspace_path/src/$repo
             repo_https_url=$(git remote -v | awk '{print $2}' | sed 's/git@github.com:/https:\/\/github.com\//g' | head -n 1 | sed 's/\.git//g')
             return_code=$(curl -o /dev/null --silent --head --write-out '%{http_code}\n' $repo_https_url)
             if [ $return_code -ne 200 ]
