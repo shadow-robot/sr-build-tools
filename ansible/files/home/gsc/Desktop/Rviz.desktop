@@ -1,7 +1,0 @@
-[Desktop Entry]
-Version=1.0
-Type=Application
-Terminal=false
-Exec=bash -i -c 'rosrun rviz rviz -d ~/hydro_ws/src/sr_grasp_stabilisation/sr_grasp_demo/config/grasp_demo.rviz'
-Name=Rviz
-Icon=/opt/ros/hydro/share/rviz/icons/package.png

@@ -1,8 +1,0 @@
-[Desktop Entry]
-Version=1.0
-Type=Application
-Terminal=false
-Exec=xterm -title "GlassBot" -e bash -i -c 'roslaunch glassbot glassbot_real.launch'
-Name=GlassBot
-Icon=/usr/share/icons/unity-icon-theme/apps/128/games.svg
-Name[en_US]=GlassBot

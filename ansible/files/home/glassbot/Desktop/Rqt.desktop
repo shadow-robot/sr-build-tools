@@ -1,7 +1,0 @@
-[Desktop Entry]
-Version=1.0
-Type=Application
-Terminal=false
-Exec=bash -i -c 'rqt'
-Name=Rqt
-Icon=/usr/share/icons/hicolor/scalable/apps/preferences-desktop-display.svg

@@ -6,8 +6,6 @@
 
 FROM ros:kinetic-perception
 
-MAINTAINER "Shadow Robot's Software Team <software@shadowrobot.com>"
-
 LABEL Description="This image is used to make ROS Kinetic based projects build faster using build tools" Vendor="Shadow Robot" Version="1.0"
 
 ENV DEBIAN_FRONTEND noninteractive

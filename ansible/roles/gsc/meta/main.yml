@@ -1,8 +1,0 @@
----
-dependencies:
-  - { role: install_simox }
-  - { role: ros_install }
-  - { role: ros_user }
-  - { role: ros_workspace }
-  - { role: ork_database } # Do after ros_workspace, we get the db from the repo.
-
