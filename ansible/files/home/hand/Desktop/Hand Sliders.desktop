@@ -1,8 +1,0 @@
-[Desktop Entry]
-Version=1.0
-Type=Application
-Terminal=false
-Exec=bash -i -c 'rqt -s sr_gui_joint_slider.joint_slider.SrGuiJointSlider'
-Name=Hand Sliders
-Icon=/usr/share/icons/hicolor/scalable/apps/gnome-nettool.svg
-StartupNotify=true

@@ -1,9 +1,0 @@
-[Desktop Entry]
-Version=1.0
-Type=Application
-Terminal=false
-Exec=xterm -title "Store Hand" -e bash -i -c 'rosrun sr_ethercat_hand_config demo_rs.py'
-Icon=/home/gsc/hydro_ws/src/sr_visualization/sr_visualization_icons/icons/iconHand.png
-Name=Store Hand
-Name[en_GB]=Store Hand
-
