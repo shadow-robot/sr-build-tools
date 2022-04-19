@@ -33,6 +33,7 @@ if  [ "semaphore_docker" != $server_type ] && [ "local" != $server_type ] && [ "
   if [ -d $build_tools_folder ]; then
     # Cached
     cd $build_tools_folder
+    git fetch
     git checkout "$toolset_branch"
     git pull origin "$toolset_branch"
     cd ./ansible
