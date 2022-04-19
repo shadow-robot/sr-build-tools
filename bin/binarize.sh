@@ -1,8 +1,6 @@
 #!/bin/bash
 
 set -e
-git config --global --add safe.directory /home/user/projects/shadow_robot/base_deps/src/leap_motion
-git config --global --add safe.directory /home/user/projects/shadow_robot/base_deps/src/ros_ethercat_eml
 
 workspace_path=$1
 pyarmor_license_zip_file_path=${2:-/home/user/pyarmor-regfile-1.zip}
@@ -53,6 +51,7 @@ list_of_private_repos=()
 cd $workspace_path/src
 for repo in "${list_of_repos[@]}"
 do
+   git config --global --add safe.directory $workspace_path/src/$repo
    cd $repo
    repo_https_url=$(git remote -v | awk '{print $2}' | sed 's/git@github.com:/https:\/\/github.com\//g' | head -n 1 | sed 's/\.git//g')
    return_code=$(curl -o /dev/null --silent --head --write-out '%{http_code}\n' $repo_https_url)
