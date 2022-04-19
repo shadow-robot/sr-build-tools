@@ -21,6 +21,11 @@
   set_fact:
     python_files_without_extension_results: "{{python_files_without_extension.results}}"
 
+- name: Move pylintrc file
+  copy:
+    src: ../files/pylintrc
+    dest: /tmp/pylintrc
+
 - name: Execute roslint for every package and .py files and write results in unit tests format
   shell: |
     source /opt/ros/{{ros_release}}/setup.bash && rosrun roslint test_wrapper \
@@ -29,7 +34,7 @@
      
     source /opt/ros/{{ros_release}}/setup.bash && rosrun roslint test_wrapper \
     {{ros_workspace}}/build/test_results/{{item.item.name}}/roslint-python3-py-{{item.item.name}}.xml \
-    "pylint -sn --max-line-length=120 --rcfile=files/pylintrc --msg-template='{abspath}:{line}:{column}:{msg_id}:{msg}' {{item.stdout}}"
+    "pylint -sn --max-line-length=120 --rcfile=/tmp/pylintrc --msg-template='{abspath}:{line}:{column}:{msg_id}:{msg}' {{item.stdout}}"
   args:
     executable: "/bin/bash"
     chdir: "{{repo_sources_path}}/{{item.item.path}}"
@@ -45,7 +50,7 @@
          
     source /opt/ros/{{ros_release}}/setup.bash && rosrun roslint test_wrapper \
     {{ros_workspace}}/build/test_results/{{item.item.name}}/roslint-python3-ex-{{item.item.name}}.xml \
-    "pylint -sn --max-line-length=120 --rcfile=files/pylintrc --msg-template='{abspath}:{line}:{column}:{msg_id}:{msg}' {{item.stdout}}"
+    "pylint -sn --max-line-length=120 --rcfile=/tmp/pylintrc --msg-template='{abspath}:{line}:{column}:{msg_id}:{msg}' {{item.stdout}}"
   args:
     executable: "/bin/bash"
     chdir: "{{repo_sources_path}}/{{item.item.path}}"
