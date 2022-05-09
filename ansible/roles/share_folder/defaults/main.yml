@@ -1,2 +1,0 @@
-shared_folder: "{{ros_workspace}}/src"
-ros_group: "ros"

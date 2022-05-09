@@ -1,8 +1,0 @@
----
-dependencies:
-  - { role: ubuntu_desktop }
-  - { role: ros_install }
-  - { role: ros_user }
-  - { role: ros_workspace }
-  - { role: webserver } # for rosbridge
-

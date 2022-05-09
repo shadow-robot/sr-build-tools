@@ -1,6 +1,0 @@
----
-- name: Update bashrc to use eth1 for RoNeX
-  lineinfile: dest=/home/{{ros_user}}/.bashrc
-              line="export ETHERCAT_PORT=eth1"
-              insertafter=EOF
-              backup=yes

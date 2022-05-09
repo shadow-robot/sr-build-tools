@@ -2,8 +2,6 @@ FROM shadowrobot/build-tools:xenial-kinetic
 
 LABEL Description="This ROS Kinetic image contains Ros Kinetic and Eigen v. 3.3.7"
 ENV eigen_folder=eigen-3.3.7
-ENV aurora_branch="master"
-ENV aurora_script="https://raw.githubusercontent.com/shadow-robot/aurora/$aurora_branch/bin/run-ansible.sh"
 
 RUN set +x && \
     apt-get update && \

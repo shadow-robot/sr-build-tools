@@ -1,7 +1,0 @@
-[Desktop Entry]
-Version=1.0
-Type=Application
-Terminal=false
-Exec=xterm -hold -title "roscore" -e "bash -i -c roscore"
-Name=Roscore
-Icon=/opt/ros/hydro/share/rqt_gui/resource/rqt.png

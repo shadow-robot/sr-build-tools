@@ -1,8 +1,0 @@
-ros_release: 'hydro'
-ros_user: 'gsc'
-ros_user_comment: 'Grasp Stabilisation'
-ros_user_password: "password"
-ros_user_email: 'software@shadowrobot.com'
-ros_workspace_install: "../data/gsc-{{ros_release}}.rosinstall"
-ros_user_background: "files/images/gsc.jpg"
-monospace_font: "Ubuntu Mono 11"

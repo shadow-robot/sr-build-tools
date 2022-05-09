@@ -1,8 +1,0 @@
-[Desktop Entry]
-Version=1.0
-Type=Application
-Terminal=false
-Exec=xterm -title "GSC Shadow" -e bash -i -c 'roslaunch sr_grasp_demo demo_shadow.launch'
-Name=GSC Shadow
-Icon=/home/gsc/Pictures/present3.svg
-Name[en_GB]=GSC Shadow
