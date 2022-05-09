@@ -23,7 +23,7 @@ if  [ "semaphore_docker" != $server_type ] && [ "local" != $server_type ] && [ "
   sudo apt-get update
   
   sudo apt-get install -y python3-dev libxml2-dev libxslt-dev python3-pip lcov wget git libssl-dev libffi-dev libyaml-dev
-  sudo pip3 install --upgrade pip setuptools==44.0.0 gcovr
+  sudo pip3 install --upgrade pip setuptools==51.1.1 gcovr
   sudo pip3 install PyYAML==5.4.1 --ignore-installed
   
   git config --global user.email "build.tools@example.com"
@@ -39,7 +39,7 @@ if  [ "semaphore_docker" != $server_type ] && [ "local" != $server_type ] && [ "
     cd ./ansible
   else
     # No caching
-    git clone https://github.com/shadow-robot/sr-build-tools.git -b "$toolset_branch" $build_tools_folder
+    git clone --depth 1 https://github.com/shadow-robot/sr-build-tools.git -b "$toolset_branch" $build_tools_folder
     cd $build_tools_folder/ansible
   fi
   sudo pip3 install -r data/requirements.txt
