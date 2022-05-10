@@ -29,19 +29,11 @@ if  [ "semaphore_docker" != $server_type ] && [ "local" != $server_type ] && [ "
   git config --global user.email "build.tools@example.com"
   git config --global user.name "Build Tools"
 
-  # Check in case of cached file system
-  if [ -d $build_tools_folder ]; then
-    # Cached
-    cd $build_tools_folder
-    git fetch
-    git checkout "$toolset_branch"
-    git pull origin "$toolset_branch"
-    cd ./ansible
-  else
-    # No caching
-    git clone --depth 1 https://github.com/shadow-robot/sr-build-tools.git -b "$toolset_branch" $build_tools_folder
-    cd $build_tools_folder/ansible
-  fi
+  # Clean up sr-build-tools and clone it with depth 1
+  rm -rf $build_tools_folder
+  git clone --depth 1 https://github.com/shadow-robot/sr-build-tools.git -b "$toolset_branch" $build_tools_folder
+  cd $build_tools_folder/ansible
+  
   sudo pip3 install -r data/requirements.txt
 fi
 
