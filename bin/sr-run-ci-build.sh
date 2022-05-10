@@ -42,7 +42,6 @@ if  [ "semaphore_docker" != $server_type ] && [ "local" != $server_type ] && [ "
     git clone --depth 1 https://github.com/shadow-robot/sr-build-tools.git -b "$toolset_branch" $build_tools_folder
     cd $build_tools_folder/ansible
   fi
-  sudo pip3 uninstall -y ansible-base ansible-core ansible
   sudo pip3 install -r data/requirements.txt
 fi
 
