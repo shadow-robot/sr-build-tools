@@ -1,0 +1,135 @@
+#!/usr/bin/env python3
+
+# Copyright 2022 Open Source Robotics Foundation, Inc.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+import os
+import argparse
+import subprocess
+from datetime import date
+
+# TODO TEST C++ FILES.
+
+class Data:
+    accepted_extensions = ["py", "c", "h", "cpp", "hpp"]
+    changed_files = []
+
+    def __init__(self, path, token, src_vers) -> None:
+        self.path = path
+        self.token = token
+        self.source = src_vers
+        self.current_year = str(date.today().year)
+
+
+def gather_arguments():
+    parser = argparse.ArgumentParser(
+        description='Used to check all files changed in PR and get a list of files changed.',
+        formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+    parser.add_argument(
+        '--path',
+        type=str,
+        required=True,
+        help='The path to the repo to check the licences.')
+
+    args = parser.parse_args()
+    token = os.environ['GITHUB_PASSWORD']
+    if not token:
+        print("GITHUB TOKEN IS MISSING.")
+        exit(1)
+
+    source_version = os.environ['CODEBUILD_SOURCE_VERSION']
+    if not source_version:
+        print("NO SOURCE VERSION DETECTED")
+        exit(1)
+    if len(source_version.split("/")) > 1:
+        source_version = source_version.split("/")[1]  # Just get the PR number
+    return Data(args.path, token, source_version)
+
+
+def authenticate_login(data):
+    """This function is used to login to the github cli using your GitHub token
+       which is passed in through the data object."""
+    command = ["gh", "auth", "login", "--with-token"]
+    process = subprocess.run(command, input=str.encode(data.token))
+    if process.returncode != 0:
+        print(f"Failed to authenticate:\nstdout: {process.stdout}\nstderr: {process.stderr}")
+        exit(1)
+
+
+def get_changes_in_pr(data):
+    """Takes in the data class and uses it to get the differences in the pr. It uses subprocess to
+       get all of the changes using github cli (gh). Then gets all the files changed by getting
+       a list of all strings containing '+++'."""
+    command = ["gh", "pr", "diff", data.source]
+    process = subprocess.Popen(command, text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    out, _ = process.communicate()
+    if process.returncode != 0:
+        print(f"Failed to get changes:\nstdout: {process.stdout}\nstderr: {process.stderr}")
+        exit(1)
+
+    for line in out.splitlines():
+        if "+++" in line:  # Changed files are marked with +++.
+            file_changed = line.split("+++")[1][3:]  # Gets the filename
+            file_path = os.path.join(data.path, file_changed)
+            _, extension = os.path.splitext(file_path)
+            if extension[1:] in data.accepted_extensions:
+                data.changed_files.append(file_path)
+
+
+def get_all_files_comments(data):
+    """This goes through all the found files, looks for all lines starting with # and returns a dictonary
+        containing the path and a list of comments."""
+    file_data = {}
+    for file_path in data.changed_files:
+        with open(file_path, "r") as file:
+            comments = []
+            for line in file.readlines():  # Read file line by line
+                stripped_l = line.strip()  # Remove whitespaces so we can find lines with just comments
+                if stripped_l and len(stripped_l) > 1 and stripped_l[0] == "#":  # Get comment
+                    comments.append(stripped_l)    
+            if comments:
+                file_data[file_path] = comments
+    return file_data
+                    
+
+def do_licence_check(data):
+    """This script gets all the commented lines in the files found. It then goes through each comment
+        checking for the licence line with the year and ensures the current year is somewhere in the string.
+        If the current year doesn't isn't in the file its printed and then the script fails."""
+    file_data = get_all_files_comments(data)
+    missing_licence_date = []
+
+    for path, comments in file_data.items():
+        for comment in comments:
+            if "Shadow Robot Company Ltd." in comment and "Copyright" in comment:
+                if data.current_year not in comment:  # Check if the current year appears
+                    missing_licence_date.append(path)
+    
+    if len(missing_licence_date) > 0:
+        print("These changed files are missing the current year in their licence:")
+        for file in missing_licence_date:
+            print(f"    {file}")
+        exit(1)
+
+
+def main():
+    data = gather_arguments()
+    authenticate_login(data)
+    os.chdir(data.path)
+    get_changes_in_pr(data)
+    do_licence_check(data)
+    
+
+if __name__ == "__main__":
+    main()
