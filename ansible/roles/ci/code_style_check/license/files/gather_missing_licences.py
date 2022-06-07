@@ -45,7 +45,7 @@ def gather_arguments():
 
     with open('/tmp/git_source', 'r') as tmp_file:
         source = tmp_file.read()
-    
+    print(source)
     return Data(args.path, source)
 
 
