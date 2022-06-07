@@ -44,7 +44,7 @@ def gather_arguments():
     args = parser.parse_args()
 
     with open('/tmp/git_source', 'r') as tmp_file:
-        source = tmp_file.read()
+        source = tmp_file.read().strip()
     print(source)
     return Data(args.path, source)
 
@@ -53,7 +53,11 @@ def get_changes_in_pr(data):
     """Takes in the data class and uses it to get the differences in the pr. It uses subprocess to
        get all of the changes using github cli (gh). Then gets all the files changed by getting
        a list of all strings containing '+++' or '---'."""
-    command = ["git", "diff", "origin", data.source]
+    command = ["git", "symbolic-ref", "refs/remotes/origin/HEAD"]
+    master_branch = subprocess.run(command, text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    master_branch = master_branch.stdout.split("/")[-1].strip()
+
+    command = ["git", "diff", master_branch, data.source]
     with subprocess.Popen(command, text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE) as process:
         out, err = process.communicate()
         if process.returncode != 0:
