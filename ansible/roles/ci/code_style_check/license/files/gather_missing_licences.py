@@ -55,9 +55,9 @@ def get_changes_in_pr(data):
        a list of all strings containing '+++' or '---'."""
     command = ["git", "diff", "origin", data.source]
     with subprocess.Popen(command, text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE) as process:
-        out, _ = process.communicate()
+        out, err = process.communicate()
         if process.returncode != 0:
-            print(f"Failed to get changes:\nstdout: {process.stdout}\nstderr: {process.stderr}")
+            print(f"Failed to get changes:\nstdout: {out}\nstderr: {err}")
             sys.exit(1)
 
     for line in out.splitlines():
