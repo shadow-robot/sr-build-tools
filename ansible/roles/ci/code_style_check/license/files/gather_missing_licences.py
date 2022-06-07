@@ -51,7 +51,7 @@ def gather_arguments():
     source_version = os.environ['CODEBUILD_SOURCE_VERSION']
     if not source_version:
         print("NO SOURCE VERSION DETECTED")
-        sys.exit(1)
+        sys.exit(0)  # Master branch doesn't give a PR version.
     if len(source_version.split("/")) > 1:
         source_version = source_version.split("/")[1]  # Just get the PR number
     return Data(args.path, token, source_version)
@@ -70,7 +70,7 @@ def authenticate_login(data):
 def get_changes_in_pr(data):
     """Takes in the data class and uses it to get the differences in the pr. It uses subprocess to
        get all of the changes using github cli (gh). Then gets all the files changed by getting
-       a list of all strings containing '+++'."""
+       a list of all strings containing '+++' or '---'."""
     command = ["gh", "pr", "diff", data.source]
     with subprocess.Popen(command, text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE) as process:
         out, _ = process.communicate()
@@ -97,9 +97,10 @@ def get_changes_in_pr(data):
                     data.changed_files.append(payload)
 
 
-def get_all_files_comments(data):
-    """This goes through all the found files, looks for all lines starting with # and returns a dictonary
-        containing the path and a list of comments."""
+def gather_missing_licences(data):
+    """This goes through all the found files, looks for all lines starting with a comment.
+       Then checks to see if the licence has the current date in it.
+       If it doesn't its added to a list of files missing the correct licence."""
     missing_licence = []
     for file_path, extension in data.changed_files:
         if os.path.exists(file_path):
@@ -123,11 +124,11 @@ def do_licence_check(data):
     """This script gets all the commented lines in the files found. It then goes through each comment
         checking for the licence line with the year and ensures the current year is somewhere in the string.
         If the current year doesn't isn't in the file its printed and then the script fails."""
-    file_data = get_all_files_comments(data)
+    missing_licences = gather_missing_licences(data)
 
-    if len(file_data) > 0:
+    if len(missing_licences) > 0:
         print("These changed files are missing the current year in their licence:")
-        for file in file_data:
+        for file in missing_licences:
             print(f"    {file}")
         sys.exit(1)
 
