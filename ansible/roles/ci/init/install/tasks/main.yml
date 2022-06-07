@@ -3,7 +3,7 @@
 
 - name: Install more packages
   apt: 
-    name: ['ros-{{ros_release}}-cmake-modules','python3-rosdep','python3-pip','cobertura','python3-bloom','fakeroot','libxml2-utils','libyubikey-dev','libykpers-1-dev','curl']
+    name: ['ros-{{ros_release}}-cmake-modules','python3-rosdep','python3-pip','cobertura','python3-bloom','fakeroot','libxml2-utils','libyubikey-dev','libykpers-1-dev']
   become: yes
   become_method: sudo
   become_user: root
@@ -26,20 +26,16 @@
 
 - name: Install GitHub CLI
   block:
+    - name: install curl
+      apt:
+        name: ['curl']
+        update_cache: yes
+
     - name: download gpg key and add to keyring
       script: curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | sudo dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg
-      become: yes
-      become_method: sudo
-      become_user: root
 
     - name: Connect to GitHub CLI dpkg repo_sources_path
       script: echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | sudo tee /etc/apt/sources.list.d/github-cli.list > /dev/null
-      become: yes
-      become_method: sudo
-      become_user: root
 
     - name: Upgrade apt and install GitHub CLI
       script: sudo apt update && sudo apt install gh
-      become: yes
-      become_method: sudo
-      become_user: root
