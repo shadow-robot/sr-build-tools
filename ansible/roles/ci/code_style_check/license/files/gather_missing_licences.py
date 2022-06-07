@@ -55,7 +55,7 @@ def gather_arguments():
         print("GITHUB TOKEN IS MISSING.")
         sys.exit(1)
 
-    source_version = os.environ['CODEBUILD_RESOLVED_SOURCE_VERSION']
+    #source_version = os.environ['CODEBUILD_RESOLVED_SOURCE_VERSION']
     #source_version = os.environ['CODEBUILD_SOURCE_VERSION']
     if not source_version:
         print("NO SOURCE VERSION DETECTED")
