@@ -41,12 +41,6 @@ def gather_arguments():
         required=True,
         help='The path to the repo to check the licences.')
 
-    parser.add_argument(
-        '--source',
-        type=str,
-        required=True,
-        help='The path to the repo to check the licences.')
-
     args = parser.parse_args()
 
     with open('/tmp/git_source', 'r') as tmp_file:
