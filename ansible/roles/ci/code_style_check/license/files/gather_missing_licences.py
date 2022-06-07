@@ -25,9 +25,8 @@ class Data:
     accepted_extensions = ["py", "c", "h", "cpp", "hpp"]
     changed_files = []
 
-    def __init__(self, path, token, src_vers) -> None:
+    def __init__(self, path, src_vers) -> None:
         self.path = path
-        self.token = token
         self.source = src_vers
         self.current_year = str(date.today().year)
 
@@ -49,37 +48,17 @@ def gather_arguments():
         help='The path to the repo to check the licences.')
 
     args = parser.parse_args()
-    #token = os.environ['GITHUB_PASSWORD']
-    token = "hello"
-    if not token:
-        print("GITHUB TOKEN IS MISSING.")
-        sys.exit(1)
 
-    #source_version = os.environ['CODEBUILD_RESOLVED_SOURCE_VERSION']
-    #source_version = os.environ['CODEBUILD_SOURCE_VERSION']
-    # if not source_version:
-    #     print("NO SOURCE VERSION DETECTED")
-    #     sys.exit(0)  # Master branch doesn't give a PR version.
-    # if len(source_version.split("/")) > 1:
-    #     source_version = source_version.split("/")[1]  # Just get the PR number
-    return Data(args.path, token, args.source)
-
-
-def authenticate_login(data):
-    """This function is used to login to the github cli using your GitHub token
-       which is passed in through the data object."""
-    command = ["gh", "auth", "login", "--with-token"]
-    process = subprocess.run(command, input=str.encode(data.token), check=True)
-    if process.returncode != 0:
-        print(f"Failed to authenticate:\nstdout: {process.stdout}\nstderr: {process.stderr}")
-        sys.exit(1)
+    with open('/tmp/git_source', 'r') as tmp_file:
+        source = tmp_file.read()
+    
+    return Data(args.path, source)
 
 
 def get_changes_in_pr(data):
     """Takes in the data class and uses it to get the differences in the pr. It uses subprocess to
        get all of the changes using github cli (gh). Then gets all the files changed by getting
        a list of all strings containing '+++' or '---'."""
-    #command = ["gh", "pr", "diff", data.source]
     command = ["git", "diff", "origin", data.source]
     with subprocess.Popen(command, text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE) as process:
         out, _ = process.communicate()
@@ -144,7 +123,6 @@ def do_licence_check(data):
 
 def main():
     data = gather_arguments()
-    #authenticate_login(data)
     os.chdir(data.path)
     get_changes_in_pr(data)
     do_licence_check(data)
