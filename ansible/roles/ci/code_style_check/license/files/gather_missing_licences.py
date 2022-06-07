@@ -42,6 +42,12 @@ def gather_arguments():
         required=True,
         help='The path to the repo to check the licences.')
 
+    parser.add_argument(
+        '--source',
+        type=str,
+        required=True,
+        help='The path to the repo to check the licences.')
+
     args = parser.parse_args()
     #token = os.environ['GITHUB_PASSWORD']
     token = "hello"
@@ -56,7 +62,7 @@ def gather_arguments():
         sys.exit(0)  # Master branch doesn't give a PR version.
     if len(source_version.split("/")) > 1:
         source_version = source_version.split("/")[1]  # Just get the PR number
-    return Data(args.path, token, source_version)
+    return Data(args.path, token, args.source)
 
 
 def authenticate_login(data):
