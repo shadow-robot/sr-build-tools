@@ -7,5 +7,8 @@
 - name: Full check for copyright annotation in repository files
   script: ../files/copyright_check_full.sh {{repo_sources_path}}
 
+- name: --print-architecture
+  shell: echo '{{ lookup('env', 'CODEBUILD_RESOLVED_SOURCE_VERSION') }}'
+
 - name: Gather license with incorrect year
-  script: echo '{{ lookup('env', 'CODEBUILD_RESOLVED_SOURCE_VERSION') }}' &&  ../files/gather_missing_licences.py --path {{repo_sources_path}} --source '{{ lookup('env', 'CODEBUILD_RESOLVED_SOURCE_VERSION') }}'
+  script: ../files/gather_missing_licences.py --path {{repo_sources_path}} --source '{{ lookup('env', 'CODEBUILD_RESOLVED_SOURCE_VERSION') }}'
