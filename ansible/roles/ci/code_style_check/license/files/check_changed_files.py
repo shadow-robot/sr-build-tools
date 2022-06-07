@@ -15,11 +15,11 @@
 # limitations under the License.
 
 import os
+import sys
 import argparse
 import subprocess
 from datetime import date
 
-# TODO TEST C++ FILES.
 
 class Data:
     accepted_extensions = ["py", "c", "h", "cpp", "hpp"]
@@ -46,12 +46,12 @@ def gather_arguments():
     token = os.environ['GITHUB_PASSWORD']
     if not token:
         print("GITHUB TOKEN IS MISSING.")
-        exit(1)
+        sys.exit(1)
 
     source_version = os.environ['CODEBUILD_SOURCE_VERSION']
     if not source_version:
         print("NO SOURCE VERSION DETECTED")
-        exit(1)
+        sys.exit(1)
     if len(source_version.split("/")) > 1:
         source_version = source_version.split("/")[1]  # Just get the PR number
     return Data(args.path, token, source_version)
@@ -61,10 +61,10 @@ def authenticate_login(data):
     """This function is used to login to the github cli using your GitHub token
        which is passed in through the data object."""
     command = ["gh", "auth", "login", "--with-token"]
-    process = subprocess.run(command, input=str.encode(data.token))
+    process = subprocess.run(command, input=str.encode(data.token), check=True)
     if process.returncode != 0:
         print(f"Failed to authenticate:\nstdout: {process.stdout}\nstderr: {process.stderr}")
-        exit(1)
+        sys.exit(1)
 
 
 def get_changes_in_pr(data):
@@ -72,11 +72,11 @@ def get_changes_in_pr(data):
        get all of the changes using github cli (gh). Then gets all the files changed by getting
        a list of all strings containing '+++'."""
     command = ["gh", "pr", "diff", data.source]
-    process = subprocess.Popen(command, text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    out, _ = process.communicate()
-    if process.returncode != 0:
-        print(f"Failed to get changes:\nstdout: {process.stdout}\nstderr: {process.stderr}")
-        exit(1)
+    with subprocess.Popen(command, text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE) as process:
+        out, _ = process.communicate()
+        if process.returncode != 0:
+            print(f"Failed to get changes:\nstdout: {process.stdout}\nstderr: {process.stderr}")
+            sys.exit(1)
 
     for line in out.splitlines():
         if "+++" in line:  # Changed files are marked with +++.
@@ -84,43 +84,52 @@ def get_changes_in_pr(data):
             file_path = os.path.join(data.path, file_changed)
             _, extension = os.path.splitext(file_path)
             if extension[1:] in data.accepted_extensions:
-                data.changed_files.append(file_path)
+                payload = (file_path, extension[1:])
+                if payload not in data.changed_files:
+                    data.changed_files.append(payload)
+        if "---" in line:  # Changed files are marked with +++.
+            file_changed = line.split("---")[1][3:]  # Gets the filename
+            file_path = os.path.join(data.path, file_changed)
+            _, extension = os.path.splitext(file_path)
+            if extension[1:] in data.accepted_extensions:
+                payload = (file_path, extension[1:])
+                if payload not in data.changed_files:
+                    data.changed_files.append(payload)
 
 
 def get_all_files_comments(data):
     """This goes through all the found files, looks for all lines starting with # and returns a dictonary
         containing the path and a list of comments."""
-    file_data = {}
-    for file_path in data.changed_files:
-        with open(file_path, "r") as file:
-            comments = []
-            for line in file.readlines():  # Read file line by line
-                stripped_l = line.strip()  # Remove whitespaces so we can find lines with just comments
-                if stripped_l and len(stripped_l) > 1 and stripped_l[0] == "#":  # Get comment
-                    comments.append(stripped_l)    
-            if comments:
-                file_data[file_path] = comments
-    return file_data
-                    
+    missing_licence = []
+    for file_path, extension in data.changed_files:
+        if os.path.exists(file_path):
+            with open(file_path, "r") as file:
+                for line in file.readlines():  # Read file line by line
+                    line = line.strip()  # Remove whitespaces so we can find lines with just comments
+                    if extension == "py":
+                        if line and len(line) > 1 and line[0] == "#":
+                            if "Shadow Robot Company Ltd" in line and "Copyright" in line:
+                                if data.current_year not in line:
+                                    missing_licence.append(file_path)
+                    else:
+                        if line and len(line) > 1 and line[0] in ["/","*"]:
+                            if "Shadow Robot Company Ltd" in line and "Copyright" in line:
+                                if data.current_year not in line:
+                                    missing_licence.append(file_path)
+    return missing_licence
+
 
 def do_licence_check(data):
     """This script gets all the commented lines in the files found. It then goes through each comment
         checking for the licence line with the year and ensures the current year is somewhere in the string.
         If the current year doesn't isn't in the file its printed and then the script fails."""
     file_data = get_all_files_comments(data)
-    missing_licence_date = []
 
-    for path, comments in file_data.items():
-        for comment in comments:
-            if "Shadow Robot Company Ltd." in comment and "Copyright" in comment:
-                if data.current_year not in comment:  # Check if the current year appears
-                    missing_licence_date.append(path)
-    
-    if len(missing_licence_date) > 0:
+    if len(file_data) > 0:
         print("These changed files are missing the current year in their licence:")
-        for file in missing_licence_date:
+        for file in file_data:
             print(f"    {file}")
-        exit(1)
+        sys.exit(1)
 
 
 def main():
@@ -129,7 +138,7 @@ def main():
     os.chdir(data.path)
     get_changes_in_pr(data)
     do_licence_check(data)
-    
+
 
 if __name__ == "__main__":
     main()
