@@ -45,7 +45,6 @@ def gather_arguments():
 
     with open('/tmp/git_source', 'r') as tmp_file:
         source = tmp_file.read().strip()
-    print(source)
     return Data(args.path, source)
 
 
@@ -58,6 +57,7 @@ def get_changes_in_pr(data):
     master_branch = master_branch.stdout.split("/")[-1].strip()
 
     command = ["git", "diff", master_branch, data.source]
+    print(command)
     with subprocess.Popen(command, text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE) as process:
         out, err = process.communicate()
         if process.returncode != 0:
