@@ -43,7 +43,8 @@ def gather_arguments():
         help='The path to the repo to check the licences.')
 
     args = parser.parse_args()
-    token = os.environ['GITHUB_PASSWORD']
+    #token = os.environ['GITHUB_PASSWORD']
+    token = "hello"
     if not token:
         print("GITHUB TOKEN IS MISSING.")
         sys.exit(1)
@@ -71,7 +72,8 @@ def get_changes_in_pr(data):
     """Takes in the data class and uses it to get the differences in the pr. It uses subprocess to
        get all of the changes using github cli (gh). Then gets all the files changed by getting
        a list of all strings containing '+++' or '---'."""
-    command = ["gh", "pr", "diff", data.source]
+    #command = ["gh", "pr", "diff", data.source]
+    command = ["git", "diff", "origin", data.source]
     with subprocess.Popen(command, text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE) as process:
         out, _ = process.communicate()
         if process.returncode != 0:
@@ -135,7 +137,7 @@ def do_licence_check(data):
 
 def main():
     data = gather_arguments()
-    authenticate_login(data)
+    #authenticate_login(data)
     os.chdir(data.path)
     get_changes_in_pr(data)
     do_licence_check(data)
