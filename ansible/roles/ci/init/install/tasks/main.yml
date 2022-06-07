@@ -24,4 +24,13 @@
               insertafter=EOF
               backup=yes
 
+- name: Install GitHub CLI
+  block:
+    - name: download gpg key and add to keyring
+      script: curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | sudo dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg
 
+    - name: Connect to GitHub CLI dpkg repo_sources_path
+      script: echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | sudo tee /etc/apt/sources.list.d/github-cli.list > /dev/null
+
+    - name: Upgrade apt and install GitHub CLI
+      script: sudo apt update && sudo apt install gh
