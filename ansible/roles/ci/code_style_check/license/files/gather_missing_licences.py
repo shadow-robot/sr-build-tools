@@ -20,7 +20,6 @@ import argparse
 import subprocess
 from datetime import date
 
-
 class Data:
     accepted_extensions = ["py", "c", "h", "cpp", "hpp"]
     changed_files = []
@@ -54,7 +53,12 @@ def get_changes_in_pr(data):
        a list of all strings containing '+++' or '---'."""
     command = ["git", "symbolic-ref", "refs/remotes/origin/HEAD"]
     master_branch = subprocess.run(command, text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    master_branch = master_branch.stdout.split("/")[-1].strip()
+    #master_branch = master_branch.stdout.split("/")[-1].strip()
+    print(master_branch.stdout)
+
+    command = ["git", "remote", "-v"]
+    master_branch = subprocess.run(command, text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    print(master_branch.stdout)
 
     command = ["git", "diff", "noetic-devel", data.source]
     print(command)
