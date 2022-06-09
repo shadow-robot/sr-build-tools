@@ -56,7 +56,7 @@ def get_changes_in_pr(data):
     #master_branch = master_branch.stdout.split("/")[-1].strip()
     print(master_branch.stdout)
 # "|", "grep", "-Po", "'HEAD -> \K.*$'"
-    command = ["git", "branch", "-r"]
+    command = ["git", "branch -r"]
     master_branch = subprocess.run(command, text=True, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     print(master_branch.stdout, master_branch.stderr)
 
