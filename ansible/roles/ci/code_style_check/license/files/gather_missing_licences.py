@@ -116,7 +116,7 @@ def do_licence_check(data):
     if len(missing_licences) > 0:
         print("These changed files are missing the current year in their licence:")
         for file in missing_licences:
-            file = file.split("shadow-robot")[1]
+            file = file.split("shadow-robot")[1][1:]
             print(f"    {file}")
         sys.exit(1)
 
