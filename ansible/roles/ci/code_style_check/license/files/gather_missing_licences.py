@@ -56,8 +56,8 @@ def get_changes_in_pr(data):
     #master_branch = master_branch.stdout.split("/")[-1].strip()
     print(master_branch.stdout)
 
-    command = ["git", "remote", "-v"]
-    master_branch = subprocess.run(command, text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    command = ["git", "branch", "-r", "|", "grep", "-Po", "'HEAD -> \K.*$'"]
+    master_branch = subprocess.run(command, text=True, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     print(master_branch.stdout)
 
     command = ["git", "diff", "noetic-devel", data.source]
