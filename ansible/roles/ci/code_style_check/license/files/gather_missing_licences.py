@@ -118,7 +118,7 @@ def do_licence_check(data):
         for file in missing_licences:
             file = file.split("shadow-robot")[1][1:]
             print(f"    {file}")
-        sys.exit(1)
+        exit(1)
 
 
 def main():
