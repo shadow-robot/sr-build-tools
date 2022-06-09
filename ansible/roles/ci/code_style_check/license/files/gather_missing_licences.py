@@ -51,16 +51,14 @@ def get_changes_in_pr(data):
     """Takes in the data class and uses it to get the differences in the pr. It uses subprocess to
        get all of the changes using github cli (gh). Then gets all the files changed by getting
        a list of all strings containing '+++' or '---'."""
-    command = ["git", "symbolic-ref", "refs/remotes/origin/HEAD"]
+    command = ["git", "branch"]
     master_branch = subprocess.run(command, text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    #master_branch = master_branch.stdout.split("/")[-1].strip()
-    print(master_branch.stdout)
-# "|", "grep", "-Po", "'HEAD -> \K.*$'"
-    master_branch = subprocess.run(["git", "branch", "-r"], text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    print(master_branch.stdout, master_branch.stderr)
+    devel_branches = ""
+    for branch in master_branch.stdout.split("\n"):
+        if "devel" in branch:
+            devel_branches = branch.strip()
 
-    command = ["git", "diff", "noetic-devel", data.source]
-    print(command)
+    command = ["git", "diff", devel_branches, data.source]
     with subprocess.Popen(command, text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE) as process:
         out, err = process.communicate()
         if process.returncode != 0:
