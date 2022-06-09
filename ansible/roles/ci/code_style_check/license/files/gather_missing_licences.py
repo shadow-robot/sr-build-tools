@@ -70,15 +70,32 @@ def get_changes_in_pr(data):
             file_changed = line.split("+++")[1][3:]  # Gets the filename
             file_path = os.path.join(data.path, file_changed)
             _, extension = os.path.splitext(file_path)
-            if extension[1:] in data.accepted_extensions:
+            if not extension:  # We sometimes have python files without extensions
+                with open(file_path, 'r') as code_file:
+                    firstline = code_file.readline().strip()
+                    if "#!/usr/bin/env python" in firstline:  # Can use to tell if py file
+                        payload = (file_path, "py")
+                        if payload not in data.changed_files:
+                            data.changed_files.append(payload)
+            elif extension[1:] in data.accepted_extensions:
                 payload = (file_path, extension[1:])
                 if payload not in data.changed_files:
                     data.changed_files.append(payload)
+
         if "---" in line:  # Changed files are marked with +++.
             file_changed = line.split("---")[1][3:]  # Gets the filename
             file_path = os.path.join(data.path, file_changed)
             _, extension = os.path.splitext(file_path)
-            if extension[1:] in data.accepted_extensions:
+            if not os.path.exists(file_path):  # For if files are removed.
+                continue
+            if not extension:  # We sometimes have python files without extensions
+                with open(file_path, 'r') as code_file:
+                    firstline = code_file.readline().strip()
+                    if "#!/usr/bin/env python" in firstline:  # Can use to tell if py file
+                        payload = (file_path, "py")
+                        if payload not in data.changed_files:
+                            data.changed_files.append(payload)
+            elif extension[1:] in data.accepted_extensions:
                 payload = (file_path, extension[1:])
                 if payload not in data.changed_files:
                     data.changed_files.append(payload)
@@ -90,20 +107,19 @@ def gather_missing_licences(data):
        If it doesn't its added to a list of files missing the correct licence."""
     missing_licence = []
     for file_path, extension in data.changed_files:
-        if os.path.exists(file_path):
-            with open(file_path, "r") as file:
-                for line in file.readlines():  # Read file line by line
-                    line = line.strip()  # Remove whitespaces so we can find lines with just comments
-                    if extension == "py":
-                        if line and len(line) > 1 and line[0] == "#":
-                            if "Shadow Robot Company Ltd" in line and "Copyright" in line:
-                                if data.current_year not in line:
-                                    missing_licence.append(file_path)
-                    else:
-                        if line and len(line) > 1 and line[0] in ["/","*"]:
-                            if "Shadow Robot Company Ltd" in line and "Copyright" in line:
-                                if data.current_year not in line:
-                                    missing_licence.append(file_path)
+        with open(file_path, "r") as file:
+            for line in file.readlines():  # Read file line by line
+                line = line.strip()  # Remove whitespaces so we can find lines with just comments
+                if extension == "py":
+                    if line and len(line) > 1 and line[0] == "#":
+                        if "Shadow Robot Company Ltd" in line and "Copyright" in line:
+                            if data.current_year not in line:
+                                missing_licence.append(file_path)
+                else:
+                    if line and len(line) > 1 and line[0] in ["/","*"]:
+                        if "Shadow Robot Company Ltd" in line and "Copyright" in line:
+                            if data.current_year not in line:
+                                missing_licence.append(file_path)
     return missing_licence
 
 
@@ -116,9 +132,10 @@ def do_licence_check(data):
     if len(missing_licences) > 0:
         print("These changed files are missing the current year in their licence:")
         for file in missing_licences:
-            file = file.split("shadow-robot")[1][1:]
+            if "shadow-robot" in file:  # For local runs only
+                file = file.split("shadow-robot")[1][1:]
             print(f"    {file}")
-        exit(1)
+        sys.exit(1)
 
 
 def main():
