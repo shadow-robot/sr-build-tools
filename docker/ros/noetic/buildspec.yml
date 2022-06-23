@@ -3,7 +3,7 @@ version: 0.2
 env:
   shell: bash
   variables:
-     branch: master
+     branch: SP-263_add_network_tools
      image: build-tools
      tag: focal-noetic
      dockerfile_folder: docker/ros/noetic/
