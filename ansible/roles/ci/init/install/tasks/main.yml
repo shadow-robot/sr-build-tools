@@ -23,5 +23,3 @@
               regexp='^source.*/setup\.bash'
               insertafter=EOF
               backup=yes
-
-
