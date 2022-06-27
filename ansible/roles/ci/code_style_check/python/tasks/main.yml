@@ -4,7 +4,6 @@
 - name: Get list of all Python files
   script: "../../common_resources/files/files_by_extension.py \
     -p {{repo_sources_path}} -ft python"
-  with_items: "{{repo_packages_list|default([])}}"
   register: python_files_without_extension
 
 - name: Set variable to workaround ansible type evaluation issue
