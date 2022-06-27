@@ -71,12 +71,13 @@ def get_changes_in_pr(data):
             file_path = os.path.join(data.path, file_changed)
             _, extension = os.path.splitext(file_path)
             if not extension:  # We sometimes have python files without extensions
-                with open(file_path, 'r') as code_file:
-                    firstline = code_file.readline().strip()
-                    if "#!/usr/bin/env python" in firstline:  # Can use to tell if py file
-                        payload = (file_path, "py")
-                        if payload not in data.changed_files:
-                            data.changed_files.append(payload)
+                if os.path.exists(file_path):
+                    with open(file_path, 'r') as code_file:
+                        firstline = code_file.readline().strip()
+                        if "#!/usr/bin/env python" in firstline:  # Can use to tell if py file
+                            payload = (file_path, "py")
+                            if payload not in data.changed_files:
+                                data.changed_files.append(payload)
             elif extension[1:] in data.accepted_extensions:
                 payload = (file_path, extension[1:])
                 if payload not in data.changed_files:
