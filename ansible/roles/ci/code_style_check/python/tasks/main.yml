@@ -23,7 +23,7 @@
          
     source /opt/ros/{{ros_release}}/setup.bash && rosrun roslint test_wrapper \
     {{ros_workspace}}/build/test_results/{{item.item.name}}/roslint-python3-ex-{{item.item.name}}.xml \
-    "pylint -sn --rcfile=/tmp/pylintrc --msg-template='{abspath}:{line}:{column}:{msg_id}:{msg}' {{item.stdout}}"
+    "pylint -sn --rcfile=/tmp/pylintrc --msg-template='{abspath}:{line}:{column}:{msg_id}:{msg}' {{item}}"
   args:
     executable: "/bin/bash"
     chdir: "{{repo_sources_path}}/{{item.item.path}}"
