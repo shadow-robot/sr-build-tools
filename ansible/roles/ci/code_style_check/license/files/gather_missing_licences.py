@@ -74,7 +74,7 @@ def get_changes_in_pr(data):
                 if os.path.exists(file_path) and os.path.isfile(file_path):
                     with open(file_path, 'r') as code_file:
                         firstline = code_file.readline().strip()
-                        if "#!/usr/bin/env python" in firstline:  # Can use to tell if py file
+                        if "#!/usr/bin/env python" in firstline or "#!/usr/bin/python" in firstline:
                             payload = (file_path, "py")
                             if payload not in data.changed_files:
                                 data.changed_files.append(payload)
@@ -93,7 +93,7 @@ def get_changes_in_pr(data):
                 if os.path.exists(file_path) and os.path.isfile(file_path):
                     with open(file_path, 'r') as code_file:
                         firstline = code_file.readline().strip()
-                        if "#!/usr/bin/env python" in firstline:  # Can use to tell if py file
+                        if "#!/usr/bin/env python" in firstline or "#!/usr/bin/python" in firstline:
                             payload = (file_path, "py")
                             if payload not in data.changed_files:
                                 data.changed_files.append(payload)
