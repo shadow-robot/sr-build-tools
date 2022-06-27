@@ -1,46 +1,20 @@
 ---
 # Playbook for Python code style check
 
-- name: Get list of all Python files by extension in repository
-  script: "../../common_resources/files/files_by_extension_and_policy.sh \
-    {{repo_sources_path}} {{repo_sources_path}}/{{item.path}} py .lintignore"
-  with_items: "{{repo_packages_list|default([])}}"
-  register: python_files_with_extension
-
-- name: Set variable to workaround ansible type evaluation issue
-  set_fact:
-    python_files_with_extension_results: "{{python_files_with_extension.results}}"
-
-- name: Get list of all Python files by content in repository
-  script: "../../common_resources/files/files_by_content_and_policy.sh \
-    {{repo_sources_path}} {{repo_sources_path}}/{{item.path}} '^#!/usr/bin/env python|^#! /usr/bin/env python|^#!/usr/bin/python|^#! /usr/bin/python' .lintignore '.*\\..*'"
+- name: Get list of all Python files
+  script: "../../common_resources/files/files_by_extension.py \
+    -p {{repo_sources_path}} -ft python"
   with_items: "{{repo_packages_list|default([])}}"
   register: python_files_without_extension
 
 - name: Set variable to workaround ansible type evaluation issue
   set_fact:
-    python_files_without_extension_results: "{{python_files_without_extension.results}}"
+    python_files_without_extension_results: "{{python_files_without_extension.stdout_lines}}"
 
 - name: Move pylintrc file
   copy:
     src: ../files/pylintrc
     dest: /tmp/pylintrc
-
-- name: Execute roslint for every package and .py files and write results in unit tests format
-  shell: |
-    source /opt/ros/{{ros_release}}/setup.bash && rosrun roslint test_wrapper \
-    {{ros_workspace}}/build/test_results/{{item.item.name}}/roslint-python-py-{{item.item.name}}.xml \
-    'rosrun roslint pycodestyle --max-line-length=120 {{item.stdout}}'
-     
-    source /opt/ros/{{ros_release}}/setup.bash && rosrun roslint test_wrapper \
-    {{ros_workspace}}/build/test_results/{{item.item.name}}/roslint-python3-py-{{item.item.name}}.xml \
-    "pylint -sn --rcfile=/tmp/pylintrc --msg-template='{abspath}:{line}:{column}:{msg_id}:{msg}' {{item.stdout}}"
-  args:
-    executable: "/bin/bash"
-    chdir: "{{repo_sources_path}}/{{item.item.path}}"
-  with_items: "{{python_files_with_extension_results|default([])}}"
-  when: item.stdout != ""
-  ignore_errors: True
 
 - name: Execute roslint for every package and no extension files and write results in unit tests format
   shell: |
