@@ -4,11 +4,11 @@
 - name: Get list of all Python files
   script: "../../common_resources/files/files_by_extension.py \
     -p {{repo_sources_path}} -ft python"
-  register: python_files_without_extension
+  register: python_files
 
 - name: Set variable to workaround ansible type evaluation issue
   set_fact:
-    python_files_without_extension_results: "{{python_files_without_extension.stdout_lines}}"
+    python_files_results: "{{python_files.stdout_lines}}"
 
 - name: Move pylintrc file
   copy:
@@ -26,7 +26,7 @@
     "pylint -sn --rcfile=/tmp/pylintrc --msg-template='{abspath}:{line}:{column}:{msg_id}:{msg}' {{item}}"
   args:
     executable: "/bin/bash"
-  with_items: "{{python_files_without_extension_results|default([])}}"
+  with_items: "{{python_files_results|default([])}}"
   ignore_errors: True
 
 
