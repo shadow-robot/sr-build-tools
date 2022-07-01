@@ -55,8 +55,9 @@ def get_changes_in_pr(data):
     master_branch = subprocess.run(command, text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     devel_branches = ""
     for branch in master_branch.stdout.split("\n"):
-        if "devel" in branch:
+        if "devel" in branch or "master" in branch or "main" in branch:
             devel_branches = branch.strip()
+            break
 
     command = ["git", "diff", devel_branches, data.source]
     with subprocess.Popen(command, text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE) as process:
