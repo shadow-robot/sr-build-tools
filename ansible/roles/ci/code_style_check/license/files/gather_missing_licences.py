@@ -55,7 +55,7 @@ def get_changes_in_pr(data):
     master_branch = subprocess.run(command, text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     devel_branches = ""
     for branch in master_branch.stdout.split("\n"):
-        print(any(branch in entry for entry in ["devel","master","main"]))
+        print(any(branch in entry for entry in ["devel","master","main"]), branch)
         if any(branch in entry for entry in ["devel","master","main"]):
             print(branch.strip())
             devel_branches = branch.strip()
