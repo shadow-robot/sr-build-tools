@@ -55,7 +55,12 @@ def get_changes_in_pr(data):
     master_branch = subprocess.run(command, text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     command = ["git", "branch", "-a", "--contains", data.source]
     active_branch = subprocess.run(command, text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    print(active_branch.stdout.split("\n"))
+    for branch in active_branch.stdout.split("\n"):
+        if "remotes/origin/" in branch:
+            branch = branch.split("remotes/origin/")[-1]
+            print(branch)
+            break
+    
     devel_branches = ""
     master_branches = ["devel","master","main"]
     for branch in master_branch.stdout.split("\n"):
