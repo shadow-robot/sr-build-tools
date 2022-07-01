@@ -59,9 +59,9 @@ def get_changes_in_pr(data):
             active_branch = branch.split("remotes/origin/")[-1]
             break
     
-    # command = ["git", "checkout", active_branch]
-    # test = subprocess.run(command, text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    # print(test.stderr, test.stdout)
+    command = ["git", "checkout", active_branch]
+    checkout_branch_process = subprocess.run(command, text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    print(checkout_branch_process.stderr, checkout_branch_process.stdout)
 
     # Gets the master branch
     command = ["git", "branch"]
@@ -77,9 +77,9 @@ def get_changes_in_pr(data):
         exit(1)
     
     command = ["git", "diff", "--name-only", devel_branches, active_branch]
-    gitdiff_process = subprocess.run(command, text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    print(gitdiff_process.stdout, gitdiff_process.stderr)
-    for line in gitdiff_process.stdout.splitlines():
+    git_diff_process = subprocess.run(command, text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    print(git_diff_process.stdout, git_diff_process.stderr)
+    for line in git_diff_process.stdout.splitlines():
         file_path = os.path.join(data.path, line)
         print(file_path)
         _, extension = os.path.splitext(file_path)
