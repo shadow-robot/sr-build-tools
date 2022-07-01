@@ -51,18 +51,21 @@ def get_changes_in_pr(data):
     """Takes in the data class and uses it to get the differences in the pr. It uses subprocess to
        get all of the changes using github cli (gh). Then gets all the files changed by getting
        a list of all strings containing '+++' or '---'."""
-    command = ["git", "branch"]
-    master_branch = subprocess.run(command, text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    
     command = ["git", "branch", "-a", "--contains", data.source]
     active_branch = subprocess.run(command, text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     for branch in active_branch.stdout.split("\n"):
         if "remotes/origin/" in branch:
             active_branch = branch.split("remotes/origin/")[-1]
             break
-    command = ["git", "checkout", active_branch]
-    test = subprocess.run(command, text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    print(test.stderr, test.stdout)
+    
+    # command = ["git", "checkout", active_branch]
+    # test = subprocess.run(command, text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    # print(test.stderr, test.stdout)
 
+    # Gets the master branch
+    command = ["git", "branch"]
+    master_branch = subprocess.run(command, text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     devel_branches = ""
     master_branches = ["devel","master","main"]
     for branch in master_branch.stdout.split("\n"):
@@ -74,23 +77,14 @@ def get_changes_in_pr(data):
         exit(1)
     
     command = ["git", "diff", "--name-only", devel_branches, active_branch]
-    test = subprocess.run(command, text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    print(test.stderr, test.stdout)
+    gitdiff_process = subprocess.run(command, text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
-    command = ["git", "diff", devel_branches, data.source]
-    with subprocess.Popen(command, text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE) as process:
-        out, err = process.communicate()
-        if process.returncode != 0:
-            print(f"Failed to get changes:\nstdout: {out}\nstderr: {err}")
-            sys.exit(1)
-
-    for line in out.splitlines():
-        if "+++" in line:  # Changed files are marked with +++.
-            file_changed = line.split("+++")[1][3:]  # Gets the filename
-            file_path = os.path.join(data.path, file_changed)
-            _, extension = os.path.splitext(file_path)
+    for line in gitdiff_process.stdout.splitlines():
+        file_path = os.path.join(data.path, line)
+        print(file_path)
+        _, extension = os.path.splitext(file_path)
+        if os.path.exists(file_path) and os.path.isfile(file_path):
             if not extension:  # We sometimes have python files without extensions
-                if os.path.exists(file_path) and os.path.isfile(file_path):
                     with open(file_path, 'r') as code_file:
                         firstline = code_file.readline().strip()
                         if "#!/usr/bin/env python" in firstline or "#!/usr/bin/python" in firstline:
@@ -102,24 +96,49 @@ def get_changes_in_pr(data):
                 if payload not in data.changed_files:
                     data.changed_files.append(payload)
 
-        if "---" in line:  # Changed files are marked with +++.
-            file_changed = line.split("---")[1][3:]  # Gets the filename
-            file_path = os.path.join(data.path, file_changed)
-            _, extension = os.path.splitext(file_path)
-            if not os.path.exists(file_path):  # For if files are removed.
-                continue
-            if not extension:  # We sometimes have python files without extensions
-                if os.path.exists(file_path) and os.path.isfile(file_path):
-                    with open(file_path, 'r') as code_file:
-                        firstline = code_file.readline().strip()
-                        if "#!/usr/bin/env python" in firstline or "#!/usr/bin/python" in firstline:
-                            payload = (file_path, "py")
-                            if payload not in data.changed_files:
-                                data.changed_files.append(payload)
-            elif extension[1:] in data.accepted_extensions:
-                payload = (file_path, extension[1:])
-                if payload not in data.changed_files:
-                    data.changed_files.append(payload)
+    # command = ["git", "diff", devel_branches, data.source]
+    # with subprocess.Popen(command, text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE) as process:
+    #     out, err = process.communicate()
+    #     if process.returncode != 0:
+    #         print(f"Failed to get changes:\nstdout: {out}\nstderr: {err}")
+    #         sys.exit(1)
+
+    # for line in out.splitlines():
+    #     if "+++" in line:  # Changed files are marked with +++.
+    #         file_changed = line.split("+++")[1][3:]  # Gets the filename
+    #         file_path = os.path.join(data.path, file_changed)
+    #         _, extension = os.path.splitext(file_path)
+    #         if not extension:  # We sometimes have python files without extensions
+    #             if os.path.exists(file_path) and os.path.isfile(file_path):
+    #                 with open(file_path, 'r') as code_file:
+    #                     firstline = code_file.readline().strip()
+    #                     if "#!/usr/bin/env python" in firstline or "#!/usr/bin/python" in firstline:
+    #                         payload = (file_path, "py")
+    #                         if payload not in data.changed_files:
+    #                             data.changed_files.append(payload)
+    #         elif extension[1:] in data.accepted_extensions:
+    #             payload = (file_path, extension[1:])
+    #             if payload not in data.changed_files:
+    #                 data.changed_files.append(payload)
+
+    #     if "---" in line:  # Changed files are marked with +++.
+    #         file_changed = line.split("---")[1][3:]  # Gets the filename
+    #         file_path = os.path.join(data.path, file_changed)
+    #         _, extension = os.path.splitext(file_path)
+    #         if not os.path.exists(file_path):  # For if files are removed.
+    #             continue
+    #         if not extension:  # We sometimes have python files without extensions
+    #             if os.path.exists(file_path) and os.path.isfile(file_path):
+    #                 with open(file_path, 'r') as code_file:
+    #                     firstline = code_file.readline().strip()
+    #                     if "#!/usr/bin/env python" in firstline or "#!/usr/bin/python" in firstline:
+    #                         payload = (file_path, "py")
+    #                         if payload not in data.changed_files:
+    #                             data.changed_files.append(payload)
+    #         elif extension[1:] in data.accepted_extensions:
+    #             payload = (file_path, extension[1:])
+    #             if payload not in data.changed_files:
+    #                 data.changed_files.append(payload)
 
 
 def gather_missing_licences(data):
