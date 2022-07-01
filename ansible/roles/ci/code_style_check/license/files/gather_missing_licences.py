@@ -54,12 +54,13 @@ def get_changes_in_pr(data):
     command = ["git", "branch"]
     master_branch = subprocess.run(command, text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     devel_branches = ""
+    master_branches = ["devel","master","main"]
     for branch in master_branch.stdout.split("\n"):
-        if any(entry in branch for entry in ["devel","master","main"]):
+        if any(entry in branch for entry in master_branches):
             devel_branches = branch.strip()
             break
     if devel_branches == "":
-        print("Could not find the master branch: checks for devel, master, main")
+        print(f"Could not find the master branch: checks for {master_branches}")
         exit(1)
     command = ["git", "diff", devel_branches, data.source]
     with subprocess.Popen(command, text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE) as process:
