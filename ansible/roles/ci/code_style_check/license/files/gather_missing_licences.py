@@ -53,6 +53,9 @@ def get_changes_in_pr(data):
        a list of all strings containing '+++' or '---'."""
     command = ["git", "branch"]
     master_branch = subprocess.run(command, text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    command = ["git", "branch", "-a", "--contains", data.source]
+    active_branch = subprocess.run(command, text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    print(active_branch.stdout.split("\n"))
     devel_branches = ""
     master_branches = ["devel","master","main"]
     for branch in master_branch.stdout.split("\n"):
