@@ -57,6 +57,7 @@ def get_changes_in_pr(data):
     for branch in master_branch.stdout.split("\n"):
         print(any(branch in entry for entry in ["devel","master","main"]))
         if any(branch in entry for entry in ["devel","master","main"]):
+            print(branch.strip())
             devel_branches = branch.strip()
             break
 
