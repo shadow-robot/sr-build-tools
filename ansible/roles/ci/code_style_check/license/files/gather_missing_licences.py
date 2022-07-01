@@ -78,7 +78,7 @@ def get_changes_in_pr(data):
     
     command = ["git", "diff", "--name-only", devel_branches, active_branch]
     gitdiff_process = subprocess.run(command, text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    print(gitdiff_process.stdout)
+    print(gitdiff_process.stdout, gitdiff_process.stderr)
     for line in gitdiff_process.stdout.splitlines():
         file_path = os.path.join(data.path, line)
         print(file_path)
