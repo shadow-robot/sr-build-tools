@@ -58,6 +58,7 @@ def get_changes_in_pr(data):
     if active_branch_process.returncode != 0:
         print(f"ERROR WITH COMMAND:\nstderr:{active_branch_process.stderr}\nstdout:{active_branch_process.stdout}")
     for branch in active_branch_process.stdout.split("\n"):
+        print(branch)
         if "remotes/origin/" in branch:
             active_branch = branch.split("remotes/origin/")[-1]
             break
