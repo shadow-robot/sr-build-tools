@@ -62,6 +62,11 @@ def get_changes_in_pr(data):
     command = ["git", "checkout", active_branch]
     test = subprocess.run(command, text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     print(test.stderr, test.stdout)
+
+    command = ["git", "diff", "--name-only"]
+    test = subprocess.run(command, text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    print(test.stderr, test.stdout)
+
     devel_branches = ""
     master_branches = ["devel","master","main"]
     for branch in master_branch.stdout.split("\n"):
