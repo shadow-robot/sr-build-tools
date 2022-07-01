@@ -57,8 +57,8 @@ def get_changes_in_pr(data):
     active_branch = ""
     if active_branch_process.returncode != 0:
         print(f"ERROR WITH COMMAND:\nstderr:{active_branch_process.stderr}\nstdout:{active_branch_process.stdout}")
+        exit(1)
     for branch in active_branch_process.stdout.split("\n"):
-        print(branch)
         if "remotes/origin/" in branch:
             active_branch = branch.split("remotes/origin/")[-1]
             break
@@ -66,12 +66,14 @@ def get_changes_in_pr(data):
     checkout_branch_process = subprocess.run(command, text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     if checkout_branch_process.returncode != 0:
         print(f"ERROR WITH COMMAND:\nstderr:{checkout_branch_process.stderr}\nstdout:{checkout_branch_process.stdout}")
+        exit(1)
 
     # Gets the master branch
     command = ["git", "branch"]
     master_branch_process = subprocess.run(command, text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     if master_branch_process.returncode != 0:
         print(f"ERROR WITH COMMAND:\nstderr:{master_branch_process.stderr}\nstdout:{master_branch_process.stdout}")
+        exit(1)
     devel_branches = ""
     master_branches = ["devel","master","main"]
     for branch in master_branch_process.stdout.split("\n"):
