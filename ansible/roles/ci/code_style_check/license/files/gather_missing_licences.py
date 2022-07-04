@@ -86,6 +86,7 @@ def get_changes_in_pr(data):
 
     # Get the differences between the PR and master.
     command = ["git", "diff", "--name-only", devel_branches, active_branch]
+    python_headers = ["#!/usr/bin/env python", "#!/usr/bin/python"]
     git_diff_process = subprocess.run(command, text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     for line in git_diff_process.stdout.splitlines():
         file_path = os.path.join(data.path, line)
@@ -94,7 +95,7 @@ def get_changes_in_pr(data):
             if not extension:  # We sometimes have python files without extensions
                 with open(file_path, 'r') as code_file:
                     firstline = code_file.readline().strip()
-                    if "#!/usr/bin/env python" in firstline or "#!/usr/bin/python" in firstline:
+                    if any(entry in firstline for entry in python_headers):
                         payload = (file_path, "py")
                         if payload not in data.changed_files:
                             data.changed_files.append(payload)
