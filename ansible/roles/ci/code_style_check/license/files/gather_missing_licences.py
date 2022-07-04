@@ -20,10 +20,13 @@ import argparse
 import subprocess
 from datetime import date
 
-class Data:
-    accepted_extensions = ["py", "c", "h", "cpp", "hpp"]
-    changed_files = []
+PYTHON_HEADERS = ["#!/usr/bin/env python", "#!/usr/bin/python"]
+ACCEPTED_EXTENSIONS = ["py", "c", "h", "cpp", "hpp"]
+MASTER_BRANCHES = ["devel","master","main"]
 
+
+class Data:
+    changed_files = []
     def __init__(self, path, src_vers) -> None:
         self.path = path
         self.source = src_vers
@@ -75,18 +78,16 @@ def get_changes_in_pr(data):
         print(f"ERROR WITH COMMAND:\nstderr:{master_branch_process.stderr}\nstdout:{master_branch_process.stdout}")
         exit(1)
     devel_branches = ""
-    master_branches = ["devel","master","main"]
     for branch in master_branch_process.stdout.split("\n"):
-        if any(entry in branch for entry in master_branches):
+        if any(entry in branch for entry in MASTER_BRANCHES):
             devel_branches = branch.strip()
             break
     if devel_branches == "":
-        print(f"Could not find the master branch: checks for {master_branches}")
+        print(f"Could not find the master branch: checks for {MASTER_BRANCHES}")
         exit(1)
 
     # Get the differences between the PR and master.
     command = ["git", "diff", "--name-only", devel_branches, active_branch]
-    python_headers = ["#!/usr/bin/env python", "#!/usr/bin/python"]
     git_diff_process = subprocess.run(command, text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     for line in git_diff_process.stdout.splitlines():
         file_path = os.path.join(data.path, line)
@@ -95,11 +96,11 @@ def get_changes_in_pr(data):
             if not extension:  # We sometimes have python files without extensions
                 with open(file_path, 'r') as code_file:
                     firstline = code_file.readline().strip()
-                    if any(entry in firstline for entry in python_headers):
+                    if any(entry in firstline for entry in PYTHON_HEADERS):
                         payload = (file_path, "py")
                         if payload not in data.changed_files:
                             data.changed_files.append(payload)
-            elif extension[1:] in data.accepted_extensions:
+            elif extension[1:] in ACCEPTED_EXTENSIONS:
                 payload = (file_path, extension[1:])
                 if payload not in data.changed_files:
                     data.changed_files.append(payload)
