@@ -86,7 +86,7 @@ def get_changes_in_pr(data):
             devel_branches = branch
             break
     if devel_branches == "":
-        print(f"Could not find the master branch: checks for noetic-devel, melodic-devel, kinetic-devel, devel, master, main")
+        print(f"Could not find the master branch: checks for {MASTER_BRANCHES}")
         exit(1)
 
     # Get the differences between the PR and master.
