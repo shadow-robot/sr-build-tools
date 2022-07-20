@@ -1,18 +1,18 @@
 #!/usr/bin/env python3
 
-# Copyright 2022 Open Source Robotics Foundation, Inc.
+# Copyright 2022 Shadow Robot Company Ltd.
 #
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
+# This program is free software: you can redistribute it and/or modify it
+# under the terms of the GNU General Public License as published by the Free
+# Software Foundation version 2 of the License.
 #
-#     http://www.apache.org/licenses/LICENSE-2.0
+# This program is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+# FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
+# more details.
 #
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
+# You should have received a copy of the GNU General Public License along
+# with this program. If not, see <http://www.gnu.org/licenses/>.
 
 import os
 import sys
@@ -79,13 +79,6 @@ def get_changes_in_pr(data):
         print(f"ERROR WITH COMMAND:\nstderr:{master_branch_process.stderr}\nstdout:{master_branch_process.stdout}")
         exit(1)
     devel_branches = ""
-    for branch in master_branch_process.stdout.split("\n"):
-        print(branch)
-    # for branch in master_branch_process.stdout.split("\n"):
-    #     if any(entry in branch for entry in MASTER_BRANCHES):
-    #         devel_branches = branch.strip()
-    #         print(f"DEVEL BRANCH: {devel_branches}")
-    #         break
     all_branches = master_branch_process.stdout.split("\n")
     all_branches = [branch.strip() for branch in all_branches]
     if  "noetic-devel" in all_branches:
@@ -111,9 +104,6 @@ def get_changes_in_pr(data):
     # Get the differences between the PR and master.
     command = ["git", "diff", "--name-only", devel_branches, active_branch]
     git_diff_process = subprocess.run(command, text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    print("PRINTING DIFFERENCES")
-    for line in git_diff_process.stdout.splitlines():
-        print(line)
     for line in git_diff_process.stdout.splitlines():
         file_path = os.path.join(data.path, line)
         _, extension = os.path.splitext(file_path)
