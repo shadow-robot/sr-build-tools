@@ -47,6 +47,7 @@ def gather_arguments():
 
     with open('/tmp/git_source', 'r') as tmp_file:
         source = tmp_file.read().strip()
+    print("\n", source)
     return Data(args.path, source)
 
 
@@ -95,6 +96,9 @@ def get_changes_in_pr(data):
     # Get the differences between the PR and master.
     command = ["git", "diff", "--name-only", devel_branches, active_branch]
     git_diff_process = subprocess.run(command, text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    print("PRINTING DIFFERENCES")
+    for line in git_diff_process.stdout.splitlines():
+        print(line)
     for line in git_diff_process.stdout.splitlines():
         file_path = os.path.join(data.path, line)
         _, extension = os.path.splitext(file_path)
