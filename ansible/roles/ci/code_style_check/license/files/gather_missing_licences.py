@@ -22,6 +22,7 @@ from datetime import date
 
 PYTHON_HEADERS = ["#!/usr/bin/env python", "#!/usr/bin/python"]
 ACCEPTED_EXTENSIONS = ["py", "c", "h", "cpp", "hpp"]
+MASTER_BRANCHES = ["noetic-devel", "melodic-devel", "kinetic-devel", "jade-devel", "indigo-devel", "devel", "master", "main"]
 
 
 class Data:
@@ -80,22 +81,10 @@ def get_changes_in_pr(data):
     devel_branches = ""
     list_of_accepted_master_branches = master_branch_process.stdout.split("\n")
     all_branches = [branch.strip() for branch in list_of_accepted_master_branches]
-    if  "noetic-devel" in all_branches:
-        devel_branches = "noetic-devel"
-    elif "melodic-devel" in all_branches:
-        devel_branches = "melodic-devel"
-    elif "kinetic-devel" in all_branches:
-        devel_branches = "kinetic-devel"
-    elif "jade-devel" in all_branches:
-        devel_branches = "jade-devel"
-    elif "indigo-devel" in all_branches:
-        devel_branches = "indigo-devel"
-    elif "devel" in all_branches:
-        devel_branches = "devel"
-    elif "master" in all_branches:
-        devel_branches = "master"
-    elif "main" in all_branches:
-        devel_branches = "main"
+    for branch in MASTER_BRANCHES:
+        if branch in all_branches:
+            devel_branches = branch
+            break
     if devel_branches == "":
         print(f"Could not find the master branch: checks for noetic-devel, melodic-devel, kinetic-devel, devel, master, main")
         exit(1)
