@@ -22,7 +22,6 @@ from datetime import date
 
 PYTHON_HEADERS = ["#!/usr/bin/env python", "#!/usr/bin/python"]
 ACCEPTED_EXTENSIONS = ["py", "c", "h", "cpp", "hpp"]
-MASTER_BRANCHES = ["devel","master","main"]
 
 
 class Data:
@@ -98,7 +97,7 @@ def get_changes_in_pr(data):
     elif "main" in all_branches:
         devel_branches = "main"
     if devel_branches == "":
-        print(f"Could not find the master branch: checks for {MASTER_BRANCHES}")
+        print(f"Could not find the master branch: checks for noetic-devel, melodic-devel, kinetic-devel, devel, master, main")
         exit(1)
 
     # Get the differences between the PR and master.
