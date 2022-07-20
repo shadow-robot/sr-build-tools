@@ -78,8 +78,8 @@ def get_changes_in_pr(data):
         print(f"ERROR WITH COMMAND:\nstderr:{master_branch_process.stderr}\nstdout:{master_branch_process.stdout}")
         exit(1)
     devel_branches = ""
-    all_branches = master_branch_process.stdout.split("\n")
-    all_branches = [branch.strip() for branch in all_branches]
+    list_of_accepted_master_branches = master_branch_process.stdout.split("\n")
+    all_branches = [branch.strip() for branch in list_of_accepted_master_branches]
     if  "noetic-devel" in all_branches:
         devel_branches = "noetic-devel"
     elif "melodic-devel" in all_branches:
