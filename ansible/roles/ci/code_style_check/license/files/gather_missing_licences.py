@@ -63,12 +63,9 @@ def get_changes_in_pr(data):
         print(f"ERROR WITH COMMAND:\nstderr:{active_branch_process.stderr}\nstdout:{active_branch_process.stdout}")
         exit(1)
     for branch in active_branch_process.stdout.split("\n"):
-        print(branch)
-    for branch in active_branch_process.stdout.split("\n"):
         if "remotes/origin/" in branch:
             active_branch = branch.split("remotes/origin/")[-1]
             break
-    print(f"ACTIVE BRANCH: {active_branch}")
     command = ["git", "checkout", active_branch]
     checkout_branch_process = subprocess.run(command, text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     if checkout_branch_process.returncode != 0:
@@ -84,11 +81,28 @@ def get_changes_in_pr(data):
     devel_branches = ""
     for branch in master_branch_process.stdout.split("\n"):
         print(branch)
-    for branch in master_branch_process.stdout.split("\n"):
-        if any(entry in branch for entry in MASTER_BRANCHES):
-            devel_branches = branch.strip()
-            print(f"DEVEL BRANCH: {devel_branches}")
-            break
+    # for branch in master_branch_process.stdout.split("\n"):
+    #     if any(entry in branch for entry in MASTER_BRANCHES):
+    #         devel_branches = branch.strip()
+    #         print(f"DEVEL BRANCH: {devel_branches}")
+    #         break
+    all_branches = master_branch_process.stdout.split("\n")
+    if any(entry in "noetic-devel" for entry in all_branches):
+        devel_branches = "noetic-devel"
+    elif any(entry in "melodic-devel" for entry in all_branches):
+        devel_branches = "melodic-devel"
+    elif any(entry in "kinetic-devel" for entry in all_branches):
+        devel_branches = "kinetic-devel"
+    elif any(entry in "jade-devel" for entry in all_branches):
+        devel_branches = "jade-devel"
+    elif any(entry in "indigo-devel" for entry in all_branches):
+        devel_branches = "indigo-devel"
+    elif any(entry in "devel" for entry in all_branches):
+        devel_branches = "devel"
+    elif any(entry in "master" for entry in all_branches):
+        devel_branches = "master"
+    elif any(entry in "main" for entry in all_branches):
+        devel_branches = "main"
     if devel_branches == "":
         print(f"Could not find the master branch: checks for {MASTER_BRANCHES}")
         exit(1)
