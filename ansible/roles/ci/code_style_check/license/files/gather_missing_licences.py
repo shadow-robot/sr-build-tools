@@ -87,21 +87,22 @@ def get_changes_in_pr(data):
     #         print(f"DEVEL BRANCH: {devel_branches}")
     #         break
     all_branches = master_branch_process.stdout.split("\n")
-    if any(entry in "noetic-devel" for entry in all_branches):
+    all_branches = [branch.strip() for branch in all_branches]
+    if  "noetic-devel" in all_branches:
         devel_branches = "noetic-devel"
-    elif any(entry in "melodic-devel" for entry in all_branches):
+    elif "melodic-devel" in all_branches:
         devel_branches = "melodic-devel"
-    elif any(entry in "kinetic-devel" for entry in all_branches):
+    elif "kinetic-devel" in all_branches:
         devel_branches = "kinetic-devel"
-    elif any(entry in "jade-devel" for entry in all_branches):
+    elif "jade-devel" in all_branches:
         devel_branches = "jade-devel"
-    elif any(entry in "indigo-devel" for entry in all_branches):
+    elif "indigo-devel" in all_branches:
         devel_branches = "indigo-devel"
-    elif any(entry in "devel" for entry in all_branches):
+    elif "devel" in all_branches:
         devel_branches = "devel"
-    elif any(entry in "master" for entry in all_branches):
+    elif "master" in all_branches:
         devel_branches = "master"
-    elif any(entry in "main" for entry in all_branches):
+    elif "main" in all_branches:
         devel_branches = "main"
     if devel_branches == "":
         print(f"Could not find the master branch: checks for {MASTER_BRANCHES}")
