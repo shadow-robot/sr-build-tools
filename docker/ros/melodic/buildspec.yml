@@ -6,7 +6,7 @@ env:
      branch: master
      image: build-tools
      tag: bionic-melodic
-     dockerfile_folder: docker/ros/melodic/base/
+     dockerfile_folder: docker/ros/melodic/
   exported-variables:
      - branch
      - image

@@ -28,5 +28,3 @@
     executable: "/bin/bash"
   with_items: "{{python_files_results|default([])}}"
   ignore_errors: True
-
-
