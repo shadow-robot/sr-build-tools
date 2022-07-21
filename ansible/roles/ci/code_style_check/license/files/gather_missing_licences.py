@@ -1,18 +1,18 @@
 #!/usr/bin/env python3
 
-# Copyright 2022 Open Source Robotics Foundation, Inc.
+# Copyright 2022 Shadow Robot Company Ltd.
 #
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
+# This program is free software: you can redistribute it and/or modify it
+# under the terms of the GNU General Public License as published by the Free
+# Software Foundation version 2 of the License.
 #
-#     http://www.apache.org/licenses/LICENSE-2.0
+# This program is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+# FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
+# more details.
 #
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
+# You should have received a copy of the GNU General Public License along
+# with this program. If not, see <http://www.gnu.org/licenses/>.
 
 import os
 import sys
@@ -22,7 +22,7 @@ from datetime import date
 
 PYTHON_HEADERS = ["#!/usr/bin/env python", "#!/usr/bin/python"]
 ACCEPTED_EXTENSIONS = ["py", "c", "h", "cpp", "hpp"]
-MASTER_BRANCHES = ["devel","master","main"]
+MASTER_BRANCHES = ["noetic-devel", "melodic-devel", "kinetic-devel", "jade-devel", "indigo-devel", "devel", "master", "main"]
 
 
 class Data:
@@ -47,6 +47,7 @@ def gather_arguments():
 
     with open('/tmp/git_source', 'r') as tmp_file:
         source = tmp_file.read().strip()
+    print("\n", source)
     return Data(args.path, source)
 
 
@@ -78,9 +79,11 @@ def get_changes_in_pr(data):
         print(f"ERROR WITH COMMAND:\nstderr:{master_branch_process.stderr}\nstdout:{master_branch_process.stdout}")
         exit(1)
     devel_branches = ""
-    for branch in master_branch_process.stdout.split("\n"):
-        if any(entry in branch for entry in MASTER_BRANCHES):
-            devel_branches = branch.strip()
+    list_of_accepted_master_branches = master_branch_process.stdout.split("\n")
+    all_branches = [branch.strip() for branch in list_of_accepted_master_branches]
+    for branch in MASTER_BRANCHES:
+        if branch in all_branches:
+            devel_branches = branch
             break
     if devel_branches == "":
         print(f"Could not find the master branch: checks for {MASTER_BRANCHES}")
