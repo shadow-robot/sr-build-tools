@@ -47,7 +47,6 @@ def gather_arguments():
 
     with open('/tmp/git_source', 'r') as tmp_file:
         source = tmp_file.read().strip()
-    print("\n", source)
     return Data(args.path, source)
 
 
@@ -62,14 +61,14 @@ def get_changes_in_pr(data):
     if active_branch_process.returncode != 0:
         print(f"ERROR WITH COMMAND:\nstderr:{active_branch_process.stderr}\nstdout:{active_branch_process.stdout}")
         exit(1)
-    print(active_branch_process.stdout.split("\n"))
     for branch in active_branch_process.stdout.split("\n"):
         if "remotes/origin/" in branch:
             branch_name = branch.split("remotes/origin/")[-1]
-            # if branch_name in MASTER_BRANCHES:
-            #     exit(0)
+            if branch_name in MASTER_BRANCHES:
+                exit(0)  # Exit on master branch as its already been merged and checked.
             active_branch = branch_name
             break
+
     command = ["git", "checkout", active_branch]
     checkout_branch_process = subprocess.run(command, text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     if checkout_branch_process.returncode != 0:
@@ -84,11 +83,9 @@ def get_changes_in_pr(data):
         exit(1)
     devel_branches = ""
     list_of_accepted_master_branches = master_branch_process.stdout.split("\n")
-    print(master_branch_process.stdout.split("\n"))
     all_branches = [branch.strip() for branch in list_of_accepted_master_branches]
     for branch in MASTER_BRANCHES:
         if branch in all_branches:
-            print(branch)
             devel_branches = branch
             break
     if devel_branches == "":
