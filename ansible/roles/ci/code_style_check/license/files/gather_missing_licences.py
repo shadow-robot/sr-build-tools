@@ -65,7 +65,10 @@ def get_changes_in_pr(data):
     print(active_branch_process.stdout.split("\n"))
     for branch in active_branch_process.stdout.split("\n"):
         if "remotes/origin/" in branch:
-            active_branch = branch.split("remotes/origin/")[-1]
+            branch_name = branch.split("remotes/origin/")[-1]
+            if branch_name in MASTER_BRANCHES:
+                exit(0)
+            active_branch = branch_name
             break
     command = ["git", "checkout", active_branch]
     checkout_branch_process = subprocess.run(command, text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
