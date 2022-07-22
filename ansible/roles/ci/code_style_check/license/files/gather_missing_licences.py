@@ -62,6 +62,7 @@ def get_changes_in_pr(data):
     if active_branch_process.returncode != 0:
         print(f"ERROR WITH COMMAND:\nstderr:{active_branch_process.stderr}\nstdout:{active_branch_process.stdout}")
         exit(1)
+    print(active_branch_process.stdout.split("\n"))
     for branch in active_branch_process.stdout.split("\n"):
         if "remotes/origin/" in branch:
             active_branch = branch.split("remotes/origin/")[-1]
@@ -80,6 +81,7 @@ def get_changes_in_pr(data):
         exit(1)
     devel_branches = ""
     list_of_accepted_master_branches = master_branch_process.stdout.split("\n")
+    print(master_branch_process.stdout.split("\n"))
     all_branches = [branch.strip() for branch in list_of_accepted_master_branches]
     for branch in MASTER_BRANCHES:
         if branch in all_branches:
