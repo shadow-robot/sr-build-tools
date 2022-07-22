@@ -66,8 +66,8 @@ def get_changes_in_pr(data):
     for branch in active_branch_process.stdout.split("\n"):
         if "remotes/origin/" in branch:
             branch_name = branch.split("remotes/origin/")[-1]
-            if branch_name in MASTER_BRANCHES:
-                exit(0)
+            # if branch_name in MASTER_BRANCHES:
+            #     exit(0)
             active_branch = branch_name
             break
     command = ["git", "checkout", active_branch]
@@ -88,6 +88,7 @@ def get_changes_in_pr(data):
     all_branches = [branch.strip() for branch in list_of_accepted_master_branches]
     for branch in MASTER_BRANCHES:
         if branch in all_branches:
+            print(branch)
             devel_branches = branch
             break
     if devel_branches == "":
