@@ -47,7 +47,6 @@ def gather_arguments():
 
     with open('/tmp/git_source', 'r') as tmp_file:
         source = tmp_file.read().strip()
-    print("\n", source)
     return Data(args.path, source)
 
 
@@ -64,8 +63,12 @@ def get_changes_in_pr(data):
         exit(1)
     for branch in active_branch_process.stdout.split("\n"):
         if "remotes/origin/" in branch:
-            active_branch = branch.split("remotes/origin/")[-1]
+            branch_name = branch.split("remotes/origin/")[-1]
+            if branch_name in MASTER_BRANCHES:
+                exit(0)  # Exit on master branch as its already been merged and checked.
+            active_branch = branch_name
             break
+
     command = ["git", "checkout", active_branch]
     checkout_branch_process = subprocess.run(command, text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     if checkout_branch_process.returncode != 0:
