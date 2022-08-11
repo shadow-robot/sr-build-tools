@@ -1,14 +1,14 @@
 #
-# ROS Noetic with build tools Dockerfile
+# ROS2 rolling with build tools Dockerfile
 #
 # https://github.com/shadow-robot/sr-build-tools/
 #
 
-FROM ros:noetic-robot
+FROM osrf/ros2:nightly
 
 MAINTAINER "Shadow Robot's Software Team <software@shadowrobot.com>"
 
-LABEL Description="This image is used to make ROS Noetic based projects build faster using build tools" Vendor="Shadow Robot" Version="1.0"
+LABEL Description="This image is used to make ROS2 rolling based projects build faster using build tools" Vendor="Shadow Robot" Version="1.0"
 
 ENV DEBIAN_FRONTEND noninteractive
 
@@ -16,10 +16,10 @@ ENV PULSE_SERVER /run/pulse/native
 ENV GOSU_VERSION 1.10
 ENV MY_USERNAME user
 
-ENV toolset_branch="master"
+ENV toolset_branch="ros2"
 ENV server_type="docker_hub"
 ENV used_modules="check_cache,create_workspace"
-ENV ros_release_name=noetic
+ENV ros_release_name=rolling
 ENV remote_shell_script="https://raw.githubusercontent.com/shadow-robot/sr-build-tools/$toolset_branch/bin/sr-run-ci-build.sh"
 
 ENV remote_additional_bashrc_cmds="https://raw.githubusercontent.com/shadow-robot/sr-build-tools/$toolset_branch/docker/utils/additional_bashrc_cmds_noetic"
