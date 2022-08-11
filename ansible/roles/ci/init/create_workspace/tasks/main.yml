@@ -31,7 +31,9 @@
         chdir: "/home/user/workspace/"
       become: yes
       become_method: sudo
-  when: ros_release != 'rolling'
+  when:
+    - ros_release != 'rolling' 
+    - ros_release != 'humble'
 
 - name: ROS2
   block:
@@ -59,5 +61,6 @@
  #       chdir: "/home/user/workspace/"
  #     become: yes
  #     become_method: sudo
-  when: ros_release == 'rolling'
-
+  when:
+    - ros_release != 'rolling' 
+    - ros_release != 'humble'

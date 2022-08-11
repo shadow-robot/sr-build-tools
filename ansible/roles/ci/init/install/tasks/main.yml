@@ -14,7 +14,9 @@
   become: yes
   become_method: sudo
   become_user: root
-  when: ros_release != 'rolling'
+  when: 
+    - ros_release != 'rolling' 
+    - ros_release != 'humble'
 
 - name: Install PIP modules
   pip: 
