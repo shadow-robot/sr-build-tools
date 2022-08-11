@@ -6,13 +6,10 @@
 
 FROM osrf/ros2:nightly
 
-MAINTAINER "Shadow Robot's Software Team <software@shadowrobot.com>"
-
 LABEL Description="This image is used to make ROS2 rolling based projects build faster using build tools" Vendor="Shadow Robot" Version="1.0"
 
 ENV DEBIAN_FRONTEND noninteractive
 
-ENV PULSE_SERVER /run/pulse/native
 ENV GOSU_VERSION 1.10
 ENV MY_USERNAME user
 
