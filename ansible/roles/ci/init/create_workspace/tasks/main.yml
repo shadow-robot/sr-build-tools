@@ -4,28 +4,63 @@
 - name: Create workspace {{ros_workspace}}
   file: state=directory path={{ros_workspace}}/src
 
-- name: catkin_init_workspace
-  shell: bash -c "source /opt/ros/{{ros_release}}/setup.bash && catkin_init_workspace"
-    chdir={{ros_workspace}}/src
-    creates={{ros_workspace}}/src/CMakeLists.txt
+- name: ROS1
+  block:
+    - name: catkin_init_workspace
+      shell: bash -c "source /opt/ros/{{ros_release}}/setup.bash && catkin_init_workspace"
+        chdir={{ros_workspace}}/src
+        creates={{ros_workspace}}/src/CMakeLists.txt
 
-- name: Init workspace
-  command: wstool init .
-    chdir={{ros_workspace}}/src
-    creates={{ros_workspace}}/src/.rosinstall
+    - name: Init workspace
+      command: wstool init .
+        chdir={{ros_workspace}}/src
+        creates={{ros_workspace}}/src/.rosinstall
 
-- name: Update dependencies
-  shell: bash -c "rosdep update -y"
-         chdir={{ros_workspace}}
+    - name: Update dependencies
+      shell: bash -c "rosdep update -y"
+             chdir={{ros_workspace}}
 
-- git:
-    repo: 'https://github.com/ros/roslint.git'
-    dest: /home/user/workspace/src/roslint
-    version: python3-support
+    - git:
+        repo: 'https://github.com/ros/roslint.git'
+        dest: /home/user/workspace/src/roslint
+        version: python3-support
     
-- name: Updating roslint with python3 support
-  command: bash -c "source /opt/ros/{{ros_release}}/setup.bash && catkin_make_isolated --install --pkg roslint --install-space $install_space /opt/ros/{{ros_release}}"
-  args:
-    chdir: "/home/user/workspace/"
-  become: yes
-  become_method: sudo
+    - name: Updating roslint with python3 support
+      command: bash -c "source /opt/ros/{{ros_release}}/setup.bash && catkin_make_isolated --install --pkg roslint --install-space $install_space /opt/ros/{{ros_release}}"
+      args:
+        chdir: "/home/user/workspace/"
+      become: yes
+      become_method: sudo
+  when:
+    - ros_release != 'rolling' 
+    - ros_release != 'humble'
+
+- name: ROS2
+  block:
+    - name: Colcon build workspace
+      shell: bash -c "source /opt/ros/{{ros_release}}/setup.bash && colcon build"
+        chdir={{ros_workspace}}
+
+    - name: Init workspace
+      command: wstool init .
+        chdir={{ros_workspace}}/src
+        creates={{ros_workspace}}/src/.rosinstall
+
+    - name: Update dependencies
+      shell: bash -c "rosdep update -y"
+             chdir={{ros_workspace}}
+
+    - git:
+        repo: 'https://github.com/ros/roslint.git'
+        dest: /home/user/workspace/src/roslint
+        version: python3-support
+    
+ #   - name: Updating roslint with python3 support
+ #     command: bash -c "source /opt/ros/{{ros_release}}/setup.bash && catkin_make_isolated --install --pkg roslint --install-space $install_space /opt/ros/{{ros_release}}"
+ #     args:
+ #       chdir: "/home/user/workspace/"
+ #     become: yes
+ #     become_method: sudo
+  when:
+    - ros_release != 'rolling' 
+    - ros_release != 'humble'
