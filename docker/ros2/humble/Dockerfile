@@ -13,7 +13,7 @@ ENV DEBIAN_FRONTEND noninteractive
 ENV GOSU_VERSION 1.10
 ENV MY_USERNAME user
 
-ENV toolset_branch="ros2"
+ENV toolset_branch="master"
 ENV server_type="docker_hub"
 ENV used_modules="check_cache,create_workspace"
 ENV ros_release_name=humble
