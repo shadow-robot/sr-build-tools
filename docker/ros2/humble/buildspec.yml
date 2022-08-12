@@ -5,8 +5,8 @@ env:
   variables:
      branch: master
      image: build-tools
-     tag: focal-rolling
-     dockerfile_folder: docker/ros2/rolling/
+     tag: focal-humble
+     dockerfile_folder: docker/ros2/humble/
   exported-variables:
      - branch
      - image
