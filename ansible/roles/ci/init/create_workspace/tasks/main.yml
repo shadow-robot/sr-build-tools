@@ -62,5 +62,5 @@
  #     become: yes
  #     become_method: sudo
   when:
-    - ros_release != 'rolling' 
-    - ros_release != 'humble'
+    - ros_release == 'rolling' 
+    - ros_release == 'humble'
