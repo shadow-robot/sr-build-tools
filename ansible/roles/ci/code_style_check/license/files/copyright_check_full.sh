@@ -3,11 +3,13 @@
 export directory=$1
 cd $directory
 
-filetypes=(py c h cpp hpp)
+filetypes=(py c h cpp hpp msg yml yaml sh xml xacro dae launch)
 
 exclusions_py=("__init__" "setup.py")
 
 exclusions_c=()
+
+exclusions_xml=()
 
 year_regex="(?:(?:[0-9]{4}){1}(?:-[0-9]{4})?)+(?:, (?:[0-9]{4}){1}(?:-[0-9]{4})?)*"
 
@@ -54,6 +56,22 @@ copyright_py_private="Copyright (C) <Year> Shadow Robot Company Ltd - All Rights
 Unauthorized copying of the content in this file, via any medium is strictly prohibited."
 copyright_py_private="$(regexify "${copyright_py_private}" "#")"
 
+copyright_xml_public="Copyright <Year> Shadow Robot Company Ltd. \
+This program is free software: you can redistribute it and/or modify it \
+under the terms of the GNU General Public License as published by the Free \
+Software Foundation version 2 of the License. \
+This program is distributed in the hope that it will be useful, but WITHOUT \
+ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or \
+FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for \
+more details. \
+You should have received a copy of the GNU General Public License along \
+with this program. If not, see <http://www.gnu.org/licenses/>."
+copyright_xml_public="$(regexify "${copyright_xml_public}" "")"
+
+copyright_xml_private="Copyright (C) <Year> Shadow Robot Company Ltd - All Rights Reserved. Proprietary and Confidential. \
+Unauthorized copying of the content in this file, via any medium is strictly prohibited."
+copyright_xml_private="$(regexify "${copyright_xml_private}" "")"
+
 any_copyright_regex="Copyright"
 
 # Check if the repository is private
@@ -80,10 +98,15 @@ for filetype in "${filetypes[@]}"; do
             public_copyright="${copyright_c_public}"
             exclusions=("${exclusions_c[@]}")
             ;;
-        py)
+        py|msg|yml|yaml|sh)
             private_copyright=${copyright_py_private}
             public_copyright=${copyright_py_public}
             exclusions=("${exclusions_py[@]}")
+            ;;
+        xml|xacro|dae|launch)
+            private_copyright="${copyright_xml_private}"
+            public_copyright="${copyright_xml_public}"
+            exclusions=("${exclusions_xml[@]}")
             ;;
         *)
             echo "Unknown filetype ${filetype}"
