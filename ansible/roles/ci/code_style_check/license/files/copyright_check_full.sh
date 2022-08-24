@@ -24,7 +24,8 @@ regexify () {
     echo ${regexified}
 }
 
-copyright_c_public="Copyright <Year> Shadow Robot Company Ltd. \
+# C, C++, H, H++ file templates
+copyright_c_public_gnu="Copyright <Year> Shadow Robot Company Ltd. \
 This program is free software: you can redistribute it and/or modify it \
 under the terms of the GNU General Public License as published by the Free \
 Software Foundation version 2 of the License. \
@@ -34,13 +35,40 @@ FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for \
 more details. \
 You should have received a copy of the GNU General Public License along \
 with this program. If not, see <http://www.gnu.org/licenses/>."
-copyright_c_public="$(regexify "$copyright_c_public" "\*")"
+copyright_c_public_gnu="$(regexify "$copyright_c_public_gnu" "\*")"
+
+copyright_c_public_bsd="Software License Agreement (BSD License) \
+Copyright © <Year> belongs to Shadow Robot Company Ltd. \
+All rights reserved. \
+\
+Redistribution and use in source and binary forms, with or without modification, \
+are permitted provided that the following conditions are met: \
+  1. Redistributions of source code must retain the above copyright notice, \
+     this list of conditions and the following disclaimer. \
+  2. Redistributions in binary form must reproduce the above copyright notice, \
+     this list of conditions and the following disclaimer in the documentation \
+     and/or other materials provided with the distribution. \
+  3. Neither the name of Shadow Robot Company Ltd nor the names of its contributors \
+     may be used to endorse or promote products derived from this software without \
+     specific prior written permission. \
+\
+This software is provided by Shadow Robot Company Ltd \"as is\" and any express \
+or implied warranties, including, but not limited to, the implied warranties of \
+merchantability and fitness for a particular purpose are disclaimed. In no event \
+shall the copyright holder be liable for any direct, indirect, incidental, special, \
+exemplary, or consequential damages (including, but not limited to, procurement of \
+substitute goods or services; loss of use, data, or profits; or business interruption) \
+however caused and on any theory of liability, whether in contract, strict liability, \
+or tort (including negligence or otherwise) arising in any way out of the use of this \
+software, even if advised of the possibility of such damage."
+copyright_c_public_bsd="$(regexify "$copyright_c_public_bsd" "\*")"
 
 copyright_c_private="Copyright (C) <Year> Shadow Robot Company Ltd - All Rights Reserved. Proprietary and Confidential. \
 Unauthorized copying of the content in this file, via any medium is strictly prohibited."
 copyright_c_private="$(regexify "$copyright_c_private" "\*")"
 
-copyright_py_public="Copyright <Year> Shadow Robot Company Ltd. \
+# py, msg, yml, yaml, sh file templates
+copyright_py_public_gnu="Copyright <Year> Shadow Robot Company Ltd. \
 This program is free software: you can redistribute it and/or modify it \
 under the terms of the GNU General Public License as published by the Free \
 Software Foundation version 2 of the License. \
@@ -50,13 +78,40 @@ FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for \
 more details. \
 You should have received a copy of the GNU General Public License along \
 with this program. If not, see <http://www.gnu.org/licenses/>."
-copyright_py_public="$(regexify "${copyright_py_public}" "#")"
+copyright_py_public_gnu="$(regexify "${copyright_py_public_gnu}" "#")"
+
+copyright_py_public_bsd="Software License Agreement (BSD License) \
+Copyright © <Year> belongs to Shadow Robot Company Ltd. \
+All rights reserved. \
+\
+Redistribution and use in source and binary forms, with or without modification, \
+are permitted provided that the following conditions are met: \
+  1. Redistributions of source code must retain the above copyright notice, \
+     this list of conditions and the following disclaimer. \
+  2. Redistributions in binary form must reproduce the above copyright notice, \
+     this list of conditions and the following disclaimer in the documentation \
+     and/or other materials provided with the distribution. \
+  3. Neither the name of Shadow Robot Company Ltd nor the names of its contributors \
+     may be used to endorse or promote products derived from this software without \
+     specific prior written permission. \
+\
+This software is provided by Shadow Robot Company Ltd \"as is\" and any express \
+or implied warranties, including, but not limited to, the implied warranties of \
+merchantability and fitness for a particular purpose are disclaimed. In no event \
+shall the copyright holder be liable for any direct, indirect, incidental, special, \
+exemplary, or consequential damages (including, but not limited to, procurement of \
+substitute goods or services; loss of use, data, or profits; or business interruption) \
+however caused and on any theory of liability, whether in contract, strict liability, \
+or tort (including negligence or otherwise) arising in any way out of the use of this \
+software, even if advised of the possibility of such damage."
+copyright_py_public_bsd="$(regexify "$copyright_py_public_bsd" "#")"
 
 copyright_py_private="Copyright (C) <Year> Shadow Robot Company Ltd - All Rights Reserved. Proprietary and Confidential. \
 Unauthorized copying of the content in this file, via any medium is strictly prohibited."
 copyright_py_private="$(regexify "${copyright_py_private}" "#")"
 
-copyright_xml_public="Copyright <Year> Shadow Robot Company Ltd. \
+# xml, xacro, dae, launch file templates
+copyright_xml_public_gnu="Copyright <Year> Shadow Robot Company Ltd. \
 This program is free software: you can redistribute it and/or modify it \
 under the terms of the GNU General Public License as published by the Free \
 Software Foundation version 2 of the License. \
@@ -66,7 +121,33 @@ FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for \
 more details. \
 You should have received a copy of the GNU General Public License along \
 with this program. If not, see <http://www.gnu.org/licenses/>."
-copyright_xml_public="$(regexify "${copyright_xml_public}" "")"
+copyright_xml_public_gnu="$(regexify "${copyright_xml_public_gnu}" "")"
+
+copyright_xml_public_bsd="Software License Agreement (BSD License) \
+Copyright © <Year> belongs to Shadow Robot Company Ltd. \
+All rights reserved. \
+\
+Redistribution and use in source and binary forms, with or without modification, \
+are permitted provided that the following conditions are met: \
+  1. Redistributions of source code must retain the above copyright notice, \
+     this list of conditions and the following disclaimer. \
+  2. Redistributions in binary form must reproduce the above copyright notice, \
+     this list of conditions and the following disclaimer in the documentation \
+     and/or other materials provided with the distribution. \
+  3. Neither the name of Shadow Robot Company Ltd nor the names of its contributors \
+     may be used to endorse or promote products derived from this software without \
+     specific prior written permission. \
+\
+This software is provided by Shadow Robot Company Ltd \"as is\" and any express \
+or implied warranties, including, but not limited to, the implied warranties of \
+merchantability and fitness for a particular purpose are disclaimed. In no event \
+shall the copyright holder be liable for any direct, indirect, incidental, special, \
+exemplary, or consequential damages (including, but not limited to, procurement of \
+substitute goods or services; loss of use, data, or profits; or business interruption) \
+however caused and on any theory of liability, whether in contract, strict liability, \
+or tort (including negligence or otherwise) arising in any way out of the use of this \
+software, even if advised of the possibility of such damage."
+copyright_xml_public_bsd="$(regexify "$copyright_xml_public_bsd" "")"
 
 copyright_xml_private="Copyright (C) <Year> Shadow Robot Company Ltd - All Rights Reserved. Proprietary and Confidential. \
 Unauthorized copying of the content in this file, via any medium is strictly prohibited."
@@ -74,12 +155,19 @@ copyright_xml_private="$(regexify "${copyright_xml_private}" "")"
 
 any_copyright_regex="Copyright"
 
-# Check if the repository is private
-public_repo_license_regex="(GNU GENERAL PUBLIC LICENSE)|(BSD 2-Clause License)|(GNU LESSER GENERAL PUBLIC LICENSE)"
-repo_privacy=private
-grep -Pz "$public_repo_license_regex" "LICENSE" > /dev/null
-if [[ $? == 0 ]]; then
-    repo_privacy=public
+# Check if the repository is gnu, bsd or private
+gnu_repo_license_regex="(GNU GENERAL PUBLIC LICENSE)|(GNU LESSER GENERAL PUBLIC LICENSE)"
+bsd_repo_license_regex="(BSD 2-Clause License)|(BSD 3-Clause License)"
+grep -Pz "$gnu_repo_license_regex" "LICENSE" > /dev/null
+gnu_repo_license=$?
+grep -Pz "$bsd_repo_license_regex" "LICENSE" > /dev/null
+bsd_repo_license=$?
+if [[ $gnu_repo_license == 0 ]]; then
+    repo_licence_type="gnu"
+elif [[ $bsd_repo_license == 0 ]]; then
+    repo_licence_type="bsd"
+else
+    repo_licence_type="private"
 fi
 
 total_num_files=0
@@ -95,17 +183,20 @@ for filetype in "${filetypes[@]}"; do
     case $filetype in 
         c|h|cpp|hpp)
             private_copyright="${copyright_c_private}"
-            public_copyright="${copyright_c_public}"
+            public_gnu_copyright="${copyright_c_public_gnu}"
+            public_bsd_copyright="${copyright_c_public_bsd}"
             exclusions=("${exclusions_c[@]}")
             ;;
         py|msg|yml|yaml|sh)
             private_copyright=${copyright_py_private}
-            public_copyright=${copyright_py_public}
+            public_gnu_copyright=${copyright_py_public_gnu}
+            public_bsd_copyright="${copyright_py_public_bsd}"
             exclusions=("${exclusions_py[@]}")
             ;;
         xml|xacro|dae|launch)
             private_copyright="${copyright_xml_private}"
-            public_copyright="${copyright_xml_public}"
+            public_gnu_copyright="${copyright_xml_public_gnu}"
+            public_bsd_copyright="${copyright_xml_public_bsd}"
             exclusions=("${exclusions_xml[@]}")
             ;;
         *)
@@ -140,11 +231,14 @@ for filetype in "${filetypes[@]}"; do
         fi
         if $accept_file; then
             (( total_num_files++ ))
-            if [[ $repo_privacy == "private" ]]; then
+            if [[ $repo_licence_type == "private" ]]; then
                 grep -Pz "$private_copyright" "$file_path" > /dev/null
                 if [[ $? != 0 ]]; then
-                    grep -Pz "$public_copyright" "$file_path" > /dev/null
-                    if [[ $? == 0 ]]; then
+                    grep -Pz "$public_gnu_copyright" "$file_path" > /dev/null
+                    public_gnu_result=$?
+                    grep -Pz "$public_bsd_copyright" "$file_path" > /dev/null
+                    public_gnu_result=$?
+                    if [[ public_gnu_result == 0 || public_bsd_result == 0 ]]; then
                         public_copyright_in_private_file_list+=("${file_path}")
                         (( total_num_files_public_copyright_in_private++ ))
                     else
@@ -158,8 +252,26 @@ for filetype in "${filetypes[@]}"; do
                         fi
                     fi
                 fi
+            elif [[ $repo_licence_type == "bsd" ]]; then
+                grep -Pz "$public_bsd_copyright" "$file_path" > /dev/null
+                if [[ $? != 0 ]]; then
+                    grep -Pz "$private_copyright" "$file_path" > /dev/null
+                    if [[ $? == 0 ]]; then
+                        private_copyright_in_public_file_list+=("${file_path}")
+                        (( total_num_files_private_copyright_in_public++ ))
+                    else
+                        grep -Pz "$any_copyright_regex" "$file_path" > /dev/null
+                        if [[ $? == 0 ]]; then
+                            bad_copyright_file_list+=("${file_path}")
+                            (( total_num_files_bad_copyright++ ))
+                        else
+                            no_copyright_file_list+=("${file_path}")
+                            (( total_num_files_no_copyright++ ))
+                        fi
+                    fi
+                fi
             else
-                grep -Pz "$public_copyright" "$file_path" > /dev/null
+                grep -Pz "$public_gnu_copyright" "$file_path" > /dev/null
                 if [[ $? != 0 ]]; then
                     grep -Pz "$private_copyright" "$file_path" > /dev/null
                     if [[ $? == 0 ]]; then
@@ -210,7 +322,7 @@ if [[ $total_num_files_private_copyright_in_public > 0 ]]; then
     fail=true
 fi
 if [[ $fail == true ]]; then
-    echo $'\n'"Our ${repo_privacy} copyright notice templates are here:"
+    echo $'\n'"Our ${repo_licence_type} copyright notice templates are here:"
     echo "https://shadowrobot.atlassian.net/wiki/spaces/SDSR/pages/594411521/Licenses"
     echo $'\n'"For more information, such as how to exclude files from this check, see this readme:"
     echo "https://github.com/shadow-robot/sr-build-tools/tree/master/ansible/roles/ci/code_style_check/license/README.md"
