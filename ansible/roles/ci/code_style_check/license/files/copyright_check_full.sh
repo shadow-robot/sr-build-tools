@@ -175,10 +175,15 @@ total_num_files_no_copyright=0
 total_num_files_bad_copyright=0
 total_num_files_private_copyright_in_public=0
 total_num_files_public_copyright_in_private=0
+total_num_files_bsd_in_gnu=0
+total_num_files_gnu_in_bsd=0
 declare -a bad_copyright_file_list
 declare -a no_copyright_file_list
 declare -a private_copyright_in_public_file_list
 declare -a public_copyright_in_private_file_list
+declare -a bsd_copyright_in_gnu_file_list
+declare -a gnu_copyright_in_bsd_file_list
+
 for filetype in "${filetypes[@]}"; do
     case $filetype in 
         c|h|cpp|hpp)
@@ -203,6 +208,7 @@ for filetype in "${filetypes[@]}"; do
             echo "Unknown filetype ${filetype}"
             continue
     esac
+
     IFS=$'\n' # Allows for filenames with spaces
     for file_path in $(find . -name "*.$filetype" -type f); do
         accept_file=true
@@ -212,6 +218,7 @@ for filetype in "${filetypes[@]}"; do
                 accept_file=false
             fi
         done
+        
         if $accept_file; then
             # See if the file is excluded by a local (same directory) CPPLINT.cfg or copyright_exclusions.cfg
             dir_name=$(dirname "${file_path}")
@@ -229,6 +236,7 @@ for filetype in "${filetypes[@]}"; do
                 fi
             done
         fi
+
         if $accept_file; then
             (( total_num_files++ ))
             if [[ $repo_licence_type == "private" ]]; then
@@ -255,10 +263,16 @@ for filetype in "${filetypes[@]}"; do
             elif [[ $repo_licence_type == "bsd" ]]; then
                 grep -Pz "$public_bsd_copyright" "$file_path" > /dev/null
                 if [[ $? != 0 ]]; then
+                    grep -Pz "$public_gnu_copyright" "$file_path" > /dev/null
+                    public_gnu_result=$?
                     grep -Pz "$private_copyright" "$file_path" > /dev/null
-                    if [[ $? == 0 ]]; then
+                    private_result=$?
+                    if [[ $private_result == 0 ]]; then
                         private_copyright_in_public_file_list+=("${file_path}")
                         (( total_num_files_private_copyright_in_public++ ))
+                    elif [[ $public_gnu_result == 0 ]]; then
+                        gnu_copyright_in_bsd_file_list+=("${file_path}")
+                        (( total_num_files_gnu_in_bsd++ ))
                     else
                         grep -Pz "$any_copyright_regex" "$file_path" > /dev/null
                         if [[ $? == 0 ]]; then
@@ -273,10 +287,16 @@ for filetype in "${filetypes[@]}"; do
             else
                 grep -Pz "$public_gnu_copyright" "$file_path" > /dev/null
                 if [[ $? != 0 ]]; then
+                    grep -Pz "$public_bsd_copyright" "$file_path" > /dev/null
+                    public_bsd_result=$?
                     grep -Pz "$private_copyright" "$file_path" > /dev/null
-                    if [[ $? == 0 ]]; then
+                    private_result=$?
+                    if [[ $private_result == 0 ]]; then
                         private_copyright_in_public_file_list+=("${file_path}")
                         (( total_num_files_private_copyright_in_public++ ))
+                    elif [[ $public_bsd_result == 0 ]]; then
+                        bsd_copyright_in_gnu_file_list+=("${file_path}")
+                        (( total_num_files_bsd_in_gnu++ ))
                     else
                         grep -Pz "$any_copyright_regex" "$file_path" > /dev/null
                         if [[ $? == 0 ]]; then
@@ -292,6 +312,7 @@ for filetype in "${filetypes[@]}"; do
         fi
     done
 done
+
 fail=false
 if [[ $total_num_files_no_copyright > 0 ]]; then
     echo $'\n'"Copyright check failure: There are $total_num_files_no_copyright files without copyright notices:"
@@ -317,6 +338,20 @@ fi
 if [[ $total_num_files_private_copyright_in_public > 0 ]]; then
     echo $'\n'"Copyright check failure: There are $total_num_files_private_copyright_in_public public files with private copyright notices:"
     for file_path in "${private_copyright_in_public_file_list[@]}"; do
+        echo "${file_path}"
+    done
+    fail=true
+fi
+if [[ $total_num_files_gnu_in_bsd > 0 ]]; then
+    echo $'\n'"Copyright check failure: There are $total_num_files_gnu_in_bsd public files with GPL licenses, please use BSD:"
+    for file_path in "${gnu_copyright_in_bsd_file_list[@]}"; do
+        echo "${file_path}"
+    done
+    fail=true
+fi
+if [[ $total_num_files_bsd_in_gnu > 0 ]]; then
+    echo $'\n'"Copyright check failure: There are $total_num_files_bsd_in_gnu public files with BSD licenses, please use GPL:"
+    for file_path in "${bsd_copyright_in_gnu_file_list[@]}"; do
         echo "${file_path}"
     done
     fail=true
