@@ -3,7 +3,7 @@
 
 - name: Install more packages
   apt: 
-    name: ['python3-wstool', 'python3-rosdep','python3-pip','cobertura','python3-bloom','fakeroot','libxml2-utils','libyubikey-dev','libykpers-1-dev']
+    name: ['python3-wstool', 'python3-rosdep','python3-pip','cobertura','python3-bloom','fakeroot','libxml2-utils','libyubikey-dev','libykpers-1-dev','libserial-dev']
   become: yes
   become_method: sudo
   become_user: root
