@@ -15,7 +15,7 @@
   shell: 'source /opt/ros/{{ros_release}}/setup.bash && \
     rosrun roslint test_wrapper \
       {{ros_workspace}}/build/test_results/{{item}}/roslint-hpp-{{item}}.xml \
-      "rosrun roslint cpplint --extensions=hpp --linelength=120 --filter=-runtime/references {{item}}" '
+      "rosrun roslint cpplint --extensions=hpp,h,cpp,c --linelength=120 --filter=-runtime/references {{item}}" '
   args:
     executable: "/bin/bash"
   with_items: "{{cpp_files_results|default([])}}"
