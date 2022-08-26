@@ -137,7 +137,7 @@ def gather_missing_licences(data):
                                 missing_licence.append(file_path)
                 else:  # Handles xml xacro dae and launch files.
                     print(line[0:3], line)
-                    if line and len(line) > 1 and line[0:3] == "<!--":
+                    if line and len(line) > 1 and line[0:4] == "<!--":
                         start_comment = True
                     if line and len(line) > 1 and line[0:2] == "-->":
                         start_comment = False
