@@ -3,10 +3,32 @@
 
 - name: Install more packages
   apt: 
-    name: ['ros-{{ros_release}}-cmake-modules','python3-rosdep','python3-pip','cobertura','python3-bloom','fakeroot','libxml2-utils','libyubikey-dev','libykpers-1-dev']
+    name: ['python3-wstool', 'python3-rosdep','python3-pip','cobertura','python3-bloom','fakeroot','libxml2-utils','libyubikey-dev','libykpers-1-dev']
   become: yes
   become_method: sudo
   become_user: root
+
+- name: Install ros1 packages
+  apt: 
+    name: ['ros-{{ros_release}}-cmake-modules']
+  become: yes
+  become_method: sudo
+  become_user: root
+  when: 
+    - ros_release != 'rolling' 
+    - ros_release != 'humble'
+
+- name: Install PIP modules
+  pip: 
+    name: ['catkin_pkg','empy','coverage','catkin-lint','pylint']
+    extra_args: '--upgrade'
+    executable: pip3
+  become: yes
+  become_method: sudo
+  become_user: root
+  when: 
+    - ros_release == 'rolling' 
+    - ros_release == 'humble'
 
 - name: Install PIP modules
   pip: 
@@ -16,6 +38,9 @@
   become: yes
   become_method: sudo
   become_user: root
+  when: 
+    - ros_release != 'rolling' 
+    - ros_release != 'humble'
 
 - name: Update users bashrc to point to the ROS installation
   lineinfile: dest={{ansible_env.HOME}}/.bashrc
