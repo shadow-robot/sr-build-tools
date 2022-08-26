@@ -119,7 +119,6 @@ def gather_missing_licences(data):
        Then checks to see if the licence has the current date in it.
        If it doesn't its added to a list of files missing the correct licence."""
     missing_licence = []
-    print(data.changed_files)
     for file_path, extension in data.changed_files:
         start_comment=False
         with open(file_path, "r") as file:
@@ -136,7 +135,6 @@ def gather_missing_licences(data):
                             if data.current_year not in line:
                                 missing_licence.append(file_path)
                 else:  # Handles xml xacro dae and launch files.
-                    print(line[0:3], line)
                     if line and len(line) > 1 and line[0:4] == "<!--":
                         start_comment = True
                     if line and len(line) > 1 and line[0:2] == "-->":
