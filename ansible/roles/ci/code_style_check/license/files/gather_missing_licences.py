@@ -125,7 +125,6 @@ def gather_missing_licences(data):
             for line in file.readlines():  # Read file line by line
                 line = line.strip()  # Remove whitespaces so we can find lines with just comments
                 if extension in ["py", "msg", "yml", "yaml", "sh", "c", "cpp", "h", "hpp"]:
-                    print(line[0])
                     if line and len(line) > 1 and line[0] in ["#", "/", "*"]:
                         if "Shadow Robot Company Ltd" in line and "Copyright" in line:
                             if data.current_year not in line:
