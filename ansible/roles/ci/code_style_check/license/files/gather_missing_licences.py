@@ -23,7 +23,7 @@ from datetime import date
 
 # Include bash in python files as we also put licences in bash files too.
 PYTHON_HEADERS = ["#!/usr/bin/env python", "#!/usr/bin/python", "#!/bin/bash", "#!/usr/bin/env bash"]
-ACCEPTED_EXTENSIONS = ["py", "c", "h", "cpp", "hpp", "msg", "yml", "yaml", "sh", "xml", "xacro", "dae", "launch"]
+ACCEPTED_EXTENSIONS = ["py", "c", "h", "cpp", "hpp", "yml", "yaml", "sh", "xml", "xacro", "dae", "launch"]
 MASTER_BRANCHES = ["noetic-devel", "melodic-devel", "kinetic-devel", "jade-devel", "indigo-devel", "devel", "master", "main"]
 
 
@@ -124,13 +124,8 @@ def gather_missing_licences(data):
         with open(file_path, "r") as file:
             for line in file.readlines():  # Read file line by line
                 line = line.strip()  # Remove whitespaces so we can find lines with just comments
-                if extension in ["py", "msg", "yml", "yaml", "sh"]:
-                    if line and len(line) > 1 and line[0] == "#":
-                        if "Shadow Robot Company Ltd" in line and "Copyright" in line:
-                            if data.current_year not in line:
-                                missing_licence.append(file_path)
-                elif extension in ["c", "cpp", "h", "hpp"]:
-                    if line and len(line) > 1 and line[0] in ["/","*"]:
+                if extension in ["py", "msg", "yml", "yaml", "sh", "c", "cpp", "h", "hpp"]:
+                    if line and len(line) > 1 and line[0] in ["#", "/", "*"]:
                         if "Shadow Robot Company Ltd" in line and "Copyright" in line:
                             if data.current_year not in line:
                                 missing_licence.append(file_path)
