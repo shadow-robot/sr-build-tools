@@ -2,7 +2,7 @@ This role checks whether the python and C++ files in a repository have appropria
 
 It first checks the repository `LICENSE` file to determine whether the repository is public or private.
 
-It then finds all .c, .cpp, .h, .hpp and .py files, and uses a regex match to check the copyright notice wording, year formatting, etc.
+It then finds all .py, .c, .h, .cpp, .hpp, .msg, .yml, .yaml, .sh, .xml, .xacro, .dae, .launch files, and uses a regex match to check the copyright notice wording, year formatting, etc.
 
 If you wish to exclude a file from copyright check (e.g. in the case of a file that doesn't belong to Shadow), create a file in the same directory as the file to be excluded, called `copyright_exclusions.cfg`. This file follows the same syntax as a `CPPLINT.cfg`, in that files are excluded using the `exclude_files=<regex>` directive. So the following file will exclude all files:
 

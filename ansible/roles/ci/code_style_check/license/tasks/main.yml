@@ -1,11 +1,11 @@
 ---
 # Playbook for checkig software license
 
-- name: Check for license file in the repository directory
-  script: ../files/license_check.sh {{repo_sources_path}}
+# - name: Check for license file in the repository directory
+#   script: ../files/license_check.sh {{repo_sources_path}}
 
-- name: Full check for copyright annotation in repository files
-  script: ../files/copyright_check_full.sh {{repo_sources_path}}
+# - name: Full check for copyright annotation in repository files
+#   script: ../files/copyright_check_full.sh {{repo_sources_path}}
 
 - name: Gather license with incorrect year
   script: ../files/gather_missing_licences.py --path {{repo_sources_path}}
