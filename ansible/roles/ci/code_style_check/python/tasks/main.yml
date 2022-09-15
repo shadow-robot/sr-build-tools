@@ -23,7 +23,7 @@
          
     source /opt/ros/{{ros_release}}/setup.bash && rosrun roslint test_wrapper \
     {{ros_workspace}}/build/test_results/{{item}}/roslint-python3-ex-{{item}}.xml \
-    'pylint -sn --rcfile=/tmp/pylintrc --msg-template="{abspath}:{line}:{column}:{msg_id}:{msg}" {{item}}'
+    'pylint -sn --rcfile=/tmp/pylintrc --msg-template="{abspath}:{line}:{column}:{msg_id}:{msg}" {{item}}' & sort --field-separator=':' -k 2,2n
   args:
     executable: "/bin/bash"
   with_items: "{{python_files_results|default([])}}"
