@@ -169,10 +169,10 @@ def format_output_data(data_dict):
         for pr_url, array in prs.items():
             pr_title = array[0]
             if array[2] == "n/a":
-                string = f"{pr_title} ([Github|({pr_url}])\n"
+                string = f"{pr_title} - {pr_url}\n"
             else:
                 pr_jira_link = array[2]
-                string = f"{pr_title} ([Jira|{pr_jira_link}]) ([Github|{pr_url}])\n"
+                string = f"{pr_title} - {pr_jira_link} {pr_url}\n"
             print(string)
 
 
