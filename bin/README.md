@@ -113,9 +113,9 @@ This script is used to allow you to pull a changelog of a specific image between
 
 ## Usage
 To pull the changelog between two dates run the script like this:</br>
-```python3 trigger_changelog.py -u <github_username> -t <github_token> -ir <image_repository> -ib <image_branch (default: noetic-devel)> -sd <start_date> -ed <end_date>```</br>
+```python3 trigger_changelog.py -u <github_username> -t <github_token> -r <image_repository> -b <image_branch (default: noetic-devel)> -sd <start_date> -ed <end_date>```</br>
 To pull the changelog from one date up to the date it was executed run this:</br>
-```python3 trigger_changelog.py -u <github_username> -t <github_token> -ir <image_repository> -ib <image_branch (default: noetic-devel)> -sd <start_date>```</br>
+```python3 trigger_changelog.py -u <github_username> -t <github_token> -r <image_repository> -b <image_branch (default: noetic-devel)> -sd <start_date>```</br>
 
 The optional fields in this script are ```-ib``` and ```-ed```.
 
@@ -123,4 +123,4 @@ The optional fields in this script are ```-ib``` and ```-ed```.
 Pull the changelog between two dates:</br>
 ```python3 trigger_changelog.py --username BenStarmerSmith --token ghp_f4hJ49XFY2XvKBVTVRb9aHeVRXW62HGCzuQ7 --repo shadow_dexterous_hand -start_date 2022-03-01 --end_date 2022-03-21```</br>
 Pull the changelog from one date to current date:</br>
-```python3 trigger_changelog.py -u BenStarmerSmith -t ghp_f4hJ49XFY2XvKBVTVRb9aHeVRXW62HGCzuQ7 -ir shadow_teleop_polhemus -sd 2022-03-06```
+```python3 trigger_changelog.py -u BenStarmerSmith -t ghp_f4hJ49XFY2XvKBVTVRb9aHeVRXW62HGCzuQ7 -r shadow_teleop_polhemus -sd 2022-03-06```
