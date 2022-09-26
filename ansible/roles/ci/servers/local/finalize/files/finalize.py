@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-# Copyright 2021 Open Source Robotics Foundation, Inc.
+# Copyright 2021-2022 Open Source Robotics Foundation, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -21,7 +21,10 @@ import sys
 from xml.etree import ElementTree
 
 
-def main(argv=sys.argv[1:]):
+def main(argv=None):
+    if not argv:
+        argv=sys.argv[1:]
+
     const_extensions = ['xml']
     parser = argparse.ArgumentParser(
         description='Check XML markup using xmllint.',
@@ -80,7 +83,7 @@ def gather_files(directory, extensions):
                 all_files.append(os.path.join(root, file))
     if not all_files:
         print("No files detected.\nExiting test.")
-        exit(0)
+        sys.exit(0)
     return all_files
 
 
@@ -111,7 +114,7 @@ def gather_all_failures(filename, error_count, failure_count):
         for error in testcase.findall('error'):
             error_msg = error.text
             if not error_msg:
-                error_msg = failure.attrib['message']
+                error_msg = error.attrib['message']
             count_e += 1
             error_msg = 'ERROR {}: \n'.format(error_count + count_e) \
                 + error_msg.strip() + '\n'
