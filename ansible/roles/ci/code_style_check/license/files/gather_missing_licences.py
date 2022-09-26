@@ -16,14 +16,16 @@
 
 # pylint: disable=W1510
 
+from operator import truediv
 import os
 import sys
 import argparse
 import subprocess
 from datetime import date
 
-PYTHON_HEADERS = ["#!/usr/bin/env python", "#!/usr/bin/python"]
-ACCEPTED_EXTENSIONS = ["py", "c", "h", "cpp", "hpp"]
+# Include bash in python files as we also put licences in bash files too.
+PYTHON_HEADERS = ["#!/usr/bin/env python", "#!/usr/bin/python", "#!/bin/bash", "#!/usr/bin/env bash"]
+ACCEPTED_EXTENSIONS = ["py", "c", "h", "cpp", "hpp", "yml", "yaml", "sh", "xml", "xacro", "dae", "launch"]
 MASTER_BRANCHES = ["noetic-devel", "melodic-devel", "kinetic-devel",
                    "jade-devel", "indigo-devel", "devel", "master", "main"]
 
@@ -121,16 +123,21 @@ def gather_missing_licences(data):
        If it doesn't its added to a list of files missing the correct licence."""
     missing_licence = []
     for file_path, extension in data.changed_files:
+        start_comment=False
         with open(file_path, "r") as file:
             for line in file.readlines():  # Read file line by line
                 line = line.strip()  # Remove whitespaces so we can find lines with just comments
-                if extension == "py":
-                    if line and len(line) > 1 and line[0] == "#":
+                if extension in ["py", "msg", "yml", "yaml", "sh", "c", "cpp", "h", "hpp"]:
+                    if line and len(line) > 1 and line[0] in ["#", "/", "*"]:
                         if "Shadow Robot Company Ltd" in line and "Copyright" in line:
                             if data.current_year not in line:
                                 missing_licence.append(file_path)
-                else:
-                    if line and len(line) > 1 and line[0] in ["/","*"]:
+                else:  # Handles xml xacro dae and launch files.
+                    if line and len(line) > 1 and line[0:4] == "<!--":
+                        start_comment = True
+                    if line and len(line) > 1 and line[0:2] == "-->":
+                        start_comment = False
+                    if start_comment:
                         if "Shadow Robot Company Ltd" in line and "Copyright" in line:
                             if data.current_year not in line:
                                 missing_licence.append(file_path)

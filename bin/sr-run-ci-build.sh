@@ -42,7 +42,6 @@ if  [ "semaphore_docker" != $server_type ] && [ "local" != $server_type ] && [ "
   
   git config --global user.email "build.tools@example.com"
   git config --global user.name "Build Tools"
-  
   # Clean up sr-build-tools and clone it with depth 1
   rm -rf $build_tools_folder
   git clone --depth 1 https://github.com/shadow-robot/sr-build-tools.git -b "$toolset_branch" $build_tools_folder

@@ -15,72 +15,22 @@
 ---
 # Playbook for C++ code style check
 
-- name: Find C++ header files in each package
-  script: "../../common_resources/files/files_by_extension_and_policy.sh \
-    {{repo_sources_path}} {{repo_sources_path}}/{{item.path}} h .lintignore"
-  with_items: "{{repo_packages_list|default([])}}"
-  register: repo_packages_and_h_files
+- name: Get list of all c, cpp, h, hpp files
+  script: "../../common_resources/files/files_by_extension.py \
+    -p {{repo_sources_path}} -ft cpp"
+  register: cpp_files
 
 - name: Set variable to workaround ansible type evaluation issue
   set_fact:
-    repo_packages_and_h_files_results: "{{repo_packages_and_h_files.results}}"
-
-- name: Execute roslint for every package and write results in unit tests format
-  shell: "source /opt/ros/{{ros_release}}/setup.bash && \
-    rosrun roslint test_wrapper \
-      {{ros_workspace}}/build/test_results/{{item.item.name}}/roslint-h-{{item.item.name}}.xml \
-      'rosrun roslint cpplint --linelength=120 --filter=-runtime/references {{item.stdout}}' "
-  args:
-    executable: "/bin/bash"
-    chdir: "{{repo_sources_path}}/{{item.item.path}}"
-  with_items: "{{repo_packages_and_h_files_results|default([])}}"
-  when: item.stdout != ""
-  ignore_errors: True
-
-- name: Find C++ code files in each package
-  script: "../../common_resources/files/files_by_extension_and_policy.sh \
-    {{repo_sources_path}} {{repo_sources_path}}/{{item.path}} cpp .lintignore"
-  with_items: "{{repo_packages_list|default([])}}"
-  register: repo_packages_and_cpp_files
-
-- name: Set variable to workaround ansible type evaluation issue
-  set_fact:
-    repo_packages_and_cpp_files_results: "{{repo_packages_and_cpp_files.results}}"
-
-- name: Execute roslint for every package and write results in unit tests format
-  shell: "source /opt/ros/{{ros_release}}/setup.bash && \
-    rosrun roslint test_wrapper \
-      {{ros_workspace}}/build/test_results/{{item.item.name}}/roslint-cpp-{{item.item.name}}.xml \
-      'rosrun roslint cpplint --linelength=120 --filter=-runtime/references {{item.stdout}}' "
-  args:
-    executable: "/bin/bash"
-    chdir: "{{repo_sources_path}}/{{item.item.path}}"
-  with_items: "{{repo_packages_and_cpp_files_results|default([])}}"
-  when: item.stdout != ""
-  ignore_errors: True
-
-- name: "Find C++ hpp files in each package (this is done due to a of such file currently in source code. \
-    In future those file would be removed)"
-  script: "../../common_resources/files/files_by_extension_and_policy.sh \
-    {{repo_sources_path}} {{repo_sources_path}}/{{item.path}} hpp .lintignore"
-  with_items: "{{repo_packages_list|default([])}}"
-  register: repo_packages_and_hpp_files
-
-- name: Set variable to workaround ansible type evaluation issue
-  set_fact:
-    repo_packages_and_hpp_files_results: "{{repo_packages_and_hpp_files.results}}"
+    cpp_files_results: "{{cpp_files.stdout_lines}}"
 
 - name: "Execute roslint for every package and write results in unit tests format.\
     In order to skip hpp files extension validation using stdin feed to checker."
   shell: 'source /opt/ros/{{ros_release}}/setup.bash && \
     rosrun roslint test_wrapper \
-      {{ros_workspace}}/build/test_results/{{item.0.item.name}}/roslint-hpp-{{item.1|basename}}.xml \
-      "rosrun roslint cpplint --extensions=hpp --linelength=120 --filter=-runtime/references {{item.1}}" '
+      {{ros_workspace}}/build/test_results/{{item}}/roslint-hpp-{{item}}.xml \
+      "rosrun roslint cpplint --extensions=hpp,h,cpp,c --linelength=120 --filter=-runtime/references {{item}}" '
   args:
     executable: "/bin/bash"
-    chdir: "{{repo_sources_path}}/{{item.0.item.path}}"
-  with_subelements:
-     - "{{repo_packages_and_hpp_files_results|default([])}}"
-     - stdout_lines
-  when: item.0.stdout != ""
+  with_items: "{{cpp_files_results|default([])}}"
   ignore_errors: True
