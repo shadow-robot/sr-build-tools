@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 #
-# Copyright 2020 Shadow Robot Company Ltd.
+# Copyright 2020, 2022 Shadow Robot Company Ltd.
 #
 # This program is free software: you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by the Free
@@ -24,7 +24,10 @@ from xml.sax.saxutils import escape
 from xml.sax.saxutils import quoteattr
 
 
-def main(argv=sys.argv[1:]):
+def main(argv=None):
+    if not argv:
+        argv=sys.argv[1:]
+
     parser = argparse.ArgumentParser(
         description='Check a package using catkin_lint.',
         formatter_class=argparse.ArgumentDefaultsHelpFormatter)
@@ -53,6 +56,7 @@ def main(argv=sys.argv[1:]):
     if args.xunit_file:
         start_time = time.time()
     generate_xunit_file(error_report,args.xunit_file,start_time)
+    return 0
 
 
 def run_catkin_lint(packages, lintignore,catkinlint_bin):
@@ -116,10 +120,10 @@ def get_xunit_content(report, testname, elapsed):
   time="%(time)s"
 >
 """ % xunit_xml_content
-    xunit_xml+=get_failure_messages(report, testname, xunit_xml)
+    xunit_xml+=get_failure_messages(report, testname)
     return xunit_xml
 
-def get_failure_messages(report, testname, elapsed):
+def get_failure_messages(report, testname):
     failure_messages=""
     for (packagename, lines) in report:
         if lines:

@@ -16,7 +16,6 @@
 
 # pylint: disable=W1510
 
-from operator import truediv
 import os
 import sys
 import argparse
