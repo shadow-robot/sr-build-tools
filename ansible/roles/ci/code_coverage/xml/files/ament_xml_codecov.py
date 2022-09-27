@@ -100,11 +100,11 @@ def main(argv=None):
     if not error_count:
         if args.debug:
             print('No problems found')
-        returncondition = 0
+        return_condition = 0
     else:
         if args.debug:
             print('%d files are invalid' % error_count, file=sys.stderr)
-        returncondition = 1
+        return_condition = 1
     # generate xunit file
     if args.xunit_file:
         folder_name = os.path.basename(os.path.dirname(args.xunit_file))
@@ -123,7 +123,7 @@ def main(argv=None):
             os.makedirs(path)
         with open(args.xunit_file, 'w') as xunit_file:
             xunit_file.write(xml)
-    return returncondition
+    return return_condition
 
 
 def gather_files(directory, extensions):
