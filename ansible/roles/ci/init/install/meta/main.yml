@@ -1,3 +1,0 @@
----
-#dependencies:
-#  - { role: ros_install, become: yes }
