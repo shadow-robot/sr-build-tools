@@ -3,7 +3,7 @@
 
 - name: Install more packages
   apt: 
-    name: ['python3-wstool', 'python3-rosdep','python3-pip','cobertura','python3-bloom','fakeroot','libxml2-utils','libyubikey-dev','libykpers-1-dev']
+    name: ['python3-wstool', 'python3-rosdep','python3-pip','cobertura','python3-bloom','fakeroot','libxml2-utils','libyubikey-dev','libykpers-1-dev','ccache']
   become: yes
   become_method: sudo
   become_user: root
@@ -32,7 +32,7 @@
 
 - name: Install PIP modules
   pip: 
-    name: ['catkin_pkg','empy==3.3.2','coverage','catkin-lint','pylint==2.10.2']
+    name: ['catkin_pkg','empy==3.3.2','coverage==6.5','catkin-lint','pylint==2.10.2']
     extra_args: '--upgrade'
     executable: pip3
   become: yes
