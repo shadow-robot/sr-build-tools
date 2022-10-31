@@ -19,10 +19,6 @@
   set_fact: 
     repo_name: "{{ repo_sources_path.split('/')[-1] }}"
 
-- name: debug
-  debug:
-    msg: "VAR NAME: {{ repo_name }}"
-
 - name: Disable licence check if forked repository
   set_fact:
     skip_repo: true
