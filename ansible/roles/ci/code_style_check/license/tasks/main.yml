@@ -15,11 +15,23 @@
 ---
 # Playbook for checkig software license
 
+- name: get_repo_name
+  set_fact: 
+    repo_name: "{{ repo_sources_path.split('/')[-1] }}"
+
+- name: Disable licence check if forked repository
+  set_fact:
+    skip_repo: true
+  when: "repo_name in forked_repos"
+
 - name: Check for license file in the repository directory
   script: ../files/license_check.sh {{repo_sources_path}}
+  when: not skip_repo
 
 - name: Full check for copyright annotation in repository files
   script: ../files/copyright_check_full.sh {{repo_sources_path}}
+  when: not skip_repo
 
 - name: Gather license with incorrect year
   script: ../files/gather_missing_licences.py --path {{repo_sources_path}}
+  when: not skip_repo
