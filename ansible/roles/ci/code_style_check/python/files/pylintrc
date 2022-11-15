@@ -317,6 +317,23 @@ bad-names=foo,
           toto,
           tutu,
           tata
+          id,
+          file,
+          list,
+          dict,
+          map,
+          all,
+          any,
+          complex,
+          int,
+          dir,
+          input,
+          slice,
+          buffer,
+          sum,
+          min,
+          max,
+          object
 
 # Bad variable names regexes, separated by a comma. If names match any regex,
 # they will always be refused
@@ -369,7 +386,6 @@ good-names=i,
            y,
            z,
            ex,
-           id,
            Run,
            _
 
