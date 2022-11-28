@@ -56,7 +56,7 @@
 - git:
     local-name: Universal_Robots_ROS_Driver
     uri: https://github.com/shadow-robot/Universal_Robots_ROS_Driver.git
-    version: master
+    version: F_temp_ur_fix
 
 - git:
     local-name: universal_robot
