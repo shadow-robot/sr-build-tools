@@ -23,7 +23,7 @@ import argparse
 LINT_IGNORE_FILE = "lint_exclusions.cfg"
 CPP_HEADERS = [".cpp", ".c", ".h", ".hpp"]
 PYTHON_HEADERS = ["#!/usr/bin/env python", "#! /usr/bin/env python", "#!/usr/bin/python", "#! /usr/bin/python",
-                       "#!/usr/bin/env python3", "#! /usr/bin/env python3", "#!/usr/bin/python3", "#! /usr/bin/python3"]
+                  "#!/usr/bin/env python3", "#! /usr/bin/env python3", "#!/usr/bin/python3", "#! /usr/bin/python3"]
 
 
 def argparser():
@@ -102,8 +102,12 @@ def check_for_python_file(file_path):
         return True
 
     fline = ""
-    with open(file_path) as python_file:
-        fline = python_file.readline().strip()
+    try:  # Used to catch files that won't open or have the wrong encoding type.
+        with open(file_path) as python_file:
+            fline = python_file.readline().strip()
+    except:
+        return False
+
     if any(fline in head for head in PYTHON_HEADERS) and fline != "" and fline != "#":
         return True
 
