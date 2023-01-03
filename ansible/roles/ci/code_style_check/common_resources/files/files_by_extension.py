@@ -75,7 +75,7 @@ def gather_excluded_files(folder_path, filetype):
 
     for f_file in folder_files:
         if filetype == "python":
-            if check_for_python_file(f_file):
+            if check_for_python_file(os.path.join(folder_path, f_file)):
                 folder_files_filtered.append(f_file)
         else:
             if os.path.splitext(f_file)[1] in CPP_HEADERS:
