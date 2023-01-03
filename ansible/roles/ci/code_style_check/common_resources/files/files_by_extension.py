@@ -101,14 +101,12 @@ def check_for_python_file(file_path):
     if os.path.splitext(file_path)[1] == ".py":
         return True
 
-    try:
-        fline = ""
-        with open(file_path) as python_file:
-            fline = python_file.readline().strip()
-        if any(fline in head for head in PYTHON_HEADERS) and fline != "" and fline != "#":
-            return True
-    except Exception:  # We don't actually care about the exception as it wont fail on python files.
-        return False
+    fline = ""
+    with open(file_path) as python_file:
+        fline = python_file.readline().strip()
+    if any(fline in head for head in PYTHON_HEADERS) and fline != "" and fline != "#":
+        return True
+
     return False
 
 if __name__ == "__main__":
