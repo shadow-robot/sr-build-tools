@@ -15,10 +15,12 @@
 # with this program. If not, see <http://www.gnu.org/licenses/>.
 
 import sys
+import re
 import os
 import argparse
 
 
+LINT_IGNORE_FILE = "lint_exclusions.cfg"
 CPP_HEADERS = [".cpp", ".c", ".h", ".hpp"]
 PYTHON_HEADERS = ["#!/usr/bin/env python", "#! /usr/bin/env python", "#!/usr/bin/python", "#! /usr/bin/python",
                        "#!/usr/bin/env python3", "#! /usr/bin/env python3", "#!/usr/bin/python3", "#! /usr/bin/python3"]
@@ -37,29 +39,77 @@ def argparser():
 
 
 def gather_all_python_files(file_path):
+    """This function walks through the given path collects all python files (with and without extension based on
+       header). It will exclude all python files found in the lint ignore file."""
     output = []
     for dirpath, _, filenames in os.walk(file_path):
+        excluded_files = gather_excluded_files(dirpath, "python")  # Gathers all the files to be ignored in this folder
         for filename in filenames:
-            file_path = f"{dirpath}/{filename}"
-            try:
-                fline = ""
-                with open(file_path) as python_file:
-                    fline = python_file.readline().strip()
-                if any(fline in head for head in PYTHON_HEADERS) and fline != "" and fline != "#":
-                    output.append(file_path)
-            except Exception:  # We don't actually care about the exception as it wont fail on python files.
+            full_file_path = os.path.join(dirpath, filename)
+            valid_file = check_for_python_file(full_file_path)
+            if filename in excluded_files:  # Skip excluded files
                 continue
+            if valid_file:
+                output.append(full_file_path)
     return output
 
 
 def gather_all_cpp_files(file_path):
+    """This function walks through the given path collects all c, cpp, h, hpp files It will exclude all python files
+       found in the lint ignore file."""
     output = []
     for dirpath, _, filenames in os.walk(file_path):
+        excluded_files = gather_excluded_files(dirpath, "cpp")  # Gathers all the files to be ignored in this folder
         for filename in filenames:
+            if filename in excluded_files:  # Skip excluded files
+                continue
             if os.path.splitext(filename)[1] in CPP_HEADERS:
-                output.append(f"{dirpath}/{filename}")
+                output.append(os.path.join(dirpath, filename))
     return output
 
+def gather_excluded_files(folder_path, filetype):
+    """Gatheres all of the files to ignore in the lint ignore file (if it exists). A * tells it to skip all files
+       or you can list indiviual files like `exclude_files=test.py,hello.cpp,hi.h`."""
+    folder_files = [f for f in os.listdir(folder_path) if os.path.isfile(os.path.join(folder_path, f))]
+    folder_files_filtered = []
+
+    for f_file in folder_files:
+        if filetype == "python":
+            if check_for_python_file(f_file):
+                folder_files_filtered.append(f_file)
+        else:
+            if os.path.splitext(f_file)[1] in CPP_HEADERS:
+                folder_files_filtered.append(f_file)
+
+    if LINT_IGNORE_FILE in folder_files:  # Check there are actually files to skip
+        re_pattern = re.compile(r'exclude_files=((?:[^,]*,)*[^,]*)')
+        with open(os.path.join(folder_path, LINT_IGNORE_FILE)) as ignore_file:
+            content = ignore_file.readline()
+
+        excluded_files = re_pattern.search(content).group(1)
+        if "*" in excluded_files:  # Tells us to skip all files
+            return folder_files_filtered
+        else:
+            return [f.strip() for f in excluded_files.split(",")]
+
+    return []
+
+def check_for_python_file(file_path):
+    """This function is used to check if a file is a python file. It first checks the extension, if this doesn't return
+       .py then it will check the first line of the file against the python headers. Returns true if the file is a
+       python file."""
+    if os.path.splitext(file_path)[1] == ".py":
+        return True
+
+    try:
+        fline = ""
+        with open(file_path) as python_file:
+            fline = python_file.readline().strip()
+        if any(fline in head for head in PYTHON_HEADERS) and fline != "" and fline != "#":
+            return True
+    except Exception:  # We don't actually care about the exception as it wont fail on python files.
+        return False
+    return False
 
 if __name__ == "__main__":
     path, filetype = argparser()
