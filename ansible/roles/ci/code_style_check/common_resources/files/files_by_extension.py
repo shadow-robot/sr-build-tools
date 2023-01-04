@@ -103,12 +103,9 @@ def check_is_python_file(file_path):
         with open(file_path) as python_file:
             fline = python_file.readline().strip()
     except:
-        return False
-
-    if re.match(r'#!\s*/usr/bin/(env|python|python3) (python|python3)', fline):
-        return True
-
-    return False
+        pass
+    finally:
+        return re.match(r'#!\s*/usr/bin/(env|python|python3) (python|python3)', fline)
 
 if __name__ == "__main__":
     path, filetype = argparser()
