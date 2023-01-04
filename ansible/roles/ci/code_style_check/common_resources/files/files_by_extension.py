@@ -45,10 +45,10 @@ def gather_all_python_files(file_path):
     for dirpath, _, filenames in os.walk(file_path):
         excluded_files = gather_excluded_files(dirpath, "python")  # Gathers all the files to be ignored in this folder
         for filename in filenames:
-            full_file_path = os.path.join(dirpath, filename)
-            valid_file = check_for_python_file(full_file_path)
             if filename in excluded_files:  # Skip excluded files
                 continue
+            full_file_path = os.path.join(dirpath, filename)
+            valid_file = check_is_python_file(full_file_path)
             if valid_file:
                 output.append(full_file_path)
     return output
@@ -68,20 +68,19 @@ def gather_all_cpp_files(file_path):
     return output
 
 def gather_excluded_files(folder_path, filetype):
-    """Gatheres all of the files to ignore in the lint ignore file (if it exists). A * tells it to skip all files
-       or you can list indiviual files like `exclude_files=test.py,hello.cpp,hi.h`."""
+    """Gatheres all of the files to ignore in the lint ignore file (if it exists). If the file contains
+       `exclude_files=*` then all files will be ignored, or you can list indiviual files like
+       `exclude_files=test.py,hello.cpp,hi.h`."""
     folder_files = [f for f in os.listdir(folder_path) if os.path.isfile(os.path.join(folder_path, f))]
     folder_files_filtered = []
 
-    for f_file in folder_files:
-        if filetype == "python":
-            if check_for_python_file(os.path.join(folder_path, f_file)):
-                folder_files_filtered.append(f_file)
-        else:
-            if os.path.splitext(f_file)[1] in CPP_HEADERS:
-                folder_files_filtered.append(f_file)
-
     if LINT_IGNORE_FILE in folder_files:  # Check there are actually files to skip
+        for folder_file in folder_files:
+            if check_is_python_file(os.path.join(folder_path, folder_file)):
+                folder_files_filtered.append(folder_file)
+            if os.path.splitext(folder_file)[1] in CPP_HEADERS:
+                folder_files_filtered.append(folder_file)
+
         re_pattern = re.compile(r'exclude_files=((?:[^,]*,)*[^,]*)')
         with open(os.path.join(folder_path, LINT_IGNORE_FILE)) as ignore_file:
             content = ignore_file.readline()
@@ -89,12 +88,11 @@ def gather_excluded_files(folder_path, filetype):
         excluded_files = re_pattern.search(content).group(1)
         if "*" in excluded_files:  # Tells us to skip all files
             return folder_files_filtered
-        else:
-            return [f.strip() for f in excluded_files.split(",")]
+        return [f.strip() for f in excluded_files.split(",")]
 
     return []
 
-def check_for_python_file(file_path):
+def check_is_python_file(file_path):
     """This function is used to check if a file is a python file. It first checks the extension, if this doesn't return
        .py then it will check the first line of the file against the python headers. Returns true if the file is a
        python file."""
