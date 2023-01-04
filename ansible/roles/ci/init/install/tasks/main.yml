@@ -33,8 +33,8 @@
 - name: Change EEpromtool ownership and group
   file:
     path: "{{ansible_env.HOME}}/.shadow_tools/eepromtool"
-    owner: foo
-    group: foo
+    owner: user
+    group: user
   become: yes
 
 - name: Install ros1 packages
