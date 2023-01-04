@@ -23,8 +23,6 @@
     dest : "{{ansible_env.HOME}}/.shadow_tools/eepromtool"
     mode: u+rwx
   become: yes
-  become_method: sudo
-  become_user: root
 
 - name: Install ros1 packages
   apt: 
