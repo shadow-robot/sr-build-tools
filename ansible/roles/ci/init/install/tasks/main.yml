@@ -8,11 +8,19 @@
   become_method: sudo
   become_user: root
 
-- name: Create a directory if it does not exist
-  ansible.builtin.file:
+- name: Create shadow_tools folder
+  file:
     path: "{{ansible_env.HOME}}/.shadow_tools"
     state: directory
     mode: '0755'
+  become: yes
+
+- name: Change ownership of shadow_tools folder
+  ansible.builtin.file:
+    path: "{{ansible_env.HOME}}/.shadow_tools"
+    state: directory
+    owner: user
+    group: user
   become: yes
 
 - name: Copy EEpromtool
@@ -20,6 +28,13 @@
     url: https://github.com/shadow-robot/sr-build-tools/raw/master/bin/eepromtool
     dest : "{{ansible_env.HOME}}/.shadow_tools/eepromtool"
     mode: u+rwx
+  become: yes
+
+- name: Change EEpromtool ownership and group
+  file:
+    path: "{{ansible_env.HOME}}/.shadow_tools/eepromtool"
+    owner: foo
+    group: foo
   become: yes
 
 - name: Install ros1 packages
