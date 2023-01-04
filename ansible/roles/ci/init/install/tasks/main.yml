@@ -22,6 +22,41 @@
   become_method: sudo
   become_user: root
 
+- name: Create shadow_tools folder
+  file:
+    path: "{{ansible_env.HOME}}/.shadow_tools"
+    state: directory
+    mode: '0755'
+  become: yes
+
+- name: Change ownership of shadow_tools folder
+  ansible.builtin.file:
+    path: "{{ansible_env.HOME}}/.shadow_tools"
+    state: directory
+    owner: user
+    group: user
+  become: yes
+
+- name: Copy EEpromtool
+  get_url:
+    url: https://github.com/shadow-robot/sr-build-tools/raw/master/bin/eepromtool
+    dest : "{{ansible_env.HOME}}/.shadow_tools/eepromtool"
+    mode: u+rwx
+  become: yes
+
+- name: Change EEpromtool ownership and group
+  file:
+    path: "{{ansible_env.HOME}}/.shadow_tools/eepromtool"
+    owner: user
+    group: user
+  become: yes
+
+- name: Write note about EEpromtool
+  copy:
+    dest: "{{ansible_env.HOME}}/.shadow_tools/eepromtool_readme"
+    content: |
+        Please Note that this tool should only be used by Shadow Support Staff and could lead to issues if used incorrectly.
+
 - name: Install ros1 packages
   apt: 
     name: ['ros-{{ros_release}}-cmake-modules']
