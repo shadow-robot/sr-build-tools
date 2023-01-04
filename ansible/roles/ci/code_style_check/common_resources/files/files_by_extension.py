@@ -71,7 +71,8 @@ def gather_excluded_files(folder_path):
     """Gatheres all of the files to ignore in the lint ignore file (if it exists). If the file contains
        `exclude_files=*` then all files will be ignored, or you can list indiviual files like
        `exclude_files=test.py,hello.cpp,hi.h`."""
-    folder_files = [f for f in os.listdir(folder_path) if os.path.isfile(os.path.join(folder_path, f))]
+    folder_files = [folder_file for folder_file in os.listdir(folder_path)
+                    if os.path.isfile(os.path.join(folder_path, folder_file))]
     folder_files_filtered = []
 
     if LINT_IGNORE_FILE in folder_files:  # Check there are actually files to skip
@@ -88,7 +89,7 @@ def gather_excluded_files(folder_path):
         excluded_files = re_pattern.search(content).group(1)
         if "*" in excluded_files:  # Tells us to skip all files
             return folder_files_filtered
-        return [f.strip() for f in excluded_files.split(",")]
+        return [folder_file.strip() for folder_file in excluded_files.split(",")]
 
     return []
 
