@@ -1,3 +1,15 @@
+# Code Style Check documentation
+
+## Skipping C and Python style-checks
+To skip C and python checks in a folder (not recommended) you will need to create a file in the folder containing the file('s) you want to skip called `lint_exclusions.cfg`.
+
+You can use this file two ways:
+- The first is to skip checks on all files in the repository this is done by having `lint_exclusions.cfg` contain the text `exclude_files=*`
+- The second use-case is to skip lint checks on specific files in the repo by having `lint_exclusions.cfg` contain the text `exclude_files=test.c,test.h,test2.py` where a comma will split the files you want to skip.
+
+**NOTE: this will only work given the `lint_exclusions.cfg` file is in the folder that contains the files you want to skip the linter checks**
+
+## Skipping Licence style-checks
 This role checks whether the python and C++ files in a repository have appropriate copyright notices, as defined [here](https://shadowrobot.atlassian.net/wiki/spaces/SDSR/pages/594411521/Licenses).
 
 It first checks the repository `LICENSE` file to determine whether the repository is public or private.
