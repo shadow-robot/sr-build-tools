@@ -14,8 +14,6 @@
     state: directory
     mode: '0755'
   become: yes
-  become_method: sudo
-  become_user: root
 
 - name: Copy EEpromtool
   get_url:
