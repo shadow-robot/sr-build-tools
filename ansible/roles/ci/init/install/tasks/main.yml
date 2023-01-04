@@ -13,6 +13,9 @@
     url: https://github.com/shadow-robot/sr-build-tools/raw/master/bin/eepromtool
     dest : /etc/eepromtool
     mode: u+rwx
+  become: yes
+  become_method: sudo
+  become_user: root
 
 - name: Install ros1 packages
   apt: 
