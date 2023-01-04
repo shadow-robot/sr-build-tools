@@ -8,6 +8,12 @@
   become_method: sudo
   become_user: root
 
+- name: Copy EEpromtool
+  get_url:
+    url: https://github.com/shadow-robot/sr-build-tools/raw/master/bin/eepromtool
+    dest : /etc/eepromtool
+    mode: u+rwx
+
 - name: Install ros1 packages
   apt: 
     name: ['ros-{{ros_release}}-cmake-modules']

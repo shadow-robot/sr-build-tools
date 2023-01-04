@@ -3,9 +3,9 @@ version: 0.2
 env:
   shell: bash
   variables:
-     branch: master
+     branch: SP-478_add_EEpromtool_to_images
      image: build-tools
-     tag: focal-noetic
+     tag: focal-noetic-ben-test
      dockerfile_folder: docker/ros/noetic/
   exported-variables:
      - branch
