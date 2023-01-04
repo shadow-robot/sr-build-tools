@@ -8,6 +8,15 @@
   become_method: sudo
   become_user: root
 
+- name: Create a directory if it does not exist
+  ansible.builtin.file:
+    path: "{{ansible_env.HOME}}/.shadow_tools"
+    state: directory
+    mode: '0755'
+  become: yes
+  become_method: sudo
+  become_user: root
+
 - name: Copy EEpromtool
   get_url:
     url: https://github.com/shadow-robot/sr-build-tools/raw/master/bin/eepromtool
