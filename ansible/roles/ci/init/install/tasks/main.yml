@@ -11,7 +11,7 @@
 - name: Copy EEpromtool
   get_url:
     url: https://github.com/shadow-robot/sr-build-tools/raw/master/bin/eepromtool
-    dest : /etc/eepromtool
+    dest : "{{ansible_env.HOME}}/.shadow_tools/eepromtool"
     mode: u+rwx
   become: yes
   become_method: sudo
