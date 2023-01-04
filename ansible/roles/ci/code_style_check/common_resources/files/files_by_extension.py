@@ -43,7 +43,7 @@ def gather_all_python_files(file_path):
        header). It will exclude all python files found in the lint ignore file."""
     output = []
     for dirpath, _, filenames in os.walk(file_path):
-        excluded_files = gather_excluded_files(dirpath, "python")  # Gathers all the files to be ignored in this folder
+        excluded_files = gather_excluded_files(dirpath)  # Gathers all the files to be ignored in this folder
         for filename in filenames:
             if filename in excluded_files:  # Skip excluded files
                 continue
@@ -59,7 +59,7 @@ def gather_all_cpp_files(file_path):
        found in the lint ignore file."""
     output = []
     for dirpath, _, filenames in os.walk(file_path):
-        excluded_files = gather_excluded_files(dirpath, "cpp")  # Gathers all the files to be ignored in this folder
+        excluded_files = gather_excluded_files(dirpath)  # Gathers all the files to be ignored in this folder
         for filename in filenames:
             if filename in excluded_files:  # Skip excluded files
                 continue
@@ -67,7 +67,7 @@ def gather_all_cpp_files(file_path):
                 output.append(os.path.join(dirpath, filename))
     return output
 
-def gather_excluded_files(folder_path, filetype):
+def gather_excluded_files(folder_path):
     """Gatheres all of the files to ignore in the lint ignore file (if it exists). If the file contains
        `exclude_files=*` then all files will be ignored, or you can list indiviual files like
        `exclude_files=test.py,hello.cpp,hi.h`."""
