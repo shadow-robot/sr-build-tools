@@ -22,8 +22,6 @@ import argparse
 
 LINT_IGNORE_FILE = "lint_exclusions.cfg"
 CPP_HEADERS = [".cpp", ".c", ".h", ".hpp"]
-PYTHON_HEADERS = ["#!/usr/bin/env python", "#! /usr/bin/env python", "#!/usr/bin/python", "#! /usr/bin/python",
-                  "#!/usr/bin/env python3", "#! /usr/bin/env python3", "#!/usr/bin/python3", "#! /usr/bin/python3"]
 
 
 def argparser():
@@ -107,7 +105,7 @@ def check_is_python_file(file_path):
     except:
         return False
 
-    if any(fline in head for head in PYTHON_HEADERS) and fline != "" and fline != "#":
+    if re.match(r'#!\s*/usr/bin/(env|python|python3) (python|python3)', fline):
         return True
 
     return False
