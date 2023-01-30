@@ -183,20 +183,26 @@ function send_mail() {
 # called changelog and pass this to a function to then send an email giving us a list of all the differences.
 function clone_repo_and_get_changes() {
     declare -g -A changelog_dict
+    echo "1"
     changelog_folder="/tmp/changelog_folder"
+    echo "2"
     mkdir $changelog_folder
+    echo "3"
     changelog_list=()
 
     for key in "${!updated_repos[@]}"; do
-        git clone --quiet "$GITHUB_TEMPLATE/$key" "$changelog_folder/${key%.*}"
+        git clone "$GITHUB_TEMPLATE/$key" "$changelog_folder/${key%.*}"
         cd "$changelog_folder/${key%.*}"
+        echo "4"
         pr_list=$(git log --pretty=format:'%H' --oneline "${updated_repos[$key]}...${updated_repos_recent[$key]}" | grep "Merge pull request #")
+        echo "5"
         pr_number_regex='#([0-9]+)'
         hash_regex='^([a-z0-9]+)\s'
         
         pr_number_list=()
         while IFS= read -r line; do
             if [[ $line =~ $pr_number_regex ]]; then
+                echo "6"
                 pr_number=${BASH_REMATCH[1]}
                 pr_number_list+=($pr_number)
             fi
