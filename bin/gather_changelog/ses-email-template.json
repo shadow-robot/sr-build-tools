@@ -1,0 +1,24 @@
+{
+    "Source": "devops@shadowrobot.com",
+    "Destination": {
+        "ToAddresses": [
+            "devops@shadowrobot.com"
+        ]
+    },
+    "Message": {
+        "Subject": {
+            "Data": "Email Subject",
+            "Charset": "UTF-8"
+        },
+        "Body": {
+            "Text": {
+                "Data": "Email Body",
+                "Charset": "UTF-8"
+            },
+            "Html": {
+                "Data": "Email Body",
+                "Charset": "UTF-8"
+            }
+        }
+    }
+}
