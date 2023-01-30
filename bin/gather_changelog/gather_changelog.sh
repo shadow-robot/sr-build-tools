@@ -183,19 +183,20 @@ function send_mail() {
 # called changelog and pass this to a function to then send an email giving us a list of all the differences.
 function clone_repo_and_get_changes() {
     declare -g -A changelog_dict
-    echo "1"
     changelog_folder="/tmp/changelog_folder"
-    echo "2"
     mkdir $changelog_folder
-    echo "3"
     changelog_list=()
 
     for key in "${!updated_repos[@]}"; do
         git clone "$GITHUB_TEMPLATE/$key" "$changelog_folder/${key%.*}"
         cd "$changelog_folder/${key%.*}"
-        echo "4"
+        set +e  # Grep will cause this to fail.
         pr_list=$(git log --pretty=format:'%H' --oneline "${updated_repos[$key]}...${updated_repos_recent[$key]}" | grep "Merge pull request #")
-        echo "5"
+        if [[ $? == 1 ]]; then
+            echo "No PRs skipping."
+            continue
+        fi
+        set -e
         pr_number_regex='#([0-9]+)'
         hash_regex='^([a-z0-9]+)\s'
         
