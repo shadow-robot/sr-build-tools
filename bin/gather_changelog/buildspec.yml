@@ -30,9 +30,6 @@ env:
      - image_repository
      - release_branch
 phases:
-  install:
-    runtime-versions:
-      docker: 22
   pre_build:
     commands:
       - apt-get install --only-upgrade bash
