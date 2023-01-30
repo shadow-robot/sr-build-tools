@@ -84,8 +84,8 @@ function write_git_commit_dict_function_to_container() {
     git config --global --add safe.directory "*"
     git_commit_dict $1
     '
-    docker exec -it $container_name bash -c "echo -e '$function_string' > /home/user/git_commit_dict.sh"
-    docker exec -it $container_name chmod +x /home/user/git_commit_dict.sh
+    docker exec -i $container_name bash -c "echo -e '$function_string' > /home/user/git_commit_dict.sh"
+    docker exec -i $container_name chmod +x /home/user/git_commit_dict.sh
 }
 
 # This function is used to start a docker container, then write a script to the container to gather all repository's
@@ -97,8 +97,8 @@ function get_all_github_dependencies() {
 
     docker run -itd --name $container_name $image_name
     write_git_commit_dict_function_to_container $container_name
-    docker exec -it $container_name /bin/bash -c 'home/user/git_commit_dict.sh /home/user/projects/shadow_robot/base/src'
-    docker exec -it $container_name /bin/bash -c 'home/user/git_commit_dict.sh /home/user/projects/shadow_robot/base_deps/src'
+    docker exec -i $container_name /bin/bash -c 'home/user/git_commit_dict.sh /home/user/projects/shadow_robot/base/src'
+    docker exec -i $container_name /bin/bash -c 'home/user/git_commit_dict.sh /home/user/projects/shadow_robot/base_deps/src'
     docker cp $container_name:home/user/git_commit_dict.txt /tmp/$container_name.txt
     docker stop $container_name
 }
