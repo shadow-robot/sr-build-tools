@@ -32,7 +32,7 @@ env:
 phases:
   install:
     runtime-versions:
-      docker: 18
+      docker: 22
   pre_build:
     commands:
       - apt-get install --only-upgrade bash
