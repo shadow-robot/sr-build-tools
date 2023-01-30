@@ -33,11 +33,7 @@ phases:
   pre_build:
     commands:
       - apt-get install --only-upgrade bash
-      - awscli_v1_executable=$(which aws)
-      - rm $awscli_v1_executable
-      - curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-      - unzip -qq awscliv2.zip
-      - ./aws/install
+
       - git checkout $release_branch
 
       - echo AWS_CONTAINER_CREDENTIALS_RELATIVE_URI=$AWS_CONTAINER_CREDENTIALS_RELATIVE_URI >> AWS_CRED
