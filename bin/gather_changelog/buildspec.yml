@@ -33,12 +33,9 @@ phases:
   pre_build:
     commands:
       - apt-get install --only-upgrade bash
-
       - git checkout $release_branch
-
       - echo AWS_CONTAINER_CREDENTIALS_RELATIVE_URI=$AWS_CONTAINER_CREDENTIALS_RELATIVE_URI >> AWS_CRED
       - echo AWS_DEFAULT_REGION=$AWS_DEFAULT_REGION >> AWS_CRED
-
       - cd $(find . -name bin)
       - cd $(find . -name gather_changelog)
   build:

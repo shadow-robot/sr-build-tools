@@ -203,7 +203,6 @@ function clone_repo_and_get_changes() {
         pr_number_list=()
         while IFS= read -r line; do
             if [[ $line =~ $pr_number_regex ]]; then
-                echo "6"
                 pr_number=${BASH_REMATCH[1]}
                 pr_number_list+=($pr_number)
             fi
