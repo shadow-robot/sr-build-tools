@@ -2,7 +2,8 @@
     "Source": "devops@shadowrobot.com",
     "Destination": {
         "ToAddresses": [
-            "devops@shadowrobot.com"
+            "devops@shadowrobot.com",
+            "software@shadowrobot.com"
         ]
     },
     "Message": {
