@@ -122,7 +122,7 @@ After this is done you can run the script. The gather_changelog.sh script has 3 
 1. Image Name: This is the URI of the image you want to get the changelog for (find examples [here](https://eu-west-2.console.aws.amazon.com/ecr/repositories?region=eu-west-2))
 2. Image Tag: This is the tag of the image you want to gather the changelog for. It won't work with night-build or release tags, just ones like noetic-v0.0.1
 3. Image Repository: This is the `Repository Name` field found [here](https://eu-west-2.console.aws.amazon.com/ecr/repositories?region=eu-west-2), it should match the URI of the image you used for the first parameter
-4. (OPTIONAL) Image Tag Previous: If we ever have to re-publish old image or the script fails, we can use this Image Tag Previous feild to manually select which two images we want to compare
+4. (OPTIONAL) Image Tag Previous: If we ever have to re-publish old image or the script fails, we can use this Image Tag Previous field to manually select which two images we want to compare. If this value isn't present it will find the last chronological image tag that matches the same distribution tag
 
 **Example executions:**
 Example with autoselected previous tag:

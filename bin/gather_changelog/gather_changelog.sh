@@ -122,8 +122,8 @@ function file_to_dict() {
 # added_repos - This has the same key as above and has the current containr hash
 # removed_repos - this is a list of all the repositories that have been removed between dict 1 and dict 2.
 function compare_dicts() {
-    local -n array1=$1
-    local -n array2=$2
+    local -n array1=$1  # Current image content
+    local -n array2=$2  # Previous image content
 
     declare -g -A updated_repos
     declare -g -A updated_repos_recent
