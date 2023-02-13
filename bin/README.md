@@ -107,20 +107,29 @@ In order to be able to change between kernels at the system startup, go to `/etc
 ## Chose the kernel at the system startup
 At the system startup, in the GRUB menu select `Advanced options for UBUNTU` and chose the rt kernel that you installed.
 
-# trigger_changelog.py
+# Gather Changelog/gather_changelog.sh
+This script has a few pre-requists as it is normally ran via a CodeBuild execution which store parameters in AWS.
 
-This script is used to allow you to pull a changelog of a specific image between two dates, or from one date to present time.
+Firstly you will need to have AWS CLI configured. you can do this by running `aws configure` and entering your Access Key and Secret Key as well as the Default Region as eu-west-2, you can leave the final value empty by just pressing enter.
 
-## Usage
-To pull the changelog between two dates run the script like this:</br>
-```python3 trigger_changelog.py -u <github_username> -t <github_token> -r <image_repository> -b <image_branch (default: noetic-devel)> -sd <start_date> -ed <end_date>```</br>
-To pull the changelog from one date up to the date it was executed run this:</br>
-```python3 trigger_changelog.py -u <github_username> -t <github_token> -r <image_repository> -b <image_branch (default: noetic-devel)> -sd <start_date>```</br>
+You will then also have to set variables `GITHUB_LOGIN` and `GITHUB_PASSWORD`, the password you enter will need to be a token which has permission to pull all shadow-robot repos. To do this run:
+```
+export GITHUB_LOGIN="github_username"
+export GITHUB_PASSWORD="github_token"
+```
 
-The optional fields in this script are ```-ib``` and ```-ed```.
+After this is done you can run the script. The gather_changelog.sh script has 3 needed parameters and one optional
+1. Image Name: This is the URI of the image you want to get the changelog for (find examples [here](https://eu-west-2.console.aws.amazon.com/ecr/repositories?region=eu-west-2))
+2. Image Tag: This is the tag of the image you want to gather the changelog for. It won't work with night-build or release tags, just ones like noetic-v0.0.1
+3. Image Repository: This is the `Repository Name` field found [here](https://eu-west-2.console.aws.amazon.com/ecr/repositories?region=eu-west-2), it should match the URI of the image you used for the first parameter
+4. (OPTIONAL) Image Tag Previous: If we ever have to re-publish old image or the script fails, we can use this Image Tag Previous field to manually select which two images we want to compare. If this value isn't present it will find the last chronological image tag that matches the same distribution tag
 
-## Examples
-Pull the changelog between two dates:</br>
-```python3 trigger_changelog.py --username BenStarmerSmith --token ghp_f4hJ49XFY2XvKBVTVRb9aHeVRXW62HGCzuQ7 --repo shadow_dexterous_hand -start_date 2022-03-01 --end_date 2022-03-21```</br>
-Pull the changelog from one date to current date:</br>
-```python3 trigger_changelog.py -u BenStarmerSmith -t ghp_f4hJ49XFY2XvKBVTVRb9aHeVRXW62HGCzuQ7 -r shadow_teleop_polhemus -sd 2022-03-06```
+**Example executions:**
+Example with autoselected previous tag:
+```
+gather_changelog/gather_changelog.sh 080653068785.dkr.ecr.eu-west-2.amazonaws.com/shadow-dexterous-hand-glove noetic-v0.0.8 shadow-dexterous-hand-glove
+```
+Example with Optional 4th varible:
+```
+gather_changelog/gather_changelog.sh 080653068785.dkr.ecr.eu-west-2.amazonaws.com/shadow-dexterous-hand-glove noetic-v0.0.2 shadow-dexterous-hand-glove noetic-v0.0.1
+```
