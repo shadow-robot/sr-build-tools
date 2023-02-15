@@ -253,12 +253,14 @@ function clone_repo_and_get_changes() {
     send_mail "Changelog for image $IMAGE_NAME:$IMAGE_TAG" "$changelog"
 }
 
-if [[ $IMAGE_NAME == "public.ecr"* ]]; then
+if [[ $IMAGE_NAME == *"public.ecr"* ]]; then
+    echo "1"
     region="us-east-1"
     aws ecr-public get-login-password --region $region | docker login --username AWS --password-stdin public.ecr.aws/shadowrobot
     IMAGE_LOCATION="https://eu-west-2.console.aws.amazon.com/ecr/repositories/public/080653068785/$IMAGE_REPOSITORY"
     ecr_version="ecr-public"
 else
+    echo "2"
     region="eu-west-2"
     IMAGE_LOCATION="https://eu-west-2.console.aws.amazon.com/ecr/repositories/private/080653068785/$IMAGE_REPOSITORY"
     aws ecr get-login-password --region $region | docker login --username AWS --password-stdin 080653068785.dkr.ecr.eu-west-2.amazonaws.com
