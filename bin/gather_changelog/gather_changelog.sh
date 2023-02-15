@@ -33,7 +33,7 @@ function reverse() {
 # a release image, night-build, or match the ros version.
 function get_last_tag() {
     # Get all image details
-    images=$(aws ecr describe-images --repository-name $IMAGE_REPOSITORY --query 'sort_by(imageDetails,& imagePushedAt)[]')
+    images=$(aws $ecr_version describe-images --repository-name $IMAGE_REPOSITORY --query 'sort_by(imageDetails,& imagePushedAt)[]')
     # Find the image details for the input tag
     image_details=$(echo $images | jq -r ".[] | select(.imageTags[0] == \"$IMAGE_TAG\")")
     # Get the timestamp of the input image
@@ -256,9 +256,11 @@ function clone_repo_and_get_changes() {
 if [[ $IMAGE_NAME == *"public.ecr"* ]]; then
     aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws/shadowrobot
     IMAGE_LOCATION="https://eu-west-2.console.aws.amazon.com/ecr/repositories/public/080653068785/$IMAGE_REPOSITORY"
+    ecr_version="ecr-public"
 else
     IMAGE_LOCATION="https://eu-west-2.console.aws.amazon.com/ecr/repositories/private/080653068785/$IMAGE_REPOSITORY"
     aws ecr get-login-password --region eu-west-2 | docker login --username AWS --password-stdin 080653068785.dkr.ecr.eu-west-2.amazonaws.com
+    ecr_version="ecr"
 fi
 
 
