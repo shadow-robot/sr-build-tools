@@ -18,6 +18,7 @@ IMAGE_TAG=$2
 IMAGE_REPOSITORY=$3
 IMAGE_TAG_PREVIOUS=$4  # An override variable if you don't want it to compare to previous tag.
 set -e  # Fail on error
+set -x
 
 # This function takes in an input array and an empty array, and reverses the input into the empty array.
 function reverse() {
