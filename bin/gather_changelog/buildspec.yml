@@ -40,5 +40,4 @@ phases:
       - cd $(find . -name gather_changelog)
   build:
     commands:
-      - echo "./gather_changelog.sh "$image_name" "$image_tag" "$image_repository" "$image_previous_tag""
       - ./gather_changelog.sh "$image_name" "$image_tag" "$image_repository" "$image_previous_tag"
