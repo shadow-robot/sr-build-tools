@@ -265,7 +265,6 @@ else
     ecr_version="ecr"
 fi
 
-
 STARTING_DIR=$(pwd)
 SCRIPT_DIR=$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")
 GITHUB_TEMPLATE="https://$GITHUB_LOGIN:$GITHUB_PASSWORD@github.com/shadow-robot"
