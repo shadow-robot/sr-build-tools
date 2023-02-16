@@ -16,7 +16,7 @@ version: 0.2
 env:
   variables:
      image_name: public.ecr.aws/shadowrobot/dexterous-hand
-     image_tag: noetic-v1.0.2
+     image_tag: noetic-v1.1.0
      image_previous_tag: ""
      image_repository: dexterous-hand
      release_branch: master
@@ -40,4 +40,4 @@ phases:
       - cd $(find . -name gather_changelog)
   build:
     commands:
-      - ./gather_changelog.sh $image_name $image_tag $image_repository $image_previous_tag
+      - ./gather_changelog.sh "$image_name" "$image_tag" "$image_repository" "$image_previous_tag"
