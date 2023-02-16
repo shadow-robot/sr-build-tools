@@ -19,7 +19,7 @@ env:
      image_tag: noetic-v1.1.0
      image_previous_tag: ""
      image_repository: dexterous-hand
-     #release_branch: master
+     release_branch: master
   parameter-store:
      GITHUB_LOGIN : GITHUB_LOGIN
      GITHUB_PASSWORD : GITHUB_PASSWORD
@@ -28,12 +28,12 @@ env:
      - image_tag
      - image_previous_tag
      - image_repository
-     #- release_branch
+     - release_branch
 phases:
   pre_build:
     commands:
       - apt-get install --only-upgrade bash
-      #- git checkout $release_branch
+      - git checkout $release_branch
       - echo AWS_CONTAINER_CREDENTIALS_RELATIVE_URI=$AWS_CONTAINER_CREDENTIALS_RELATIVE_URI >> AWS_CRED
       - echo AWS_DEFAULT_REGION=$AWS_DEFAULT_REGION >> AWS_CRED
       - cd $(find . -name bin)
