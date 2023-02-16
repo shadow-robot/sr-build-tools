@@ -18,7 +18,7 @@ IMAGE_TAG=$2
 IMAGE_REPOSITORY=$3
 IMAGE_TAG_PREVIOUS=$4  # An override variable if you don't want it to compare to previous tag.
 set -e  # Fail on error
-
+echo "FIRST THINGS FIRST"
 # This function takes in an input array and an empty array, and reverses the input into the empty array.
 function reverse() {
     declare -n input_arr="$1"
@@ -259,14 +259,12 @@ if [[ $IMAGE_NAME == *"public.ecr"* ]]; then
     aws ecr-public get-login-password --region $region | docker login --username AWS --password-stdin public.ecr.aws/shadowrobot
     IMAGE_LOCATION="https://eu-west-2.console.aws.amazon.com/ecr/repositories/public/080653068785/$IMAGE_REPOSITORY"
     ecr_version="ecr-public"
-    aws $ecr_version describe-images --repository-name $IMAGE_REPOSITORY --region $region --query 'sort_by(imageDetails,& imagePushedAt)[]'
 else
     echo "2"
     region="eu-west-2"
     IMAGE_LOCATION="https://eu-west-2.console.aws.amazon.com/ecr/repositories/private/080653068785/$IMAGE_REPOSITORY"
     aws ecr get-login-password --region $region | docker login --username AWS --password-stdin 080653068785.dkr.ecr.eu-west-2.amazonaws.com
     ecr_version="ecr"
-    aws $ecr_version describe-images --repository-name $IMAGE_REPOSITORY --region $region --query 'sort_by(imageDetails,& imagePushedAt)[]'
 fi
 
 echo "WHATS GOING ON"
