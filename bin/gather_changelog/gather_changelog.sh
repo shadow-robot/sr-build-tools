@@ -268,6 +268,7 @@ else
     ecr_version="ecr"
 fi
 
+echo "WHATS GOING ON"
 
 STARTING_DIR=$(pwd)
 SCRIPT_DIR=$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")
