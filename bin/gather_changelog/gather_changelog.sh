@@ -33,7 +33,7 @@ function reverse() {
 # a release image, night-build, or match the ros version.
 function get_last_tag() {
     # Get all image details
-    images=$(aws ecr-public describe-images --repository-name $IMAGE_REPOSITORY --region us-east-1 --query 'sort_by(imageDetails,& imagePushedAt)[]')
+    #images=$(aws ecr-public describe-images --repository-name $IMAGE_REPOSITORY --region us-east-1 --query 'sort_by(imageDetails,& imagePushedAt)[]')
     #images=$(aws $ecr_version describe-images --repository-name $IMAGE_REPOSITORY --region $region --query 'sort_by(imageDetails,& imagePushedAt)[]')
     # Find the image details for the input tag
     image_details=$(echo $images | jq -r ".[] | select(.imageTags[0] == \"$IMAGE_TAG\")")
