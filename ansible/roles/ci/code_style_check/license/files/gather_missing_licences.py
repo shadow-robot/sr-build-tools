@@ -17,6 +17,7 @@
 # pylint: disable=W1510
 
 import os
+import re
 import sys
 import argparse
 import subprocess
@@ -66,8 +67,9 @@ def get_changes_in_pr(data):
         print(f"ERROR WITH COMMAND:\nstderr:{active_branch_process.stderr}\nstdout:{active_branch_process.stdout}")
         sys.exit(1)
     for branch in active_branch_process.stdout.split("\n"):
-        if "remotes/origin/" in branch:
-            branch_name = branch.split("remotes/origin/")[-1]
+        if "remotes/origin/HEAD ->" in branch:
+            result = re.search(r"->\s*origin/(.+)", branch)
+            branch_name = result.group(1)
             if branch_name in MASTER_BRANCHES:
                 sys.exit(0)  # Exit on master branch as its already been merged and checked.
             active_branch = branch_name
