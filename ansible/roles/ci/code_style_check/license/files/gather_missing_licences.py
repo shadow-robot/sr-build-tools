@@ -69,7 +69,7 @@ def get_changes_in_pr(data):
     for branch in active_branch_process.stdout.split("\n"):
         if "remotes/origin/" in branch:
             print(branch)
-            result = re.search(r"->\s*origin/(\w+)", branch)
+            result = re.search(r"->\s*origin/(.+)", branch)
             branch_name = branch.split("remotes/origin/")[-1]
             print(branch_name, result.group(1))
             if branch_name in MASTER_BRANCHES:
