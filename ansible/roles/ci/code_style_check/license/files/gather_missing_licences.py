@@ -64,7 +64,7 @@ def get_changes_in_pr(data):
     active_branch_process = subprocess.run(command, text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     active_branch = ""
     if active_branch_process.returncode != 0:
-        print(f"ERROR WITH COMMAND:\nstderr:{active_branch_process.stderr}\nstdout:{active_branch_process.stdout}")
+        print(f"ERROR WITH COMMAND {command}:\nstderr:{active_branch_process.stderr}\nstdout:{active_branch_process.stdout}")
         sys.exit(1)
     for branch in active_branch_process.stdout.split("\n"):
         if "remotes/origin/HEAD ->" in branch:
@@ -78,14 +78,14 @@ def get_changes_in_pr(data):
     command = ["git", "checkout", active_branch]
     checkout_branch_process = subprocess.run(command, text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     if checkout_branch_process.returncode != 0:
-        print(f"ERROR WITH COMMAND:\nstderr:{checkout_branch_process.stderr}\nstdout:{checkout_branch_process.stdout}")
+        print(f"ERROR WITH COMMAND {command}:\nstderr:{checkout_branch_process.stderr}\nstdout:{checkout_branch_process.stdout}")
         sys.exit(1)
 
     # Gets the master branch
     command = ["git", "branch"]
     master_branch_process = subprocess.run(command, text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     if master_branch_process.returncode != 0:
-        print(f"ERROR WITH COMMAND:\nstderr:{master_branch_process.stderr}\nstdout:{master_branch_process.stdout}")
+        print(f"ERROR WITH COMMAND {command}:\nstderr:{master_branch_process.stderr}\nstdout:{master_branch_process.stdout}")
         sys.exit(1)
     devel_branches = ""
     list_of_accepted_master_branches = master_branch_process.stdout.split("\n")
