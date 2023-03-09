@@ -15,14 +15,17 @@
 # with this program. If not, see <http://www.gnu.org/licenses/>.
 
 import os
+import re
 import sys
 import argparse
 import subprocess
 from datetime import date
 
-PYTHON_HEADERS = ["#!/usr/bin/env python", "#!/usr/bin/python"]
-ACCEPTED_EXTENSIONS = ["py", "c", "h", "cpp", "hpp"]
-MASTER_BRANCHES = ["noetic-devel", "melodic-devel", "kinetic-devel", "jade-devel", "indigo-devel", "devel", "master", "main"]
+# Include bash in python files as we also put licences in bash files too.
+PYTHON_HEADERS = ["#!/usr/bin/env python", "#!/usr/bin/python", "#!/bin/bash", "#!/usr/bin/env bash"]
+ACCEPTED_EXTENSIONS = ["py", "c", "h", "cpp", "hpp", "yml", "yaml", "sh", "xml", "xacro", "dae", "launch"]
+MASTER_BRANCHES = ["noetic-devel", "melodic-devel", "kinetic-devel",
+                   "jade-devel", "indigo-devel", "devel", "master", "main"]
 
 
 class Data:
@@ -60,12 +63,13 @@ def get_changes_in_pr(data):
     active_branch = ""
     if active_branch_process.returncode != 0:
         print(f"ERROR WITH COMMAND:\nstderr:{active_branch_process.stderr}\nstdout:{active_branch_process.stdout}")
-        exit(1)
+        sys.exit(1)
     for branch in active_branch_process.stdout.split("\n"):
-        if "remotes/origin/" in branch:
-            branch_name = branch.split("remotes/origin/")[-1]
+        if "remotes/origin/HEAD ->" in branch:
+            result = re.search(r"->\s*origin/(.+)", branch)
+            branch_name = result.group(1)
             if branch_name in MASTER_BRANCHES:
-                exit(0)  # Exit on master branch as its already been merged and checked.
+                sys.exit(0)  # Exit on master branch as its already been merged and checked.
             active_branch = branch_name
             break
 
@@ -73,14 +77,14 @@ def get_changes_in_pr(data):
     checkout_branch_process = subprocess.run(command, text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     if checkout_branch_process.returncode != 0:
         print(f"ERROR WITH COMMAND:\nstderr:{checkout_branch_process.stderr}\nstdout:{checkout_branch_process.stdout}")
-        exit(1)
+        sys.exit(1)
 
     # Gets the master branch
     command = ["git", "branch"]
     master_branch_process = subprocess.run(command, text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     if master_branch_process.returncode != 0:
         print(f"ERROR WITH COMMAND:\nstderr:{master_branch_process.stderr}\nstdout:{master_branch_process.stdout}")
-        exit(1)
+        sys.exit(1)
     devel_branches = ""
     list_of_accepted_master_branches = master_branch_process.stdout.split("\n")
     all_branches = [branch.strip() for branch in list_of_accepted_master_branches]
@@ -90,7 +94,7 @@ def get_changes_in_pr(data):
             break
     if devel_branches == "":
         print(f"Could not find the master branch: checks for {MASTER_BRANCHES}")
-        exit(1)
+        sys.exit(1)
 
     # Get the differences between the PR and master.
     command = ["git", "diff", "--name-only", devel_branches, active_branch]
@@ -118,16 +122,21 @@ def gather_missing_licences(data):
        If it doesn't its added to a list of files missing the correct licence."""
     missing_licence = []
     for file_path, extension in data.changed_files:
+        start_comment=False
         with open(file_path, "r") as file:
             for line in file.readlines():  # Read file line by line
                 line = line.strip()  # Remove whitespaces so we can find lines with just comments
-                if extension == "py":
-                    if line and len(line) > 1 and line[0] == "#":
+                if extension in ["py", "msg", "yml", "yaml", "sh", "c", "cpp", "h", "hpp"]:
+                    if line and len(line) > 1 and line[0] in ["#", "/", "*"]:
                         if "Shadow Robot Company Ltd" in line and "Copyright" in line:
                             if data.current_year not in line:
                                 missing_licence.append(file_path)
-                else:
-                    if line and len(line) > 1 and line[0] in ["/","*"]:
+                else:  # Handles xml xacro dae and launch files.
+                    if line and len(line) > 1 and line[0:4] == "<!--":
+                        start_comment = True
+                    if line and len(line) > 1 and line[0:2] == "-->":
+                        start_comment = False
+                    if start_comment:
                         if "Shadow Robot Company Ltd" in line and "Copyright" in line:
                             if data.current_year not in line:
                                 missing_licence.append(file_path)
