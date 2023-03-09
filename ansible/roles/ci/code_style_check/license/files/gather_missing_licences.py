@@ -91,20 +91,11 @@ def get_changes_in_pr(data):
         print(f"ERROR WITH COMMAND {command}:\nstderr:{checkout_branch_process.stderr}\nstdout:{checkout_branch_process.stdout}")
         sys.exit(1)
 
-    # Get a list of all local branches in the Git repository
-    result = subprocess.run(['git', 'branch'], stdout=subprocess.PIPE)
-    branches = result.stdout.decode().split()
+    # Get the URL of the remote repository associated with the local Git repository
+    result = subprocess.run(['git', 'config', '--get', 'remote.origin.url'], stdout=subprocess.PIPE)
+    repo_url = result.stdout.decode().strip()
 
-    # Iterate over each local branch and check if it matches any of the accepted default branch names
-    for branch in branches:
-        # Remove the leading "*" character from the current branch
-        branch = branch.lstrip('*').strip()
-        
-        if branch in MASTER_BRANCHES:
-            print(f'Branch "{branch}" is an accepted default branch')
-        else:
-            print(f'Branch "{branch}" is not an accepted default branch')
-
+    print(f'The URL of the remote repository is {repo_url}')
 
     # Gets the master branch
     command = ["git", "branch"]
