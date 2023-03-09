@@ -91,6 +91,15 @@ def get_changes_in_pr(data):
         print(f"ERROR WITH COMMAND {command}:\nstderr:{checkout_branch_process.stderr}\nstdout:{checkout_branch_process.stdout}")
         sys.exit(1)
 
+    # Run the git rev-parse command to get the SHA1 hash of the current HEAD commit
+    output = subprocess.check_output(['git', 'rev-parse', 'HEAD'])
+
+    # Convert the output to a string and remove any whitespace or newline characters
+    commit_hash = output.decode('utf-8').strip()
+
+    # Print the commit hash
+    print(commit_hash)
+
     # Gets the master branch
     command = ["git", "branch"]
     master_branch_process = subprocess.run(command, text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
