@@ -111,28 +111,9 @@ def get_changes_in_pr(data):
     response = requests.get(api_url, auth=(data.user, data.token))
     # Extract the default branch from the response
     default_branch = response.json()['default_branch']
-    print(default_branch)
-
-    # Gets the master branch
-    command = ["git", "branch"]
-    master_branch_process = subprocess.run(command, text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    if master_branch_process.returncode != 0:
-        print(f"ERROR WITH COMMAND {command}:\nstderr:{master_branch_process.stderr}\nstdout:{master_branch_process.stdout}")
-        sys.exit(1)
-    devel_branches = ""
-    list_of_accepted_master_branches = master_branch_process.stdout.split("\n")
-    all_branches = [branch.strip() for branch in list_of_accepted_master_branches]
-    print(all_branches)
-    for branch in MASTER_BRANCHES:
-        if branch in all_branches:
-            devel_branches = branch
-            break
-    if devel_branches == "":
-        print(f"Could not find the master branch: checks for {MASTER_BRANCHES}")
-        sys.exit(1)
 
     # Get the differences between the PR and master.
-    command = ["git", "diff", "--name-only", devel_branches, active_branch]
+    command = ["git", "diff", "--name-only", default_branch, active_branch]
     git_diff_process = subprocess.run(command, text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     for line in git_diff_process.stdout.splitlines():
         file_path = os.path.join(data.path, line)
