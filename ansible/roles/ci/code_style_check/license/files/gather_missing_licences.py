@@ -84,10 +84,6 @@ def get_changes_in_pr(data):
                 sys.exit(0)  # Exit on master branch as its already been merged and checked.
             active_branch = branch_name
             break
-    print("Active branch: " + active_branch)
-    if not active_branch:
-        print(f"Could not find a master branch matching: {MASTER_BRANCHES}")
-        sys.exit(1)
 
     command = ["git", "checkout", active_branch]
     checkout_branch_process = subprocess.run(command, text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
@@ -104,6 +100,7 @@ def get_changes_in_pr(data):
     devel_branches = ""
     list_of_accepted_master_branches = master_branch_process.stdout.split("\n")
     all_branches = [branch.strip() for branch in list_of_accepted_master_branches]
+    print(all_branches)
     for branch in MASTER_BRANCHES:
         if branch in all_branches:
             devel_branches = branch
