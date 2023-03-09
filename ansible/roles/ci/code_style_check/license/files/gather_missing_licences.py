@@ -68,8 +68,8 @@ def get_changes_in_pr(data):
         print(f"ERROR WITH COMMAND {command}:\nstderr:{active_branch_process.stderr}\nstdout:{active_branch_process.stdout}")
         sys.exit(1)
     for branch in active_branch_process.stdout.split("\n"):
-        print(branch)
         if "remotes/origin/HEAD ->" in branch:
+            print(1)
             result = re.search(r"->\s*origin/(.+)", branch)
             branch_name = result.group(1)
             if branch_name in MASTER_BRANCHES:
@@ -77,13 +77,14 @@ def get_changes_in_pr(data):
             active_branch = branch_name
             break
         elif "remotes/origin/" in branch:
+            print(2)
             result = re.search(r"remotes/origin/(.+)", branch)
             branch_name = result.group(1)
             if branch_name in MASTER_BRANCHES:
                 sys.exit(0)  # Exit on master branch as its already been merged and checked.
             active_branch = branch_name
             break
-
+    print("Active branch: " + active_branch)
     if not active_branch:
         print(f"Could not find a master branch matching: {MASTER_BRANCHES}")
         sys.exit(1)
