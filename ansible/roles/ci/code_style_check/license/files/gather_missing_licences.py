@@ -21,6 +21,7 @@ import re
 import sys
 import argparse
 import subprocess
+import requests
 from datetime import date
 
 # Include bash in python files as we also put licences in bash files too.
@@ -32,9 +33,11 @@ MASTER_BRANCHES = ["noetic-devel", "melodic-devel", "kinetic-devel",
 
 class Data:
     changed_files = []
-    def __init__(self, path, src_vers) -> None:
+    def __init__(self, path, src_vers, user, token) -> None:
         self.path = path
         self.source = src_vers
+        self.user = user
+        self.token = token
         self.current_year = str(date.today().year)
 
 
@@ -47,12 +50,21 @@ def gather_arguments():
         type=str,
         required=True,
         help='The path to the repo to check the licences.')
-
+    parser.add_argument(
+        '--user',
+        type=str,
+        required=True,
+        help='The Github Username.')
+    parser.add_argument(
+        '--token',
+        type=str,
+        required=True,
+        help='The Github Token.')
     args = parser.parse_args()
 
     with open('/tmp/git_source', 'r') as tmp_file:
         source = tmp_file.read().strip()
-    return Data(args.path, source)
+    return Data(args.path, source, args.user, args.token)
 
 
 def get_changes_in_pr(data):
@@ -64,7 +76,7 @@ def get_changes_in_pr(data):
     active_branch_process = subprocess.run(command, text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     active_branch = ""
     if active_branch_process.returncode != 0:
-        print(f"ERROR WITH COMMAND:\nstderr:{active_branch_process.stderr}\nstdout:{active_branch_process.stdout}")
+        print(f"ERROR WITH COMMAND {command}:\nstderr:{active_branch_process.stderr}\nstdout:{active_branch_process.stdout}")
         sys.exit(1)
     for branch in active_branch_process.stdout.split("\n"):
         if "remotes/origin/HEAD ->" in branch:
@@ -74,32 +86,31 @@ def get_changes_in_pr(data):
                 sys.exit(0)  # Exit on master branch as its already been merged and checked.
             active_branch = branch_name
             break
+        elif "remotes/origin/" in branch:
+            result = re.search(r"remotes/origin/(.+)", branch)
+            branch_name = result.group(1)
+            if branch_name in MASTER_BRANCHES:
+                sys.exit(0)  # Exit on master branch as its already been merged and checked.
+            active_branch = branch_name
+            break
 
     command = ["git", "checkout", active_branch]
     checkout_branch_process = subprocess.run(command, text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     if checkout_branch_process.returncode != 0:
-        print(f"ERROR WITH COMMAND:\nstderr:{checkout_branch_process.stderr}\nstdout:{checkout_branch_process.stdout}")
+        print(f"ERROR WITH COMMAND {command}:\nstderr:{checkout_branch_process.stderr}\nstdout:{checkout_branch_process.stdout}")
         sys.exit(1)
 
-    # Gets the master branch
-    command = ["git", "branch"]
-    master_branch_process = subprocess.run(command, text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    if master_branch_process.returncode != 0:
-        print(f"ERROR WITH COMMAND:\nstderr:{master_branch_process.stderr}\nstdout:{master_branch_process.stdout}")
-        sys.exit(1)
-    devel_branches = ""
-    list_of_accepted_master_branches = master_branch_process.stdout.split("\n")
-    all_branches = [branch.strip() for branch in list_of_accepted_master_branches]
-    for branch in MASTER_BRANCHES:
-        if branch in all_branches:
-            devel_branches = branch
-            break
-    if devel_branches == "":
-        print(f"Could not find the master branch: checks for {MASTER_BRANCHES}")
-        sys.exit(1)
+    # Get the URL of the remote repository associated with the local Git repository
+    result = subprocess.run(['git', 'config', '--get', 'remote.origin.url'], stdout=subprocess.PIPE)
+    repo_name = result.stdout.decode().strip().split(".git")[0].split("/")[-1]
+    # Make a GET request to the GitHub API to get information about the repository
+    api_url = f'https://api.github.com/repos/shadow-robot/{repo_name}'
+    response = requests.get(api_url, auth=(data.user, data.token))
+    # Extract the default branch from the response
+    default_branch = response.json()['default_branch']
 
     # Get the differences between the PR and master.
-    command = ["git", "diff", "--name-only", devel_branches, active_branch]
+    command = ["git", "diff", "--name-only", default_branch, active_branch]
     git_diff_process = subprocess.run(command, text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     for line in git_diff_process.stdout.splitlines():
         file_path = os.path.join(data.path, line)
