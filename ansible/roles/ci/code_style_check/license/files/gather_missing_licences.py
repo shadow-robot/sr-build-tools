@@ -67,7 +67,9 @@ def get_changes_in_pr(data):
         sys.exit(1)
     for branch in active_branch_process.stdout.split("\n"):
         if "remotes/origin/" in branch:
+            print(branch)
             branch_name = branch.split("remotes/origin/")[-1]
+            print(branch_name)
             if branch_name in MASTER_BRANCHES:
                 sys.exit(0)  # Exit on master branch as its already been merged and checked.
             active_branch = branch_name
