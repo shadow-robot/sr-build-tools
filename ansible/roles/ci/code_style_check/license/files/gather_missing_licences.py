@@ -67,6 +67,7 @@ def get_changes_in_pr(data):
         print(f"ERROR WITH COMMAND {command}:\nstderr:{active_branch_process.stderr}\nstdout:{active_branch_process.stdout}")
         sys.exit(1)
     for branch in active_branch_process.stdout.split("\n"):
+        print(branch)
         if "remotes/origin/HEAD ->" in branch:
             result = re.search(r"->\s*origin/(.+)", branch)
             branch_name = result.group(1)
