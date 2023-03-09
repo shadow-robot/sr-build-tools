@@ -91,23 +91,24 @@ def get_changes_in_pr(data):
         print(f"ERROR WITH COMMAND {command}:\nstderr:{checkout_branch_process.stderr}\nstdout:{checkout_branch_process.stdout}")
         sys.exit(1)
 
-    # Run the git rev-parse command to get the SHA1 hash of the current HEAD commit
-    output = subprocess.check_output(['git', 'rev-parse', 'HEAD'])
-
-    # Convert the output to a string and remove any whitespace or newline characters
-    commit_hash = output.decode('utf-8').strip()
-
     # Run the git symbolic-ref command to get the name of the current branch
     output = subprocess.check_output(['git', 'symbolic-ref', '--short', 'HEAD'])
 
     # Convert the output to a string and remove any whitespace or newline characters
     current_branch = output.decode('utf-8').strip()
 
-    # Run the git for-each-ref command to get the name of the default branch
-    output = subprocess.check_output(['git', 'for-each-ref', '--format=%(refname:short)', 'refs/remotes/origin/HEAD'])
+    # Run the git remote show command to get the name of the default branch on the remote repository
+    output = subprocess.check_output(['git', 'remote', 'show', 'origin'])
 
     # Convert the output to a string and remove any whitespace or newline characters
-    default_branch = output.decode('utf-8').strip()
+    remote_info = output.decode('utf-8').strip()
+
+    # Find the line that specifies the default branch and extract the name of the branch
+    default_branch = None
+    for line in remote_info.split('\n'):
+        if 'HEAD branch:' in line:
+            default_branch = line.split(':', 1)[1].strip()
+            break
 
     # If the current branch is the default branch, use the local branch name instead
     if current_branch == default_branch:
@@ -116,6 +117,7 @@ def get_changes_in_pr(data):
 
     # Print the name of the default branch
     print(default_branch)
+
 
     # Gets the master branch
     command = ["git", "branch"]
