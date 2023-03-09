@@ -21,6 +21,7 @@ import re
 import sys
 import argparse
 import subprocess
+import requests
 from datetime import date
 
 # Include bash in python files as we also put licences in bash files too.
@@ -32,9 +33,11 @@ MASTER_BRANCHES = ["noetic-devel", "melodic-devel", "kinetic-devel",
 
 class Data:
     changed_files = []
-    def __init__(self, path, src_vers) -> None:
+    def __init__(self, path, src_vers, user, token) -> None:
         self.path = path
         self.source = src_vers
+        self.user = user
+        self.token = token
         self.current_year = str(date.today().year)
 
 
@@ -47,12 +50,21 @@ def gather_arguments():
         type=str,
         required=True,
         help='The path to the repo to check the licences.')
-
+    parser.add_argument(
+        '--user',
+        type=str,
+        required=True,
+        help='The Github Username.')
+    parser.add_argument(
+        '--token',
+        type=str,
+        required=True,
+        help='The Github Token.')
     args = parser.parse_args()
 
     with open('/tmp/git_source', 'r') as tmp_file:
         source = tmp_file.read().strip()
-    return Data(args.path, source)
+    return Data(args.path, source, args.user, args.token)
 
 
 def get_changes_in_pr(data):
@@ -93,9 +105,13 @@ def get_changes_in_pr(data):
 
     # Get the URL of the remote repository associated with the local Git repository
     result = subprocess.run(['git', 'config', '--get', 'remote.origin.url'], stdout=subprocess.PIPE)
-    repo_url = result.stdout.decode().strip()
-
-    print(f'The URL of the remote repository is {repo_url}')
+    repo_name = result.stdout.decode().strip().split(".git")[0].split("/")[-1]
+    # Make a GET request to the GitHub API to get information about the repository
+    api_url = f'https://api.github.com/repos/shadow-robot/{repo_name}'
+    response = requests.get(api_url, auth=(data.user, data.token))
+    # Extract the default branch from the response
+    default_branch = response.json()['default_branch']
+    print(default_branch)
 
     # Gets the master branch
     command = ["git", "branch"]
