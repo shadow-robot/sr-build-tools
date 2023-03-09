@@ -97,17 +97,25 @@ def get_changes_in_pr(data):
     # Convert the output to a string and remove any whitespace or newline characters
     commit_hash = output.decode('utf-8').strip()
 
-    # Print the commit hash
-    print("hash " + commit_hash)
-    
     # Run the git symbolic-ref command to get the name of the current branch
     output = subprocess.check_output(['git', 'symbolic-ref', '--short', 'HEAD'])
 
     # Convert the output to a string and remove any whitespace or newline characters
-    branch_name = output.decode('utf-8').strip()
+    current_branch = output.decode('utf-8').strip()
 
-    # Print the branch name
-    print("hash2 " + branch_name)
+    # Run the git for-each-ref command to get the name of the default branch
+    output = subprocess.check_output(['git', 'for-each-ref', '--format=%(refname:short)', 'refs/remotes/origin/HEAD'])
+
+    # Convert the output to a string and remove any whitespace or newline characters
+    default_branch = output.decode('utf-8').strip()
+
+    # If the current branch is the default branch, use the local branch name instead
+    if current_branch == default_branch:
+        output = subprocess.check_output(['git', 'rev-parse', '--abbrev-ref', 'HEAD'])
+        default_branch = output.decode('utf-8').strip()
+
+    # Print the name of the default branch
+    print(default_branch)
 
     # Gets the master branch
     command = ["git", "branch"]
