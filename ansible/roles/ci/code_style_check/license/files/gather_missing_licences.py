@@ -98,7 +98,7 @@ def get_changes_in_pr(data):
     commit_hash = output.decode('utf-8').strip()
 
     # Print the commit hash
-    print(commit_hash)
+    print("hash" + commit_hash)
 
     # Gets the master branch
     command = ["git", "branch"]
