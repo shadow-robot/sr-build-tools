@@ -98,7 +98,16 @@ def get_changes_in_pr(data):
     commit_hash = output.decode('utf-8').strip()
 
     # Print the commit hash
-    print("hash" + commit_hash)
+    print("hash " + commit_hash)
+    
+    # Run the git symbolic-ref command to get the name of the current branch
+    output = subprocess.check_output(['git', 'symbolic-ref', '--short', 'HEAD'])
+
+    # Convert the output to a string and remove any whitespace or newline characters
+    branch_name = output.decode('utf-8').strip()
+
+    # Print the branch name
+    print("hash2 " + branch_name)
 
     # Gets the master branch
     command = ["git", "branch"]
