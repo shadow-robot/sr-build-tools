@@ -62,6 +62,7 @@ def get_changes_in_pr(data):
     # Get commit branch and checkout to it
     command = ["git", "branch", "-a", "--contains", data.source]
     active_branch_process = subprocess.run(command, text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    print(active_branch_process.stdout.split("\n"))
     active_branch = ""
     if active_branch_process.returncode != 0:
         print(f"ERROR WITH COMMAND {command}:\nstderr:{active_branch_process.stderr}\nstdout:{active_branch_process.stdout}")
@@ -75,6 +76,17 @@ def get_changes_in_pr(data):
                 sys.exit(0)  # Exit on master branch as its already been merged and checked.
             active_branch = branch_name
             break
+        elif "remotes/origin/" in branch:
+            result = re.search(r"remotes/origin/(.+)", branch)
+            branch_name = result.group(1)
+            if branch_name in MASTER_BRANCHES:
+                sys.exit(0)  # Exit on master branch as its already been merged and checked.
+            active_branch = branch_name
+            break
+
+    if not active_branch:
+        print(f"Could not find a master branch matching: {MASTER_BRANCHES}")
+        sys.exit(1)
 
     command = ["git", "checkout", active_branch]
     checkout_branch_process = subprocess.run(command, text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
