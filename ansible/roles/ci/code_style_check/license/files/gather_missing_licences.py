@@ -17,6 +17,7 @@
 # pylint: disable=W1510
 
 import os
+import re
 import sys
 import argparse
 import subprocess
