@@ -1,0 +1,48 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            // Debug the currently-open/focussed launch file. This launches every node in the launch file, as well as included launch files,
+            // and attaches python or C++ debuggers to the nodes selected for debugging. You can configure breakpoints, watch variables etc.
+            // within VS code.
+            "name": "ROS: Debug current launch file",
+            "type": "ros",
+            "request": "launch",
+            "target": "${file}",
+            "arguments": [], // Add desired launch file arguments here, e.g. "input_file_name:=blah.world"
+            "launch": [
+                "rviz",
+                "gz",
+                "gzserver",
+                "gzclient",
+                "static_transform_publisher",
+            ], // Add the types of nodes that you do NOT want to debug
+            // "attachDebugger": [], // Alternatively, specify the only executables that will be debugged; everthing else will just be launched
+            "preLaunchTask": "catkin_make Workspace",
+        },
+        {
+            // Debug a specific ROS test file. This launches every node in the launch file, as well as included launch files,
+            // and attaches python or C++ debuggers to the nodes selected for debugging. You can configure breakpoints, watch variables etc.
+            // within VS code.
+            "name": "ROS: Debug underactuation test launch file",
+            "type": "ros",
+            "request": "launch",
+            "target": "${workspaceFolder}/src/sr_teleop_hand_internal/sr_underactuation_compensation/test/test_underactuation_predictor.test",
+            "arguments": [], // Add desired launch file arguments here, e.g. "input_file_name:=blah.world"
+            "launch": [], // Add the types of nodes that you do NOT want to debug
+            // "attachDebugger": [], // Alternatively, specify the only executables that will be debugged; everthing else will just be launched
+            "preLaunchTask": "catkin_make test_sr_underactuation_predictor",
+        },
+        {
+            "name": "Python: Current File",
+            "type": "python",
+            "request": "launch",
+            "program": "${file}",
+            "console": "integratedTerminal",
+            "justMyCode": true
+        }
+    ]
+}
