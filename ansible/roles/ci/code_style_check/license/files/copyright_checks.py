@@ -434,7 +434,7 @@ class CopyrightChecker:
         """
         file_path = os.path.relpath(file_path, repo_path)
         git_years = subprocess.check_output(
-            ["git", "-C", repo_path, "log", "--all", "--follow", "--format=%as", "--", file_path]).decode(
+            ["git", "-C", repo_path, "log", "--follow", "--format=%as", "--", file_path]).decode(
                 "utf-8").splitlines()
         git_years = list(set([int(line.split("-")[0]) for line in git_years]))
         git_years.sort()
