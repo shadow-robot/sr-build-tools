@@ -331,7 +331,7 @@ class CopyrightChecker:
                      "strict liability, or tort (including negligence or otherwise) arising in any way out of the use "
                      "of this software, even if advised of the possibility of such damage.")
         elif license_type == "GPL":
-            regex = ("Copyright <Yeas> Shadow Robot Company Ltd. This program is free software: you can redistribute "
+            regex = ("Copyright <Year> Shadow Robot Company Ltd. This program is free software: you can redistribute "
                      "it and/or modify it under the terms of the GNU General Public License as published by the Free "
                      "Software Foundation version 2 of the License. This program is distributed in the hope that it "
                      "will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY "
