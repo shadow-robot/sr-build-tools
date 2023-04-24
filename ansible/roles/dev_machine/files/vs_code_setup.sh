@@ -6,10 +6,15 @@ sr_build_tools_url="https://raw.githubusercontent.com/shadow-robot/sr-build-tool
 # Check if VS Code is installed
 if ! [ -x "$(command -v code)" ]; then
     echo 'VS Code is not installed. Installing...'
-    apt update || echo "apt update failed!"; exit 1
-    apt install -y wget || echo "apt install wget failed!"; exit 1
+    # Check if wget is installed
+    if ! [ -x "$(command -v wget)" ]; then
+        echo 'wget is not installed. Installing...'
+        sudo apt update || echo "apt update failed!"; exit 1
+        sudo apt install -y wget || echo "apt install wget failed!"; exit 1
+    echo "wget installed."
+    fi
     wget -O /tmp/code.deb https://go.microsoft.com/fwlink/?LinkID=760868 || echo "Failed to fetch VS Code!"; exit 1
-    apt install -y /tmp/code.deb || echo "Failed to install VS Code!"; exit 1
+    sudo apt install -y /tmp/code.deb || echo "Failed to install VS Code!"; exit 1
     rm /tmp/code.deb
     echo "VS Code installed."
 fi
