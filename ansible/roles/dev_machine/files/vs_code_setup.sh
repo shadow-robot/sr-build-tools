@@ -9,12 +9,12 @@ if ! [ -x "$(command -v code)" ]; then
     # Check if wget is installed
     if ! [ -x "$(command -v wget)" ]; then
         echo 'wget is not installed. Installing...'
-        sudo apt update || echo "apt update failed!"; exit 1
-        sudo apt install -y wget || echo "apt install wget failed!"; exit 1
+        sudo apt update || { echo "apt update failed!"; exit 1; }
+        sudo apt install -y wget || { echo "apt install wget failed!"; exit 1; }
     echo "wget installed."
     fi
     wget -O /tmp/code.deb https://go.microsoft.com/fwlink/?LinkID=760868 || echo "Failed to fetch VS Code!"; exit 1
-    sudo apt install -y /tmp/code.deb || echo "Failed to install VS Code!"; exit 1
+    sudo apt install -y /tmp/code.deb || { echo "Failed to install VS Code!"; exit 1; }
     rm /tmp/code.deb
     echo "VS Code installed."
 fi
@@ -29,7 +29,7 @@ for extension in "${required_extensions[@]}"; do
         continue
     else
         echo "Installing $extension..."
-        code --install-extension $extension || echo "Failed to install $extension!"; exit 1
+        code --install-extension $extension || { echo "Failed to install extension: \"$extension\"!"; exit 1; }
     fi
 done
 echo "All required VS Code extensions installed."
@@ -81,7 +81,7 @@ if [ -z "$container_name" ]; then
 else
     if [ -z "$(docker ps -q -f name=$container_name)" ]; then
         echo "Container '$container_name' is not running."
-        docker start $container_name || echo "Failed to start container '$container_name'!"; exit 1
+        docker start $container_name || { echo "Failed to start container '$container_name'!"; exit 1; }
     else
         echo "Container '$container_name' is running."
     fi
