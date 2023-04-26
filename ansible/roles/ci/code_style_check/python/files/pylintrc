@@ -114,7 +114,7 @@ score=no
 [REFACTORING]
 
 # Maximum number of nested blocks for function / method body
-max-nested-blocks=5
+max-nested-blocks=7
 
 # Complete name of functions that never returns. When checking for
 # inconsistent-return-statements if a never returning function is called then
@@ -559,8 +559,6 @@ max-statements=75
 
 # Minimum number of public methods for a class (see R0903).
 min-public-methods=2
-
-max-nested-blocks=7
 
 
 [EXCEPTIONS]
