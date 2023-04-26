@@ -53,6 +53,8 @@ select container_name in "${container_names[@]}"; do
     # Replace forward slash with $3f to avoid issues with sed
     image_name=${image_name//\//\%3f}
     container_config_file=~/.config/Code/User/globalStorage/ms-vscode-remote.remote-containers/imageConfigs/$image_name.json
+    # Create directory if it doesn't exist
+    mkdir -p $(dirname $container_config_file)
     wget -O "$container_config_file" "$sr_build_tools_url/ansible/roles/dev_machine/files/imageConfig.json" > /dev/null 2>&1
     if [ $? -ne 0 ]; then
         echo "Failed to fetch VS Code container config!"
