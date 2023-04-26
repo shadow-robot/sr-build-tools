@@ -48,9 +48,9 @@ select container_name in "${container_names[@]}"; do
     fi
     image_name=$(docker inspect --format='{{.Config.Image}}' $container_name)
     echo "Container '$container_name' is image '$image_name'. Installing VS Code config for image..."
-    # Replace colon with $2f to avoid issues with sed
-    image_name=${image_name//:/\%3f}
-    # Replace forward slash with $3f to avoid issues with sed
+    # Replace colon with $3a to avoid issues with sed
+    image_name=${image_name//:/\%3a}
+    # Replace forward slash with $2f to avoid issues with sed
     image_name=${image_name//\//\%2f}
     container_config_file=~/.config/Code/User/globalStorage/ms-vscode-remote.remote-containers/imageConfigs/$image_name.json
     # Create directory if it doesn't exist
