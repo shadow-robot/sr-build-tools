@@ -13,7 +13,7 @@ if ! [ -x "$(command -v code)" ]; then
         sudo apt install -y wget || { echo "apt install wget failed!"; exit 1; }
     echo "wget installed."
     fi
-    wget -O /tmp/code.deb https://go.microsoft.com/fwlink/?LinkID=760868 || echo "Failed to fetch VS Code!"; exit 1
+    wget -O /tmp/code.deb https://go.microsoft.com/fwlink/?LinkID=760868 || { echo "Failed to fetch VS Code!"; exit 1; }
     sudo apt install -y /tmp/code.deb || { echo "Failed to install VS Code!"; exit 1; }
     rm /tmp/code.deb
     echo "VS Code installed."
