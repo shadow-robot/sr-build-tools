@@ -44,7 +44,3 @@ while [ $current_repo_count -ne $previous_repo_count ]; do
   fi
 
 done
-
-# Find and delete duplicate repository directories. Keep the one furthest from destination_folder, e.g. codebuild.
-this_script_dir=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
-$this_script_dir/deduplicate_repositories.py -p $destination_folder -v -w
