@@ -30,7 +30,7 @@ class RepoDeduplicator:
             ignored: Whether to check ignored files.
         """
         logging.basicConfig(level=log_level)
-        self._logger = logging.getLogger('Copyright Check')
+        self._logger = logging.getLogger('Repo Deduplicator')
         self._wet_run = wet_run
         self._repositories = []
         self._duplicates = []
@@ -97,7 +97,7 @@ class RepoDeduplicator:
             for repo in duplicate[1:]:
                 if self._wet_run:
                     self._logger.info(f"Deleting {repo['path']}")
-                    # subprocess.run(['rm', '-rf', repo['path']])
+                    subprocess.run(['rm', '-rf', repo['path']])
                 else:
                     self._logger.info(f"Would delete {repo['path']}")
 
