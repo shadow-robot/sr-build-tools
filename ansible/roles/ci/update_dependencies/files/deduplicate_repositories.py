@@ -51,7 +51,7 @@ class RepoDeduplicator:
         if not repository_paths:
             self._logger.error(f"No repositories found in {path}")
             sys.exit(1)
-        url_regex = re.compile(r'(?:(?:git@github\.com:)|(?:https:\/\/github.com\/))(\S*?)(?:\.git)*$')
+        url_regex = re.compile(r'(?:(?:git@github\.com:)|(?:https:\/\/\S*github.com\/))(\S*?)(?:\.git)*$')
         for repository_path in repository_paths:
             repository_name = os.path.basename(repository_path)
             full_repository_url = subprocess.check_output(
