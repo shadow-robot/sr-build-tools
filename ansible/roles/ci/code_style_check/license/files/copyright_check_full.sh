@@ -17,7 +17,7 @@
 export directory=$1
 cd $directory
 
-filetypes=(py c h cpp hpp yml yaml sh xml xacro dae launch sdf world)
+filetypes=(py c h cpp hpp yml yaml sh xml xacro dae launch sdf world config)
 
 exclusions_py=("__init__" "setup.py")
 
