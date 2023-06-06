@@ -39,6 +39,24 @@ fi
 
 export extra_variables="codecov_secure=$CODECOV_TOKEN github_login=$GITHUB_LOGIN github_password=$GITHUB_PASSWORD ros_release=$ros_release ubuntu_version_name=$ubuntu_version "
 
+
+ansible_executable=~/.local/bin/ansible-playbook
+if [[ ! -f "${ansible_executable}" ]]; then
+    ansible_executable=ansible-playbook
+fi
+ansible_basic_executable=~/.local/bin/ansible
+if [[ ! -f "${ansible_basic_executable}" ]]; then
+    ansible_basic_executable=ansible
+fi
+ansible_galaxy_executable=~/.local/bin/ansible-galaxy
+if [[ ! -f "${ansible_galaxy_executable}" ]]; then
+    ansible_galaxy_executable=ansible-galaxy
+fi
+
+# install ansible galaxy aws collections
+"${ansible_basic_executable}" --version
+"${ansible_galaxy_executable}" collection install amazon.aws
+
 case $server_type in
 
 "travis") echo "Travis CI server"
