@@ -14,3 +14,4 @@
     - {role: mongo_database, tags: ["mongodb"]}
     - {role: pyassimp, tags: ["pyassimp"]}
     - {role: pyqtgraph, tags: ["pyqtgraph"]}
+    - {role: build_deps, tags: ["default"]}
