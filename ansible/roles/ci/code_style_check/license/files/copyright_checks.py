@@ -201,22 +201,22 @@ class CopyrightChecker:
                             return True
         return False
 
-    def check_all_copyright(self, check_years: bool = True) -> bool:
+    def check_all_copyright(self) -> bool:
         """ Check copyright for all files in all repositories. Return true if all files are copyright compliant."""
         n_files_checked = 0
         n_files_with_issues = 0
         for repository in self._repositories.values():
             for file_dict in repository["files"]:
-                if not self.check_file_copyright(repository, file_dict, check_years):
+                if not self.check_file_copyright(repository, file_dict):
                     n_files_with_issues += 1
                 n_files_checked += 1
         self._logger.info(f"Checked {n_files_checked} files in {len(self._repositories)} repositories, found "
                           f"{n_files_with_issues} files with issues.")
-        if not check_years:
+        if not self._check_years:
             self._logger.info("Ignored years in copyright checks.")
         return n_files_with_issues == 0
 
-    def check_file_copyright(self, repository: dict, file_dict: dict, check_years: bool = True) -> bool:
+    def check_file_copyright(self, repository: dict, file_dict: dict) -> bool:
         """ Check copyright for a file in a repository. Return true if the file is copyright compliant.
 
         Args:
@@ -244,7 +244,7 @@ class CopyrightChecker:
                                       line=matched_line, column=matched_char)
                     correct = False
                 # Check if the years are correct, and return true if both the type and years are correct
-                if check_years:
+                if self._check_years:
                     correct = self.check_years(match[0][1], file_dict, repository, file_contents) and correct
                 return correct
         # If none of the regexes match, check for a malformed copyright notice
@@ -381,24 +381,22 @@ class CopyrightChecker:
                 if next_consecutive:
                     # We're in the middle of a range, continue
                     continue
+                # We're at the end of a range
+                # If the range is long enough, add it as a range
+                if years[i] - years[current_range_start_index] >= min_range_length:
+                    years_string += f"{years[current_range_start_index]}-{years[i]}, "
                 else:
-                    # We're at the end of a range
-                    # If the range is long enough, add it as a range
-                    if years[i] - years[current_range_start_index] >= min_range_length:
-                        years_string += f"{years[current_range_start_index]}-{years[i]}, "
-                    else:
-                        # Otherwise, add each year individually
-                        for year in years[current_range_start_index:i + 1]:
-                            years_string += f"{year}, "
+                    # Otherwise, add each year individually
+                    for year in years[current_range_start_index:i + 1]:
+                        years_string += f"{year}, "
             else:
                 # Not consecutive to the previous
                 # If consecutive to the next, we're at the start of a range
                 if next_consecutive:
                     current_range_start_index = i
                     continue
-                else:
-                    # Not consecutive to the next, add this year individually
-                    years_string += f"{years[i]}, "
+                # Not consecutive to the next, add this year individually
+                years_string += f"{years[i]}, "
         return years_string[:-2]
 
     @staticmethod
@@ -439,6 +437,8 @@ class CopyrightChecker:
         git_years = list(set([int(line.split("-")[0]) for line in git_years]))
         git_years.sort()
         self._logger.debug(f"File {file_path} git modified years: {git_years}")
+        if not self._check_locally_modified:
+            return git_years
         git_file_status = subprocess.check_output(
             ["git", "-C", repo_path, "status", "--porcelain", "--", file_path]).decode("utf-8").splitlines()
         if git_file_status:
@@ -460,10 +460,13 @@ if __name__ == '__main__':
     parser.add_argument('-q', '--quiet', dest='quiet', action='store_true', help='Check files ignored by git')
     parser.add_argument('--no-year-check', dest='check_years', action='store_false',
                         help='Don\'t check copyright years')
+    parser.add_argument('--no-local-modify-check', dest='check_local_modified', action='store_false',
+                        help="Don\'t check if the file has been locally modified")
     args = parser.parse_args()
     logging_level = logging.ERROR if args.quiet else logging.WARNING - (args.verbosity) * 10
-    copyright_checker = CopyrightChecker(logging_level, args.untracked, args.ignored)
+    copyright_checker = CopyrightChecker(logging_level, args.untracked, args.ignored, args.check_years,
+                                         args.check_local_modified)
     copyright_checker.find_path_repositories(args.path)
-    if copyright_checker.check_all_copyright(args.check_years):
+    if copyright_checker.check_all_copyright():
         sys.exit(0)
     sys.exit(1)
