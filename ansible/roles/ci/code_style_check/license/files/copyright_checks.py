@@ -1,5 +1,19 @@
 #!/usr/bin/env python3
 
+# Copyright 2023 Shadow Robot Company Ltd.
+#
+# This program is free software: you can redistribute it and/or modify it
+# under the terms of the GNU General Public License as published by the Free
+# Software Foundation version 2 of the License.
+#
+# This program is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+# FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
+# more details.
+#
+# You should have received a copy of the GNU General Public License along
+# with this program. If not, see <http://www.gnu.org/licenses/>.
+
 import argparse
 import datetime
 import logging
@@ -19,18 +33,23 @@ class CopyrightChecker:
     confluence_url = r"https://shadowrobot.atlassian.net/wiki/spaces/SDSR/pages/594411521/Licenses"
     any_copy_right_regex = r"(Copyright)"
 
-    def __init__(self, log_level: int = logging.WARNING, untracked: bool = False, ignored: bool = False) -> None:
+    def __init__(self, log_level: int = logging.WARNING, untracked: bool = False, ignored: bool = False,
+                 check_years: bool = True, check_locally_modified: bool = True) -> None:
         """ Initialise the CopyrightChecker class.
 
         Args:
             log_level: Logging level; 10 = debug, 20 = info, 30 = warning, 40 = error
             untracked: Whether to check untracked files.
             ignored: Whether to check ignored files.
+            check_years: Whether to check the years in copyright notices
+            check_locally_modified: Whether to check if files are locally modified (and should include the current year)
         """
         logging.basicConfig(level=log_level)
         self._logger = logging.getLogger('Copyright Check')
         self._check_untracked = untracked
         self._check_ignored = ignored
+        self._check_years = check_years
+        self._check_locally_modified = check_locally_modified
         self._repositories = {}
         self._comment_style_file_extensions = {
             "python": {"extensions": ["py", "msg", "yml", "yaml", "sh"], "exclusions": ["__init__.py", "setup.py"],
