@@ -73,4 +73,4 @@ alias depmelodic='rosdep install --from-paths . --ignore-src --rosdistro noetic 
 export ROSCONSOLE_FORMAT='[${severity}](${node}): [${time}] ${message}'
 alias python=python3
 
-echo "performance" | sudo tee /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor
+echo "performance" | sudo tee /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor >/dev/null 2>&1
