@@ -225,6 +225,12 @@ class CopyrightChecker:
         n_files_checked = 0
         n_files_with_issues = 0
         for repository in self._repositories.values():
+            # Check if repository is a shallow clone
+            shallow = subprocess.check_output(['git', '-C', repository['path'], 'rev-parse', '--is-shallow-repository'])
+            if shallow == b'true\n':
+                # Fetch the full git history for the repository
+                self._logger.info(f"Fetching git history for {repository['path']}")
+                subprocess.check_call(['git', '-C', repository['path'], 'fetch', '--unshallow'])
             for file_dict in repository["files"]:
                 if not self.check_file_copyright(repository, file_dict):
                     n_files_with_issues += 1
