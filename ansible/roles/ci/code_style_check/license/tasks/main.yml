@@ -29,5 +29,5 @@
   when: not skip_repo
 
 - name: Full check for copyright annotation in repository files
-  script: ../files/copyright_checks.py --no-local-modify-check -p {{repo_sources_path}}
+  script: ../files/copyright_checks.py -vv --no-local-modify-check -p {{repo_sources_path}}
   when: not skip_repo
