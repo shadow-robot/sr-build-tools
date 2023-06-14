@@ -52,7 +52,9 @@
   apt:
     deb: /tmp/ros-noetic-ur-client-library.deb
     state: present
-    become: yes
+  become: yes
+  become_method: sudo
+  become_user: root
 
 - name: Remove file
   file:
