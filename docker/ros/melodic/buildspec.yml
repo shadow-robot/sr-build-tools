@@ -3,15 +3,15 @@ version: 0.2
 env:
   shell: bash
   variables:
-     branch: default
-     image: build-tools
-     tag: bionic-melodic
-     dockerfile_folder: docker/ros/melodic/
+    branch: default
+    image: build-tools
+    tag: bionic-melodic
+    dockerfile_folder: docker/ros/melodic/
   exported-variables:
-     - branch
-     - image
-     - tag
-     - dockerfile_folder
+    - branch
+    - image
+    - tag
+    - dockerfile_folder
 phases:
   install:
     runtime-versions:
