@@ -29,7 +29,6 @@ phases:
         else
           branch=$CODEBUILD_SOURCE_VERSION
         fi
-      - echo $branch
       - awscli_v1_executable=$(which aws)
       - rm $awscli_v1_executable
       - curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
