@@ -3,7 +3,7 @@ version: 0.2
 env:
   shell: bash
   variables:
-     branch: master
+     branch: default
      image: build-tools
      tag: focal-noetic
      dockerfile_folder: docker/ros/noetic/
@@ -18,6 +18,18 @@ phases:
       docker: 19
   build:
     commands:
+      - |
+        if [[ $branch != "default" ]]; then
+          toolset_branch=$branch
+        elif [[ $CODEBUILD_SOURCE_VERSION == "pr/"* ]]; then
+          pr_number=${CODEBUILD_SOURCE_VERSION#pr/}
+          branch=$(curl -s "https://api.github.com/repos/shadow-robot/aurora/pulls/$pr_number" | jq -r '.head.ref')
+        elif [[ $CODEBUILD_SOURCE_VERSION =~ ^[0-9a-f]{40}$ ]]; then
+          branch=$(git ls-remote --symref origin | grep -m1 $CODEBUILD_SOURCE_VERSION | awk -F '/' '{print $NF}')
+        else
+          branch=$CODEBUILD_SOURCE_VERSION
+        fi
+      - echo $branch
       - awscli_v1_executable=$(which aws)
       - rm $awscli_v1_executable
       - curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
