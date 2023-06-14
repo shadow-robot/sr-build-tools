@@ -18,17 +18,6 @@ phases:
       docker: 19
   build:
     commands:
-      - |
-        if [[ $branch != "default" ]]; then
-          toolset_branch=$branch
-        elif [[ $CODEBUILD_SOURCE_VERSION == "pr/"* ]]; then
-          pr_number=${CODEBUILD_SOURCE_VERSION#pr/}
-          branch=$(curl -s "https://api.github.com/repos/shadow-robot/aurora/pulls/$pr_number" | jq -r '.head.ref')
-        elif [[ $CODEBUILD_SOURCE_VERSION =~ ^[0-9a-f]{40}$ ]]; then
-          branch=$(git ls-remote --symref origin | grep -m1 $CODEBUILD_SOURCE_VERSION | awk -F '/' '{print $NF}')
-        else
-          branch=$CODEBUILD_SOURCE_VERSION
-        fi
       - awscli_v1_executable=$(which aws)
       - rm $awscli_v1_executable
       - curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
