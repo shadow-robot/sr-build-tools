@@ -52,6 +52,7 @@
   apt:
     deb: /tmp/ros-noetic-ur-client-library.deb
     state: present
+    become: yes
 
 - name: Remove file
   file:
