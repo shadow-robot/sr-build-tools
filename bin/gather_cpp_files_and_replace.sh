@@ -26,7 +26,9 @@ Find_And_Replace_Licence_Var () {
     directories=( $(find $1 -type f -name "*.cpp") )
     for dir in ${directories[@]} 
     do
-        sed -i "s/if (false \&\& licence_check() != 1)/if (true \&\& licence_check() != 1)/g" $dir
+        # Find the licence block which is between // Licence block start and  // Licence block end
+        # and replace 'int licence = 0;' with 'int licence = licence_check();'
+        sed -i '/\/\/ Licence block start/,/\/\/ Licence block end/{/int licence = 0;/s/int licence = 0;/int licence = licence_check();/}' $dir
     done
 }
 
