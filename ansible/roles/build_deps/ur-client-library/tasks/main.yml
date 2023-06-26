@@ -43,3 +43,6 @@
   file:
     path: "{{ download_location }}"
     state: absent
+  become: yes
+  become_method: sudo
+  become_user: root
