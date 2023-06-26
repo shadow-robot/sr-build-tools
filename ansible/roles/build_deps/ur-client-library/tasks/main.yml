@@ -21,7 +21,7 @@
 
 - name: Copy ros-noetic-ur-client-library .deb file
   copy:
-    src: files/ros-noetic-ur-client-library_1.3.1-1focal.20221201.233814_amd64.deb
+    src: "files/{{ ur_client_filename }}"
     dest: /tmp/ros-noetic-ur-client-library.deb
 
 - name: Install ros-noetic-ur-client-library from .deb file

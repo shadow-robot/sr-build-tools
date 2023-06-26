@@ -13,8 +13,4 @@
 # with this program. If not, see <http://www.gnu.org/licenses/>.
 
 ---
-user: "{{ ansible_user_id }}"
-user_home_dir: "/home/{{ user }}"
-bucket_name: "shadowrobot.aurora.files"
-folder_name: "server/ur-client-library"
 ur_client_filename: "ros-noetic-ur-client-library_1.3.1-1focal.20221201.233814_amd64.deb"
