@@ -19,6 +19,9 @@
   become: yes
   changed_when: false
 
+- debug:
+    msg: "Downloading {{ file_url }} to {{ download_location }}"
+
 - name: Download ros-noetic-ur-client-library .deb file
   get_url:
     url: "{{ file_url }}"
