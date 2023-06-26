@@ -19,30 +19,6 @@
   become: yes
   changed_when: false
 
-# - name: Ensure botocore and boto3 modules are installed
-#   pip:
-#     name: [ "boto3", "botocore"]
-#     extra_args: "--user"
-
-# - name: Downloading ur_client_library
-#   amazon.aws.s3_object:
-#     aws_access_key: "{{ lookup('env','aws_key') }}"
-#     aws_secret_key: "{{ lookup('env','aws_secret') }}"
-#     bucket: "{{ bucket_name }}"
-#     object: "{{ folder_name }}/{{ ur_client_filename }}"
-#     dest: "/tmp/{{ ur_client_filename }}"
-#     mode: get
-
-# - name: Install ur_client_library.deb package
-#   apt:
-#     deb: "/tmp/{{ ur_client_filename }}"
-#     state: present
-
-# - name: Removing steamvr.tar.gz file
-#   file:
-#     path: "/tmp/{{ ur_client_filename }}"
-#     state: absent
-
 - name: Copy ros-noetic-ur-client-library .deb file
   copy:
     src: files/ros-noetic-ur-client-library_1.3.1-1focal.20221201.233814_amd64.deb
