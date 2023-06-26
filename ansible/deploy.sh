@@ -240,23 +240,6 @@ echo " | Running Ansible |"
 echo " -------------------"
 echo ""
 
-ansible_executable=~/.local/bin/ansible-playbook
-if [[ ! -f "${ansible_executable}" ]]; then
-    ansible_executable=ansible-playbook
-fi
-ansible_basic_executable=~/.local/bin/ansible
-if [[ ! -f "${ansible_basic_executable}" ]]; then
-    ansible_basic_executable=ansible
-fi
-ansible_galaxy_executable=~/.local/bin/ansible-galaxy
-if [[ ! -f "${ansible_galaxy_executable}" ]]; then
-    ansible_galaxy_executable=ansible-galaxy
-fi
-
-# install ansible galaxy aws collections
-"${ansible_basic_executable}" --version
-"${ansible_galaxy_executable}" collection install amazon.aws
-
 sudo sh -c "echo \"[dev-machine]
 localhost ansible_connection=local\" > ${ANSIBLE_INVENTORY}"
 export ROS_RELEASE_SETTINGS=" \"ros_release\":\"${ROS_VERSION}\", "
