@@ -19,14 +19,18 @@
   become: yes
   changed_when: false
 
-- name: Copy ros-noetic-ur-client-library .deb file
-  copy:
-    src: "files/{{ ur_client_filename }}"
-    dest: /tmp/ros-noetic-ur-client-library.deb
+- name: Download ros-noetic-ur-client-library .deb file
+  get_url:
+    url: "{{ file_url }}"
+    dest: "{{ download_location }}"
+    mode: 0644
+  become: yes
+  become_method: sudo
+  become_user: root
 
 - name: Install ros-noetic-ur-client-library from .deb file
   apt:
-    deb: /tmp/ros-noetic-ur-client-library.deb
+    deb: "{{ download_location }}"
     state: present
   become: yes
   become_method: sudo
@@ -34,5 +38,5 @@
 
 - name: Remove file
   file:
-    path: /tmp/ros-noetic-ur-client-library.deb
+    path: "{{ download_location }}"
     state: absent

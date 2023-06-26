@@ -14,3 +14,7 @@
 
 ---
 ur_client_filename: "ros-noetic-ur-client-library_1.3.1-1focal.20221201.233814_amd64.deb"
+bucket_name: "com.shadowrobot.eu-west-2.public"
+folder_name: "debians/ur-client-library"
+file_url: "https://s3.eu-west-2.amazonaws.com/{{ bucket_name: }}/{{ folder_name }}/{{ ur_client_filename }}"
+download_location: "/tmp/{{ ur_client_filename }}"
