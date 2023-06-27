@@ -13,7 +13,8 @@ ENV DEBIAN_FRONTEND noninteractive
 ENV GOSU_VERSION 1.10
 ENV MY_USERNAME user
 
-ENV toolset_branch="master"
+ARG toolset_branch
+ENV toolset_branch ${toolset_branch:-"master"}
 ENV server_type="docker_hub"
 ENV used_modules="check_cache,create_workspace"
 ENV ros_release_name=rolling
