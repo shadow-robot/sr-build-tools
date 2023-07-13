@@ -157,7 +157,7 @@
 # Now build the code we just installed.
 - name: catkin_make
   shell: 
-    cmd: bash -c "export PATH=/usr/lib/ccache:$PATH && source <(grep '^export\|^source' ~{{ros_user}}/.bashrc) && catkin_make -DCMAKE_BUILD_TYPE=RelWithDebInfo"
+    cmd: bash -c "source <(grep '^export\|^source' ~{{ros_user}}/.bashrc) && PATH=/usr/lib/ccache:/opt/ros/noetic/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin catkin_make -DCMAKE_BUILD_TYPE=RelWithDebInfo"
     chdir: "{{ros_workspace}}"
   become: yes
   become_user: "{{ros_user}}"
