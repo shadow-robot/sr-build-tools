@@ -13,6 +13,10 @@
 # You should have received a copy of the GNU General Public License along
 # with this program. If not, see <http://www.gnu.org/licenses/>.
 
+
+# Replace <IMAGE_NAME>, <IMAGE_TAG>, <IMAGE_REPOSITORY>, and <IMAGE_TAG_PREVIOUS> with appropriate values.
+# bash gather_changelog.sh <IMAGE_NAME> <IMAGE_TAG> <IMAGE_REPOSITORY> <IMAGE_TAG_PREVIOUS>
+
 IMAGE_NAME=$1
 IMAGE_TAG=$2
 IMAGE_REPOSITORY=$3
