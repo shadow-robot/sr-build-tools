@@ -1,5 +1,5 @@
 ---
 dependencies:
   - { role: ros_install, become: yes }
-  - { role: ros_workspace }
+  - { role: ros_workspace_preinstall }
   - { role: gazebo_models }
