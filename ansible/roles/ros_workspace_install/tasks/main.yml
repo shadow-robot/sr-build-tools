@@ -1,9 +1,24 @@
 ---
+# Pull all changes deps
+- name: git pull all repos in base_deps
+  shell: 
+    cmd: bash -c "wstool update -t src"
+    chdir: "{{ros_workspace}}_deps"
+  become: yes
+  become_user: "{{ros_user}}"
+
+# Pull all changes base
+- name: git pull all repos in base
+  shell: 
+    cmd: bash -c "wstool update -t src"
+    chdir: "{{ros_workspace}}"
+  become: yes
+  become_user: "{{ros_user}}"
 
 # Now build the code we just installed.
 - name: catkin_make for deps
   shell: 
-    cmd: bash -c "source <(grep '^export\|^source' ~{{ros_user}}/.bashrc) && catkin_make -DCMAKE_BUILD_TYPE=RelWithDebInfo"
+    cmd: bash -c "source <(grep '^export\|^source' ~{{ros_user}}/.bashrc) && PATH=/usr/lib/ccache:/opt/ros/noetic/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin catkin_make -DCMAKE_BUILD_TYPE=RelWithDebInfo"
     chdir: "{{ros_workspace}}_deps"
   become: yes
   become_user: "{{ros_user}}"
@@ -11,7 +26,7 @@
 # Now build the code we just installed.
 - name: catkin_make
   shell: 
-    cmd: bash -c "source <(grep '^export\|^source' ~{{ros_user}}/.bashrc) && catkin_make -DCMAKE_BUILD_TYPE=RelWithDebInfo"
+    cmd: bash -c "source <(grep '^export\|^source' ~{{ros_user}}/.bashrc) && PATH=/usr/lib/ccache:/opt/ros/noetic/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin catkin_make -DCMAKE_BUILD_TYPE=RelWithDebInfo"
     chdir: "{{ros_workspace}}"
   become: yes
   become_user: "{{ros_user}}"
