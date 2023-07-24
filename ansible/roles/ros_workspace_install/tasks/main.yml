@@ -2,16 +2,16 @@
 # Pull all changes deps
 - name: git pull all repos in base_deps
   shell: 
-    cmd: bash -c "find . -maxdepth 1 -type d -exec sh -c '(cd {} && git pull)' ';'"
-    chdir: "{{ros_workspace}}_deps/src"
+    cmd: bash -c "wstool update -t src"
+    chdir: "{{ros_workspace}}_deps"
   become: yes
   become_user: "{{ros_user}}"
 
 # Pull all changes base
 - name: git pull all repos in base
   shell: 
-    cmd: bash -c "find . -maxdepth 1 -type d -exec sh -c '(cd {} && git pull)' ';'"
-    chdir: "{{ros_workspace}}/src"
+    cmd: bash -c "wstool update -t src"
+    chdir: "{{ros_workspace}}"
   become: yes
   become_user: "{{ros_user}}"
 
