@@ -52,12 +52,23 @@ case $key in
     TAGS_LIST="$2"
     shift
     ;;
+    -d|--dockeryml)
+    VAGRANT_SITE_YML="$2"
+    shift
+    ;;
     *)
     # ignore unknown option
     ;;
 esac
 shift
 done
+
+
+
+if [ -z "${VAGRANT_SITE_YML}" ]; then
+    VAGRANT_SITE_YML="vagrant_site.yml"
+fi
+
 
 if [ -z "${REPOSITORY_OWNER}" ]; then
     REPOSITORY_OWNER="shadow-robot"
@@ -159,9 +170,9 @@ else
 fi
 
 if [ -z "${TAGS_LIST}" ]; then
-    export MY_ANSIBLE_PARAMETERS="-vvv  --ask-become-pass ${PLAYBOOKS_DIR}/vagrant_site.yml --tags default"
+    export MY_ANSIBLE_PARAMETERS="-vvv  --ask-become-pass ${PLAYBOOKS_DIR}/${VAGRANT_SITE_YML} --tags default"
 else
-    export MY_ANSIBLE_PARAMETERS="-vvv  --ask-become-pass ${PLAYBOOKS_DIR}/vagrant_site.yml --tags default,${TAGS_LIST}"
+    export MY_ANSIBLE_PARAMETERS="-vvv  --ask-become-pass ${PLAYBOOKS_DIR}/${VAGRANT_SITE_YML} --tags default,${TAGS_LIST}"
 fi
 
 export EXTRA_ANSIBLE_PARAMETER_ROS_USER=" \"ros_user\":\"`whoami`\", \"ros_group\":\"`whoami`\", "
@@ -258,9 +269,6 @@ export SR_CONFIG_BRANCH=" \"config_branch\":\"${SR_CONFIG_BRANCH}\", "
 
 export WORKSPACE_SETTINGS="\"ros_workspace\":\"${WORKSPACE_PATH}\", \"ros_workspace_install\":\"${ROS_WORKSPACE_INSTALL_FILE}\" "
 export EXTERNAL_VARIABLES_JSON="{ ${GITHUB_CREDENTIALS} ${EXTRA_ANSIBLE_PARAMETER_ROS_USER} ${ROS_RELEASE_SETTINGS} ${SR_CONFIG_BRANCH} ${WORKSPACE_SETTINGS}}"
-echo "MY_ANSIBLE_PARAMETERS"; for x in $MY_ANSIBLE_PARAMETERS; do echo $x; done
-echo "EXTERNAL_VARIABLES_JSON"; for x in $EXTERNAL_VARIABLES_JSON; do echo $x; done
-
 ansible-playbook ${MY_ANSIBLE_PARAMETERS} --extra-vars "${EXTERNAL_VARIABLES_JSON}"
 
 echo ""
