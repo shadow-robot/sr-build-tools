@@ -1,0 +1,2 @@
+ros_workspace: "~{{ros_user}}/{{ros_release}}_ws"
+ros_group: "ros"
