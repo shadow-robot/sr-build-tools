@@ -198,7 +198,6 @@ echo ""
 SR_BUILD_TOOLS_BRANCH="F_testing_deps_first_tom"
 echo "going to clone: "
 echo ${SR_BUILD_TOOLS_BRANCH:-"master"}
-exit
 
 git clone --depth 1 -b ${SR_BUILD_TOOLS_BRANCH:-"master"}  https://github.com/shadow-robot/sr-build-tools.git ${SR_BUILD_TOOLS_HOME}
 
