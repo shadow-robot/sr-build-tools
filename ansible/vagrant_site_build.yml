@@ -1,0 +1,12 @@
+---
+# Playbook for all the Vagrant machines.
+
+- hosts: dev-machine
+  vars:
+    ansible_python_interpreter: /usr/bin/python3
+    ros_release: 'noetic'
+    ros_packages:
+      - ethercat-grant
+    ros_workspace_install: "../data/shadow_robot-{{ros_release}}.rosinstall"
+  roles:
+    - {role: ros_workspace_install, tags: ["default"]}
