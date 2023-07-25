@@ -2,6 +2,13 @@
 
 set -e
 
+# Original positional mapping:
+# $1 - workspace_path
+# $2 - pyarmor_license_zip_file_path  default: /home/user/pyarmor-regfile-1.zip
+# $3 - underlay_devel                 default: $install_space
+# $4 - user_name                      default: $(stat -c '%U' $workspace_path)
+# $5 - install_space                  default: /opt/ros/shadow
+
 while [[ $# > 1 ]]
 do
 key="$1"
