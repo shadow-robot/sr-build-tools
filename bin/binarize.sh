@@ -34,8 +34,8 @@ case $key in
     install_space="$2"
     shift
     ;;
-    -e|--excludelist)
-    exclude_packages_list="$2"
+    -e|--excludelistpath)
+    exclude_repos_list_path="$2"
     shift
     ;;
     --)
@@ -52,7 +52,7 @@ done
 
 if [ -z "${workspace_path}" ]; then
     echo "ERROR: --workspacepath | -w is required for this (binarize.sh) script to work. Exiting..."
-    exit
+    exit 1
 fi
 
 
@@ -79,6 +79,13 @@ if [ -z "${user_name}" ]; then
    user_name=$(stat -c '%U' $workspace_path)
 fi
 
+# If $exclude_repos_list_path has been specified but points to a file that does not exist..
+if [[ $exclude_repos_list_path ]]; then
+    if ! [[ -f "$exclude_repos_list_path" ]]; then
+        echo "ERROR: --excludelistpath | -e specifies an excluded repos list file of: $exclude_repos_list_path but this file does not exist. Exiting..."
+        exit 1
+    fi
+fi
 
 source $workspace_path/devel/setup.bash
 
@@ -108,6 +115,9 @@ list_of_private_packages=()
 echo "Finding all private repos and packages"
 list_of_private_repos=()
 
+echo "Finding repos excluded by --excludelistpath | -e"
+list_of_confirmed_excluded_repos=()
+
 cd $workspace_path/src
 for repo in "${list_of_repos[@]}"
 do
@@ -115,8 +125,21 @@ do
    cd $repo
    repo_https_url=$(git remote -v | awk '{print $2}' | sed 's/git@github.com:/https:\/\/github.com\//g' | head -n 1 | sed 's/\.git//g')
    return_code=$(curl -o /dev/null --silent --head --write-out '%{http_code}\n' $repo_https_url)
-   if [ $return_code -ne 200 ]
-      then
+   if [ $return_code -ne 200 ]; then
+      if [[ $exclude_repos_list_path ]]; then
+         exclude_this_repo="no"
+         while read line_in_file; do
+            if [[ $repo == $line_in_file ]]; then
+               exclude_this_repo="yes"
+               list_of_confirmed_excluded_repos+=($repo)
+               continue
+            fi
+         done <$exclude_repos_list_path
+         if [[ $exclude_this_repo == "yes" ]]; then
+            cd ..
+            continue
+         fi
+      fi
       list_of_private_repos+=($repo)
       list_of_subfolders_in_repo=($(ls -d */ | sed 's:/*$::'))
       for folder in "${list_of_subfolders_in_repo[@]}"
@@ -164,6 +187,16 @@ for package in "${list_of_private_packages[@]}"
 do
    echo "  - $package"
 done
+
+if [[ $exclude_repos_list_path ]]; then
+   echo "Private packages found in $workspace_path that will not be hidden because they are specified in $exclude_repos_list_path:"
+   for repo in "${list_of_confirmed_excluded_repos[@]}"
+   do
+      echo "  - $repo"
+   done
+else
+   echo "No exclude_repos_list_path specified, binarizing all private repos"
+fi
 
 source $underlay_devel/setup.bash
 cd $workspace_path
