@@ -2,23 +2,83 @@
 
 set -e
 
-workspace_path=$1
-pyarmor_license_zip_file_path=${2:-/home/user/pyarmor-regfile-1.zip}
-install_space=${5:-/opt/ros/shadow}
+# Original positional mapping:
+# $1 - workspace_path
+# $2 - pyarmor_license_zip_file_path  default: /home/user/pyarmor-regfile-1.zip
+# $3 - underlay_devel                 default: $install_space
+# $4 - user_name                      default: $(stat -c '%U' $workspace_path)
+# $5 - install_space                  default: /opt/ros/shadow
 
-# If the user to rebuild non-private workspace as is not specified, use the owner of it
-if [ -z $4 ]; then
-   user_name=$(stat -c '%U' $workspace_path)
-else
-   user_name=$4
+while [[ $# > 1 ]]
+do
+key="$1"
+
+case $key in
+    -w|--workspacepath)
+    workspace_path="$2"
+    shift
+    ;;
+    -p|--pyarmourzippath)
+    pyarmor_license_zip_file_path="$2"
+    shift
+    ;;
+    -l|--underlaydevelpath)
+    underlay_devel_path="$2"
+    shift
+    ;;
+    -u|--username)
+    USER_NAME="$2"
+    shift
+    ;;
+    -i|--installspace)
+    install_space="$2"
+    shift
+    ;;
+    -e|--excludelist)
+    exclude_packages_list="$2"
+    shift
+    ;;
+    --)
+    shift
+    break
+    ;;
+    *)
+    # ignore unknown option
+    ;;
+esac
+shift
+done
+
+
+if [ -z "${workspace_path}" ]; then
+    echo "ERROR: --workspacepath | -w is required for this (binarize.sh) script to work. Exiting..."
+    exit
 fi
+
+
+if [ -z "${pyarmor_license_zip_file_path}" ]; then
+    pyarmor_license_zip_file_path="/home/user/pyarmor-regfile-1.zip"
+fi
+
+
+if [ -z "${install_space}" ]; then
+    install_space="/opt/ros/shadow"
+fi
+
 
 # If no underlying workspace is specified, use the binary install space instead
-if [ -z $3 ]; then
-   underlay_devel=$install_space
+if [ -z "${underlay_devel_path}" ]; then
+    underlay_devel=${install_space}
 else
-   underlay_devel="$3/devel"
+    underlay_devel="${underlay_devel_path}/devel"
 fi
+
+
+# If the user to rebuild non-private workspace as is not specified, use the owner of it
+if [ -z "${user_name}" ]; then
+   user_name=$(stat -c '%U' $workspace_path)
+fi
+
 
 source $workspace_path/devel/setup.bash
 
