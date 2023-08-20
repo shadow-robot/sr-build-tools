@@ -3,7 +3,7 @@ set -e # fail on errors
 
 recursive_rosinstall () {
     while [ $current_repo_count -ne $previous_repo_count ]; do
-        find $current_folder -type f -name $rosinstall_filename -exec wstool merge -y {} \;
+        find $current_folder -type f -name $rosinstall_filename -exec wstool merge -k -y {} \;
         sed -i "$1" .rosinstall
 
         mv .rosinstall repository.rosinstall
