@@ -26,7 +26,8 @@ from datetime import date
 
 # Include bash in python files as we also put licences in bash files too.
 PYTHON_HEADERS = ["#!/usr/bin/env python", "#!/usr/bin/python", "#!/bin/bash", "#!/usr/bin/env bash"]
-ACCEPTED_EXTENSIONS = ["py", "c", "h", "cpp", "hpp", "yml", "yaml", "sh", "xml", "xacro", "dae", "launch"]
+ACCEPTED_EXTENSIONS = ["py", "c", "h", "cpp", "hpp", "yml", "yaml", "sh", "xml", "xacro", "dae", "launch",
+                       "sdf", "world", "config"]
 MASTER_BRANCHES = ["noetic-devel", "melodic-devel", "kinetic-devel",
                    "jade-devel", "indigo-devel", "devel", "master", "main"]
 

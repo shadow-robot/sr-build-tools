@@ -17,7 +17,7 @@
 export directory=$1
 cd $directory
 
-filetypes=(py c h cpp hpp yml yaml sh xml xacro dae launch)
+filetypes=(py c h cpp hpp yml yaml sh xml xacro dae launch sdf world config)
 
 exclusions_py=("__init__" "setup.py")
 
@@ -212,7 +212,7 @@ for filetype in "${filetypes[@]}"; do
             public_bsd_copyright="${copyright_py_public_bsd}"
             exclusions=("${exclusions_py[@]}")
             ;;
-        xml|xacro|dae|launch)
+        xml|xacro|dae|launch|sdf|world|config)
             private_copyright="${copyright_xml_private}"
             public_gpl_copyright="${copyright_xml_public_gpl}"
             public_bsd_copyright="${copyright_xml_public_bsd}"

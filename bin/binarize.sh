@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Copyright 2022 Shadow Robot Company Ltd.
+# Copyright 2022-2023 Shadow Robot Company Ltd.
 #
 # This program is free software: you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by the Free
@@ -41,7 +41,7 @@ echo "Running binarization script on workspace: $workspace_path"
 echo "Installing pyarmor"
 apt update
 apt install python3-pip
-pip install pyarmor
+pip install pyarmor==7.7.4
 pyarmor register $pyarmor_license_zip_file_path
 pyarmor runtime --output "/opt/ros/$ROS_DISTRO/lib/python3/dist-packages"
 if [ -f $HOME/.pyarmor_capsule.zip ]; then
