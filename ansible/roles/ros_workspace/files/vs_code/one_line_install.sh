@@ -15,7 +15,7 @@
 # with this program. If not, see <http://www.gnu.org/licenses/>.
 
 build_tools_dir=~/sr-build-tools
-build_tools_branch=F_#SP-476_vs_code_setup_lint
+build_tools_branch=lint
 # If build tools dir exists, back it up
 if [ -d $build_tools_dir ]; then
     mv $build_tools_dir $build_tools_dir.bak

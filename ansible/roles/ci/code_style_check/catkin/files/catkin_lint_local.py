@@ -48,6 +48,7 @@ def get_package_path(package_name: str) -> str:
 # To prevent lines being matched multiple times by different patterns, they are removed when they match.
 remaining_output = catkin_lint_output
 
+# Match lines of the form package_name:file_name:[line_number:]severity:message
 regex = r'(^(.*?):\s(.*?)(?:\((\d+)\))?:\s(.*?):\s(.*?)$)'
 
 for match in re.findall(regex, remaining_output, re.MULTILINE):
@@ -58,6 +59,7 @@ for match in re.findall(regex, remaining_output, re.MULTILINE):
         print(f'{package_path}/{match[2]}:{match[3]}:{match[4]}:{match[5]}')
     remaining_output = remaining_output.replace(f'\n{match[0]}', '')
 
+# Match lines of the form package_name:severity:message:file_name
 regex = r"(^(.*?):\s(.*?): (file '(.*?)'.*)$)"
 
 for match in re.findall(regex, remaining_output, re.MULTILINE):

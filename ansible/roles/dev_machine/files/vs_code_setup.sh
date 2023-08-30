@@ -14,7 +14,7 @@
 # You should have received a copy of the GNU General Public License along
 # with this program. If not, see <http://www.gnu.org/licenses/>.
 
-sr_build_tools_branch="F_%23SP-476_vs_code_setup_lint"
+sr_build_tools_branch="lint"
 sr_build_tools_url="https://raw.githubusercontent.com/shadow-robot/sr-build-tools/$sr_build_tools_branch"
 
 # Check if VS Code is installed
