@@ -34,4 +34,3 @@
 
 - name: Gather license with incorrect year
   script: ../files/gather_missing_licences.py --path {{repo_sources_path}} --user {{github_login | default('') }} --token {{github_password | default('') }}
-  when: not skip_repo

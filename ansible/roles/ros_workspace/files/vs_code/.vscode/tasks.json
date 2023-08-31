@@ -1,0 +1,309 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Catkin Make Workspace",
+			"detail": "Builds the entire workspace (${workspaceFolder}), and exports compile_commands.json for various tools to use.",
+			"type": "catkin_make",
+			"args": [
+				"--directory",
+				"${workspaceFolder}",
+				"-DCMAKE_BUILD_TYPE=RelWithDebInfo",
+				"-DCMAKE_EXPORT_COMPILE_COMMANDS=1"
+			],
+			"problemMatcher": [
+				"$catkin-gcc"
+			],
+			"group": {
+				"kind": "build",
+				"isDefault": true
+			}
+		},
+		{
+			"label": "Catkin Make Package",
+			"detail": "Builds the selected package, and exports compile_commands.json for various tools to use.",
+			"type": "catkin_make",
+			"args": [
+				"--directory",
+				"${workspaceFolder}",
+				"-DCMAKE_BUILD_TYPE=RelWithDebInfo",
+				"-DCMAKE_EXPORT_COMPILE_COMMANDS=1",
+				"--pkg", "${input:package_name}",
+			],
+			"problemMatcher": [
+				"$catkin-gcc"
+			],
+			"group": {
+				"kind": "build",
+				"isDefault": false
+			}
+		},
+		{
+			"label": "Catkin Make Test",
+			"detail": "Builds the selected test, but does not run it. Useful as a pre-launch task for test debugging.",
+			"type": "catkin_make",
+			"args": [
+				"test_${input:test_name}",
+				"--directory",
+				"${workspaceFolder}",
+				"-DCMAKE_BUILD_TYPE=RelWithDebInfo",
+				"-DCMAKE_EXPORT_COMPILE_COMMANDS=1"
+			],
+			"problemMatcher": [
+				"$catkin-gcc"
+			],
+			"group": {
+				"kind": "build",
+				"isDefault": false
+			}
+		},
+		{
+			"label": "Catkin Make and Run Package Tests",
+			"detail": "Builds and runs the selected package's tests.",
+			"type": "catkin_make",
+			"args": [
+				"run_tests_${input:package_name}",
+				"--directory",
+				"${workspaceFolder}",
+				"-DCMAKE_BUILD_TYPE=RelWithDebInfo",
+				"-DCMAKE_EXPORT_COMPILE_COMMANDS=1"
+			],
+			"problemMatcher": [
+				"$catkin-gcc"
+			],
+			"group": {
+				"kind": "build",
+				"isDefault": false
+			}
+		},
+		{
+			"label": "Pylint Lint Current File",
+			"detail": "Runs Pylint on the currently-focused file.",
+			"type": "shell",
+			"command": "${config:python.linting.pylintPath} -s n -j0 --rcfile=${config:shadowRobot.buildToolsDir}/ansible/roles/ci/code_style_check/python/files/pylintrc ${file}",
+			"problemMatcher": {
+				"owner": "shadow-pylint",
+				"fileLocation": ["relative", "${workspaceFolder}"],
+				"pattern": {
+					"regexp": "^([^:]*):(\\d+):(\\d+): (.+): (.*)$",
+					"file": 1,
+					"line": 2,
+					"column": 3,
+					"code": 4,
+					"message": 5
+				}
+			}
+		},
+		{
+			"label": "Pylint Lint Current Repo",
+			"detail": "Runs Pylint on all Python files in the repository containing the currently-focused file.",
+			"type": "shell",
+			"command": "repodir=$(git -C ${fileDirname} rev-parse --show-toplevel); files=$(${config:shadowRobot.buildToolsDir}/ansible/roles/ci/code_style_check/common_resources/files/files_by_extension.py -p $repodir -ft python); ${config:python.linting.pylintPath} -s n -j0 --rcfile=${config:shadowRobot.buildToolsDir}/ansible/roles/ci/code_style_check/python/files/pylintrc $files",
+			"problemMatcher": {
+				"owner": "shadow-pylint",
+				"fileLocation": ["relative", "${workspaceFolder}"],
+				"pattern": {
+					"regexp": "^([^:]*):(\\d+):(\\d+): (.+): (.*)$",
+					"file": 1,
+					"line": 2,
+					"column": 3,
+					"code": 4,
+					"message": 5
+				}
+			}
+		},
+		{
+			"label": "ROSLint (Python) Current File",
+			"detail": "Runs Roslint on the currently-focused python file.",
+			"type": "shell",
+			"command": "rosrun roslint pycodestyle ${file}",
+			"problemMatcher": {
+				"owner": "ROSLint pycodestyle",
+				"fileLocation": "absolute",
+				"pattern": {
+					"regexp": "^([^:]*):(\\d+):(\\d+):(.*)$",
+					"file": 1,
+					"line": 2,
+					"column": 3,
+					"message": 4
+				}
+			}
+		},
+		{
+			"label": "ROSLint (Python) Current Repo",
+			"detail": "Runs Roslint on all Python files in the repository containing the currently-focused file.",
+			"type": "shell",
+			"command": "repodir=$(git -C ${fileDirname} rev-parse --show-toplevel); files=$(${config:shadowRobot.buildToolsDir}/ansible/roles/ci/code_style_check/common_resources/files/files_by_extension.py -p $repodir -ft python); rosrun roslint pycodestyle $files",
+			"problemMatcher": {
+				"owner": "ROSLint pycodestyle",
+				"fileLocation": "absolute",
+				"pattern": {
+					"regexp": "^([^:]*):(\\d+):(\\d+):(.*)$",
+					"file": 1,
+					"line": 2,
+					"column": 3,
+					"message": 4
+				}
+			}
+		},
+		{
+			"label": "ROSLint (C++) Current File",
+			"detail": "Runs Roslint on the currently-focused C++ file.",
+			"type": "shell",
+			"command": "rosrun roslint cpplint ${file}",
+			"problemMatcher": {
+				"owner": "ROSLint cpplint",
+				"fileLocation": "absolute",
+				"pattern": {
+					"regexp": "^(.*):(\\d+):\\s+(.*)$",
+					"file": 1,
+					"line": 2,
+					"message": 3
+				}
+			}
+		},
+		{
+			"label": "ROSLint (C++) Current Repo",
+			"detail": "Runs Roslint on all C++ files in the repository containing the currently-focused file.",
+			"type": "shell",
+			"command": "repodir=$(git -C ${fileDirname} rev-parse --show-toplevel); files=$(${config:shadowRobot.buildToolsDir}/ansible/roles/ci/code_style_check/common_resources/files/files_by_extension.py -p $repodir -ft cpp); rosrun roslint cpplint $files",
+			"problemMatcher": {
+				"owner": "ROSLint cpplint",
+				"fileLocation": "absolute",
+				"pattern": {
+					"regexp": "^(.*):(\\d+):\\s+(.*)$",
+					"file": 1,
+					"line": 2,
+					"message": 3
+				}
+			}
+		},
+		{
+			"label": "License Check Current Repo",
+			"detail": "Checks for compliant licenses in all files in the repository containing the currently-focused file.",
+			"type": "shell",
+			"command": "repodir=$(git -C ${fileDirname} rev-parse --show-toplevel); ${config:shadowRobot.buildToolsDir}/ansible/roles/ci/code_style_check/license/files/copyright_checks.py -p $repodir",
+			"problemMatcher": {
+				"owner": "shadow license check",
+				"fileLocation": [
+					"absolute"
+				],
+				"pattern": [
+					{
+						"regexp": "^([^:]*):Copyright Check:([^:]*): ([0-9]*): ([0-9]*): (.*?)$",
+						"severity": 1,
+						"file": 2,
+						"line": 3,
+						"column": 4,
+						"message": 5
+					}
+				]
+			}
+		},
+		{
+			"label": "Catkin Lint Current Repo",
+			"detail": "Runs Catkin Lint on all files in the repository containing the currently-focused file.",
+			"type": "shell",
+			"command": "repodir=$(git -C ${fileDirname} rev-parse --show-toplevel); ${config:shadowRobot.buildToolsDir}/ansible/roles/ci/code_style_check/catkin/files/catkin_lint_local.py -W2 $repodir",
+			"problemMatcher": {
+				"owner": "catkin lint",
+				"fileLocation": [
+					"absolute"
+				],
+				"pattern": [
+					{
+						"regexp": "^(.*?):(\\d+):(.*?):(.*?)$",
+						"file": 1,
+						"line": 2,
+						"severity": 3,
+						"message": 4
+					}
+				]
+			}
+		},
+		{
+			"label": "Check Current Repo ROS Source Deps",
+			"detail": "Checks whether packages in the repository containing the currently-focused file have the correct source dependencies.",
+			"type": "shell",
+			"command": "repodir=$(git -C ${fileDirname} rev-parse --show-toplevel); ${config:shadowRobot.buildToolsDir}/ansible/roles/ci/code_style_check/common_resources/files/check_source_deps.py -p $repodir",
+			"problemMatcher": {
+				"owner": "rosinstall",
+				"fileLocation": [
+					"absolute"
+				],
+				"pattern": [
+					{
+						"regexp": "^(.*?)\\:(.*?)\\:(\\d+)\\:(\\d+)\\:(.*)$",
+						"severity": 1,
+						"file": 2,
+						"line": 3,
+						"column": 4,
+						"message": 5
+					}
+				]
+			}
+		},
+		{
+			"label": "Check All ROS Source Deps",
+			"detail": "Checks whether all packages in the workspace have the correct source dependencies.",
+			"type": "shell",
+			"command": "${config:shadowRobot.buildToolsDir}/ansible/roles/ci/code_style_check/common_resources/files/check_source_deps.py -p ${workspaceFolder}",
+			"problemMatcher": {
+				"owner": "rosinstall",
+				"fileLocation": [
+					"absolute"
+				],
+				"pattern": [
+					{
+						"regexp": "^([^:]*):Source Dep Check:([^:]*):([0-9]*):([0-9]*): (.*?)$",
+						"severity": 1,
+						"file": 2,
+						"line": 3,
+						"column": 4,
+						"message": 5
+					}
+				]
+			}
+		},
+		{
+			"label": "Lint (All) Current Repo",
+			"detail": "Runs all lint tasks on all files in the repository containing the currently-focused file.",
+			"type": "shell",
+			"dependsOn": [
+				"ROSLint (Python) Current Repo",
+				"ROSLint (C++) Current Repo",
+				"Pylint Lint Current Repo",
+				"License Check Current Repo",
+				"Catkin Lint Current Repo"
+			],
+			"dependsOrder": "parallel",
+			"problemMatcher": []
+		},
+		{
+			"label": "Lint (Quick) Current Repo",
+			"detail": "Runs quick lint tasks on all files in the repository containing the currently-focused file.",
+			"dependsOn": [
+				"ROSLint (Python) Current Repo",
+				"ROSLint (C++) Current Repo",
+				"License Check Current Repo",
+				"Catkin Lint Current Repo"
+			],
+			"dependsOrder": "parallel",
+			"problemMatcher": []
+		}
+	],
+	"inputs": [
+		{
+			"id": "package_name",
+			"type": "promptString",
+			"description": "Enter the name of a ROS package.",
+			"default": "sr_underactuation_compensation"
+		},
+		{
+			"id": "test_name",
+			"type": "promptString",
+			"description": "Enter the name of a ROS test executable.",
+			"default": "test_underactuation_predictor"
+		}
+	]
+}
