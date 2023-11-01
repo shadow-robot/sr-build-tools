@@ -24,6 +24,9 @@ LABEL Description=\"This is updated to use OpenGL with nvidia-docker2\" Vendor=\
 ENV NVIDIA_VISIBLE_DEVICES all
 ENV NVIDIA_DRIVER_CAPABILITIES all
 
+RUN rm /etc/apt/sources.list.d/cuda.list
+RUN rm /etc/apt/sources.list.d/nvidia-ml.list
+
 # OpenGL using libglvnd
 RUN apt-get update && apt-get install -y --no-install-recommends \
         git \
