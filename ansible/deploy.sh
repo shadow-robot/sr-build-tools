@@ -195,7 +195,8 @@ echo " |   Cloning repo  |"
 echo " -------------------"
 echo ""
 
-git clone --depth 1 -b ${SR_BUILD_TOOLS_BRANCH:-"removing_debugging_symbols"}  https://github.com/shadow-robot/sr-build-tools.git ${SR_BUILD_TOOLS_HOME}
+SR_BUILD_TOOLS_BRANCH="removing_debugging_symbols"
+git clone --depth 1 -b ${SR_BUILD_TOOLS_BRANCH:-"master"}  https://github.com/shadow-robot/sr-build-tools.git ${SR_BUILD_TOOLS_HOME}
 
 echo ""
 echo " ----------------------------------"
