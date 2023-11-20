@@ -222,7 +222,7 @@ done
 echo "Building remaining public packages in $workspace_path"
 cd $workspace_path
 source $underlay_devel/setup.bash
-gosu $user_name catkin_make -DCMAKE_BUILD_TYPE=RelWithDebInfo
+gosu $user_name catkin_make
 
 echo "Running pyarmorize"
 pyarmorize_paths=("$install_space/lib" "$install_space/lib/python3/dist-packages")
