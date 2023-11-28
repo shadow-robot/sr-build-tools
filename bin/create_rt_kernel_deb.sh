@@ -6,6 +6,10 @@ KERNEL_VERSION="6.5.2"
 sudo apt-get install linux-source fakeroot libssl-dev
 
 cd linux-${KERNEL_VERSION}/
+
+scripts/config --disable SYSTEM_TRUSTED_KEYS
+scripts/config --disable SYSTEM_REVOCATION_KEYS
+
 make clean
 
 # set concurrency to all cores but one
