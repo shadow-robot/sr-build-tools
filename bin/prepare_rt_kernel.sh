@@ -19,9 +19,17 @@ cp /boot/config-`uname -r` .config
 
 make olddefconfig
 
+scripts/config --disable SYSTEM_TRUSTED_KEYS
+scripts/config --disable SYSTEM_REVOCATION_KEYS
+
+scripts/config --set-val CONFIG_HZ 1000
+scripts/config --enable HZ_1000
+scripts/config --disable HZ_250
+
+
 # edit manually the RT_PREEMPT parameters:
 # General Setup -> Preemption Model  set to Fully Preemptible Kernel (RT)
-sudo apt-get install libncurses-dev
+sudo apt-get install libncurses-dev flex
 make menuconfig
 #or
 #make xconfig
