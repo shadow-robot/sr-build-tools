@@ -3,7 +3,8 @@
 KERNEL_VERSION="6.5.2"
 
 # https://www.debian.org/releases/stable/i386/ch08s06.html.en
-sudo apt-get install linux-source fakeroot libssl-dev
+sudo apt-get install linux-source fakeroot libssl-dev lib libelf-dev debhelper libssl-dev
+
 
 cd linux-${KERNEL_VERSION}/
 
