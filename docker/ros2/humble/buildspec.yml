@@ -13,9 +13,6 @@ env:
     - tag
     - dockerfile_folder
 phases:
-  install:
-    runtime-versions:
-      docker: 19
   build:
     commands:
       - |
@@ -29,11 +26,6 @@ phases:
         else
           branch=$CODEBUILD_SOURCE_VERSION
         fi
-      - awscli_v1_executable=$(which aws)
-      - rm $awscli_v1_executable
-      - curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-      - unzip awscliv2.zip
-      - ./aws/install
       - git checkout $branch
       - cd $dockerfile_folder
       - aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws/shadowrobot
