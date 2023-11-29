@@ -5,7 +5,7 @@ env:
   variables:
     branch: default
     image: build-tools
-    tag: focal-humble
+    tag: humble
     dockerfile_folder: docker/ros2/humble/
   exported-variables:
     - branch
