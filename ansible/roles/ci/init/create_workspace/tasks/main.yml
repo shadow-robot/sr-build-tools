@@ -61,6 +61,4 @@
  #       chdir: "/home/user/workspace/"
  #     become: yes
  #     become_method: sudo
-  when:
-    - ros_release == 'rolling' 
-    - ros_release == 'humble'
+  when: (ros_release == 'rolling') or (ros_release == 'humble')
