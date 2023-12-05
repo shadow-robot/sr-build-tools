@@ -203,7 +203,8 @@ echo " |   Setting up requirements      |"
 echo " ----------------------------------"
 echo ""
 
-sudo pip3 install -r "${SR_BUILD_TOOLS_HOME}/ansible/data/requirements.txt"
+export ubuntu_version="$(lsb_release -cs)"
+sudo pip3 install -r "${SR_BUILD_TOOLS_HOME}/ansible/data/$ubuntu_version/requirements.txt"
 sudo pip3 install --upgrade setuptools==51.1.1
 
 echo ""
