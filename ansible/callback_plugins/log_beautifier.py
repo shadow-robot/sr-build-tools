@@ -5,6 +5,7 @@ See README.md
 from __future__ import absolute_import
 import json
 import re
+import sys
 from threading import Timer
 from ansible.plugins.callback import CallbackBase
 
@@ -15,7 +16,10 @@ def obfuscate_credentials(input_value):
 
 def fixed_dump_results(self, result, indent=None, sort_keys=True, keep_invocation=False):
     json_message = self._original_dump_results(result, indent, sort_keys, keep_invocation)
-    message_dictionary = json.loads(json_message)
+    if sys.version_info.major>=3 and sys.version_info.minor>=9:
+        message_dictionary = json.loads(json_message)
+    else:
+        message_dictionary = json.loads(json_message, encoding="utf-8")
     result = ""
     for key, value in message_dictionary.items():
         if key not in ["stderr", "stdout_lines"]:
