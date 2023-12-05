@@ -18,7 +18,7 @@
     - ros_release != 'rolling' 
     - ros_release != 'humble'
 
-# Using aspecificversion for empy as that's the one that is installed by default in Ubuntu Jammy form debian repos
+# Using a specific version for empy as that's the one that is installed by default in Ubuntu Jammy from debian repos
 # so pip will skip it. Otherwise pip throws an error when failing to uninstall the deb version to install the latest pip version.
 # I don't really know what this package is needed for.
 - name: Install PIP modules
