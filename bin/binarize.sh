@@ -16,22 +16,89 @@
 
 set -e
 
-workspace_path=$1
-pyarmor_license_zip_file_path=${2:-/home/user/pyarmor-regfile-1.zip}
-install_space=${5:-/opt/ros/shadow}
+# Original positional mapping:
+# $1 - workspace_path
+# $2 - pyarmor_license_zip_file_path  default: /home/user/pyarmor-regfile-1.zip
+# $3 - underlay_devel                 default: $install_space
+# $4 - user_name                      default: $(stat -c '%U' $workspace_path)
+# $5 - install_space                  default: /opt/ros/shadow
 
-# If the user to rebuild non-private workspace as is not specified, use the owner of it
-if [ -z $4 ]; then
-   user_name=$(stat -c '%U' $workspace_path)
-else
-   user_name=$4
+while [[ $# > 1 ]]
+do
+key="$1"
+
+case $key in
+    -w|--workspacepath)
+    workspace_path="$2"
+    shift
+    ;;
+    -p|--pyarmourzippath)
+    pyarmor_license_zip_file_path="$2"
+    shift
+    ;;
+    -l|--underlaydevelpath)
+    underlay_devel_path="$2"
+    shift
+    ;;
+    -u|--username)
+    USER_NAME="$2"
+    shift
+    ;;
+    -i|--installspace)
+    install_space="$2"
+    shift
+    ;;
+    -e|--excludelistpath)
+    exclude_repos_list_path="$2"
+    shift
+    ;;
+    --)
+    shift
+    break
+    ;;
+    *)
+    # ignore unknown option
+    ;;
+esac
+shift
+done
+
+
+if [ -z "${workspace_path}" ]; then
+    echo "ERROR: --workspacepath | -w is required for this (binarize.sh) script to work. Exiting..."
+    exit 1
 fi
 
+
+if [ -z "${pyarmor_license_zip_file_path}" ]; then
+    pyarmor_license_zip_file_path="/home/user/pyarmor-regfile-1.zip"
+fi
+
+
+if [ -z "${install_space}" ]; then
+    install_space="/opt/ros/shadow"
+fi
+
+
 # If no underlying workspace is specified, use the binary install space instead
-if [ -z $3 ]; then
-   underlay_devel=$install_space
+if [ -z "${underlay_devel_path}" ]; then
+    underlay_devel=${install_space}
 else
-   underlay_devel="$3/devel"
+    underlay_devel="${underlay_devel_path}/devel"
+fi
+
+
+# If the user to rebuild non-private workspace as is not specified, use the owner of it
+if [ -z "${user_name}" ]; then
+   user_name=$(stat -c '%U' $workspace_path)
+fi
+
+# If $exclude_repos_list_path has been specified but points to a file that does not exist..
+if [[ $exclude_repos_list_path ]]; then
+    if ! [[ -f "$exclude_repos_list_path" ]]; then
+        echo "ERROR: --excludelistpath | -e specifies an excluded repos list file of: $exclude_repos_list_path but this file does not exist. Exiting..."
+        exit 1
+    fi
 fi
 
 source $workspace_path/devel/setup.bash
@@ -40,7 +107,7 @@ echo "Running binarization script on workspace: $workspace_path"
 
 echo "Installing pyarmor"
 apt update
-apt install python3-pip
+apt install -y python3-pip
 pip install pyarmor==7.7.4
 pyarmor register $pyarmor_license_zip_file_path
 pyarmor runtime --output "/opt/ros/$ROS_DISTRO/lib/python3/dist-packages"
@@ -62,6 +129,9 @@ list_of_private_packages=()
 echo "Finding all private repos and packages"
 list_of_private_repos=()
 
+echo "Finding repos excluded by --excludelistpath | -e"
+list_of_confirmed_excluded_repos=()
+
 cd $workspace_path/src
 for repo in "${list_of_repos[@]}"
 do
@@ -69,8 +139,21 @@ do
    cd $repo
    repo_https_url=$(git remote -v | awk '{print $2}' | sed 's/git@github.com:/https:\/\/github.com\//g' | head -n 1 | sed 's/\.git//g')
    return_code=$(curl -o /dev/null --silent --head --write-out '%{http_code}\n' $repo_https_url)
-   if [ $return_code -ne 200 ]
-      then
+   if [ $return_code -ne 200 ]; then
+      if [[ $exclude_repos_list_path ]]; then
+         exclude_this_repo="no"
+         while read line_in_file; do
+            if [[ $repo == $line_in_file ]]; then
+               exclude_this_repo="yes"
+               list_of_confirmed_excluded_repos+=($repo)
+               continue
+            fi
+         done <$exclude_repos_list_path
+         if [[ $exclude_this_repo == "yes" ]]; then
+            cd ..
+            continue
+         fi
+      fi
       list_of_private_repos+=($repo)
       list_of_subfolders_in_repo=($(ls -d */ | sed 's:/*$::'))
       for folder in "${list_of_subfolders_in_repo[@]}"
@@ -118,6 +201,16 @@ for package in "${list_of_private_packages[@]}"
 do
    echo "  - $package"
 done
+
+if [[ $exclude_repos_list_path ]]; then
+   echo "Private packages found in $workspace_path that will not be hidden because they are specified in $exclude_repos_list_path:"
+   for repo in "${list_of_confirmed_excluded_repos[@]}"
+   do
+      echo "  - $repo"
+   done
+else
+   echo "No exclude_repos_list_path specified, binarizing all private repos"
+fi
 
 source $underlay_devel/setup.bash
 cd $workspace_path

@@ -17,15 +17,15 @@ version: 0.2
 env:
   shell: bash
   variables:
-     branch: legacy
-     image: build-tools
-     tag: xenial-kinetic
-     dockerfile_folder: docker/ros/kinetic/base/
+    branch: legacy
+    image: build-tools
+    tag: xenial-kinetic
+    dockerfile_folder: docker/ros/kinetic/base/
   exported-variables:
-     - branch
-     - image
-     - tag
-     - dockerfile_folder
+    - branch
+    - image
+    - tag
+    - dockerfile_folder
 phases:
   install:
     runtime-versions:
@@ -40,7 +40,7 @@ phases:
       - git checkout $branch
       - cd $dockerfile_folder
       - aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws/shadowrobot
-      - docker build -t $image .
+      - docker build --build-arg toolset_branch=$branch -t $image .
       - docker tag $image:latest public.ecr.aws/shadowrobot/$image:$tag
       - docker push public.ecr.aws/shadowrobot/$image:$tag
       - comm -13 <(aws ecr-public describe-image-tags --repository-name $image --region us-east-1 --output text | awk '{print $3}' | tr " " "\n" | sort -u) <(aws ecr-public describe-images --repository-name $image --region us-east-1 --output text | awk '{print $2}' | tr " " "\n" | sort -u) >> ids_to_delete.txt

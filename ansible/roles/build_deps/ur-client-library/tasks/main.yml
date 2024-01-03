@@ -1,0 +1,45 @@
+# Copyright 2023 Shadow Robot Company Ltd.
+#
+# This program is free software: you can redistribute it and/or modify it
+# under the terms of the GNU General Public License as published by the Free
+# Software Foundation version 2 of the License.
+#
+# This program is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+# FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
+# more details.
+#
+# You should have received a copy of the GNU General Public License along
+# with this program. If not, see <http://www.gnu.org/licenses/>.
+
+---
+- name: Update package lists
+  apt:
+    update_cache: yes
+  become: yes
+  changed_when: false
+
+- name: Download ros-noetic-ur-client-library .deb file
+  get_url:
+    url: "{{ file_url }}"
+    dest: "{{ download_location }}"
+    mode: 0644
+  become: yes
+  become_method: sudo
+  become_user: root
+
+- name: Install ros-noetic-ur-client-library from .deb file
+  apt:
+    deb: "{{ download_location }}"
+    state: present
+  become: yes
+  become_method: sudo
+  become_user: root
+
+- name: Remove file
+  file:
+    path: "{{ download_location }}"
+    state: absent
+  become: yes
+  become_method: sudo
+  become_user: root

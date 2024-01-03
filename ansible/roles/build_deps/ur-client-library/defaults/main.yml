@@ -1,4 +1,4 @@
-# Copyright 2022 Shadow Robot Company Ltd.
+# Copyright 2023 Shadow Robot Company Ltd.
 #
 # This program is free software: you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by the Free
@@ -13,19 +13,8 @@
 # with this program. If not, see <http://www.gnu.org/licenses/>.
 
 ---
-# Playbook for all the Vagrant machines.
-
-- hosts: dev-machine
-  vars:
-    ansible_python_interpreter: /usr/bin/python3
-    ros_release: 'noetic'
-    ros_packages:
-      - ethercat-grant
-    ros_workspace_install: "../data/shadow_robot-{{ros_release}}.rosinstall"
-  roles:
-    - {role: mujoco, tags: ["mujoco"]}
-    - {role: dev_machine, tags: ["default","mongodb"]}
-    - {role: mongo_database, tags: ["mongodb"]}
-    - {role: pyassimp, tags: ["pyassimp"]}
-    - {role: pyqtgraph, tags: ["pyqtgraph"]}
-    - {role: build_deps, tags: ["default"]}
+ur_client_filename: "ros-noetic-ur-client-library_1.3.1-1focal.20221201.233814_amd64.deb"
+bucket_name: "com.shadowrobot.eu-west-2.public"
+folder_name: "debians/ur-client-library"
+file_url: "https://s3.eu-west-2.amazonaws.com/{{ bucket_name }}/{{ folder_name }}/{{ ur_client_filename }}"
+download_location: "/tmp/{{ ur_client_filename }}"
