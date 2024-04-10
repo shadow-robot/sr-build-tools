@@ -1,9 +1,9 @@
 #!/bin/bash
 
-RT_PATCH_DIR="4.13"
-RT_PATCH_VERSION="4.13.13-rt5"
-KERNEL_DIR="v4.x"
-KERNEL_VERSION="4.13.13"
+RT_PATCH_DIR="x.xx"
+RT_PATCH_VERSION="x.xx.xx-rtx"
+KERNEL_DIR="vx.x"
+KERNEL_VERSION="x.xx.xx"
 
 # Double check the links here as they do change over time to include new paths i.e. kernel/projects/old/rt
 wget https://www.kernel.org/pub/linux/kernel/projects/rt/${RT_PATCH_DIR}/patch-${RT_PATCH_VERSION}.patch.xz  --no-check-certificate
