@@ -159,8 +159,11 @@ case $server_type in
   else
     export benchmarking_dir=$benchmarking_result_dir
   fi
+  echo "#############################"
+  xdpyinfo
+  DISPLAY=$(xdpyinfo | grep -i display | awk '{print $NF}')
   export extra_variables="$extra_variables local_repo_dir=$local_repo local_test_dir=$unit_tests_dir local_code_coverage_dir=$coverage_tests_dir local_benchmarking_dir=$benchmarking_dir"
-  git pull && git checkout $toolset_branch && git pull && sudo PYTHONUNBUFFERED=1 ansible-playbook -v -i "localhost," -c local docker_site.yml --tags "local,$tags_list" -e "$extra_variables"
+  git pull && git checkout $toolset_branch && git pull && sudo PYTHONUNBUFFERED=1 ansible-playbook -v -i "localhost," -c local docker_site.yml --tags "local,$tags_list" -e "$extra_variables" -e DISPLAY
   ;;
 
 *) echo "Not supported server type $server_type"
