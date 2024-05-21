@@ -48,7 +48,6 @@ if  [ "semaphore_docker" != $server_type ] && [ "local" != $server_type ] && [ "
   cd $build_tools_folder/ansible
   
   sudo pip3 install -r data/requirements.txt
-  export DISPLAY=:1
 fi
 
 export extra_variables="codecov_secure=$CODECOV_TOKEN github_login=$GITHUB_LOGIN github_password=$GITHUB_PASSWORD ros_release=$ros_release ubuntu_version_name=$ubuntu_version "
