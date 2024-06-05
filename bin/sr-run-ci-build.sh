@@ -21,6 +21,13 @@ export toolset_branch=$1
 export server_type=$2
 export tags_list=$3
 
+echo "#######################################"
+echo "#######################################"
+echo "#######################################"
+echo "toolset_branch: ${toolset_branch}"
+echo "server_type: ${server_type}"
+echo "tags_list: ${tags_list}"
+echo "local_repo_dir: $4"
 
 export ubuntu_version=${ubuntu_version_name:-"focal"}
 export ros_release=${ros_release_name:-"noetic"}
@@ -101,7 +108,7 @@ case $server_type in
 
 "local") echo "Local run"
   export local_repo_dir=$4
-
+  
   if [ -z "$unit_tests_result_dir" ]
   then
     export unit_tests_dir="$docker_user_home/workspace/test_results"
