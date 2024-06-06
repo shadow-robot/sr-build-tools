@@ -29,12 +29,6 @@ echo "server_type: ${server_type}"
 echo "tags_list: ${tags_list}"
 echo "local_repo_dir: $4"
 
-cur_dir=$(pwd)
-cd $local_repo
-echo "##########################################################################################"
-git status
-cd $cur_dir
-
 export ubuntu_version=${ubuntu_version_name:-"focal"}
 export ros_release=${ros_release_name:-"noetic"}
 export docker_image=${docker_image_name:-"shadowrobot/build-tools:$ubuntu_version-$ros_release"}
@@ -153,6 +147,13 @@ case $server_type in
 "local-docker") echo "Using Docker Image from Docker Hub"
 
   export local_repo=$4
+
+  cur_dir=$(pwd)
+  cd $local_repo
+  echo "##########################################################################################"
+  git status || true
+  cd $cur_dir
+
 
   if [ -z "$unit_tests_result_dir" ]
   then
