@@ -46,7 +46,7 @@ RUN set -x && \
     echo "Installing and configuring additional quality-of-life tools" && \
     apt install -y tree highlight speedometer xsel && \
     cat /etc/highlight/filetypes.conf | sed -r 's/\{ Lang=\"xml\", Extensions=\{/\{ Lang=\"xml\", Extensions=\{\"launch\", /g' | tee /etc/highlight/filetypes.conf && \
-	cat /etc/highlight/filetypes.conf | sed -r 's/\{ Lang=\"xml\", Extensions=\{/\{ Lang=\"xml\", Extensions=\{\"xacro\", /g' | tee /etc/highlight/filetypes.conf && \
+    cat /etc/highlight/filetypes.conf | sed -r 's/\{ Lang=\"xml\", Extensions=\{/\{ Lang=\"xml\", Extensions=\{\"xacro\", /g' | tee /etc/highlight/filetypes.conf && \
     \
     echo "Updating bash commands" && \
     wget -O /tmp/additional_bashrc_cmds "$( echo "$remote_additional_bashrc_cmds" | sed 's/#/%23/g' )" && \
