@@ -1,0 +1,39 @@
+
+grep_all() { grep -rn '.' -e "$1"; }
+docker_exec () { if [[ $(docker container ls -q | wc -l) -eq 1 ]]; then docker exec -it $(docker container ls -q) bash -c "su user"; else echo "wrong number of containers running"; fi; }
+id_rsa_to_container() { 
+  has_input_args=$(if [[ $(for i in $@; do echo $i; done | wc -l) -eq 0 ]]; then echo false; else echo true; fi)
+  if [[ $has_input_args == 'true' ]]; then 
+    for container in $@; do 
+      docker exec -it $container bash -c "gosu user mkdir /home/user/.ssh"
+      docker cp ~/.ssh/id_rsa ${container}:/home/user/.ssh/
+    done
+  else
+    if [ $(which docker | wc -l) -eq 0 ] ; then
+      echo "Docker not found. Are you on the host?"
+      elif [ $(docker container ls -q | wc -l) -eq 0 ]; then
+      echo "No currently running containers"
+      elif [ $(docker container ls -q | wc -l) -eq 1 ]; then
+      echo "Copying id_rsa to container $(docker container ls -q)"
+      docker cp ~/.ssh/id_rsa $(docker container ls -q):/home/user/.ssh/
+      elif [ $(docker container ls -q | wc -l) -gt 1 ]; then
+      echo "More than one container is running"
+    fi
+  fi
+}
+git_add_ssh() { eval "$(ssh-agent -s)"; ssh-add ~/.ssh/id_rsa ; }
+git config --global alias.sshify '!f() { git remote set-url origin $(git remote get-url origin | sed -En "s/https:\/\/github.com\//git@github.com:/p") ; }; f'
+git config --global alias.unsshify '!f() { git remote set-url origin $(git remote get-url origin | sed -En "s/git@github.com:/https:\/\/github.com\//p") ; }; f'
+git_print_log() { git log --graph --oneline --decorate --all ; }
+vscode_dev_container() { bash <(curl -s https://raw.githubusercontent.com/shadow-robot/sr-build-tools/lint/ansible/roles/dev_machine/files/vs_code_setup.sh) ; }
+aws_ecr_public() { aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws/shadowrobot; }
+aws_ecr_private() { aws ecr get-login-password --region eu-west-2 | docker login --username AWS --password-stdin 080653068785.dkr.ecr.eu-west-2.amazonaws.com; }
+cd_ltr(){ cd $1$(ls $1 -ltr -d */ | tail -n 1 | awk '{print $9}'); }
+cats() { for input_file in $@; do echo -e "${input_file}: \n"; highlight -O ansi --force $input_file; echo -e "\n"; done; }
+catsn() { for input_file in $@; do echo -e "${input_file}: \n"; highlight -O ansi --force -n $input_file; echo -e "\n"; done; }
+sr_diagnostics() { rostopic echo --filter "m.status[0].name == 'Realtime Control Loop'" /diagnostics; }
+network_speed() { speedometer -l  -r $1 -t $1 -m $(( 1024 * 1024 * 3 / 2 )) ; }
+alias cgrep="grep --color=always"
+ps_aux() { ps aux | cgrep $1 | grep -v grep ; }
+ps_aux_command() { ps -e -o command | cgrep $1 | grep -v grep ; }
+kill_any_process() { ps_aux_command $1; conf="$(confirm "kill these processes? [Y/n]")"; if [[ $conf == "y" ]]; then echo "killing..."; sudo kill -9 $(ps_aux $1 | awk {'print $2}'); sleep 1; echo "remaining: "; ps_aux_command $1 else echo "not killing"; fi ; }
