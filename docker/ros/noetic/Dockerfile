@@ -46,6 +46,9 @@ RUN set -x && \
     echo "Updating bash commands" && \
     wget -O /tmp/additional_bashrc_cmds "$( echo "$remote_additional_bashrc_cmds" | sed 's/#/%23/g' )" && \
     cat /tmp/additional_bashrc_cmds >> /home/user/.bashrc && \
+    echo "Installing fzf" && \
+    gosu $MY_USERNAME git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf && \
+    gosu $MY_USERNAME ~/.fzf/install --all && \
     \
     echo "Setting default terminator config" && \
     mkdir -p /home/$MY_USERNAME/.config/terminator/ && \
