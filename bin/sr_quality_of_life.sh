@@ -31,7 +31,7 @@ fi
 if [[ "${BASH_ONLY}" == false ]]; then
 
 	echo "Installing and configuring additional quality-of-life tools"
-	apt install -y tree highlight speedometer xsel gosu screen
+	sudo apt install -y tree highlight speedometer xsel gosu screen
 
 	echo "Configuring highlight"
 	for new_lang in $(echo -e "launch\nxacro\nurdf"); do
@@ -53,6 +53,6 @@ fi
 echo "Grabbing additional bash cmds"
 wget -O /home/${MY_USERNAME}/.bash_functions https://raw.githubusercontent.com/shadow-robot/sr-build-tools/F_add_useful_bash_stuff/docker/utils/additional_bashrc_commands_quality_of_life
 if [[ $(cat ~/.bashrc  | grep "source ~/.bash_functions" | wc -l) -eq 0 ]]; then
-	echo "source ~/.bash_functions" >> ~/.bashrc
+	echo "source ~/.bash_functions" >> /home/${MY_USERNAME}/.bashrc
 fi
 
