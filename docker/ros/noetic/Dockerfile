@@ -23,6 +23,7 @@ ENV ros_release_name=noetic
 ENV remote_shell_script="https://raw.githubusercontent.com/shadow-robot/sr-build-tools/$toolset_branch/bin/sr-run-ci-build.sh"
 ENV quality_of_life_script="https://raw.githubusercontent.com/shadow-robot/sr-build-tools/$toolset_branch/bin/sr_quality_of_life.sh"
 
+ENV remote_additional_bashrc_cmds="https://raw.githubusercontent.com/shadow-robot/sr-build-tools/$toolset_branch/docker/utils/additional_bashrc_cmds_noetic"
 
 COPY entrypoint.sh /usr/local/bin/entrypoint.sh
 COPY terminator_config /tmp/terminator_config
@@ -42,6 +43,10 @@ RUN set -x && \
     chmod 755 /tmp/oneliner && \
     /tmp/oneliner "$toolset_branch" $server_type 'setup_docker_user' && \
     gosu $MY_USERNAME /tmp/oneliner "$toolset_branch" $server_type $used_modules && \
+    \
+    echo "Updating bash commands" && \
+    wget -O /tmp/additional_bashrc_cmds "$( echo "$remote_additional_bashrc_cmds" | sed 's/#/%23/g' )" && \
+    cat /tmp/additional_bashrc_cmds >> /home/user/.bashrc && \
     \
     echo "Installing and configuring additional quality-of-life tools" && \
     wget -O /tmp/quality_of_life_setup "$( echo "$quality_of_life_script" | sed 's/#/%23/g' )" && \
