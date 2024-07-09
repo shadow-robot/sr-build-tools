@@ -72,10 +72,14 @@ def get_changes_in_pr(data):
     """Takes in the data class and uses it to get the differences in the pr. It uses subprocess to
        get all of the changes using github cli (gh). Then gets all the files changed by getting
        a list of all strings containing '+++' or '---'."""
+    print("Debug time: ")
+    print(f"data.source: {data.source}")
     # Get commit branch and checkout to it
     command = ["git", "branch", "-a", "--contains", data.source]
     active_branch_process = subprocess.run(command, text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     active_branch = ""
+    print(f"active_branch_process: {active_branch_process}")
+    print(f"active_branch_process.stdout: {active_branch_process.stdout}")
     if active_branch_process.returncode != 0:
         print(f"ERROR WITH COMMAND {command}:\nstderr:{active_branch_process.stderr}\nstdout:{active_branch_process.stdout}")
         sys.exit(1)
@@ -95,6 +99,7 @@ def get_changes_in_pr(data):
             active_branch = branch_name
             break
 
+    print(f"active_branch: {active_branch}")
     command = ["git", "checkout", active_branch]
     checkout_branch_process = subprocess.run(command, text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     if checkout_branch_process.returncode != 0:
