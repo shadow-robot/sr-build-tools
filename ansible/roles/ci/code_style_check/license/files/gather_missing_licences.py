@@ -98,6 +98,10 @@ def get_changes_in_pr(data):
                 sys.exit(0)  # Exit on master branch as its already been merged and checked.
             active_branch = branch_name
             break
+        elif "HEAD detached" in branch:
+            branch_name = data.source
+            active_branch = branch_name
+            break
 
     print(f"active_branch: {active_branch}")
     command = ["git", "checkout", active_branch]
