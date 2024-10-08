@@ -202,10 +202,8 @@ source $underlay_devel/setup.bash
 cd $workspace_path
 echo "Removing all old build artefacts from $workspace_path"
 rm -rf ./devel ./build ./devel_isolated ./build_isolated ./install ./install_isolated
-echo "Building private packages and dependencies in $workspace_path"
-catkin_make_isolated --install --only-pkg-with-deps $list_of_private_packages_as_string
-echo "Installing private packages from $workspace_path to $install_space"
-catkin_make_isolated --install --install-space $install_space --pkg $list_of_private_packages_as_string
+echo "Building private packages from and dependencies from $workspace_path and installing them to $install_space"
+catkin_make_isolated --install --install-space $install_space --only-pkg-with-deps $list_of_private_packages_as_string
 
 echo "Removing private build artefacts from $workspace_path"
 rm -rf ./devel_isolated ./build_isolated ./install_isolated
