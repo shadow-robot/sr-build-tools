@@ -37,7 +37,7 @@
 
 - name: Set upgrade_all_packages
   set_fact:
-    upgrade_all_packages: no
+    upgrade_all_packages: yes
 
 - name: Set repository source code path
   set_fact:
