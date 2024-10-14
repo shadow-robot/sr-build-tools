@@ -38,6 +38,10 @@ case $key in
     exclude_repos_list_path="$2"
     shift
     ;;
+    -t|--enabletests)
+    enable_tests="$2"
+    shift
+    ;;
     --)
     shift
     break
@@ -59,7 +63,6 @@ fi
 if [ -z "${pyarmor_license_zip_file_path}" ]; then
     pyarmor_license_zip_file_path="/home/user/pyarmor-regfile-1.zip"
 fi
-
 
 if [ -z "${install_space}" ]; then
     install_space="/opt/ros/shadow"
@@ -85,6 +88,18 @@ if [[ $exclude_repos_list_path ]]; then
         echo "ERROR: --excludelistpath | -e specifies an excluded repos list file of: $exclude_repos_list_path but this file does not exist. Exiting..."
         exit 1
     fi
+fi
+
+if [ -z "${enable_tests}" ]; then
+    enable_tests="false"
+elif [ "${enable_tests,,}" = "true" ]; then
+    enable_tests="true"
+elif [ "${enable_tests,,}" = "yes" ]; then
+    enable_tests="true"
+elif [ "${enable_tests,,}" = "y" ]; then
+    enable_tests="true"
+else
+    enable_tests="false"
 fi
 
 source $workspace_path/devel/setup.bash
@@ -280,5 +295,16 @@ do
    fi
 done
 
-echo "Binarize: done."
+if [ "${enable_tests}" = "true" ]; then
+  test_files_full_paths=$(find ${install_space} -name "*\.test")
+  test_packages=$(for package in $test_files; do dirname $(dirname $package ) | sed -r 's;.*\/;;g'; done | uniq)
+  test_commands=$(for package in $test_packages; do test_file=$(rosls ${package}/test | grep "\.test"); echo "${package} ${test_file}"; done)
+  IFS=$'\n'
+  for test_command in ${test_commands}; do ; ; done; done
+     package=$(echo $test_command | cut -d " " -f 1)
+     test_file_name=$(echo $test_command | cut -d " " -f 2)
+    rostest ${package} ${test_file_name}
+  done
+fi
 
+echo "Binarize: done."
