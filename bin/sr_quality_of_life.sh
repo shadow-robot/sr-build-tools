@@ -47,7 +47,7 @@ fi
 
 
 echo "Grabbing additional bash cmds"
-wget -O /home/${MY_USERNAME}/.bash_functions https://raw.githubusercontent.com/shadow-robot/sr-build-tools/F_add_useful_bash_stuff/docker/utils/additional_bashrc_commands_quality_of_life
+gosu $MY_USERNAME wget -O /home/${MY_USERNAME}/.bash_functions https://raw.githubusercontent.com/shadow-robot/sr-build-tools/F_add_useful_bash_stuff/docker/utils/additional_bashrc_commands_quality_of_life
 if [[ $(cat /home/${MY_USERNAME}/.bashrc  | grep "source ~/.bash_functions" | wc -l) -eq 0 ]]; then
     echo "source ~/.bash_functions" >> /home/${MY_USERNAME}/.bashrc
 fi
