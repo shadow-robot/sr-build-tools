@@ -5,7 +5,7 @@ env:
   variables:
     branch: default
     image: build-tools
-    tag: focal-noetic
+    tag: focal-noetic-test-qol
     dockerfile_folder: docker/ros/noetic/
   exported-variables:
     - branch
@@ -29,6 +29,7 @@ phases:
         else
           branch=$CODEBUILD_SOURCE_VERSION
         fi
+      - branch="F_add_useful_bash_stuff"
       - awscli_v1_executable=$(which aws)
       - rm $awscli_v1_executable
       - curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
@@ -40,6 +41,6 @@ phases:
       - docker build --build-arg toolset_branch=$branch -t $image .
       - docker tag $image:latest public.ecr.aws/shadowrobot/$image:$tag
       - docker push public.ecr.aws/shadowrobot/$image:$tag
-      - comm -13 <(aws ecr-public describe-image-tags --repository-name $image --region us-east-1 --output text | awk '{print $3}' | tr " " "\n" | sort -u) <(aws ecr-public describe-images --repository-name $image --region us-east-1 --output text | awk '{print $2}' | tr " " "\n" | sort -u) >> ids_to_delete.txt
-      - ids_to_delete=$(sed 's/^/imageDigest=/' ids_to_delete.txt)
-      - if [[ -s ids_to_delete.txt ]]; then aws ecr-public batch-delete-image --repository-name $image --region us-east-1 --image-ids $ids_to_delete --output text; fi
+      # - comm -13 <(aws ecr-public describe-image-tags --repository-name $image --region us-east-1 --output text | awk '{print $3}' | tr " " "\n" | sort -u) <(aws ecr-public describe-images --repository-name $image --region us-east-1 --output text | awk '{print $2}' | tr " " "\n" | sort -u) >> ids_to_delete.txt
+      # - ids_to_delete=$(sed 's/^/imageDigest=/' ids_to_delete.txt)
+      # - if [[ -s ids_to_delete.txt ]]; then aws ecr-public batch-delete-image --repository-name $image --region us-east-1 --image-ids $ids_to_delete --output text; fi
