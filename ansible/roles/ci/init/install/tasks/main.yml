@@ -23,7 +23,7 @@
      - catkin_pkg
      - empy==3.3.2
      - coverage
-     - catkin-lint
+     - catkin-lint<1.6.23
 
 - name: Update users bashrc to point to the ROS installation
   lineinfile: dest={{ansible_env.HOME}}/.bashrc
