@@ -203,7 +203,7 @@ cd $workspace_path
 echo "Removing all old build artefacts from $workspace_path"
 rm -rf ./devel ./build ./devel_isolated ./build_isolated ./install ./install_isolated
 echo "Building private packages from and dependencies from $workspace_path and installing them to $install_space"
-catkin_make_isolated --install --install-space $install_space --only-pkg-with-deps $list_of_private_packages_as_string
+catkin_make_isolated -DCMAKE_BUILD_TYPE=RelWithDebInfo --install --install-space $install_space --only-pkg-with-deps $list_of_private_packages_as_string
 
 echo "Removing private build artefacts from $workspace_path"
 rm -rf ./devel_isolated ./build_isolated ./install_isolated
