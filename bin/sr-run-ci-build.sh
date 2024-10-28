@@ -15,6 +15,15 @@ export docker_image=${docker_image_name:-"shadowrobot/build-tools:$ubuntu_versio
 export docker_user=${docker_user_name:-"user"}
 export docker_user_home=${docker_user_home_dir:-"/home/user"}
 
+echo "#######################################"
+echo "#######################################"
+echo "#######################################"
+echo "toolset_branch: ${toolset_branch}"
+echo "server_type: ${server_type}"
+echo "tags_list: ${tags_list}"
+
+
+
 # Do not install all libraries for docker container CI servers
 if  [ "semaphore_docker" != $server_type ] && [ "local" != $server_type ] && [ "travis" != $server_type ]; then
 
