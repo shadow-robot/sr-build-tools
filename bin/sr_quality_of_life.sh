@@ -21,7 +21,11 @@ do
 done
 
 if [ -z "${MY_USERNAME}" ]; then
-	MY_USERNAME="user"
+    if [ -z "${USER}" ]; then
+        MY_USERNAME="user"
+    else
+        MY_USERNAME="${USER}"
+    fi
 fi
 
 if [ -z "${BASH_ONLY}" ]; then
