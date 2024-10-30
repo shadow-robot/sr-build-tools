@@ -51,7 +51,7 @@ RUN set -x && \
     echo "Installing and configuring additional quality-of-life tools" && \
     wget -O /tmp/quality_of_life_setup "$( echo "$quality_of_life_script" | sed 's/#/%23/g' )" && \
     chmod 755 /tmp/quality_of_life_setup && \
-    /tmp/quality_of_life_setup --user ${MY_USERNAME} && \
+    gosu $MY_USERNAME /tmp/quality_of_life_setup --user ${MY_USERNAME} && \
     \
     echo "Setting default terminator config" && \
     mkdir -p /home/$MY_USERNAME/.config/terminator/ && \
