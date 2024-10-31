@@ -59,3 +59,77 @@ initialise_container() {
   id_rsa_to_container $1
   docker exec -it $1 bash -c "gosu user wget bit.ly/sr_qol -O /tmp/sr_qol && gosu user sudo chmod +x /tmp/sr_qol && gosu user bash /tmp/sr_qol -b true -g false"
 }
+docker_create() {
+  while [[ $# > 1 ]]
+  do
+    key="$1"
+
+    case $key in
+      -g|--no_gpu)
+        NO_GPU="$2"
+        shift
+        ;;	
+      -c|--container_name)
+        CONTAINER_NAME="$2"
+        shift
+        ;;			
+      -i|--image)
+        IMAGE="$2"
+        shift
+        ;;
+      -b|--bash)
+        BASH="$2"
+        shift
+        ;;
+      -d|--dont_initialize)
+        DONT_INITIALIZE="$2"
+        shift
+        ;;			
+      *)
+      # ignore unknown option
+		  ;;
+    esac
+    shift
+  done
+
+
+  if [ -z "${CONTAINER_NAME}" ]; then echo "Please specify desired container name (-c)" ; return ; fi
+  if [ -z "${IMAGE}" ]; then echo "Please specify image name (-i)" ; return ; fi
+
+  if [ -z "${NO_GPU}" ]; then NO_GPU="false"; fi
+  if [ -z "${BASH}" ]; then BASH="false"; fi
+  if [ -z "${DONT_INITIALIZE}" ]; then DONT_INITIALIZE="false"; fi
+
+
+  echo "Creating container $CONTAINER_NAME from image $IMAGE"
+  if [[ $BASH == "true" ]]; then
+    echo "Using bash as default shell"
+    CONTAINER_COMMAND="bash"
+  else
+    echo "Using graphical terminator as default shell (pass in -b true to use bash instead)"
+    CONTAINER_COMMAND="terminator"
+  fi
+
+  if [[ $NO_GPU == "false" ]]; then
+    echo "Creating container with nvidia gpu support"
+    docker create --name $CONTAINER_NAME -it --security-opt seccomp=unconfined \
+                  --network=host --ipc=host --pid=host --privileged \
+                  --gpus all -e NVIDIA_DRIVER_CAPABILITIES=all -e NVIDIA_VISIBLE_DEVICES=all \
+                  -e DISPLAY -e QT_X11_NO_MITSHM=1 -e LOCAL_USER_ID=$(id -u) \
+                  -e XDG_RUNTIME_DIR=/run/user/$(id -u) -e ROS_MASTER_URI=http://localhost:11311\
+                  -v /tmp/.X11-unix:/tmp/.X11-unix:rw -v /dev/input:/dev/input:rw -v /dev:/dev \
+                  -v /run/udev/data:/run/udev/data:rw ${IMAGE} ${CONTAINER_COMMAND}
+  else
+	  echo "Creating container without nvidia gpu support"
+	  docker create --name $CONTAINER_NAME -it --security-opt seccomp=unconfined \
+                  --network=host --ipc=host --pid=host --privileged \
+                  -e DISPLAY -e QT_X11_NO_MITSHM=1 -e LOCAL_USER_ID=$(id -u) \
+                  -e XDG_RUNTIME_DIR=/run/user/$(id -u) -e ROS_MASTER_URI=http://localhost:11311\
+                  -v /tmp/.X11-unix:/tmp/.X11-unix:rw -v /dev/input:/dev/input:rw -v /dev:/dev \
+                  -v /run/udev/data:/run/udev/data:rw ${IMAGE} ${CONTAINER_COMMAND}
+  fi
+  if [[ $DONT_INITIALIZE == "true" ]]; then
+    return
+  fi
+  initialise_container $CONTAINER_NAME
+}
