@@ -52,6 +52,7 @@ echo "BASH_ONLY?        = ${BASH_ONLY}"
 if [[ "${BASH_ONLY}" == false ]]; then
 
     echo "Installing and configuring additional quality-of-life tools"
+    sudo apt update
     sudo apt install -y tree highlight speedometer xsel screen nano git curl jq nmap
 
     echo "Configuring highlight"
