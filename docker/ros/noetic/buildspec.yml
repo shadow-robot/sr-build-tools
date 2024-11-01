@@ -5,7 +5,7 @@ env:
   variables:
     branch: default
     image: build-tools
-    tag: focal-noetic-test-qol
+    tag: focal-noetic
     dockerfile_folder: docker/ros/noetic/
   exported-variables:
     - branch
