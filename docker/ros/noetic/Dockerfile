@@ -21,6 +21,7 @@ ENV server_type="docker_hub"
 ENV used_modules="check_cache,create_workspace"
 ENV ros_release_name=noetic
 ENV remote_shell_script="https://raw.githubusercontent.com/shadow-robot/sr-build-tools/$toolset_branch/bin/sr-run-ci-build.sh"
+ENV quality_of_life_script="https://raw.githubusercontent.com/shadow-robot/sr-build-tools/$toolset_branch/bin/sr_quality_of_life.sh"
 
 ENV remote_additional_bashrc_cmds="https://raw.githubusercontent.com/shadow-robot/sr-build-tools/$toolset_branch/docker/utils/additional_bashrc_cmds_noetic"
 
@@ -46,6 +47,11 @@ RUN set -x && \
     echo "Updating bash commands" && \
     wget -O /tmp/additional_bashrc_cmds "$( echo "$remote_additional_bashrc_cmds" | sed 's/#/%23/g' )" && \
     cat /tmp/additional_bashrc_cmds >> /home/user/.bashrc && \
+    \
+    echo "Installing and configuring additional quality-of-life tools" && \
+    wget -O /tmp/quality_of_life_setup "$( echo "$quality_of_life_script" | sed 's/#/%23/g' )" && \
+    chmod 755 /tmp/quality_of_life_setup && \
+    gosu $MY_USERNAME /tmp/quality_of_life_setup --user ${MY_USERNAME} && \
     \
     echo "Setting default terminator config" && \
     mkdir -p /home/$MY_USERNAME/.config/terminator/ && \
