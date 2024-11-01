@@ -53,7 +53,7 @@ if [[ "${BASH_ONLY}" == false ]]; then
 
     echo "Installing and configuring additional quality-of-life tools"
     sudo apt update
-    sudo apt install -y tree highlight speedometer xsel screen nano git curl jq nmap
+    sudo apt install -y tree highlight speedometer xsel screen nano git curl jq nmap byobu emacs
 
     echo "Configuring highlight"
     for new_lang in $(echo -e "launch\nxacro\nurdf"); do
