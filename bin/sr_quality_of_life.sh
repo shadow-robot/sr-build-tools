@@ -62,10 +62,11 @@ if [[ "${BASH_ONLY}" == false ]]; then
             cat /etc/highlight/filetypes.conf | sed -r 's/\{ Lang=\"xml\", Extensions=\{/\{ Lang=\"xml\", Extensions=\{\"'${new_lang}'\", /g' | sudo tee /etc/highlight/filetypes.conf
         fi
     done
-    echo "Installing fzf"
-    git clone --depth 1 https://github.com/junegunn/fzf.git /home/${MY_USERNAME}/.fzf
-    /home/${MY_USERNAME}/.fzf/install --all
 fi
+
+echo "Installing fzf"
+git clone --depth 1 https://github.com/junegunn/fzf.git /home/${MY_USERNAME}/.fzf
+/home/${MY_USERNAME}/.fzf/install --all
 
 BASH_FUNCTIONS_LOCATION="/home/${MY_USERNAME}/.bash_functions"
 echo "Grabbing additional bash cmds and saving them to ${BASH_FUNCTIONS_LOCATION}"
