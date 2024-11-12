@@ -71,6 +71,6 @@ git clone --depth 1 https://github.com/junegunn/fzf.git /home/${MY_USERNAME}/.fz
 BASH_FUNCTIONS_LOCATION="/home/${MY_USERNAME}/.bash_functions"
 echo "Grabbing additional bash cmds and saving them to ${BASH_FUNCTIONS_LOCATION}"
 wget -O ${BASH_FUNCTIONS_LOCATION} https://raw.githubusercontent.com/shadow-robot/sr-build-tools/master/docker/utils/additional_bashrc_commands_quality_of_life
-if [[ $(cat /home/${MY_USERNAME}/.bashrc  | grep "source ~/.bash_functions" | wc -l) -eq 0 ]]; then
+if [[ $(cat /home/${MY_USERNAME}/.bashrc  | grep "source ~/.bash_functions$" | wc -l) -eq 0 ]]; then
     echo "source ~/.bash_functions" >> /home/${MY_USERNAME}/.bashrc
 fi
