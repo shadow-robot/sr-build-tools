@@ -9,6 +9,10 @@ do
             MY_USERNAME="$2"
             shift
             ;;
+        -e|--emacs)
+            INSTALL_EMACS="$2"
+            shift
+            ;;
         -b|--bash_only)
             BASH_ONLY="$2"
             shift
@@ -27,6 +31,10 @@ if [ -z "${MY_USERNAME}" ]; then
         MY_USERNAME="${USER}"
     fi
 fi
+
+if [ -z "${INSTALL_EMACS}" ]; then
+	INSTALL_EMACS=false
+ fi
 
 if [ -z "${BASH_ONLY}" ]; then
 	BASH_ONLY=false
@@ -53,8 +61,10 @@ if [[ "${BASH_ONLY}" == false ]]; then
 
     echo "Installing and configuring additional quality-of-life tools"
     sudo apt update
-    sudo apt install -y tree highlight speedometer xsel screen nano git curl jq nmap byobu emacs
-
+    sudo apt install -y tree highlight speedometer xsel screen nano git curl jq nmap
+    if [[ "${INSTALL_EMACS}" == true ]]; then
+        sudo apt install -y byobu emacs
+    fi
     echo "Configuring highlight"
     for new_lang in $(echo -e "launch\nxacro\nurdf"); do
         if [[ $(cat /etc/highlight/filetypes.conf | grep "Lang=\"xml\", Extensions=" | grep ${new_lang} | wc -l) -eq 0 ]]; then
