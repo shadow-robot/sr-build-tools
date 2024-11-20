@@ -57,7 +57,7 @@ catkin_make_all_debug_release () { tmp_var=$(pwd); roscd; cd ..; catkin_make_deb
 initialise_container() {
   docker start $1
   id_rsa_to_container $1
-  docker exec -it $1 bash -c "gosu user wget bit.ly/sr_qol -O /tmp/sr_qol && gosu user sudo chmod +x /tmp/sr_qol && gosu user bash /tmp/sr_qol -b true -g false"
+  docker exec -it $1 bash -c "gosu user wget bit.ly/sr-qol -O /tmp/sr_qol && gosu user sudo chmod +x /tmp/sr_qol && gosu user bash /tmp/sr_qol -b true -g false"
 }
 docker_create() {
   while [[ $# > 1 ]]
