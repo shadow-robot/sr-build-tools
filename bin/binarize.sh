@@ -295,7 +295,7 @@ echo "Cleaning user workspace overlay at $user_overlay_workspace"
 if [ ! -d "$user_overlay_workspace" ]; then
    echo "Provided user workspace overlay path '$DIRECTORY' does not exist."
    echo "Nothing will be done to the user workspace overlay."
-elif
+else
    cd $user_overlay_workspace
    rm -rf build/ devel/
 fi
