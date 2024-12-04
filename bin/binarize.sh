@@ -289,7 +289,7 @@ do
    fi
 done
 
-# In de future, if we want to inlude the user overlay workspace to all our binary images, we could also be
+# In the future, if we want to include the user overlay workspace to all our binary images, we could also be
 # compiling/sourcing the user workspace overlay here (instead of doing it in the dockerFile on Release branches)
 echo "Cleaning user workspace overlay at $user_overlay_workspace"
 if [ ! -d "$user_overlay_workspace" ]; then
