@@ -85,7 +85,7 @@ fi
 
 # If the user workspace overlay path is not specified, use the default one
 if [ -z "${user_overlay_workspace}" ]; then
-   user_overlay_workspace="/home/user/workspace"
+   user_overlay_workspace="/home/$user_name/workspace"
 fi
 
 # If $exclude_repos_list_path has been specified but points to a file that does not exist..
