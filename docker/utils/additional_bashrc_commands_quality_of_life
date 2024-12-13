@@ -136,4 +136,4 @@ docker_create() {
 aws_ecr_list_tags_by_repo() { echo "${1}:"; aws ecr list-images --repository-name $1 | jq '.imageIds[].imageTag'; echo; }
 aws_ecr_list_repos() { aws ecr describe-repositories |  jq '.repositories[].repositoryName' | sed -r 's/"//g'; }
 aws_ecr_list_all() { for img in $(aws_ecr_list_repos); do aws_ecr_list_tags_by_repo $img; done; }
-find_sort_by_date() { find . -iname "*$1*" -printf "%T@ %Tc %p\n" 2>/dev/null | sort -n; }
+find_sort_by_date() { find . -iname "*$1*" -printf "%T@ %Tc %p\n" 2>/dev/null | sort -rn; }
