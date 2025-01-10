@@ -159,7 +159,7 @@ clean_git(){
 clean_ssh() {
     print_yellow "Step 7/8"
     # Double check its okay to remove all ssh keys
-    if $AUTO_RUN || confirm"Remove all ssh keys from $HOME/.ssh (Y/N) "; then
+    if $AUTO_RUN || confirm "Remove all ssh keys from $HOME/.ssh (Y/N) "; then
         if [ -d "$HOME/Downloads/" ]; then
             rm -rf "$HOME/.ssh/"
         else
