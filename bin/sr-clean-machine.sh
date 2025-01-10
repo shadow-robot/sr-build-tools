@@ -58,9 +58,8 @@ confirm() {
 }
 
 clean_aws() {
-    print_yellow "Step 1/8"
     # Double check its okay to remove AWS creds
-    if $AUTO_RUN || confirm "Remove AWS Creds (Y/N) "; then
+    if $AUTO_RUN || confirm "Remove AWS Creds (y/N) "; then
         if [ -f "$HOME/.aws/credentials" ]; then
             rm "$HOME/.aws/credentials"
             print_green "----------AWS creds removed----------"
@@ -73,9 +72,8 @@ clean_aws() {
 }
 
 clean_chrome() {
-    print_yellow "Step 2/8"
     # Double check its okay to remove contents of chrome
-    if $AUTO_RUN || confirm "Remove chrome logins, history and cookies, this will kill the chrome process (Y/N) "; then
+    if $AUTO_RUN || confirm "Remove chrome logins, history and cookies, this will kill the chrome process (y/N) "; then
         if [ -d "$HOME/.cache/google-chrome/" ]; then
             rm -rf "$HOME/.cache/google-chrome/*"
         else
@@ -93,9 +91,8 @@ clean_chrome() {
 }
 
 clean_firefox() {
-    print_yellow "Step 3/8"
     # Double check its okay to remove contents of chrome
-    if $AUTO_RUN || confirm "Remove chrome logins, history and cookies, this will kill the chrome process (Y/N) "; then
+    if $AUTO_RUN || confirm "Remove browser logins, history and cookies, this will kill the chrome process (Y/N) "; then
         if [ -d "$HOME/.mozilla/firefox" ]; then
             rm -rf "$HOME/.mozilla/firefox/*"
         else
@@ -113,10 +110,9 @@ clean_firefox() {
 }
 
 clean_downloads() {
-    print_yellow "Step 4/8"
     # Double check its okay to remove contents of downloads
-    if $AUTO_RUN || confirm "Remove contents of downloads folder (Y/N) "; then
-        if [ -d "$HOME/.ssh/" ]; then
+    if $AUTO_RUN || confirm "Remove contents of downloads folder (y/N) "; then
+            if [ -d "$HOME/Downloads/" ]; then
             rm -rf "$HOME/Downloads/*"
         else
             print_yellow "----------Downloads not found skipping----------"
@@ -127,21 +123,9 @@ clean_downloads() {
     fi
 }
 
-clean_history() {
-    print_yellow "Step 5/8"
-    # Double check its okay to remove bash history
-    if $AUTO_RUN || confirm "Clear Bash History (Y/N) "; then
-        history -c
-        history -w
-        print_green "----------Bash History Cleared----------"
-    else
-        print_red "----------Bash History Skipped----------"
-    fi
-}
 
 clean_git(){
-    print_yellow "Step 6/8"
-    if $AUTO_RUN || confirm "Clear GitHub creds (Y/N) "; then
+    if $AUTO_RUN || confirm "Clear GitHub creds (y/N) "; then
         
         # Remove GitHub credentials from the credential store
         git credential-cache exit
@@ -157,10 +141,9 @@ clean_git(){
 }
 
 clean_ssh() {
-    print_yellow "Step 7/8"
     # Double check its okay to remove all ssh keys
-    if $AUTO_RUN || confirm "Remove all ssh keys from $HOME/.ssh (Y/N) "; then
-        if [ -d "$HOME/Downloads/" ]; then
+    if $AUTO_RUN || confirm "Remove all ssh keys from $HOME/.ssh (y/N) "; then
+        if [ -d "$HOME/.ssh/" ]; then
             rm -rf "$HOME/.ssh/"
         else
             print_yellow "----------ssh not found skipping----------"
@@ -169,12 +152,11 @@ clean_ssh() {
     else
         print_red "----------SSH Skipped----------"
     fi
-}
 
-clean_cache() {
-    print_yellow "Step 8/8"
+
+        if [ -d "$HOME/.ssh/" ]; then
     # Double check its okay to remove all temp directories
-    if $AUTO_RUN || confirm "Would you like to remove the system cache? /tmp /var/tmp /var/lib/apt/lists/ $HOME/.cache (Y/N) "; then
+    if $AUTO_RUN || confirm "Would you like to remove the system cache? /tmp /var/tmp /var/lib/apt/lists/ $HOME/.cache (y/N) "; then
         sudo apt clean
         sudo rm -rf /tmp/*
         sudo rm -rf /var/tmp/*
@@ -185,17 +167,36 @@ clean_cache() {
     fi
 }
 
+clean_history() {
+    # Double check its okay to remove bash history
+    if $AUTO_RUN || confirm "Clear Bash History (y/N) "; then
+        history -c
+        history -w
+        print_green "----------Bash History Cleared----------"
+    else
+        print_red "----------Bash History Skipped----------"
+    fi
+}
+
 
 main(){
     # Run the clean up the process step by step
-    clean_aws
+    print_yellow "Step 1/8"
     clean_chrome
+    print_yellow "Step 2/8"
     clean_firefox
+    print_yellow "Step 3/8"
     clean_downloads
-    clean_history
-    clean_git
-    clean_ssh
+    print_yellow "Step 4/8"
     clean_cache
+    print_yellow "Step 5/8"
+    clean_git
+    print_yellow "Step 6/8"
+    clean_ssh
+    print_yellow "Step 7/8"
+    clean_aws
+    print_yellow "Step 8/8"
+    clean_history
     print_green "----------Cleaning Complete----------"
 }
 
@@ -203,7 +204,7 @@ main(){
 print_green "----------Delivery Cleaner----------"
 if $AUTO_RUN; then
     print_green "Running in auto mode"
-    if confirm "Is this correct?"; then
+    if confirm "Is this correct? (y/N)"; then
         main
     else
         # Kill the script if no is selected
@@ -212,7 +213,7 @@ if $AUTO_RUN; then
     fi
 else
     if confirm "This script will clean the machine. It will remove the AWS CLI and creds, the bash history, any logged-in GitHub accounts, and perform apt autoremove. 
-are you sure you would like to continue (Y/N) "; then
+are you sure you would like to continue (y/N) "; then
         # Run the clean up the process step by step
         main()
     else
