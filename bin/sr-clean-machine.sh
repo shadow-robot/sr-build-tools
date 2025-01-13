@@ -92,7 +92,7 @@ clean_chrome() {
 
 clean_firefox() {
     # Double check its okay to remove contents of chrome
-    if $AUTO_RUN || confirm "Remove browser logins, history and cookies, this will kill the chrome process (Y/N) "; then
+    if $AUTO_RUN || confirm "Remove firefox logins, history and cookies, this will kill the firefox process (Y/N) "; then
         if [ -d "$HOME/.mozilla/firefox" ]; then
             rm -rf "$HOME/.mozilla/firefox/*"
         else
