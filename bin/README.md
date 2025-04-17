@@ -145,7 +145,7 @@ $HOME/Downloads/
 Git credentials
 SSH keys
 sudo apt clean
-        sudo rm -rf /tmp/*
+sudo rm -rf /tmp/*
         sudo rm -rf /var/tmp/*
 Bash history
 ```
