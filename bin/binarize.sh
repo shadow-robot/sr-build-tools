@@ -38,6 +38,10 @@ case $key in
     exclude_repos_list_path="$2"
     shift
     ;;
+    -o|--overlay_workspace)
+    user_overlay_workspace="$2"
+    shift
+    ;;
     --)
     shift
     break
@@ -77,6 +81,11 @@ fi
 # If the user to rebuild non-private workspace as is not specified, use the owner of it
 if [ -z "${user_name}" ]; then
    user_name=$(stat -c '%U' $workspace_path)
+fi
+
+# If the user workspace overlay path is not specified, use the default one
+if [ -z "${user_overlay_workspace}" ]; then
+   user_overlay_workspace="/home/$user_name/workspace"
 fi
 
 # If $exclude_repos_list_path has been specified but points to a file that does not exist..
@@ -203,7 +212,7 @@ cd $workspace_path
 echo "Removing all old build artefacts from $workspace_path"
 rm -rf ./devel ./build ./devel_isolated ./build_isolated ./install ./install_isolated
 echo "Building private packages from and dependencies from $workspace_path and installing them to $install_space"
-catkin_make_isolated --install --install-space $install_space --only-pkg-with-deps $list_of_private_packages_as_string
+catkin_make_isolated -DCMAKE_BUILD_TYPE=RelWithDebInfo --install --install-space $install_space --only-pkg-with-deps $list_of_private_packages_as_string
 
 echo "Removing private build artefacts from $workspace_path"
 rm -rf ./devel_isolated ./build_isolated ./install_isolated
@@ -279,6 +288,17 @@ do
       done
    fi
 done
+
+# In the future, if we want to include the user overlay workspace to all our binary images, we could also be
+# compiling/sourcing the user workspace overlay here (instead of doing it in the dockerFile on Release branches)
+echo "Cleaning user workspace overlay at $user_overlay_workspace"
+if [ ! -d "$user_overlay_workspace" ]; then
+   echo "Provided user workspace overlay path '$DIRECTORY' does not exist."
+   echo "Nothing will be done to the user workspace overlay."
+else
+   cd $user_overlay_workspace
+   rm -rf build/ devel/
+fi
 
 echo "Binarize: done."
 
