@@ -24,16 +24,10 @@ ENV remote_shell_script="https://raw.githubusercontent.com/shadow-robot/sr-build
 ENV remote_additional_bashrc_cmds="https://raw.githubusercontent.com/shadow-robot/sr-build-tools/$toolset_branch/docker/utils/additional_bashrc_cmds_noetic"
 
 COPY entrypoint.sh /usr/local/bin/entrypoint.sh
-COPY terminator_config /tmp/terminator_config
 
 RUN set -x && \
     apt-get update && \
-    apt-get install -y --no-install-recommends gnupg && \
-    rm -rf /var/lib/apt/lists/*
-
-RUN set -x && \
-    apt-get update && \
-    apt-get install -y --no-install-recommends build-essential python3-dev && \
+    apt-get install -y --no-install-recommends gnupg apt-utils build-essential python3-dev && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
@@ -71,6 +65,8 @@ RUN set -x && \
     wget -O /tmp/additional_bashrc_cmds "$( echo "$remote_additional_bashrc_cmds" | sed 's/#/%23/g' )" && \
     cat /tmp/additional_bashrc_cmds >> /home/user/.bashrc && \
     rm -rf /tmp/*
+
+COPY terminator_config /tmp/terminator_config
 
 RUN set -x && \
     echo "Setting default terminator config" && \
