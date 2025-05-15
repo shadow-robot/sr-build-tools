@@ -1,4 +1,4 @@
-ansible==4.2.0
+ansible==7.0.0
 ansible-core==2.11.11
 asn1crypto==1.5.1
 bcrypt==3.2.0
