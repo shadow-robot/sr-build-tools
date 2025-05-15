@@ -1,0 +1,45 @@
+version: 0.2
+
+env:
+  shell: bash
+  variables:
+    branch: default
+    image: build-tools
+    tag: jammy
+    dockerfile_folder: docker/ubuntu/jammy/
+  exported-variables:
+    - branch
+    - image
+    - tag
+    - dockerfile_folder
+phases:
+  install:
+    runtime-versions:
+      docker: 19
+  build:
+    commands:
+      - |
+        if [[ $branch != "default" ]]; then
+          toolset_branch=$branch
+        elif [[ $CODEBUILD_SOURCE_VERSION == "pr/"* ]]; then
+          pr_number=${CODEBUILD_SOURCE_VERSION#pr/}
+          branch=$(curl -s "https://api.github.com/repos/shadow-robot/sr-build-tools/pulls/$pr_number" | jq -r '.head.ref')
+        elif [[ $CODEBUILD_SOURCE_VERSION =~ ^[0-9a-f]{40}$ ]]; then
+          branch=$(git ls-remote --symref origin | grep -m1 $CODEBUILD_SOURCE_VERSION | awk -F '/' '{print $NF}')
+        else
+          branch=$CODEBUILD_SOURCE_VERSION
+        fi
+      - awscli_v1_executable=$(which aws)
+      - rm $awscli_v1_executable
+      - curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+      - unzip awscliv2.zip
+      - ./aws/install
+      - git checkout $branch
+      - cd $dockerfile_folder
+      - aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws/shadowrobot
+      - docker build --build-arg toolset_branch=$branch -t $image .
+      - docker tag $image:latest public.ecr.aws/shadowrobot/$image:$tag
+      - docker push public.ecr.aws/shadowrobot/$image:$tag
+      - comm -13 <(aws ecr-public describe-image-tags --repository-name $image --region us-east-1 --output text | awk '{print $3}' | tr " " "\n" | sort -u) <(aws ecr-public describe-images --repository-name $image --region us-east-1 --output text | awk '{print $2}' | tr " " "\n" | sort -u) >> ids_to_delete.txt
+      - ids_to_delete=$(sed 's/^/imageDigest=/' ids_to_delete.txt)
+      - if [[ -s ids_to_delete.txt ]]; then aws ecr-public batch-delete-image --repository-name $image --region us-east-1 --image-ids $ids_to_delete --output text; fi
