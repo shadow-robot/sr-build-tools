@@ -11,15 +11,9 @@
 - name: Install PIP modules
   pip:
     name: ['catkin_pkg','empy','coverage','catkin-lint','pylint', 'pycodestyle']
-    extra_args: '--upgrade'
+    extra_args: '--upgrade --use-pep517'
     executable: pip3
   become: yes
   become_method: sudo
   become_user: root
 
-- name: Update users bashrc to point to the ROS installation
-  lineinfile: dest={{ansible_env.HOME}}/.bashrc
-              line="source /opt/ros/{{ros_release}}/setup.bash"
-              regexp='^source.*/setup\.bash'
-              insertafter=EOF
-              backup=yes
