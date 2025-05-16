@@ -1,11 +1,36 @@
+# Copyright 2022 Shadow Robot Company Ltd.
+#
+# This program is free software: you can redistribute it and/or modify it
+# under the terms of the GNU General Public License as published by the Free
+# Software Foundation version 2 of the License.
+#
+# This program is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+# FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
+# more details.
+#
+# You should have received a copy of the GNU General Public License along
+# with this program. If not, see <http://www.gnu.org/licenses/>.
+
 ---
 # Playbook for checkig software license
 
+- name: get_repo_name
+  set_fact: 
+    repo_name: "{{ repo_sources_path.split('/')[-1] }}"
+
+- name: Disable licence check if forked repository
+  set_fact:
+    skip_repo: true
+  when: "repo_name in forked_repos"
+
 - name: Check for license file in the repository directory
   script: ../files/license_check.sh {{repo_sources_path}}
+  when: not skip_repo
 
 - name: Full check for copyright annotation in repository files
   script: ../files/copyright_check_full.sh {{repo_sources_path}}
+  when: not skip_repo
 
 - name: Gather license with incorrect year
   script: ../files/gather_missing_licences.py --path {{repo_sources_path}} --user {{github_login | default('') }} --token {{github_password | default('') }}

@@ -1,56 +1,44 @@
+# Copyright 2022 Shadow Robot Company Ltd.
+#
+# This program is free software: you can redistribute it and/or modify it
+# under the terms of the GNU General Public License as published by the Free
+# Software Foundation version 2 of the License.
+#
+# This program is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+# FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
+# more details.
+#
+# You should have received a copy of the GNU General Public License along
+# with this program. If not, see <http://www.gnu.org/licenses/>.
+
 ---
 # Playbook for Python code style check
 
-- name: Get list of all Python files by extension in repository
-  script: "../../common_resources/files/files_by_extension_and_policy.sh \
-    {{repo_sources_path}} {{repo_sources_path}}/{{item.path}} py .lintignore"
-  with_items: "{{repo_packages_list|default([])}}"
-  register: python_files_with_extension
+- name: Get list of all Python files
+  script: "../../common_resources/files/files_by_extension.py \
+    -p {{repo_sources_path}} -ft python"
+  register: python_files
 
 - name: Set variable to workaround ansible type evaluation issue
   set_fact:
-    python_files_with_extension_results: "{{python_files_with_extension.results}}"
+    python_files_results: "{{python_files.stdout_lines}}"
 
-- name: Get list of all Python files by content in repository
-  script: "../../common_resources/files/files_by_content_and_policy.sh \
-    {{repo_sources_path}} {{repo_sources_path}}/{{item.path}} '^#!/usr/bin/env python|^#! /usr/bin/env python|^#!/usr/bin/python|^#! /usr/bin/python' .lintignore '.*\\..*'"
-  with_items: "{{repo_packages_list|default([])}}"
-  register: python_files_without_extension
-
-- name: Set variable to workaround ansible type evaluation issue
-  set_fact:
-    python_files_without_extension_results: "{{python_files_without_extension.results}}"
-
-- name: Execute roslint for every package and .py files and write results in unit tests format
-  shell: |
-    source /opt/ros/{{ros_release}}/setup.bash && rosrun roslint test_wrapper \
-    {{ros_workspace}}/build/test_results/{{item.item.name}}/roslint-python-py-{{item.item.name}}.xml \
-    'rosrun roslint pycodestyle --max-line-length=120 {{item.stdout}}'
-     
-    source /opt/ros/{{ros_release}}/setup.bash && rosrun roslint test_wrapper \
-    {{ros_workspace}}/build/test_results/{{item.item.name}}/roslint-python3-py-{{item.item.name}}.xml \
-    "pylint -sn --py3k --msg-template='{abspath}:{line}:{column}:{msg_id}:{msg}' {{item.stdout}}"
-  args:
-    executable: "/bin/bash"
-    chdir: "{{repo_sources_path}}/{{item.item.path}}"
-  with_items: "{{python_files_with_extension_results|default([])}}"
-  when: item.stdout != ""
-  ignore_errors: True
+- name: Move pylintrc file
+  copy:
+    src: ../files/pylintrc
+    dest: /tmp/pylintrc
 
 - name: Execute roslint for every package and no extension files and write results in unit tests format
   shell: |
     source /opt/ros/{{ros_release}}/setup.bash && rosrun roslint test_wrapper \
-    {{ros_workspace}}/build/test_results/{{item.item.name}}/roslint-python-ex-{{item.item.name}}.xml \
-    'rosrun roslint pycodestyle --max-line-length=120 {{item.stdout}}'
+    {{ros_workspace}}/build/test_results/{{item}}/roslint-python-ex-{{item}}.xml \
+    'rosrun roslint pycodestyle --max-line-length=120 {{item}}'
          
     source /opt/ros/{{ros_release}}/setup.bash && rosrun roslint test_wrapper \
-    {{ros_workspace}}/build/test_results/{{item.item.name}}/roslint-python3-ex-{{item.item.name}}.xml \
-    "pylint -sn --py3k --msg-template='{abspath}:{line}:{column}:{msg_id}:{msg}' {{item.stdout}}"
+    {{ros_workspace}}/build/test_results/{{item}}/roslint-python3-ex-{{item}}.xml \
+    "pylint -sn --rcfile=/tmp/pylintrc --msg-template='{abspath}:{line}:{column}:{msg_id}:{msg}' {{item}}"
   args:
     executable: "/bin/bash"
-    chdir: "{{repo_sources_path}}/{{item.item.path}}"
-  with_items: "{{python_files_without_extension_results|default([])}}"
-  when: item.stdout != ""
+  with_items: "{{python_files_results|default([])}}"
   ignore_errors: True
-
-

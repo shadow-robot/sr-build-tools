@@ -191,7 +191,7 @@ function clone_repo_and_get_changes() {
         git clone "$GITHUB_TEMPLATE/$key" "$changelog_folder/${key%.*}"
         cd "$changelog_folder/${key%.*}"
         set +e  # Grep will cause this to fail.
-        pr_list=$(git log --pretty=format:'%H' --oneline "${updated_repos_recent[$key]}...${updated_repos[$key]}")
+        pr_list=$(git log --pretty=format:'%H' --oneline "${updated_repos_recent[$key]}...${updated_repos[$key]}" | grep "Merge pull request #")
         if [[ $? == 1 ]]; then
             echo "No PRs skipping."
             continue

@@ -1,9 +1,23 @@
 #!/bin/bash
 
-RT_PATCH_DIR="x.xx"
-RT_PATCH_VERSION="x.xx.xx-rtx"
-KERNEL_DIR="vx.x"
-KERNEL_VERSION="x.xx.xx"
+# Copyright 2022 Shadow Robot Company Ltd.
+#
+# This program is free software: you can redistribute it and/or modify it
+# under the terms of the GNU General Public License as published by the Free
+# Software Foundation version 2 of the License.
+#
+# This program is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+# FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
+# more details.
+#
+# You should have received a copy of the GNU General Public License along
+# with this program. If not, see <http://www.gnu.org/licenses/>.
+
+RT_PATCH_DIR="4.13"
+RT_PATCH_VERSION="4.13.13-rt5"
+KERNEL_DIR="v4.x"
+KERNEL_VERSION="4.13.13"
 
 # Double check the links here as they do change over time to include new paths i.e. kernel/projects/old/rt
 wget https://www.kernel.org/pub/linux/kernel/projects/rt/${RT_PATCH_DIR}/patch-${RT_PATCH_VERSION}.patch.xz  --no-check-certificate

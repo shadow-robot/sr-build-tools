@@ -1,0 +1,17 @@
+{
+    "remoteUser": "user",
+    "userEnvProbe": "interactiveShell",
+	"extensions": [
+		"GitHub.copilot",
+		"ms-iot.vscode-ros",
+		"ms-python.isort",
+		"ms-python.python",
+		"ms-python.vscode-pylance",
+		"ms-vscode.cmake-tools",
+		"ms-vscode.cpptools",
+		"ms-vscode.cpptools-extension-pack",
+		"ms-vscode.cpptools-themes",
+		"twxs.cmake"
+	],
+	"workspaceFolder": "/home/user/projects/shadow_robot/base"
+}

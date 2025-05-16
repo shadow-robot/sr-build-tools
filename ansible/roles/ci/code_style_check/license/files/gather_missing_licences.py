@@ -14,6 +14,8 @@
 # You should have received a copy of the GNU General Public License along
 # with this program. If not, see <http://www.gnu.org/licenses/>.
 
+# pylint: disable=W1510
+
 import os
 import re
 import sys
@@ -24,7 +26,8 @@ from datetime import date
 
 # Include bash in python files as we also put licences in bash files too.
 PYTHON_HEADERS = ["#!/usr/bin/env python", "#!/usr/bin/python", "#!/bin/bash", "#!/usr/bin/env bash"]
-ACCEPTED_EXTENSIONS = ["py", "c", "h", "cpp", "hpp", "yml", "yaml", "sh", "xml", "xacro", "dae", "launch"]
+ACCEPTED_EXTENSIONS = ["py", "c", "h", "cpp", "hpp", "yml", "yaml", "sh", "xml", "xacro", "dae", "launch",
+                       "sdf", "world", "config"]
 MASTER_BRANCHES = ["noetic-devel", "melodic-devel", "kinetic-devel",
                    "jade-devel", "indigo-devel", "devel", "master", "main"]
 
@@ -89,6 +92,11 @@ def get_changes_in_pr(data):
             branch_name = result.group(1)
             if branch_name in MASTER_BRANCHES:
                 sys.exit(0)  # Exit on master branch as its already been merged and checked.
+            active_branch = branch_name
+            break
+        elif "HEAD detached" in branch:
+            # If head is detached, just use the commit hash (data.source) as the branch name
+            branch_name = data.source
             active_branch = branch_name
             break
 

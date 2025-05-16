@@ -1,5 +1,19 @@
 #!/usr/bin/env bash
 
+# Copyright 2022, 2025 Shadow Robot Company Ltd.
+#
+# This program is free software: you can redistribute it and/or modify it
+# under the terms of the GNU General Public License as published by the Free
+# Software Foundation version 2 of the License.
+#
+# This program is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+# FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
+# more details.
+#
+# You should have received a copy of the GNU General Public License along
+# with this program. If not, see <http://www.gnu.org/licenses/>.
+
 set -e # fail on errors
 #set -x # echo commands run
 
@@ -7,6 +21,13 @@ export toolset_branch=$1
 export server_type=$2
 export tags_list=$3
 
+echo "#######################################"
+echo "#######################################"
+echo "#######################################"
+echo "toolset_branch: ${toolset_branch}"
+echo "server_type: ${server_type}"
+echo "tags_list: ${tags_list}"
+echo "local_repo_dir: $4"
 
 export ubuntu_version=${ubuntu_version_name:-"jammy"}
 export ros_release=${ros_release_name:-"rolling"}
@@ -88,7 +109,7 @@ case $server_type in
 
 "local") echo "Local run"
   export local_repo_dir=$4
-
+  
   if [ -z "$unit_tests_result_dir" ]
   then
     export unit_tests_dir="$docker_user_home/workspace/test_results"
@@ -125,7 +146,14 @@ case $server_type in
   ;;
 
 "local-docker") echo "Using Docker Image from Docker Hub"
+
   export local_repo=$4
+
+  cur_dir=$(pwd)
+  cd $local_repo
+  echo "##########################################################################################"
+  git status || true
+  cd $cur_dir
 
   if [ -z "$unit_tests_result_dir" ]
   then

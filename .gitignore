@@ -10,3 +10,5 @@ vagrant_ansible_inventory*
 
 #PyCharm IDE
 .idea
+
+.vscode
