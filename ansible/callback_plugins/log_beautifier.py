@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-# Copyright 2022 Shadow Robot Company Ltd.
+# Copyright 2022, 2025 Shadow Robot Company Ltd.
 #
 # This program is free software: you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by the Free
@@ -29,7 +29,7 @@ def obfuscate_credentials(input_value):
 
 def fixed_dump_results(self, result, indent=None, sort_keys=True, keep_invocation=False):
     json_message = self._original_dump_results(result, indent, sort_keys, keep_invocation)  # pylint: disable=W0212
-    message_dictionary = json.loads(json_message, encoding="utf-8")
+    message_dictionary = json.loads(json_message)
     result = ""
     for key, value in message_dictionary.items():
         if key not in ["stderr", "stdout_lines"]:

@@ -1,4 +1,4 @@
-# Copyright 2022 Shadow Robot Company Ltd.
+# Copyright 2022, 2025 Shadow Robot Company Ltd.
 #
 # This program is free software: you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by the Free
@@ -17,7 +17,7 @@
 
 - hosts: all
   vars:
-    ros_release: "noetic"
+    ros_release: "humble"
     ansible_python_interpreter: /usr/bin/python3
   roles:
     - {role: docker/setup_ui, tags: ["setup_docker_user"]}
