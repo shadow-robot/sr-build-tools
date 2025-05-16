@@ -31,13 +31,9 @@
 
 - name: Execute roslint for every package and no extension files and write results in unit tests format
   shell: |
-    source /opt/ros/{{ros_release}}/setup.bash && ros2 run roslint test_wrapper \
-    {{ros_workspace}}/build/test_results/{{item}}/roslint-python-ex-{{item}}.xml \
-    'ros2 run roslint pycodestyle --max-line-length=120 {{item}}'
+    pycodestyle --max-line-length=120 {{item}}
 
-    source /opt/ros/{{ros_release}}/setup.bash && ros2 run roslint test_wrapper \
-    {{ros_workspace}}/build/test_results/{{item}}/roslint-python3-ex-{{item}}.xml \
-    "pylint -sn --rcfile=/tmp/pylintrc --msg-template='{abspath}:{line}:{column}:{msg_id}:{msg}' {{item}}"
+    pylint -sn --rcfile=/tmp/pylintrc --msg-template='{abspath}:{line}:{column}:{msg_id}:{msg}' {{item}}
   args:
     executable: "/bin/bash"
   with_items: "{{python_files_results|default([])}}"
