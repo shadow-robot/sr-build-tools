@@ -1,4 +1,4 @@
-# Copyright 2022 Shadow Robot Company Ltd.
+# Copyright 2022, 2025 Shadow Robot Company Ltd.
 #
 # This program is free software: you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by the Free
@@ -29,14 +29,11 @@
     src: ../files/pylintrc
     dest: /tmp/pylintrc
 
-- name: Execute roslint for every package and no extension files and write results in unit tests format
+- name: Execute pylint for every package and no extension files and write results in unit tests format
   shell: |
-    source /opt/ros/{{ros_release}}/setup.bash && rosrun roslint test_wrapper \
-    {{ros_workspace}}/build/test_results/{{item}}/roslint-python-ex-{{item}}.xml \
-    'rosrun roslint pycodestyle --max-line-length=120 {{item}}'
-         
-    source /opt/ros/{{ros_release}}/setup.bash && rosrun roslint test_wrapper \
-    {{ros_workspace}}/build/test_results/{{item}}/roslint-python3-ex-{{item}}.xml \
+    source /opt/ros/{{ros_release}}/setup.bash && \
+    bash <(curl -Ls https://raw.githubusercontent.com/ros/roslint/refs/heads/master/scripts/test_wrapper) \
+    {{ros_workspace}}/build/test_results/{{item}}/pylint-python-ex-{{item}}.xml \
     "pylint -sn --rcfile=/tmp/pylintrc --msg-template='{abspath}:{line}:{column}:{msg_id}:{msg}' {{item}}"
   args:
     executable: "/bin/bash"

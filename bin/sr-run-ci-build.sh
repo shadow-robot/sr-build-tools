@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# Copyright 2022 Shadow Robot Company Ltd.
+# Copyright 2022, 2025 Shadow Robot Company Ltd.
 #
 # This program is free software: you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by the Free
@@ -29,8 +29,8 @@ echo "server_type: ${server_type}"
 echo "tags_list: ${tags_list}"
 echo "local_repo_dir: $4"
 
-export ubuntu_version=${ubuntu_version_name:-"focal"}
-export ros_release=${ros_release_name:-"noetic"}
+export ubuntu_version=${ubuntu_version_name:-"jammy"}
+export ros_release=${ros_release_name:-"humble"}
 export docker_image=${docker_image_name:-"shadowrobot/build-tools:$ubuntu_version-$ros_release"}
 
 export docker_user=${docker_user_name:-"user"}
@@ -42,18 +42,18 @@ if  [ "semaphore_docker" != $server_type ] && [ "local" != $server_type ] && [ "
   export build_tools_folder="$HOME/sr-build-tools"
 
   sudo apt-get update
-  
+
   sudo apt-get install -y python3-dev libxml2-dev libxslt-dev python3-pip lcov wget git libssl-dev libffi-dev libyaml-dev
   sudo pip3 install --upgrade pip setuptools==51.1.1 gcovr
-  sudo pip3 install PyYAML==5.4.1 --ignore-installed
-  
+  sudo pip3 install PyYAML==6.0 --ignore-installed
+
   git config --global user.email "build.tools@example.com"
   git config --global user.name "Build Tools"
   # Clean up sr-build-tools and clone it with depth 1
   rm -rf $build_tools_folder
   git clone --depth 1 https://github.com/shadow-robot/sr-build-tools.git -b "$toolset_branch" $build_tools_folder
   cd $build_tools_folder/ansible
-  
+
   sudo pip3 install -r data/requirements.txt
 fi
 
@@ -108,7 +108,7 @@ case $server_type in
 
 "local") echo "Local run"
   export local_repo_dir=$4
-  
+
   if [ -z "$unit_tests_result_dir" ]
   then
     export unit_tests_dir="$docker_user_home/workspace/test_results"
@@ -143,7 +143,7 @@ case $server_type in
   export extra_variables="$extra_variables local_benchmarking_dir=$benchmarking_dir"
   docker run -w "$docker_user_home/sr-build-tools/ansible" -e LOCAL_USER_ID=$(id -u) $docker_flags --rm -v $HOME:/host:rw $docker_image  bash -c "git pull && git checkout $toolset_branch && git pull && PYTHONUNBUFFERED=1 ansible-playbook -v -i \"localhost,\" -c local docker_site.yml --tags \"local,$tags_list\" -e \"$extra_variables\" "
   ;;
-  
+
 "local-docker") echo "Using Docker Image from Docker Hub"
 
   export local_repo=$4

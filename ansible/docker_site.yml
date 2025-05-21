@@ -1,4 +1,4 @@
-# Copyright 2022 Shadow Robot Company Ltd.
+# Copyright 2022, 2025 Shadow Robot Company Ltd.
 #
 # This program is free software: you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by the Free
@@ -17,7 +17,7 @@
 
 - hosts: all
   vars:
-    ros_release: "noetic"
+    ros_release: "humble"
     ansible_python_interpreter: /usr/bin/python3
   roles:
     - {role: docker/setup_ui, tags: ["setup_docker_user"]}
@@ -49,13 +49,6 @@
                                                                  "xml_code_style_check", "catkin_code_style_check",
                                                                  "code_style_check", "create_workspace",
                                                                  "benchmarking", "check_install"]}
-    - {role: build_deps/ur-client-library, tags: ["build", "unit_tests", "software_tests", "all_tests",
-                                                  "code_coverage", "codecov_tool", "python_code_coverage",
-                                                  "cpp_code_coverage", "check_deb_make", "complete_deb_check",
-                                                  "check_build", "python_code_style_check",
-                                                  "cpp_code_style_check", "xml_code_style_check",
-                                                  "catkin_code_style_check", "code_style_check",
-                                                  "create_workspace", "benchmarking", "check_install"]}
     - {role: ci/update_dependencies, when: run_build, tags: ["build", "unit_tests", "software_tests", "all_tests",
                                                              "code_coverage", "codecov_tool", "python_code_coverage",
                                                              "cpp_code_coverage", "check_deb_make",
