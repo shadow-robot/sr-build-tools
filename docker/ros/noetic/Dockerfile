@@ -44,9 +44,6 @@ RUN curl -L -s -o /tmp/ros-apt-source.deb "https://github.com/ros-infrastructure
     apt-get update \
     apt-get install /tmp/ros-apt-source.deb \
     rm -f /tmp/ros-apt-source.deb
-
-RUN apt-get update && \
-    apt-get install -y ros-noetic-roscpp-tutorials
 ########################################################################################################################
 
 RUN set -x && \
