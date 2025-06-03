@@ -1,5 +1,5 @@
 #
-# ROS2 rolling with build tools Dockerfile
+# ROS2 humble with build tools Dockerfile
 #
 # https://github.com/shadow-robot/sr-build-tools/
 #
@@ -18,9 +18,10 @@ ENV toolset_branch ${toolset_branch:-"master"}
 ENV server_type="docker_hub"
 ENV used_modules="check_cache,create_workspace"
 ENV ros_release_name=humble
+ENV ubuntu_version_name=jammy
 ENV remote_shell_script="https://raw.githubusercontent.com/shadow-robot/sr-build-tools/$toolset_branch/bin/sr-run-ci-build.sh"
 
-ENV remote_additional_bashrc_cmds="https://raw.githubusercontent.com/shadow-robot/sr-build-tools/$toolset_branch/docker/utils/additional_bashrc_cmds_rolling"
+ENV remote_additional_bashrc_cmds="https://raw.githubusercontent.com/shadow-robot/sr-build-tools/$toolset_branch/docker/utils/additional_bashrc_cmds_humble"
 
 COPY entrypoint.sh /usr/local/bin/entrypoint.sh
 COPY terminator_config /tmp/terminator_config
