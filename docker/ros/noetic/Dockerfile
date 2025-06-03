@@ -21,11 +21,29 @@ ENV server_type="docker_hub"
 ENV used_modules="check_cache,create_workspace"
 ENV ros_release_name=noetic
 ENV remote_shell_script="https://raw.githubusercontent.com/shadow-robot/sr-build-tools/$toolset_branch/bin/sr-run-ci-build.sh"
+ENV quality_of_life_script="https://raw.githubusercontent.com/shadow-robot/sr-build-tools/$toolset_branch/bin/sr_quality_of_life.sh"
 
 ENV remote_additional_bashrc_cmds="https://raw.githubusercontent.com/shadow-robot/sr-build-tools/$toolset_branch/docker/utils/additional_bashrc_cmds_noetic"
 
 COPY entrypoint.sh /usr/local/bin/entrypoint.sh
 COPY terminator_config /tmp/terminator_config
+
+########################################################################################################################
+# Temporary fix for expired ROS GPG key issue as of 01/06/2025 (https://github.com/osrf/docker_images/issues/807)
+# Can be removed once upstream ros base images have been fixed.
+########################################################################################################################
+RUN rm /etc/apt/sources.list.d/ros1-latest.list && \
+    rm /usr/share/keyrings/ros1-latest-archive-keyring.gpg
+
+RUN apt-get update && \
+    apt-get install -y ca-certificates curl
+
+RUN export ROS_APT_SOURCE_VERSION=$(curl -s https://api.github.com/repos/ros-infrastructure/ros-apt-source/releases/latest | grep -F "tag_name" | awk -F\" '{print $4}') ; \
+    curl -L -s -o /tmp/ros-apt-source.deb "https://github.com/ros-infrastructure/ros-apt-source/releases/download/${ROS_APT_SOURCE_VERSION}/ros-apt-source_${ROS_APT_SOURCE_VERSION}.$(. /etc/os-release && echo $VERSION_CODENAME)_all.deb" && \
+    apt-get update && \
+    apt-get install /tmp/ros-apt-source.deb && \
+    rm -f /tmp/ros-apt-source.deb
+########################################################################################################################
 
 RUN set -x && \
     \
@@ -46,6 +64,11 @@ RUN set -x && \
     echo "Updating bash commands" && \
     wget -O /tmp/additional_bashrc_cmds "$( echo "$remote_additional_bashrc_cmds" | sed 's/#/%23/g' )" && \
     cat /tmp/additional_bashrc_cmds >> /home/user/.bashrc && \
+    \
+    echo "Installing and configuring additional quality-of-life tools" && \
+    wget -O /tmp/quality_of_life_setup "$( echo "$quality_of_life_script" | sed 's/#/%23/g' )" && \
+    chmod 755 /tmp/quality_of_life_setup && \
+    gosu $MY_USERNAME /tmp/quality_of_life_setup --user ${MY_USERNAME} && \
     \
     echo "Setting default terminator config" && \
     mkdir -p /home/$MY_USERNAME/.config/terminator/ && \
