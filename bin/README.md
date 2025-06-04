@@ -133,3 +133,26 @@ Example with Optional 4th varible:
 ```
 gather_changelog/gather_changelog.sh 080653068785.dkr.ecr.eu-west-2.amazonaws.com/shadow-dexterous-hand-glove noetic-v0.0.2 shadow-dexterous-hand-glove noetic-v0.0.1
 ```
+
+# sr-clean-machine.sh
+This script remove several directories and files in order to sanitise a machine ahead of delivery.
+The following are removed by the script:
+```
+aws logins
+chrome cache and cookies
+firefox cache and cookies
+$HOME/Downloads/
+Git credentials
+SSH keys
+sudo apt clean
+sudo rm -rf /tmp/*
+        sudo rm -rf /var/tmp/*
+Bash history
+```
+
+
+## Usage
+```
+   -h, --help          Show this help message and exit"
+   -a, --auto          Run the script in automatic mode without prompts. Use with caution as this will delete folders and files without confirmation"
+```
