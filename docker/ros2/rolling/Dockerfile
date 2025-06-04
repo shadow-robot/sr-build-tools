@@ -8,13 +8,13 @@ FROM ros:rolling-ros-base
 
 LABEL Description="This image is used to make ROS2 rolling based projects build faster using build tools" Vendor="Shadow Robot" Version="1.0"
 
-ENV DEBIAN_FRONTEND noninteractive
+ENV DEBIAN_FRONTEND=noninteractive
 
-ENV GOSU_VERSION 1.10
-ENV MY_USERNAME user
+ENV GOSU_VERSION=1.10
+ENV MY_USERNAME=user
 
 ARG toolset_branch
-ENV toolset_branch ${toolset_branch:-"master"}
+ENV toolset_branch=${toolset_branch:-"master"}
 ENV server_type="docker_hub"
 ENV used_modules="check_cache,create_workspace"
 ENV ros_release_name=rolling
