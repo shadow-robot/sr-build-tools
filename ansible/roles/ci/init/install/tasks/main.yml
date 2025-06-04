@@ -21,9 +21,10 @@
 # Using a specific version for empy as that's the one that is installed by default in Ubuntu Jammy from debian repos
 # so pip will skip it. Otherwise pip throws an error when failing to uninstall the deb version to install the latest pip version.
 # I don't really know what this package is needed for.
+# We also install pycodestyle, since the roslint package (which comes with pycodestyle) is not supported for ros2
 - name: Install PIP modules
   pip: 
-    name: ['catkin_pkg','empy==3.3.4','coverage','catkin-lint','pylint']
+    name: ['catkin_pkg','empy==3.3.4','coverage','catkin-lint','pylint', 'pycodestyle']
     extra_args: '--upgrade'
     executable: pip3
   become: yes
