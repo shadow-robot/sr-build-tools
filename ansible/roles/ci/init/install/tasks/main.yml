@@ -34,7 +34,7 @@
 
 - name: Install PIP modules
   pip:
-    name: ['catkin_pkg','empy','coverage','catkin-lint','pylint']
+    name: ['catkin_pkg','empy','coverage','catkin-lint','pylint','pycodestyle']
     extra_args: '--upgrade'
     executable: pip3
   become: yes
