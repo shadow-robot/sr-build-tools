@@ -1,4 +1,5 @@
-# Copyright 2025 Shadow Robot Company Ltd.
+#!/bin/bash
+# Copyright 2024 Shadow Robot Company Ltd.
 #
 # This program is free software: you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by the Free
@@ -12,8 +13,8 @@
 # You should have received a copy of the GNU General Public License along
 # with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#!/bin/bash
 set -e
+set -u
 
 # Set the script to run in auto mode
 AUTO_RUN=false
@@ -39,22 +40,32 @@ print_yellow() {
     echo -e "${YELLOW}$1${RESET}"
 }
 
-# Check whether user had supplied -h or --help
-if [[ ($@ == "--help") || $@ == "-h" ]]; then
-    echo "Usage: $0 [OPTION]"
-    echo ""
-    echo "Options:"
-    echo "  -h, --help          Show this help message and exit"
-    echo "  -a, --auto          Run the script in automatic mode without prompts"
-    echo ""
-    echo "Warning: Running in automatic mode will execute all cleaning operations without confirmation prompts. This may delete important directories and files!"
-    exit 0
-fi
+# Check for sudo
+check_sudo() {
+    if ! command -v sudo >/dev/null 2>&1; then
+        print_red "sudo is required but not installed. Exiting."
+        exit 1
+    fi
+}
 
-# Check whether user had supplied -a or --auto
-if [[ ($@ == "--auto") || $@ == "-a" ]]; then
-    AUTO_RUN=true
-fi
+# Argument parsing
+for arg in "$@"; do
+    case "$arg" in
+        -h|--help)
+            echo "Usage: $0 [OPTION]"
+            echo ""
+            echo "Options:"
+            echo "  -h, --help          Show this help message and exit"
+            echo "  -a, --auto          Run the script in automatic mode without prompts"
+            echo ""
+            echo "Warning: Running in automatic mode will execute all cleaning operations without confirmation prompts. This may delete important directories and files!"
+            exit 0
+            ;;
+        -a|--auto)
+            AUTO_RUN=true
+            ;;
+    esac
+done
 
 confirm() {
     # call with a prompt string or use a default
@@ -105,19 +116,14 @@ clean_chrome() {
 }
 
 clean_firefox() {
-    # Double check its okay to remove contents of chrome
-    if $AUTO_RUN || confirm "Remove firefox logins, history and cookies, this will kill the firefox process (Y/N) "; then
-        if [ -d "$HOME/.mozilla/firefox" ]; then
-            rm -rf "$HOME/.mozilla/firefox/*"
-        else
-            print_yellow "----------Firefox Cache not found skipping----------"
-        fi
+    # Double check its okay to remove contents of firefox
+    if $AUTO_RUN || confirm "Remove firefox logins, history and cookies, this will kill the firefox process (y/N) "; then
         if [ -d "$HOME/.mozilla/firefox" ]; then
             rm -rf "$HOME/.mozilla/firefox"
+            print_green "----------Firefox data Cleared----------"
         else
-            print_yellow "----------Firefox Config not found skipping----------"
+            print_yellow "----------Firefox not found skipping----------"
         fi
-        print_green "----------Firefox data Cleared----------"
     else
         print_red "----------Firefox Skipped----------"
     fi
@@ -126,26 +132,21 @@ clean_firefox() {
 clean_downloads() {
     # Double check its okay to remove contents of downloads
     if $AUTO_RUN || confirm "Remove contents of downloads folder (y/N) "; then
-            if [ -d "$HOME/Downloads/" ]; then
+        if [ -d "$HOME/Downloads/" ]; then
             rm -rf "$HOME/Downloads/*"
+            print_green "----------Downloads Cleared----------"
         else
             print_yellow "----------Downloads not found skipping----------"
         fi
-        print_green "----------Downloads Cleared----------"
     else
         print_red "----------Downloads Skipped----------"
     fi
 }
 
-
 clean_git(){
     if $AUTO_RUN || confirm "Clear GitHub creds (y/N) "; then
-        
-        # Remove GitHub credentials from the credential store
         git credential-cache exit
         git credential-cache --timeout=1 exit
-        
-        # Remove any stored GitHub credentials from the .git-credentials file
         if [ -f ~/.git-credentials ]; then
             rm ~/.git-credentials
             echo "Removed ~/.git-credentials"
@@ -159,22 +160,26 @@ clean_ssh() {
     if $AUTO_RUN || confirm "Remove all ssh keys from $HOME/.ssh (y/N) "; then
         if [ -d "$HOME/.ssh/" ]; then
             rm -rf "$HOME/.ssh/"
+            print_green "----------SSH Keys Cleared----------"
         else
             print_yellow "----------ssh not found skipping----------"
         fi
-        print_green "----------SSH Keys Cleared----------"
     else
         print_red "----------SSH Skipped----------"
     fi
+}
 
-
-        if [ -d "$HOME/.ssh/" ]; then
-    # Double check its okay to remove all temp directories
+clean_cache() {
+    check_sudo
     if $AUTO_RUN || confirm "Would you like to remove the system cache? /tmp /var/tmp /var/lib/apt/lists/ $HOME/.cache (y/N) "; then
         sudo apt clean
         sudo rm -rf /tmp/*
         sudo rm -rf /var/tmp/*
-        rm -rf "$HOME/.cache/*"
+        if [ -n "$HOME" ]; then
+            rm -rf "$HOME/.cache/*"
+        else
+            print_red "HOME variable is not set. Skipping user cache clean."
+        fi
         print_green "-----------Cleared Cache-----------"
     else
         print_red "-----------Cache Skipped----------"
@@ -186,15 +191,16 @@ clean_history() {
     if $AUTO_RUN || confirm "Clear Bash History (y/N) "; then
         history -c
         history -w
+        if [ -f "$HOME/.bash_history" ]; then
+            rm "$HOME/.bash_history"
+        fi
         print_green "----------Bash History Cleared----------"
     else
         print_red "----------Bash History Skipped----------"
     fi
 }
 
-
-main(){
-    # Run the clean up the process step by step
+main() {
     print_yellow "Step 1/8"
     clean_chrome
     print_yellow "Step 2/8"
@@ -221,17 +227,13 @@ if $AUTO_RUN; then
     if confirm "Is this correct? (y/N)"; then
         main
     else
-        # Kill the script if no is selected
         print_red "----------Program Terminated----------"
         exit 1
     fi
 else
-    if confirm "This script will clean the machine. It will remove the AWS CLI and creds, the bash history, any logged-in GitHub accounts, and perform apt autoremove. 
-are you sure you would like to continue (y/N) "; then
-        # Run the clean up the process step by step
-        main()
+    if confirm "This script will clean the machine. It will remove the AWS CLI and creds, the bash history, any logged-in GitHub accounts, and perform apt autoremove.\nAre you sure you would like to continue (y/N) "; then
+        main
     else
-        # Kill the script if no is selected
         print_red "----------Program Terminated----------"
         exit 1
     fi
