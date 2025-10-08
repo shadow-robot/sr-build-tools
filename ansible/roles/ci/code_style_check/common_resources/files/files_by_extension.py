@@ -105,7 +105,7 @@ def check_is_python_file(file_path):
     except:
         pass
     finally:
-        return re.match(r'#!\s*/usr/bin/(env|python|python3) (python|python3)', fline)
+        return re.match(r'#!\s*/usr/bin/(env|python|python3)( (python|python3))*', fline)
 
 if __name__ == "__main__":
     path, filetype = argparser()
