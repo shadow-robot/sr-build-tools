@@ -34,19 +34,18 @@
 
 - name: Install PIP modules
   pip:
-    name: ['catkin_pkg','empy','coverage','catkin-lint','pylint','pycodestyle','cpplint']
+    name: ['catkin_pkg','coverage','catkin-lint','pylint','pycodestyle','cpplint']
     extra_args: '--upgrade'
     executable: pip3
   become: yes
   become_method: sudo
   become_user: root
   when:
-    - ros_release == 'rolling'
-    - ros_release == 'humble'
+    - ros_release == 'rolling' or ros_release == 'humble'
 
 - name: Install PIP modules
   pip:
-    name: ['catkin_pkg','empy==3.3.2','coverage==6.5','catkin-lint','pylint==2.10.2', 'cpplint']
+    name: ['catkin_pkg','coverage==6.5','catkin-lint','pylint==2.10.2', 'cpplint']
     extra_args: '--upgrade'
     executable: pip3
   become: yes
