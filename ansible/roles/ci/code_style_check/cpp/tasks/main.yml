@@ -15,23 +15,8 @@
 ---
 # Playbook for C++ code style check
 
-- name: Get list of all c, cpp, h, hpp files
-  script: "../../common_resources/files/files_by_extension.py \
-    -p {{repo_sources_path}} -ft cpp"
-  register: cpp_files
-
-- name: Set variable to workaround ansible type evaluation issue
-  set_fact:
-    cpp_files_results: "{{cpp_files.stdout_lines}}"
-
-- name: "Execute cpplint for every package and write results in unit tests format.\
-    In order to skip hpp files extension validation using stdin feed to checker."
-  shell: |
-    source /opt/ros/{{ros_release}}/setup.bash && \
-    bash <(curl -Ls https://raw.githubusercontent.com/ros/roslint/refs/heads/master/scripts/test_wrapper) \
-    {{ros_workspace}}/build/test_results/{{item}}/roslint-hpp-{{item}}.xml \
-    "cpplint --extensions=hpp,h,cpp,c --linelength=120 --filter=-runtime/references {{item}}"
+- name: Run project-specific CI checks
+  shell: ./run_ci.sh
   args:
-    executable: "/bin/bash"
-  with_items: "{{cpp_files_results|default([])}}"
-  ignore_errors: True
+    chdir: "{{ repo_sources_path }}"
+    executable: /bin/bash
