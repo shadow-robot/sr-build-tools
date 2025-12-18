@@ -198,6 +198,13 @@ declare -a public_copyright_in_private_file_list
 declare -a bsd_copyright_in_gpl_file_list
 declare -a gpl_copyright_in_bsd_file_list
 
+# Read global exclusions file from root directory
+global_exclusions_file="global_copyright_exclusions.cfg"
+if [[ -f "${global_exclusions_file}" ]]; then
+    global_exclude_regex="^exclude_files=\K(.*)"
+    global_exclude_pattern="$(grep -oP ${global_exclude_regex} ${global_exclusions_file})"
+fi
+
 for filetype in "${filetypes[@]}"; do
     case $filetype in 
         c|h|cpp|hpp)
@@ -238,6 +245,12 @@ for filetype in "${filetypes[@]}"; do
             dir_name=$(dirname "${file_path}")
             exclusion_filenames=("CPPLINT.cfg" "copyright_exclusions.cfg")
             for exclusion_filename in "${exclusion_filenames[@]}"; do
+                # Allow absolute regex exclusions from global_copyright_exclusions.cfg
+                if [[ ! -z ${global_exclude_pattern} ]]; then
+                    if [[ ${file_path} =~ ${global_exclude_pattern} ]]; then
+                        accept_file=false
+                    fi
+                fi
                 if [[ -f "${dir_name}/${exclusion_filename}" ]]; then
                     exclude_regex="^exclude_files=\K(.*)"
                     exclude_pattern="$(grep -oP ${exclude_regex} ${dir_name}/${exclusion_filename})"
