@@ -1,33 +1,36 @@
 #!/usr/bin/env python3
 
-# Copyright 2014-2018, 2021 Open Source Robotics Foundation, Inc.
+# Copyright 2014-2018, 2021-2022 Shadow Robot Company Ltd.
 #
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
+# This program is free software: you can redistribute it and/or modify it
+# under the terms of the GNU General Public License as published by the Free
+# Software Foundation version 2 of the License.
 #
-#     http://www.apache.org/licenses/LICENSE-2.0
+# This program is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+# FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
+# more details.
 #
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
+# You should have received a copy of the GNU General Public License along
+# with this program. If not, see <http://www.gnu.org/licenses/>.
 
 import argparse
 import os
 import sys
 import time
-import rospkg
 from xml.etree import ElementTree
 from xml.sax import make_parser
 from xml.sax import SAXParseException
 from xml.sax.handler import ContentHandler
 from xml.sax.saxutils import escape
 from xml.sax.saxutils import quoteattr
+import rospkg
 
 
-def main(argv=sys.argv[1:]):
+def main(argv=None):
+    if not argv:
+        argv=sys.argv[1:]
+
     const_extensions = ['xml', 'launch', 'xacro']
 
     parser = argparse.ArgumentParser(
@@ -97,11 +100,11 @@ def main(argv=sys.argv[1:]):
     if not error_count:
         if args.debug:
             print('No problems found')
-        rc = 0
+        return_condition = 0
     else:
         if args.debug:
             print('%d files are invalid' % error_count, file=sys.stderr)
-        rc = 1
+        return_condition = 1
     # generate xunit file
     if args.xunit_file:
         folder_name = os.path.basename(os.path.dirname(args.xunit_file))
@@ -118,9 +121,9 @@ def main(argv=sys.argv[1:]):
         path = os.path.dirname(os.path.abspath(args.xunit_file))
         if not os.path.exists(path):
             os.makedirs(path)
-        with open(args.xunit_file, 'w') as f:
-            f.write(xml)
-    return rc
+        with open(args.xunit_file, 'w') as xunit_file:
+            xunit_file.write(xml)
+    return return_condition
 
 
 def gather_files(directory, extensions):
@@ -133,7 +136,7 @@ def gather_files(directory, extensions):
                 all_files.append(os.path.join(root, file))
     if not all_files:
         print("No files detected.\nExiting test.")
-        exit(0)
+        sys.exit(0)
     return all_files
 
 
@@ -163,29 +166,29 @@ def test_dependencies(dependencies, path):
         for path_element in dep.split('/'):
             if "$(find" in path_element:
                 continue  # Gathered later
-            elif "$(arg" in path_element:
+            if "$(arg" in path_element:
                 defaultval = get_dependency_args(dep, path)
                 rest_of_string = path_element.split(')')[1]
                 path_string += "/" + defaultval + rest_of_string
             else:
                 path_string += "/" + path_element
         package_path = dep.split('$(find ')[1].split(')')[0]
-        rp = rospkg.RosPack()
+        rospack = rospkg.RosPack()
         try:
-            package_path = rp.get_path(package_path)
+            package_path = rospack.get_path(package_path)
             full_path = package_path + path_string
             if not os.path.exists(full_path):
                 if errors:
                     errors += " THIS FILE WAS NOT FOUND '{}' ERROR ON THE LINE: {}".format(full_path, fulldepstr)
                 else:
                     errors = "{} THIS FILE WAS NOT FOUND '{}' ERROR ON THE LINE: {}".format(path, full_path, fulldepstr)
-        except rospkg.ResourceNotFound as e:
+        except rospkg.ResourceNotFound as exception:
             if errors:
                 errors += " ROS PACKAGE NOT FOUND '{}' ERROR ON THE LINE: {}".format(
-                    str(e).split('\n')[0], fulldepstr)
+                    str(exception).split('\n', maxsplit=1)[0], fulldepstr)
             else:
                 errors = "{} ROS PACKAGE NOT FOUND: '{}' ERROR ON THE LINE: {}".format(
-                    path, str(e).split('\n')[0], fulldepstr)
+                    path, str(exception).split('\n', maxsplit=1)[0], fulldepstr)
     return errors
 
 
@@ -200,6 +203,7 @@ def get_dependency_args(dependency, path):
     for arg in root.findall('arg'):
         if arg.attrib["name"] == argument:
             return arg.attrib["default"]
+    return None
 
 
 class CustomHandler(ContentHandler):

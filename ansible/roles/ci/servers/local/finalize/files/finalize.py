@@ -1,18 +1,18 @@
 #!/usr/bin/env python3
 
-# Copyright 2021 Open Source Robotics Foundation, Inc.
+# Copyright 2022 Shadow Robot Company Ltd.
 #
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
+# This program is free software: you can redistribute it and/or modify it
+# under the terms of the GNU General Public License as published by the Free
+# Software Foundation version 2 of the License.
 #
-#     http://www.apache.org/licenses/LICENSE-2.0
+# This program is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+# FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
+# more details.
 #
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
+# You should have received a copy of the GNU General Public License along
+# with this program. If not, see <http://www.gnu.org/licenses/>.
 
 import argparse
 import os
@@ -21,7 +21,10 @@ import sys
 from xml.etree import ElementTree
 
 
-def main(argv=sys.argv[1:]):
+def main(argv=None):
+    if not argv:
+        argv=sys.argv[1:]
+
     const_extensions = ['xml']
     parser = argparse.ArgumentParser(
         description='Check XML markup using xmllint.',
@@ -80,7 +83,7 @@ def gather_files(directory, extensions):
                 all_files.append(os.path.join(root, file))
     if not all_files:
         print("No files detected.\nExiting test.")
-        exit(0)
+        sys.exit(0)
     return all_files
 
 
@@ -111,7 +114,7 @@ def gather_all_failures(filename, error_count, failure_count):
         for error in testcase.findall('error'):
             error_msg = error.text
             if not error_msg:
-                error_msg = failure.attrib['message']
+                error_msg = error.attrib['message']
             count_e += 1
             error_msg = 'ERROR {}: \n'.format(error_count + count_e) \
                 + error_msg.strip() + '\n'

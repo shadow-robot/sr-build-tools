@@ -1,18 +1,18 @@
 #!/usr/bin/env python3
 
-# Copyright 2014-2018, 2021 Open Source Robotics Foundation, Inc.
+# Copyright 2014-2018, 2021-2022 Shadow Robot Company Ltd.
 #
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
+# This program is free software: you can redistribute it and/or modify it
+# under the terms of the GNU General Public License as published by the Free
+# Software Foundation version 2 of the License.
 #
-#     http://www.apache.org/licenses/LICENSE-2.0
+# This program is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+# FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
+# more details.
 #
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
+# You should have received a copy of the GNU General Public License along
+# with this program. If not, see <http://www.gnu.org/licenses/>.
 
 import argparse
 import os
@@ -28,7 +28,10 @@ from xml.sax.saxutils import escape
 from xml.sax.saxutils import quoteattr
 
 
-def main(argv=sys.argv[1:]):
+def main(argv=None):  # pylint: disable=R0914, R0915
+    if not argv:
+        argv=sys.argv[1:]
+
     extensions = ['xml', 'launch', 'xacro']
 
     parser = argparse.ArgumentParser(
@@ -105,8 +108,8 @@ def main(argv=sys.argv[1:]):
         try:
             subprocess.check_output(
                 cmd, cwd=os.path.dirname(filename), stderr=subprocess.STDOUT)
-        except subprocess.CalledProcessError as e:
-            errors = e.output.decode()
+        except subprocess.CalledProcessError as exception:
+            errors = exception.output.decode()
         else:
             errors = None
 
@@ -115,7 +118,7 @@ def main(argv=sys.argv[1:]):
     if args.debug:
         for (filename, errors) in report:
             if errors is not None:
-                errormsg = "File '{}' is invalid: ".format(filename)
+                errormsg = f"File '{filename}' is invalid: "
                 for line in errors.splitlines():
                     errormsg += line.strip() + " "
                 print(errormsg, file=sys.stderr)
@@ -125,11 +128,11 @@ def main(argv=sys.argv[1:]):
     if not error_count:
         if args.debug:
             print('No problems found')
-        rc = 0
+        return_condition = 0
     else:
         if args.debug:
-            print('%d files are invalid' % error_count, file=sys.stderr)
-        rc = 1
+            print(f'{error_count} files are invalid', file=sys.stderr)
+        return_condition = 1
     # generate xunit file
     if args.xunit_file:
         folder_name = os.path.basename(os.path.dirname(args.xunit_file))
@@ -146,9 +149,9 @@ def main(argv=sys.argv[1:]):
         path = os.path.dirname(os.path.abspath(args.xunit_file))
         if not os.path.exists(path):
             os.makedirs(path)
-        with open(args.xunit_file, 'w') as f:
-            f.write(xml)
-    return rc
+        with open(args.xunit_file, 'w') as xunit_file:
+            xunit_file.write(xml)
+    return return_condition
 
 
 def gather_files(directory, extensions):
@@ -161,7 +164,7 @@ def gather_files(directory, extensions):
                 all_files.append(os.path.join(root, file))
     if not all_files:
         print("No files detected.\nExiting test.")
-        exit(0)
+        sys.exit(0)
     return all_files
 
 
