@@ -26,6 +26,10 @@
   become_user: root
   when: upgrade_all_packages
 
+- name: Repull git LFS files
+  shell: cd $CODEBUILD_SRC_DIR && git lfs install && git lfs pull
+  when: upgrade_all_packages
+
 - name: Update package lists
   apt: update_cache=yes
   become: yes
