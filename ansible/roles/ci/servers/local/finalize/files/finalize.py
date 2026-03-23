@@ -16,7 +16,6 @@
 
 import argparse
 import os
-import subprocess
 import sys
 from xml.etree import ElementTree
 
@@ -128,7 +127,7 @@ def gather_all_failures(filename, error_count, failure_count):
 
 def output_to_cmd(string):
     """Simple function to echo a string to terminal."""
-    subprocess.call(['echo', '-e', string])
+    print(string)
 
 
 if __name__ == '__main__':

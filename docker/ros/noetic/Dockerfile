@@ -28,8 +28,6 @@ ENV remote_additional_bashrc_cmds="https://raw.githubusercontent.com/shadow-robo
 COPY entrypoint.sh /usr/local/bin/entrypoint.sh
 COPY terminator_config /tmp/terminator_config
 
-
-
 RUN set -x && \
     \
     echo "Installing wget" && \
