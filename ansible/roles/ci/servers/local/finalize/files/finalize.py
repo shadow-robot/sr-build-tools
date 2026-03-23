@@ -16,7 +16,6 @@
 
 import argparse
 import os
-import subprocess
 import sys
 from xml.etree import ElementTree
 
@@ -56,12 +55,12 @@ def main(argv=None):
         failure_count += count_f
         failures = failures + failed_tests
     if error_count == 0 and failure_count == 0:
-        output_to_cmd('TESTS SUCCEEDED. NO FAILURES OR ERRORS DETECTED.')
+        print('TESTS SUCCEEDED. NO FAILURES OR ERRORS DETECTED.')
         return 0
 
-    output_to_cmd('\n')
+    print('\n')
     for fail_msg in failures:
-        output_to_cmd(fail_msg)
+        print(fail_msg)
 
     if error_count > 0 and failure_count == 0:
         total_error_msg = "\nERRORS FOUND IN TEST. {} ERRORS FOUND.".format(error_count)
@@ -69,7 +68,7 @@ def main(argv=None):
         total_error_msg = "\nFAILURES FOUND IN TEST. {} FAILURES FOUND.".format(failure_count)
     else:
         total_error_msg = "\nISSUES FOUND IN TEST. {} ERRORS AND {} FAILURES FOUND.".format(error_count, failure_count)
-    output_to_cmd(total_error_msg)
+    print(total_error_msg)
     return 1
 
 
@@ -124,11 +123,6 @@ def gather_all_failures(filename, error_count, failure_count):
                 error_msg = error_msg + message.strip()[10:-8] + '\n'
             failures.append(error_msg)
     return failures, count_e, count_f
-
-
-def output_to_cmd(string):
-    """Simple function to echo a string to terminal."""
-    subprocess.call(['echo', '-e', string])
 
 
 if __name__ == '__main__':
