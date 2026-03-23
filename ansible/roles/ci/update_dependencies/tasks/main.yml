@@ -27,7 +27,8 @@
   when: upgrade_all_packages
 
 - name: Repull git LFS files
-  shell: cd {{ros_workspace}}/src/sr_manus_gloves && git lfs install && git lfs pull
+  shell: git lfs install && git lfs pull
+    chdir={{ros_workspace}}/src/sr_manus_gloves
   when: upgrade_all_packages
 
 - name: Update package lists
