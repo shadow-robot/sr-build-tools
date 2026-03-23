@@ -28,22 +28,7 @@ ENV remote_additional_bashrc_cmds="https://raw.githubusercontent.com/shadow-robo
 COPY entrypoint.sh /usr/local/bin/entrypoint.sh
 COPY terminator_config /tmp/terminator_config
 
-########################################################################################################################
-# Temporary fix for expired ROS GPG key issue as of 01/06/2025 (https://github.com/osrf/docker_images/issues/807)
-# Can be removed once upstream ros base images have been fixed.
-########################################################################################################################
-RUN rm /etc/apt/sources.list.d/ros1-latest.list && \
-    rm /usr/share/keyrings/ros1-latest-archive-keyring.gpg
 
-RUN apt-get update && \
-    apt-get install -y ca-certificates curl
-
-RUN export ROS_APT_SOURCE_VERSION=$(curl -s https://api.github.com/repos/ros-infrastructure/ros-apt-source/releases/latest | grep -F "tag_name" | awk -F\" '{print $4}') ; \
-    curl -L -s -o /tmp/ros-apt-source.deb "https://github.com/ros-infrastructure/ros-apt-source/releases/download/${ROS_APT_SOURCE_VERSION}/ros-apt-source_${ROS_APT_SOURCE_VERSION}.$(. /etc/os-release && echo $VERSION_CODENAME)_all.deb" && \
-    apt-get update && \
-    apt-get install /tmp/ros-apt-source.deb && \
-    rm -f /tmp/ros-apt-source.deb
-########################################################################################################################
 
 RUN set -x && \
     \
@@ -53,35 +38,40 @@ RUN set -x && \
     apt-get upgrade -y && \
     apt-get install -y --no-install-recommends ca-certificates wget sudo curl && \
     apt-get install -y bash-completion && \
-    apt-get install -y gdb && \
-    \
-    echo "Running one-liner" && \
+    apt-get install -y gdb
+
+RUN echo "Installing git LFS" && \
+    curl -s https://packagecloud.io/install/repositories/github/git-lfs/script.deb.sh | bash && \
+    apt-get install -y git-lfs && \
+    git lfs install
+
+RUN echo "Running one-liner" && \
     wget -O /tmp/oneliner "$( echo "$remote_shell_script" | sed 's/#/%23/g' )" && \
     chmod 755 /tmp/oneliner && \
     /tmp/oneliner "$toolset_branch" $server_type 'setup_docker_user' && \
-    gosu $MY_USERNAME /tmp/oneliner "$toolset_branch" $server_type $used_modules && \
-    \
-    echo "Updating bash commands" && \
+    gosu $MY_USERNAME /tmp/oneliner "$toolset_branch" $server_type $used_modules
+
+RUN echo "Updating bash commands" && \
     wget -O /tmp/additional_bashrc_cmds "$( echo "$remote_additional_bashrc_cmds" | sed 's/#/%23/g' )" && \
-    cat /tmp/additional_bashrc_cmds >> /home/user/.bashrc && \
-    \
-    echo "Installing and configuring additional quality-of-life tools" && \
+    cat /tmp/additional_bashrc_cmds >> /home/user/.bashrc
+
+RUN echo "Installing and configuring additional quality-of-life tools" && \
     wget -O /tmp/quality_of_life_setup "$( echo "$quality_of_life_script" | sed 's/#/%23/g' )" && \
     chmod 755 /tmp/quality_of_life_setup && \
-    gosu $MY_USERNAME /tmp/quality_of_life_setup --user ${MY_USERNAME} && \
-    \
-    echo "Setting default terminator config" && \
+    gosu $MY_USERNAME /tmp/quality_of_life_setup --user ${MY_USERNAME}
+    
+RUN echo "Setting default terminator config" && \
     mkdir -p /home/$MY_USERNAME/.config/terminator/ && \
     mv /tmp/terminator_config /home/$MY_USERNAME/.config/terminator/config && \
-    chown -R $MY_USERNAME:$MY_USERNAME /home/$MY_USERNAME/.config &&\
-    \
-    echo "Creating XDG_RUNTIME_DIR to avoid rqt black windows" && \
+    chown -R $MY_USERNAME:$MY_USERNAME /home/$MY_USERNAME/.config
+    
+RUN echo "Creating XDG_RUNTIME_DIR to avoid rqt black windows" && \
     mkdir -p /run/$MY_USERNAME/1000 && \
     chmod 0700 /run/$MY_USERNAME/1000 && \
     chown 1000:1000 /run/$MY_USERNAME/1000 && \
-    export XDG_RUNTIME_DIR=/run/$MY_USERNAME/1000 && \
-    \
-    echo "Removing cache" && \
+    export XDG_RUNTIME_DIR=/run/$MY_USERNAME/1000
+
+RUN echo "Removing cache" && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /home/$MY_USERNAME/workspace/build_isolated /home/$MY_USERNAME/workspace/devel_isolated /home/$MY_USERNAME/workspace/src/roslint /home/$MY_USERNAME/.ansible /home/$MY_USERNAME/.gitconfig /home/$MY_USERNAME/.cache
 
