@@ -30,6 +30,11 @@ phases:
   install:
     runtime-versions:
       docker: 19
+    commands:
+      - curl -s https://packagecloud.io/install/repositories/github/git-lfs/script.deb.sh | bash
+      - apt-get install -y git-lfs
+      - git lfs install
+    
   build:
     commands:
       - |

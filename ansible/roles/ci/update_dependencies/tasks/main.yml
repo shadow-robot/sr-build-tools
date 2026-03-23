@@ -19,18 +19,6 @@
   set_fact:
     dependencies_file: "{{repo_sources_path}}/repository.rosinstall"
 
-- name: Install git LFS
-  shell: curl -s https://packagecloud.io/install/repositories/github/git-lfs/script.deb.sh | sudo bash && sudo apt-get install git-lfs
-  become: yes
-  become_method: sudo
-  become_user: root
-  when: upgrade_all_packages
-
-- name: Repull git LFS files
-  shell: git lfs install && git lfs pull
-    chdir={{repo_sources_path}}
-  when: upgrade_all_packages
-
 - name: Update package lists
   apt: update_cache=yes
   become: yes
