@@ -19,7 +19,7 @@ env:
   variables:
     branch: default
     image: build-tools
-    tag: focal-noetic
+    tag: focal-noetic-lfs
     dockerfile_folder: docker/ros/noetic/
   exported-variables:
     - branch
