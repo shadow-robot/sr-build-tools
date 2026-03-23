@@ -28,7 +28,7 @@
 
 - name: Repull git LFS files
   shell: git lfs install && git lfs pull
-    chdir={{ros_workspace}}/src/sr_manus_gloves
+    chdir={{repo_sources_path}}
   when: upgrade_all_packages
 
 - name: Update package lists
