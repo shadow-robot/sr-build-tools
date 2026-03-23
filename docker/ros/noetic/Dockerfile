@@ -4,7 +4,7 @@
 # https://github.com/shadow-robot/sr-build-tools/
 #
 
-FROM ros:noetic-robot
+FROM public.ecr.aws/docker/library/ros:noetic-robot
 
 MAINTAINER "Shadow Robot's Software Team <software@shadowrobot.com>"
 
