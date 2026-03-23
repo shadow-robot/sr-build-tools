@@ -19,6 +19,7 @@ See README.md
 """
 import json
 import re
+import sys
 from threading import Timer
 from ansible.plugins.callback import CallbackBase
 

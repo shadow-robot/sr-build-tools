@@ -19,8 +19,9 @@ RT_PATCH_VERSION="4.13.13-rt5"
 KERNEL_DIR="v4.x"
 KERNEL_VERSION="4.13.13"
 
-wget https://www.kernel.org/pub/linux/kernel/projects/rt/${RT_PATCH_DIR}/patch-${RT_PATCH_VERSION}.patch.xz
-wget https://www.kernel.org/pub/linux/kernel/${KERNEL_DIR}/linux-${KERNEL_VERSION}.tar.xz
+# Double check the links here as they do change over time to include new paths i.e. kernel/projects/old/rt
+wget https://www.kernel.org/pub/linux/kernel/projects/rt/${RT_PATCH_DIR}/patch-${RT_PATCH_VERSION}.patch.xz  --no-check-certificate
+wget https://www.kernel.org/pub/linux/kernel/${KERNEL_DIR}/linux-${KERNEL_VERSION}.tar.xz --no-check-certificate
 tar -xvJf linux-${KERNEL_VERSION}.tar.xz
 cd linux-${KERNEL_VERSION}/
 xzcat -dc ../patch-${RT_PATCH_VERSION}.patch.xz | patch -p1
@@ -32,6 +33,9 @@ make mrproper
 cp /boot/config-`uname -r` .config
 
 make olddefconfig
+# Setting systemkeys to avoid; No rule to make target 'debian/certs/test-signing-certs.pem' build error
+scripts/config --set-str SYSTEM_TRUSTED_KEYS ""
+scripts/config --disable SYSTEM_REVOCATION_KEYS
 
 # edit manually the RT_PREEMPT parameters:
 # General Setup -> Preemption Model  set to Fully Preemptible Kernel (RT)

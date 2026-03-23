@@ -4,7 +4,7 @@
 # https://github.com/shadow-robot/sr-build-tools/
 #
 
-FROM ros:noetic-robot
+FROM public.ecr.aws/docker/library/ros:noetic-robot
 
 MAINTAINER "Shadow Robot's Software Team <software@shadowrobot.com>"
 
@@ -21,6 +21,7 @@ ENV server_type="docker_hub"
 ENV used_modules="check_cache,create_workspace"
 ENV ros_release_name=noetic
 ENV remote_shell_script="https://raw.githubusercontent.com/shadow-robot/sr-build-tools/$toolset_branch/bin/sr-run-ci-build.sh"
+ENV quality_of_life_script="https://raw.githubusercontent.com/shadow-robot/sr-build-tools/$toolset_branch/bin/sr_quality_of_life.sh"
 
 ENV remote_additional_bashrc_cmds="https://raw.githubusercontent.com/shadow-robot/sr-build-tools/$toolset_branch/docker/utils/additional_bashrc_cmds_noetic"
 
@@ -35,30 +36,40 @@ RUN set -x && \
     apt-get upgrade -y && \
     apt-get install -y --no-install-recommends ca-certificates wget sudo curl && \
     apt-get install -y bash-completion && \
-    apt-get install -y gdb && \
-    \
-    echo "Running one-liner" && \
+    apt-get install -y gdb
+
+RUN echo "Installing git LFS" && \
+    curl -s https://packagecloud.io/install/repositories/github/git-lfs/script.deb.sh | bash && \
+    apt-get install -y git-lfs && \
+    git lfs install
+
+RUN echo "Running one-liner" && \
     wget -O /tmp/oneliner "$( echo "$remote_shell_script" | sed 's/#/%23/g' )" && \
     chmod 755 /tmp/oneliner && \
     /tmp/oneliner "$toolset_branch" $server_type 'setup_docker_user' && \
-    gosu $MY_USERNAME /tmp/oneliner "$toolset_branch" $server_type $used_modules && \
-    \
-    echo "Updating bash commands" && \
+    gosu $MY_USERNAME /tmp/oneliner "$toolset_branch" $server_type $used_modules
+
+RUN echo "Updating bash commands" && \
     wget -O /tmp/additional_bashrc_cmds "$( echo "$remote_additional_bashrc_cmds" | sed 's/#/%23/g' )" && \
-    cat /tmp/additional_bashrc_cmds >> /home/user/.bashrc && \
-    \
-    echo "Setting default terminator config" && \
+    cat /tmp/additional_bashrc_cmds >> /home/user/.bashrc
+
+RUN echo "Installing and configuring additional quality-of-life tools" && \
+    wget -O /tmp/quality_of_life_setup "$( echo "$quality_of_life_script" | sed 's/#/%23/g' )" && \
+    chmod 755 /tmp/quality_of_life_setup && \
+    gosu $MY_USERNAME /tmp/quality_of_life_setup --user ${MY_USERNAME}
+    
+RUN echo "Setting default terminator config" && \
     mkdir -p /home/$MY_USERNAME/.config/terminator/ && \
     mv /tmp/terminator_config /home/$MY_USERNAME/.config/terminator/config && \
-    chown -R $MY_USERNAME:$MY_USERNAME /home/$MY_USERNAME/.config &&\
-    \
-    echo "Creating XDG_RUNTIME_DIR to avoid rqt black windows" && \
+    chown -R $MY_USERNAME:$MY_USERNAME /home/$MY_USERNAME/.config
+    
+RUN echo "Creating XDG_RUNTIME_DIR to avoid rqt black windows" && \
     mkdir -p /run/$MY_USERNAME/1000 && \
     chmod 0700 /run/$MY_USERNAME/1000 && \
     chown 1000:1000 /run/$MY_USERNAME/1000 && \
-    export XDG_RUNTIME_DIR=/run/$MY_USERNAME/1000 && \
-    \
-    echo "Removing cache" && \
+    export XDG_RUNTIME_DIR=/run/$MY_USERNAME/1000
+
+RUN echo "Removing cache" && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /home/$MY_USERNAME/workspace/build_isolated /home/$MY_USERNAME/workspace/devel_isolated /home/$MY_USERNAME/workspace/src/roslint /home/$MY_USERNAME/.ansible /home/$MY_USERNAME/.gitconfig /home/$MY_USERNAME/.cache
 
